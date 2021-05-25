@@ -1,0 +1,219 @@
+/* Shadows Into Light Two */
+@import url("https://fonts.googleapis.com/css?family=Shadows+Into+Light+Two&display=swap");
+
+/* @font-face {
+	font-family: "SF";
+	src: url('../../assets/fonts/san_francisco-webfont.woff2') format('woff2');
+} */
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fira+Sans&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans+Condensed:wght@300&display=swap');
+@import url('http://fonts.cdnfonts.com/css/francophil-sans');
+
+@import url('./bs-custom.css');
+@import url('./uikit-custom.css');
+@import url('./leaflet-custom.css');
+@import url('./material-design-ripple.css');
+@import url('./plot-owner-card.css');
+@import url('./utilities.css');
+@import url('./_left-pane.css');
+@import url('./_right-pane.css');
+@import url('./_middle-pane.css');
+
+:root {
+	--scrollbar-width: 7px;
+	
+	/* GRIDS */
+	--app-grid-template-cols: 290px 240px 1.2fr 340px;
+	--app-grid-template-rows: 0.15fr 2fr;
+	
+	/* COLORS */
+	--scrollbar-color: #009432;
+	--btn-hover-background-color: grey;
+	--btn-hover-text-color: white;
+	--card-light-grey: #F9F9F9;
+	--bg-light-blue: #EEF3FA;
+	--light-grey-line: #ecf0f1;
+	--light-grey-line: #dfe6e9;
+	--grey-line-50: #eee;
+	--grey-line-100: #dfe6e9;
+	--grey-line-200: lightgrey;
+
+	/* FONT SIZES */
+	--pt3r-font: 0.3rem;
+	--pt5r-font: 0.5rem;
+	--pt6r-font: 0.6rem;
+	--pt7r-font: 0.7rem;
+	--pt8r-font: 0.8rem;
+	--tiny-text: 0.54rem;
+	--filter-group-font-size: 0.6rem;
+	--pill-font-size: 0.5rem;
+	--plot-owner-card-header-text: 0.7rem;
+	--plot-owner-card-detail-text: 0.54rem;
+
+	/* Z-INDEXES */
+	--z-idx-2: 500;
+	--z-idx-3: 501;
+	--z-idx-max: 9999;
+
+	/* PADDING */
+	--pad10p: 10px;
+	--pad15p: 15px;
+	--card-padding-inside: 5px;
+	--pill-text-padding: 5px;
+
+	/* MARGINS */
+	--card-margin-outside: 8px;
+
+	/* LINE HEIGHTS */
+	--card-text-line: 1.5;
+}
+
+* {
+	padding: 0;
+	margin: 0;
+	-webkit-box-sizing:border-box;
+	-moz-box-sizing:border-box;
+	-webkit-font-smoothing:antialiased;
+	-moz-font-smoothing:antialiased;
+	-o-font-smoothing:antialiased;
+	box-sizing:border-box;
+	text-rendering:optimizeLegibility;
+}
+
+body, html {
+	margin: auto;
+	width: 100%;
+	height: 100%;
+	font-family: Shadows Into Light Two;
+	line-height: 2.3;
+	font-weight: medium;
+	font-size: 1rem;
+	letter-spacing: 0.1px;
+	color: black;
+}
+
+
+
+/* @media screen and (min-width: 968px) { */
+@media screen and (min-width: 850px) {
+
+	body {	
+		/* THIS MAKES THE PAGE RESIZE WITH WINDOW */
+		display: flex;
+	
+		-webkit-font-smoothing: antialiased;
+		overflow: hidden;
+	}
+
+	main {
+		position: relative;
+	}
+
+	.app-container {
+		width: 100vw;
+		height: 100vh;
+		color: black;
+	}
+
+	.app-container .tab-content {
+		width: 100%;
+		position: relative;
+	}
+		
+	.base-app-grid-container {
+		padding: 10px 10px 0 10px;
+		position: relative;
+		display: grid;
+		grid-template-columns: var(--app-grid-template-cols);
+		grid-template-rows: var(--app-grid-template-rows);
+		width: 100%;
+		height: 100vh;
+	
+		/* DEFINE THE GRID AREAS WITH NAMED GRID AREAS */
+		grid-template-areas:
+				'left-pane		hidden-pane 	header	header'
+				'left-pane		hidden-pane 	. 			right-pane';
+	
+				background: #EFE9DD;
+				background: blue;
+	}
+	
+	#agv_base_map {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100vh;
+	}
+
+	#parcelization_map {
+		width: 100%;
+		height: 100%;
+	}
+
+	.user-action-container {
+		border-bottom: 1px solid var(--light-grey-line);
+	}
+	
+	.user-action-container > div {
+		color: green;
+		flex: 1;
+	}
+		
+	.pane-controls {
+		padding-left: 10px;
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: flex-end;
+		border: 1px dashed black;
+		background-color: whitesmoke;
+		font-size: 0.6rem;
+		opacity: 0.6;
+		cursor: pointer;
+		height: min-content;
+	}
+
+	.pane-controls:hover {
+		opacity: 1;
+		background-color: white;
+	}
+
+	.pane-controls > div {
+		flex: 1;
+		display: flex;
+		justify-content: center;
+	}
+
+	header.header-wrapper {
+		margin: 0;
+		margin-left: 10px;
+		margin-bottom: 10px;
+		grid-area: header;
+		display: flex;
+		flex-direction: row;
+		justify-content: space-evenly;
+		align-items: center;
+		background: skyblue;
+		border: 1px solid green;
+		z-index: var(--z-idx-2)
+	}
+
+	.header-wrapper > div {
+		flex: 1;
+	}
+	
+	header a {
+		cursor: pointer;
+		color: white;
+		text-decoration: none;
+	}
+	
+	header a:visited {
+		color: red;
+		text-decoration: none;
+	}
+}

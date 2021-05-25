@@ -1,0 +1,896 @@
+extends index
+
+//- APPEND THESE MAP SCRIPTS TO THE HEAD OF index.pug
+block append agv-dashboard-head-map-scripts
+
+  //- MAPBOX
+  script(src='https://api.mapbox.com/mapbox-gl-js/v1.10.1/mapbox-gl.js')
+  link(href='https://api.mapbox.com/mapbox-gl-js/v1.10.1/mapbox-gl.css' rel='stylesheet')
+
+  //- LEAFLET
+  script(src='https://unpkg.com/leaflet@1.7.1/dist/leaflet.js' integrity='sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==' crossorigin='')
+  link(rel='stylesheet' href='https://unpkg.com/leaflet@1.7.1/dist/leaflet.css' integrity='sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==' crossorigin='')
+
+  //- LEAFLET BING MAPS
+  //- script(src='/src/plugins/LeafletBingLayer/bing.js')
+
+  //- LEAFLET CONTROL CUSTOM
+  //- script(src="/src/plugins/LeafletControlCustom/Leaflet.Control.Custom.js")    
+  //- link(rel="stylesheet" href="/src/plugins/LeafletControlCustom/Leaflet.Control.Custom.css")
+
+block agv-dashboard
+
+  //- THIS ALLOWS THE FRONTEND RECEIVE DATA FROM THE API & PASS IT TO THE SCRIPT BELOW
+  .data-container
+    div#parcelized_geoclusters_api_data_stream(data-parcelizedgeoclusters=`${JSON.stringify(geoclustersData)}`)
+
+  main
+
+    .app-container
+
+      .d-flex.align-items-start
+
+        #v-pills-tab.nav.flex-column.nav-pills.me-3(role='tablist' aria-orientation='vertical')
+          //- <button class="btn btn-outline" id="app_sidebar_toggle_button" type="button" aria-label="Expand Main Sidebar" aria-controls="" aria-selected="false"><span><img src="https://img.icons8.com/plasticine/30/000000/gps.png" alt="" srcset=""></span></button>
+          //- <button class="btn btn-outline" id="app_sidebar_toggle_button" type="button" aria-label="Expand Main Sidebar" aria-controls="" aria-selected="false"><span><img src="https://img.icons8.com/plasticine/30/000000/more-details.png" alt="" srcset=""></span></button>
+          //- <button class="btn btn-outline" id="app_sidebar_toggle_button" type="button" aria-label="Expand Main Sidebar" aria-controls="" aria-selected="false"><span><img src="https://img.icons8.com/plasticine/30/000000/collect.png" alt="" srcset=""></span></button>
+          //- <button class="btn btn-outline" id="app_launcher_button" type="button" title="App Launcher" aria-haspopup="true" aria-label="App laucher" aria-controls="" aria-selected="false"><span><img src="https://img.icons8.com/plasticine/25/000000/right-2.png" alt="" srcset=""></span></button>
+          //- <button class="btn btn-outline" id="app_sidebar_toggle_button" type="button" title="Expand App Sidebar" aria-label="expand app sidebar" aria-controls="" aria-selected="false"><span><img src="https://img.icons8.com/material-sharp/24/000000/squared-menu.png"/></span></button>
+          //- <button class="btn btn-outline" id="app_sidebar_toggle_button" type="button" title="Expand App Sidebar" aria-label="expand app sidebar" aria-controls="" aria-selected="false"><span><img src="https://img.icons8.com/carbon-copy/40/000000/show-sidepanel.png"/></span></button>
+          button#app_sidebar_toggle_button.btn.btn-outline(type='button' title='Expand App Sidebar' aria-label='expand app sidebar' aria-controls='' aria-selected='false')
+            span
+              img(src='https://img.icons8.com/metro/26/000000/chevron-right.png' alt='Sidebar Toggle Button' srcset='')
+          button#v-pills-home-tab.nav-link(title='Home' data-bs-toggle='pill' data-bs-target='#v-pills-home' type='button' role='tab' aria-controls='v-pills-home' aria-selected='true')
+            span
+              img(src="https://img.icons8.com/windows/28/ffffff/compass.png" alt='Home Tab' srcset='')
+              //- img(src="https://img.icons8.com/dotty/28/ffffff/compass.png" alt='Home Tab' srcset='')
+          button#v_pills_agv_dash_tab.nav-link.active(title='AGV Dashsboard' data-bs-toggle='pill' data-bs-target='#v_pills_agv_dash_content' type='button' role='tab' aria-controls='v_pills_agv_dash_content' aria-selected='true')
+            span
+              img(src="https://img.icons8.com/wired/24/ffffff/layers.png" alt='AGV Dashboard Tab' srcset='')
+          button#v-pills-profile-tab.nav-link(title="" data-bs-toggle='pill' data-bs-target='#v-pills-profile' type='button' role='tab' aria-controls='v-pills-profile' aria-selected='false')
+            span(style='font-size: 1rem') &#x1F680;
+          button#v-pills-users-tab.nav-link.flex-row-center-around(title="Users" data-bs-toggle='pill' data-bs-target='#v-pills-user' type='button' role='tab' aria-controls='v-pills-user' aria-selected='false')
+            span
+              img(src="https://img.icons8.com/small/24/ffffff/user.png")
+          button#v-pills-settings-tab.nav-link(title="Dashboard App Settings" data-bs-toggle='pill' data-bs-target='#v-pills-settings' type='button' role='tab' aria-controls='v-pills-settings' aria-selected='false')
+            span
+              img(src="https://img.icons8.com/wired/24/ffffff/settings.png")
+          //- button#v-pills-semantic-loader-tab.nav-link(data-bs-toggle='pill' data-bs-target='#v-pills-semantic-loader' type='button' role='tab' aria-controls='v-pills-semantic-loader' aria-selected='false')
+          //- .ui.segment
+          //-   .ui.active.dimmer
+          //-     .ui.medium.text.loader Loading
+
+        #v-pills-tabContent.tab-content
+
+          #v-pills-home.tab-pane.fade(role='tabpanel' aria-labelledby='v-pills-home-tab')
+            div On-boarding
+            div Cluster Management
+            div Farm Monitoring
+
+          #v_pills_agv_dash_content.tab-pane.show.active(role='tabpanel' aria-labelledby='v_pills_agv_dash_tab')
+
+            .base-app-grid-container
+
+              section.left-pane-container
+
+                .pane-controls
+                  .pane-status-text.flex-1.flex-row-center
+                    span#results_status(role='status')
+                    span#results_count.results-count
+
+                  button.btn.btn-outline-primary.btn-sm(title='Show or Hide Sidebar' aria-label='Show or hide sidebar' aria-haspopup='true' tabindex='0') Collapse
+
+                .left-pane-content
+                  .search-wrapper.line-3pt
+                    .search-input-group
+                      label(for='search_input')
+                        span
+                          img(src='https://img.icons8.com/android/24/000000/search.png')
+                      input(type='search' placeholder='Search AGCs, locations or famers' aria-label='search input' id="search_input")
+                      .search-action
+                        button.btn.btn-outline(type='button' title='Cancel Search' aria-label='Cancel search' aria-haspopup='true' tabindex='0') X
+                        button.btn.btn-outline-primary.btn-sm(type='button' title='Search Go' aria-label='Search go' aria-haspopup='true' tabindex='0') Go
+
+                  .results-container
+
+                    button#results_filter_button.btn.btn-primary.btn-sm.ripplelink(data-bs-toggle='collapse' data-bs-target='#hidden_pane_container' aria-controls='hidden_pane_container' title='Open Result Filters' aria-label='show results filters' tabindex='0')
+                      span
+                        img(src='https://img.icons8.com/ios/24/ffffff/vertical-settings-mixer.png')
+
+                    button#results_scroll_top_button.btn.btn-outline.btn-sm.ripplelink(data-bs-toggle='' data-bs-target='#' aria-controls='' title='Scroll To Top' aria-label='scroll to top' tabindex='0')
+                      span
+                        img(src='https://img.icons8.com/material/16/000000/chevron-up--v1.png')
+
+                    .results-header
+
+                      //- SANDBOX
+                      //- RESPONSIVE NAVBAR
+                        nav.navbar.navbar-toggle.navbar-light.bg-light
+                        .container-fluid
+                          a.navbar-brand(href='#') Navbar
+                          button.navbar-toggler.btn-sm(type='button' data-bs-toggle='collapse' data-bs-target='#navbarSupportedContent' aria-controls='navbarSupportedContent' aria-expanded='false' aria-label='Toggle navigation')
+                            span.navbar-toggler-icon
+                          #navbarSupportedContent.collapse.navbar-collapse
+                            ul.navbar-nav.me-auto.mb-2.mb-lg-0
+                            li.nav-item
+                              a.nav-link.active(aria-current='page' href='#') Home
+                            li.nav-item
+                              a.nav-link(href='#') Link
+                            li.nav-item.dropdown
+                              a#navbarDropdown.nav-link.dropdown-toggle(href='#' role='button' data-bs-toggle='dropdown' aria-expanded='false')
+                                | Dropdown
+                              ul.dropdown-menu(aria-labelledby='navbarDropdown')
+                                li
+                                a.dropdown-item(href='#') Action
+                                li
+                                a.dropdown-item(href='#') Another action
+                                li
+                                hr.dropdown-divider
+                                li
+                                a.dropdown-item(href='#') Something else here
+                            form.d-flex
+                            input.form-control.me-2(type='search' placeholder='Search' aria-label='Search')
+                            button.btn.btn-outline-success(type='submit') Search
+
+                      .user-action-container.flex-row-center-end.pad-round-5px
+                        .btn-group.flex-1
+                          button.btn.btn-outline.btn-sm.stacked(type='button' title='Download' aria-label='Download' aria-haspopup='true' tabindex='0')
+                            span
+                              img(src='https://img.icons8.com/small/16/000000/download.png')
+                            span download
+                          button.btn.btn-outline.btn-sm.stacked(type='button' title='Print' aria-label='Print' aria-haspopup='true' tabindex='0')
+                            span
+                              img(src='https://img.icons8.com/small/16/000000/print.png')
+                            span Print
+                          button.btn.btn-outline.btn-sm.stacked(type='button' title='Share' aria-label='Email' aria-haspopup='true' tabindex='0')
+                            span
+                              img(src='https://img.icons8.com/small/16/000000/send-mass-email.png')
+                            span Email
+
+                        .btn-group.page-view-config-container
+                          button#hide_fields_dd_btn.btn.btn-outline-secondary.btn-sm.dropdown-toggle(type='button' data-bs-auto-close='outside' data-bs-toggle='dropdown' title='Select Fields' aria-haspopup='true' aria-expanded='false') Hide Fields
+                          ul.dropdown-menu(aria-labelledby='hide_fields_dd_btn')
+                            li
+                              a.dropdown-item(href='#')
+                                .form-check.form-switch
+                                  label.form-check-label(for='flexSwitchCheckDefault') AGC Name
+                                  input#flexSwitchCheckDefault.form-check-input(disabled aria-disabled='true' type='checkbox')
+                            li
+                              a.dropdown-item(href='#')
+                                .form-check.form-switch
+                                  label.form-check-label(for='flexSwitchCheckDefault') AGC ID
+                                  input#flexSwitchCheckDefault.form-check-input(type='checkbox')
+                            li
+                              a.dropdown-item(href='#')
+                                .form-check.form-switch
+                                  label.form-check-label(for='flexSwitchCheckDefault') AGC Pres. First Name
+                                  input#flexSwitchCheckDefault.form-check-input(type='checkbox')
+                            li
+                              a.dropdown-item(href='#')
+                                .form-check.form-switch
+                                  label.form-check-label(for='flexSwitchCheckDefault') AGC Pres. Last Name
+                                  input#flexSwitchCheckDefault.form-check-input(type='checkbox')
+                            li
+                              a.dropdown-item(href='#')
+                                .form-check.form-switch
+                                  label.form-check-label(for='flexSwitchCheckDefault') Date Added
+                                  input#flexSwitchCheckDefault.form-check-input(type='checkbox')
+                            li
+                              a.dropdown-item(href='#')
+                                .form-check.form-switch
+                                  label.form-check-label(for='flexSwitchCheckDefault') Primary Crop
+                                  input#flexSwitchCheckDefault.form-check-input(type='checkbox')
+                            li
+                              hr.dropdown-divider
+                            li(style='display: flex; flex-direction: row; justify-content: space-around;')
+                              span
+                                button.btn.btn-outline-primary.btn-sm(type='button' title='Hide All Fields' aria-label='Hide all fields' aria-haspopup='true' tabindex='0') Hide All
+                              span
+                                button.btn.btn-outline-primary.btn-sm(type='button' title='Show All Fields' aria-label='Show all fields' aria-haspopup='true' tabindex='0') Show All
+                          .dropdown(title='Sort Options' aria-label='Sort Options' aria-haspopup='true' tabindex='0')
+                            button#results_sort_dd_menu_btn.btn.btn-outline-secondary.dropdown-toggle.btn-sm(type='button' data-bs-auto-close='outside' data-bs-toggle='dropdown' aria-expanded='false')
+                              | Sort
+                            ul.dropdown-menu(aria-labelledby='results_sort_dd_menu_btn')
+                              li
+                                a.dropdown-item(href='#') A-Z
+                              li
+                                a.dropdown-item(href='#') Z-A
+                              li
+                                a.dropdown-item(href='#') Newest
+                              li
+                                a.dropdown-item(href='#') Oldest
+                              li
+                                a.dropdown-item(href='#') Largest
+                              li
+                                a.dropdown-item(href='#') Smallest
+
+                    .results-body
+
+                      #results_list_wrapper.results-list-wrapper
+                        //- each geocluster in geoclustersData
+                        //-   .result-item.flex-col-start
+                        //-     small.result-item-pill
+                        //-       span= `${geocluster.properties.geo_cluster_details.delineated_area.toFixed(0)} HA.`
+                        //-       span= `${geocluster.features.length} FARMERS`
+                        //-     a.result-item-title(href='#')= geocluster.properties.geo_cluster_name
+                        //-     small.item-subtitle
+                        //-       a(href='#')= geocluster.properties.geo_cluster_details.lga[0]
+                        //-     .result-item-body.flex-col-start
+                        //-       span
+                        //-         a(href='#')= `President ° ${geocluster.properties.geo_cluster_governance_structure.president.first_name} ${geocluster.properties.geo_cluster_governance_structure.president.last_name || ``}`
+                        //-       span
+                        //-         a(href='#') Cluster VP Vivian Okonji Adaeze
+                        //-       div
+                        //-         span= `Allocated: ${geocluster.properties.geo_cluster_details.total_allocations_area.toFixed(1)} ha.`
+                        //-         br
+                        //-     .result-item-hidden
+                        //-       span
+                        //-         img(src="https://img.icons8.com/small/16/000000/point-objects.png")
+                        //-       span
+                        //-         //- a(href="#")= `${JSON.stringify(geocluster.properties.agc_center_coords[0].geometry.coordinates[0].toFixed(9))}°`
+                        //-         a(href="#") 6.5225556°N 5.321599°E
+                        //-       span
+                        //-         img(src="https://img.icons8.com/windows/12/000000/home-button.png")
+                        //-       span= `${geocluster.properties.geo_cluster_details.primary_crop.toUpperCase()}`
+                        //-   .h-divider-grey-50
+                        each geocluster in geoclustersData
+                          .result-item.flex-col-start
+                            small.result-item-pill
+                              span= `${geocluster.properties.agc_area.toFixed(0)} HA.`
+                              span= `${geocluster.features.length} FARMERS`
+                            a.result-item-title(href='#')= geocluster.properties.agc_extended_name
+                            small.item-subtitle
+                              a(href='#')= geocluster.properties.agc_location
+                            .result-item-body.flex-col-start
+                              span
+                                a(href='#') AGC President Abubara Ibrahim Ismaila
+                              span
+                                a(href='#') AGC Vice President Vivian Okonji Adaeze
+                              //- .flex-row-center-btw
+                              div
+                                span= `Allocated: ${geocluster.properties.total_allocation.toFixed(1)} ha.`
+                                br
+                            .result-item-hidden
+                              span
+                                //- img(src="https://img.icons8.com/small/16/000000/place-marker.png")
+                                //- img(src="https://img.icons8.com/cotton/14/000000/place-marker.png")
+                                //- img(src="https://img.icons8.com/wired/16/000000/point-objects.png")
+                                img(src="https://img.icons8.com/small/16/000000/point-objects.png")
+                              span
+                                a(href="#")= `${JSON.stringify(geocluster.properties.agc_center_coords[0].geometry.coordinates[0].toFixed(9))}°N 6.3255411°E`
+                              span
+                                //- img(src="https://img.icons8.com/small/12/000000/puzzle.png")
+                                img(src="https://img.icons8.com/windows/12/000000/home-button.png")
+                              span= `${geocluster.properties.unused_land_area.toFixed(1)} ha. unused`
+                          .h-divider-grey-50
+
+                    .pane-footer.flex-row-center-btw.pad-lr-5px
+                      .page-config-container
+                        select.form-select-sm(aria-label='select pagination or scroll')
+                          option(value='1') Scroll
+                          option(value='2' selected='') Pagination
+                      .pagination-container.flex-1.flex-row-center-btw
+                        select.form-select-sm(aria-label='select results per page')
+                          option(value='1' selected='') 5
+                          option(value='2') 10
+                          option(value='3') 20
+                        ul.uk-pagination.flex-row-center-end.flex-1
+                          li
+                            a(href='#')
+                              span(uk-pagination-previous='')
+                          li
+                            a(href='#') 1
+                          li.uk-disabled
+                            span ...
+                          li
+                            a(href='#') 4
+                          li.uk-active
+                            span 5
+                          li
+                            a(href='#')
+                              span(uk-pagination-next='')
+
+              section#hidden_pane_container.hidden-pane-container
+                .pane-controls
+                  .line-height-pt6 Filters
+                  button.btn.btn-outline-primary.btn-sm(type='button' data-bs-toggle='collapse' data-bs-target='#hidden_pane_content' aria-expanded='false' aria-controls='hidden_pane_content')
+                    | Collapse
+                  //- button.btn.btn-outline-danger.btn-sm(type='button' data-bs-toggle='collapse' data-bs-target='#collapseExample' aria-expanded='false' aria-controls='collapseExample')
+                  //-   | Close
+                  button.btn-close(type="button" aria-label="Close")
+                #hidden_pane_content.hidden-pane-content.show
+                  .filter-controls-wrapper
+                    ul.list-unstyled.components
+                      li
+                        a.dropdown-toggle.ripplelink(href='#farm_prog_submenu' data-toggle='collapse' aria-expanded='false') &#xF33D; Intervention Programmes
+                        ul#farm_prog_submenu.collapse.list-unstyled.filters-submenu
+                          li
+                            a.dropdown-item.ripplelink(href='#')
+                              .form-check.form-switch
+                                label.form-check-label(for='all_prog_chk') All Programmes
+                                input#all_prog_chk.form-check-input.results-filter-checkbox.master-checkbox(type='checkbox' checked='' disabled aria-disabled='true')
+                          li
+                            hr.dropdown-divider
+                          li
+                            a.dropdown-item.ripplelink(href='#')
+                              .form-check.form-switch
+                                label.form-check-label(for='agric_prog_1_chk') NIRSAL AGC
+                                input#agric_prog_1_chk.form-check-input.results-filter-checkbox(type='checkbox' checked='' disabled aria-disabled='true')
+                      li
+                        a.dropdown-toggle.ripplelink(href='#agc_category_submenu' data-toggle='collapse' aria-expanded='false') &#xF4A0; AGC Categories
+                        ul#agc_category_submenu.collapse.list-unstyled.filters-submenu.show
+                          li
+                            a.dropdown-item.ripplelink(href='#')
+                              .form-check.form-switch
+                                label.form-check-label(for='agc_all_cat_chk') All
+                                input#agc_all_cat_chk.form-check-input.results-filter-checkbox.master-checkbox(type='checkbox')
+                          li
+                            hr.dropdown-divider
+                          li
+                            a.dropdown-item.ripplelink(href='#')
+                              .form-check.form-switch
+                                label.form-check-label(for='agc_cat_1_chk') Cell
+                                input#agc_cat_1_chk.form-check-input.results-filter-checkbox(type='checkbox')
+                          li
+                            a.dropdown-item.ripplelink(href='#')
+                              .form-check.form-switch
+                                label.form-check-label(for='agc_cat_2_chk') Block
+                                input#agc_cat_2_chk.form-check-input.results-filter-checkbox(type='checkbox')
+                          li
+                            a.dropdown-item.ripplelink(href='#')
+                              .form-check.form-switch
+                                label.form-check-label(for='agc_cat_3_chk') AGC Cat. 3
+                                input#agc_cat_3_chk.form-check-input.results-filter-checkbox(type='checkbox')
+                          li
+                            a.dropdown-item.ripplelink(href='#')
+                              .form-check.form-switch
+                                label.form-check-label(for='agc_cat_4_chk') AGC Cat. 4
+                                input#agc_cat_4_chk.form-check-input.results-filter-checkbox(type='checkbox')
+                          li
+                            a.dropdown-item.ripplelink(href='#')
+                              .form-check.form-switch
+                                label.form-check-label(for='agc_cat_5_chk') AGC Cat. 5
+                                input#agc_cat_5_chk.form-check-input.results-filter-checkbox(type='checkbox')
+                      li
+                        a.dropdown-toggle.ripplelink(href='#commodity_sector_submenu' data-toggle='collapse' aria-expanded='false') &#xF4A0; Commodity Sectors
+                        ul#commodity_sector_submenu.collapse.list-unstyled.filters-submenu
+                          li
+                            a.dropdown-item.ripplelink(href='#') All
+                          li
+                            hr.dropdown-divider
+                          li
+                            a.dropdown-item.ripplelink(href='#') Consumer
+                          li
+                            a.dropdown-item.ripplelink(href='#') Industrial
+                          li
+                            a.dropdown-item.ripplelink(href='#') Export
+                      li
+                        a.dropdown-toggle.ripplelink(href='#commodity_types_submenu' data-toggle='collapse' aria-expanded='false') &#xF4A0; Commodity Types
+                        ul#commodity_types_submenu.collapse.list-unstyled.filters-submenu
+                          li
+                            a.dropdown-item.ripplelink(href='#') All
+                          li
+                            hr.dropdown-divider
+                          li
+                            a.dropdown-item.ripplelink(href='#') Row Crops
+                          li
+                            a.dropdown-item.ripplelink(href='#') Tree Crops
+                          li
+                            a.dropdown-item.ripplelink(href='#') Poultry
+                          li
+                            a.dropdown-item.ripplelink(href='#') Aquaculture
+                      li.active
+                        a.dropdown-toggle.ripplelink(href='#admin_bounds_filters_submenu' data-toggle='collapse' aria-expanded='false') &#xF310; Administrative Bounds
+                        ul#admin_bounds_filters_submenu.collapse.list-unstyled.filters-submenu.show
+                          li
+                            a.dropdown-toggle.ripplelink(href='#states_submenu' data-toggle='collapse' aria-expanded='false') States
+                            ul#states_submenu.collapse.list-unstyled
+                              li
+                                a.dropdown-item.ripplelink(href='#') All States
+                              li
+                                a.dropdown-item.ripplelink(href='#') Kano
+                              li
+                                a.dropdown-item.ripplelink(href='#') Kaduna
+                              li
+                                a.dropdown-item.ripplelink(href='#') Delta
+                              li
+                                a.dropdown-item.ripplelink(href='#') Kastina
+                              li
+                                a.dropdown-item.ripplelink(href='#') Gombe
+                              li
+                                a.dropdown-item.ripplelink(href='#') Adamawa
+                              li
+                                a.dropdown-item.ripplelink(href='#') Edo
+                              li
+                                a.dropdown-item.ripplelink(href='#') Ogun
+                          li
+                            a.dropdown-toggle.ripplelink(href='#lgas_submenu' data-toggle='collapse' aria-expanded='false') &#xF310; Local Governments
+                            ul#lgas_submenu.collapse.list-unstyled.filters-submenu
+                              li
+                                a(href='#') All LGAs
+                              // li*20>a[href=#]{LGA-$}
+                          li
+                            a.dropdown-toggle.ripplelink(href='#wards_submenu' data-toggle='collapse' aria-expanded='false') Wards
+                    #poi_overlays_accordion.accordion.accordion-flush
+                      .accordion-item
+                        #poi_overlays_heading.accordion-header
+                          button.accordion-button.collapsed.btn-sm(type='button' data-bs-toggle='collapse' data-bs-target='#poi_overlays_accordion_content' aria-expanded='false' aria-controls='poi_overlays_accordion_content')
+                            | &#xF4A2; POI Overlays
+                        #poi_overlays_accordion_content.accordion-collapse.collapse(aria-labelledby='poi_overlays_heading' data-bs-parent='#poi_overlays_accordion')
+                          .accordion-body
+                            .form-check.form-switch
+                              label.form-check-label(for='flexSwitchCheckDefault') Active Farms
+                              input#flexSwitchCheckDefault.form-check-input(aria-disabled='false' type='checkbox')
+                            .form-check.form-switch
+                              label.form-check-label(for='flexSwitchCheckDefault') PMRO Offices
+                              input#flexSwitchCheckDefault.form-check-input(aria-disabled='false' type='checkbox')
+                            .form-check.form-switch
+                              label.form-check-label(for='flexSwitchCheckDefault') State Extension Offices
+                              input#flexSwitchCheckDefault.form-check-input(aria-disabled='false' type='checkbox')
+                      .accordion-item
+                        #flush-headingOne.accordion-header
+                          button.accordion-button.collapsed.btn-sm(type='button' data-bs-toggle='collapse' data-bs-target='#flush-collapseOne' aria-expanded='false' aria-controls='flush-collapseOne')
+                            | &#xF5FE; Accordion Item #1
+                        #flush-collapseOne.accordion-collapse.collapse(aria-labelledby='flush-headingOne' data-bs-parent='#poi_overlays_accordion')
+                          .accordion-body
+                            // SANDBOX
+                            //- UIKIT ACCORDION EX.
+                            ul(uk-accordion='')
+                              li
+                                a.uk-accordion-title(href='#') Administrative Bounds
+                                .uk-accordion-content
+                                  ul(uk-accordion='')
+                                    li
+                                      a.uk-accordion-title(href='#') States
+                                      .uk-accordion-content
+                                        ul
+                                          li
+                                            a(href='#') Kano
+                                          li
+                                            a(href='#') Adamawa
+                                          li
+                                            a(href='#') Anambara
+                                          li
+                                            a(href='#') Delta
+                                          li
+                                            a(href='#') Kastina
+                                          li
+                                            a(href='#') Osun
+                                          li
+                                            a(href='#') Kastina
+                                          li
+                                            a(href='#') Gombe
+                                          li
+                                            a(href='#') Adamawa
+                                          li
+                                            a(href='#') Edo
+                                          li
+                                            a(href='#') Ogun
+                                          li
+                                            a(href='#') Niger
+                                          li
+                                            a(href='#') Sokoto
+                                          li
+                                            a(href='#') Lagos
+                                    li
+                                      a.uk-accordion-title(href='#') LGAs
+                              li
+                                a.uk-accordion-title(href='#') Farm Attributes
+                                .uk-accordion-content
+                                  p
+                                    | Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
+                                    | nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
+                                    | reprehenderit.
+                              li
+                                a.uk-accordion-title(href='#') POI Overlays
+                                .uk-accordion-content
+                                  p
+                                    | Duis aute irure dolor in reprehenderit in voluptate velit esse
+                                    | cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
+                                    | cupidatat proident.
+                  .selected-filters-wrapper
+                    .selected-filters-control.flex-row.flex-end.pad-trb-5px
+                      button.btn.btn-outline-danger.btn-sm(type='button' title='Clear All Filters' aria-label='clear all filters' aria-haspopup='true' tabindex='0') Clear All
+                    .filter-groups
+                      .filter-group
+                        //-
+                          <div class="filter-group-header">
+                          <span>Farmers' Programmes</span>
+                          <span>-</span>
+                          </div>
+                        fieldset
+                          legend.filter-group-title
+                            span Farmer Programme
+                          .filter-group-pills
+                            .filter-pill
+                              span NIRSAL AGC
+                              span
+                      .filter-group
+                        //-
+                          <div class="filter-group-header">
+                          <span>AGC Categories</span>
+                          <span>-</span>
+                          </div>
+                        fieldset
+                          legend.filter-group-title
+                            span AGC Categories
+                          .filter-group-pills
+                            .filter-pill
+                              span Block
+                              span
+                            .filter-pill
+                              span Cell
+                              span
+                            .filter-pill
+                              span AGC Cat. 3
+                              span
+                            .filter-pill
+                              span AGC Cat. 4
+                              span
+                            .filter-pill
+                              span AGC Cat. 5
+                              span
+                      .filter-group
+                        //
+                          <div class="filter-group-header">
+                          <span>States</span>
+                          <span>-</span>
+                          </div>
+                        fieldset
+                          legend.filter-group-title
+                            span States
+                          .filter-group-pills
+                            //
+                              <div class="filter-pill"><span>Lagos</span><span></span></div>
+                              <div class="filter-pill"><span>Kastina</span><span></span></div>
+                            .filter-pill
+                              span Adamawa
+                              span
+                            .filter-pill
+                              span Kogi
+                              span
+                            .filter-pill
+                              span Osun
+                              span
+                            .filter-pill
+                              span Delta
+                              span
+                      //
+                        <div class="filter-group">Commodity Sectors</div>
+                        <div class="filter-group">Commodity Types</div>
+                        <div class="filter-group">LGAs</div>
+                        <div class="filter-group">Wards</div>
+                        <div class="filter-group">POI Overlays</div>
+
+              header.header-wrapper
+
+                .navbar__container.flex-1
+
+                  .hide-on-small
+                    a.navbar-brand.ripplelink(href='#')
+                      span.business-logo
+                        img.rounded-circle(src=`./assets/images/nirsal-agc-2.png`)
+                      span ...
+
+                  nav.navbar.navbar-expand-lg.sticky-top
+
+                    a.navbar-brand.second.ripplelink(href='#') Business Logo - Mobile
+                    button.navbar-toggler(type='button' data-toggle='collapse' data-target='#navbarNav' aria-controls='navbarNav' aria-expanded='false' aria-label='toggle navigation')
+                      span.navbar-toggler-icon
+
+                    #navbarNav.collapse.navbar-collapse
+                      ul.navbar-nav
+                        li.nav-item.active
+                          a.nav-link.ripplelink(href='#') Language 
+                        li.nav-item
+                          button#sidebarCollapse.nav-link.btn.btn-sm.text-sidebar.bg-turbo-yellow(type='button' title='Open Settings Sidebar')
+                            span
+                              img(src="https://img.icons8.com/wired/24/000000/settings.png")
+                            span
+                        //- li.nav-item
+                        //-   a.nav-link.ripplelink(href='#') Settings
+                        li.nav-item.user-nav-item
+                          .dropdown
+                            a#topbar_user_drop.dropdown-toggle.ripplelink(href='#' role='button' data-bs-toggle='dropdown' aria-expanded='false')
+                              span.account-user-avatar
+                                img.rounded-circle(src='./assets/images/users/img_avatar1.png' alt='user-image' style='width: 30px; height: 30px')
+                              span
+                                span.account-user-name Nosa O.
+                                span.account-position Field ICT
+                            ul.dropdown-menu(aria-labelledby='topbar_user_drop')
+                              li
+                                a.dropdown-item(href='javascript:void(0);')
+                                  i.mdi.mdi-account-circle.me-1
+                                  span My Account
+                              li
+                                a.dropdown-item(href='javascript:void(0);')
+                                  i.mdi.mdi-account-edit.me-1
+                                  span Settings
+                              li
+                                a.dropdown-item(href='javascript:void(0);')
+                                  i.mdi.mdi-lifebuoy.me-1
+                                  span Support
+                              li
+                                a.dropdown-item(href='javascript:void(0);')
+                                  i.mdi.mdi-lock-outline.me-1
+                                  span Lock Screen
+                              li
+                                a.dropdown-item(href='javascript:void(0);')
+                                  i.mdi.mdi-logout.me-1
+                                  span Logout
+
+                //- ul.list-unstyled.topbar-menu.mb-0(role="navigation")
+
+                //-   li.dropdown.notification-list
+                //-     a#topbar_user_drop.nav-link.dropdown-toggle.nav-user.ripplelink(href="#") Business Logo
+
+                //-   li.dropdown.notification-list.topbar-dropdown.d-none.d-lg-block
+                //-     a#topbar_language_drop.nav-link.dropdown-toggle.arrow-none(data-bs-toggle='dropdown' href='#' role='button' aria-haspopup='true' aria-expanded='false')
+                //-       img.me-1(src='assets/images/flags/us.jpg' alt='user-image' height='12')
+                //-       span.align-middle English
+                //-       i.mdi.mdi-chevron-down
+                //-     .dropdown-menu.dropdown-menu-end.dropdown-menu-animated.topbar-dropdown-menu(aria-labelledby='topbar_language_drop')
+                //-       a.dropdown-item.notify-item(href='javascript:void(0);')
+                //-         img.me-1(src='assets/images/flags/germany.jpg' alt='user-image' height='12')
+                //-         span.align-middle German
+                //-       a.dropdown-item.notify-item(href='javascript:void(0);')
+                //-         img.me-1(src='assets/images/flags/italy.jpg' alt='user-image' height='12')
+                //-         span.align-middle Italian
+                //-       a.dropdown-item.notify-item(href='javascript:void(0);')
+                //-         img.me-1(src='assets/images/flags/spain.jpg' alt='user-image' height='12')
+                //-         span.align-middle Spanish
+                //-       a.dropdown-item.notify-item(href='javascript:void(0);')
+                //-         img.me-1(src='assets/images/flags/russia.jpg' alt='user-image' height='12')
+                //-         span.align-middle Russian
+
+                //-   li.dropdown.notification-list
+                //-     a#topbar_user_drop.nav-link.dropdown-toggle.nav-user.arrow-none.me-0.show(data-bs-toggle='dropdown' href='#' role='button' aria-haspopup='true' aria-expanded='true')
+                //-       span.account-user-avatar
+                //-         img.rounded-circle(src='./assets/images/users/img_avatar2.png' alt='user-image')
+                //-       span
+                //-         span.account-user-name Dominic Keller
+                //-         span.account-position Founder
+                //-     .dropdown-menu.dropdown-menu-end.dropdown-menu-animated.topbar-dropdown-menu.profile-dropdown.show(aria-labelledby='topbar_user_drop' style='position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(13px, 72px);' data-popper-placement='bottom-end')
+                //-       .dropdown-header.noti-title
+                //-         h6.text-overflow.m-0 Welcome !
+                //-       a.dropdown-item.notify-item(href='javascript:void(0);')
+                //-         i.mdi.mdi-account-circle.me-1
+                //-         span My Account
+                //-       a.dropdown-item.notify-item(href='javascript:void(0);')
+                //-         i.mdi.mdi-account-edit.me-1
+                //-         span Settings
+                //-       a.dropdown-item.notify-item(href='javascript:void(0);')
+                //-         i.mdi.mdi-lifebuoy.me-1
+                //-         span Support
+                //-       a.dropdown-item.notify-item(href='javascript:void(0);')
+                //-         i.mdi.mdi-lock-outline.me-1
+                //-         span Lock Screen
+                //-       a.dropdown-item.notify-item(href='javascript:void(0);')
+                //-         i.mdi.mdi-logout.me-1
+                //-         span Logout
+
+              section.right-pane-container
+                .pane-controls
+                  .line-height-pt6 AGC Insights &amp; Details
+                  button.btn.btn-outline-primary.btn-sm(type='button' data-bs-toggle='collapse' data-bs-target='#right_pane_content' aria-expanded='false' aria-controls='right_pane_content')
+                    | Resize
+                #right_pane_content.right-pane-content.show
+                  .right-pane-content-body
+                    // NAV TABS
+                    ul#myTab.nav.nav-tabs.nav-fill(role='tablist' style='padding: 3px 3px 0 3px')
+                      li.nav-item(role='presentation')
+                        button#agc_insights_tab.nav-link.ripplelink(data-bs-toggle='tab' data-bs-target='#agc_insights_tab_content' type='button' role='tab' aria-controls='agc_insights_tab_content' aria-selected='true') AGC Insights
+                      li.nav-item(role='presentation')
+                        button#profile-tab.nav-link.active.ripplelink(data-bs-toggle='tab' data-bs-target='#profile' type='button' role='tab' aria-controls='profile' aria-selected='false') AGC Details
+                    // TAB PANES
+                    .tab-content(style='padding: 3px; padding-bottom: 0;')
+                      #agc_insights_tab_content.tab-pane.agc-insights-tab-content(role='tabpanel' aria-labelledby='agc_insights_tab')
+                        // BS CAROUSEL
+                        #carouselExampleIndicators.carousel.slide.carousel-fade(data-bs-ride='carousel')
+                          .carousel-indicators
+                            button.active(type='button' data-bs-target='#carouselExampleIndicators' data-bs-slide-to='0' aria-current='true' aria-label='Slide 1')
+                            button(type='button' data-bs-target='#carouselExampleIndicators' data-bs-slide-to='1' aria-label='Slide 2')
+                            button(type='button' data-bs-target='#carouselExampleIndicators' data-bs-slide-to='2' aria-label='Slide 3')
+                          .carousel-inner
+                            .carousel-item.active
+                              img.d-block.w-100(src='' alt='' style='height: 20vh; background-color: limegreen;')
+                            .carousel-item
+                              img.d-block.w-100(src='' alt='' style='height: 20vh; background-color: slateblue;')
+                            .carousel-item
+                              img.d-block.w-100(src='' alt='' style='height: 20vh; background-color: whitesmoke;')
+                          button.carousel-control-prev(type='button' data-bs-target='#carouselExampleIndicators' data-bs-slide='prev')
+                            span.carousel-control-prev-icon(aria-hidden='true')
+                            span.visually-hidden Previous
+                          button.carousel-control-next(type='button' data-bs-target='#carouselExampleIndicators' data-bs-slide='next')
+                            span.carousel-control-next-icon(aria-hidden='true')
+                            span.visually-hidden Next
+                      #profile.tab-pane.agc-details-tab-content.active(role='tabpanel' aria-labelledby='profile-tab')
+                        #parcelization_map.parcelization-map
+                          .map-overlay
+                            a(role='button' href='https://agcfarmlands.herokuapp.com/private/parcelized-agc/?AGCBEN000005' target='_blank' rel='noopener noreferrer')
+                              span
+                                //- img(src='https://img.icons8.com/material-sharp/18/000000/external-link.png')
+                                img(src='https://img.icons8.com/small/18/000000/external-link.png')
+                        .geo-cluster-summary.flex-col-center-center
+                          .wrapper.flex-1
+                            div.pad-tb5p
+                              span FARMERS
+                              span 50
+                            span.v-divider-grey
+                            div.pad-tb5p
+                              span CLUSTER AREA
+                              span 50.3 ha.
+                            span.v-divider-grey
+                            div.pad-tb5p
+                              span ALLOCATIONS
+                              span 49.8 ha.
+                            span.v-divider-grey
+                            div.pad-tb5p
+                              span UNUSED LAND
+                              span 1.8 ha.
+                        .plot-owner-details
+                          .farmers-list-header
+                            .user-action-container.flex-row-center-btw.pad-round-5px
+                              .btn-group
+                                button.btn.btn-outline.btn-sm.stacked(type='button' title='Download' aria-label='Download' aria-haspopup='true' tabindex='0')
+                                  span
+                                    img(src='https://img.icons8.com/small/16/000000/download.png')
+                                  span download
+                                button.btn.btn-outline.btn-sm.stacked(type='button' title='Print' aria-label='Print' aria-haspopup='true' tabindex='0')
+                                  span
+                                    img(src='https://img.icons8.com/small/16/000000/print.png')
+                                  span Print
+                                button.btn.btn-outline.btn-sm.stacked(type='button' title='Share' aria-label='Email' aria-haspopup='true' tabindex='0')
+                                  span
+                                    img(src='https://img.icons8.com/small/16/000000/send-mass-email.png')
+                                  span Email
+                              .btn-group.page-view-config-container.flex-row-center-end(role='group' aria-label='button group with nested dropdown' tabindex='0')
+                                .btn-group(tabindex='0')
+                                  button.btn.btn-primary.btn-sm.dropdown-toggle(type='button' data-bs-toggle='dropdown' title='Sort Options' aria-expanded='false' aria-haspopup='true') Sort
+                                  ul.dropdown-menu
+                                    li
+                                      a.dropdown-item(href='#') A-Z
+                                    li
+                                      a.dropdown-item(href='#') Z-A
+                                .btn-group(tabindex='0')
+                                  button.btn.btn-primary.btn-sm.dropdown-toggle(type='button' data-bs-toggle='dropdown' title='View Options' aria-expanded='false' aria-haspopup='true') View Mode
+                                  ul.dropdown-menu
+                                    li
+                                      a.dropdown-item(href='#') List
+                                    li
+                                      a.dropdown-item(href='#') Cards
+                                    li
+                                      a.dropdown-item(href='#') Thumbnails
+                          .plot-owners-list-body.grid-1col
+                            a.card.plot-owner-card.ripplediv
+                              .card-media-wrapper
+                                .plot-owner-avatar
+                                  img(src='./assets/images/plot-owners/AGCABI000712.jpg' alt='Plot Owner Avatar')
+                              .plot-owner-card-text-wrapper
+                                .card-text-top
+                                  .header-title-name
+                                    span Friday Rajak Suleman
+                                    span 4.40435&deg;E 12.034462&deg;N
+                                  .header-title-allocation
+                                    span Plot 19
+                                    span 56.9 ha.
+                                .card-text-bottom
+                                  .plot-owner-card-text-body
+                                    div
+                                      span FARMERID
+                                      span AGCBEN000630
+                                    div
+                                      span VASTID
+                                      span AGCBEN000_20QW
+                            .card.plot-owner-card.ripplediv
+                              .card-media-wrapper
+                                .plot-owner-avatar
+                                  img(src='./assets/images/AGCABU000585.jpg' alt='Plot Owner Avatar')
+                              .plot-owner-card-text-wrapper
+                                .card-text-top
+                                  .header-title-name
+                                    span Kabiru Ibrahim
+                                    span 4.40435&deg;E 12.034462&deg;N
+                                  .header-title-allocation
+                                    span Plot 22
+                                    span 5 ha.
+                                .card-text-bottom
+                                  .plot-owner-card-text-body
+                                    div
+                                      span FARMERID
+                                      span AGCBEN000630
+                                    div
+                                      span VASTID
+                                      span AGCBEN000_20QW
+                            .card.plot-owner-card.ripplediv
+                              .card-media-wrapper
+                                .plot-owner-avatar
+                                  img(src='./assets/images/AGCNIG000851.jpg' alt='Plot Owner Avatar')
+                              .plot-owner-card-text-wrapper
+                                .card-text-top
+                                  .header-title-name
+                                    span Grace Madueze Ibrahim
+                                    span 10.40435&deg;E 12.034462&deg;N
+                                  .header-title-allocation
+                                    span Plot 32
+                                    span 5.6 ha.
+                                .card-text-bottom
+                                  .plot-owner-card-text-body
+                                    div
+                                      span FARMERID
+                                      span AGCBEN000630
+                                    div
+                                      span VASTID
+                                      span AGCBEN000_20QW
+                            .card.plot-owner-card Farmer-1
+                            .card.plot-owner-card Farmer-2
+                            .card.plot-owner-card Farmer-3
+                            .card.plot-owner-card Farmer-4
+                            .card.plot-owner-card Farmer-5
+                            .card.plot-owner-card Farmer-6
+                            .card.plot-owner-card Farmer-7
+                            .card.plot-owner-card Farmer-8
+                            .card.plot-owner-card Farmer-9
+                            .card.plot-owner-card Farmer-10
+                        .plot-detail-map.hide Plot Detail Map
+                        .tab-pane-footer.agc-details-tab-footer.flex-row-center-btw
+                          .page-config-container
+                            select.form-select-sm(aria-label='select pagination or scroll')
+                              option(value='1') Scroll
+                              option(value='2' selected='') Pagination
+                          .pagination-container.flex-1.flex-row-center-btw
+                            select.form-select-sm(aria-label='select results per page')
+                              option(value='1' selected='') 5
+                              option(value='2') 10
+                              option(value='3') 20
+                            nav(aria-label='Page navigation example')
+                              ul.pagination.justify-content-end
+                                li.page-item.disabled
+                                  a.page-link(href='#' tabindex='-1' aria-disabled='true') Previous
+                                li.page-item
+                                  a.page-link(href='#') 1
+                                li.page-item
+                                  a.page-link(href='#') 2
+                                li.page-item
+                                  a.page-link(href='#') 3
+                                li.page-item
+                                  a.page-link(href='#') Next
+
+            #agv_base_map
+
+            .agv-settings-sidebar-container
+              #agv_settings_sidebar.agv-settings-sidebar-content
+                .settings-sidebar-header
+                  span AGV Settings
+                  span
+                    button#settings_sidebar_collapse.btn-close(type="button" aria-label="Close")
+                .settings-sidebar-body
+                  .form-check.form-switch
+                    label.form-check-label(for='agv_sidebar_setting_1') Activate Dark Mode
+                    input#agv_sidebar_setting_1.form-check-input.results-filter-checkbox(type='checkbox' checked='' aria-disabled='false')
+                  .form-check.form-switch
+                    label.form-check-label(for='agv_sidebar_setting_1') Default Base Map
+                    input#agv_sidebar_setting_1.form-check-input.results-filter-checkbox(type='checkbox' checked='' aria-disabled='false')
+                  .form-check.form-switch
+                    label.form-check-label(for='agv_sidebar_setting_2') Hide Sidebars on Map Pan
+                    input#agv_sidebar_setting_2.form-check-input.results-filter-checkbox(type='checkbox' checked='' aria-disabled='false')
+                .settings-sidebar-footer
+                  button#settings_default_reset.btn.btn-danger.btn-sm Reset to Defaults
+
+          #v-pills-profile.tab-pane.fade(role='tabpanel' aria-labelledby='v-pills-profile-tab') Profile
+          #v-pills-messages.tab-pane.fade(role='tabpanel' aria-labelledby='v-pills-messages-tab') Messages
+          #v-pills-user.tab-pane.fade(role='tabpanel' aria-labelledby='v-pills-users-tab') User
+          #v-pills-settings.tab-pane.fade(role='tabpanel' aria-labelledby='v-pills-settings-tab') Dashboard App Settings
+
+          //- LOAD UI SCRIPT
+          script(src='/src/js/ui-controller.js' type='module')
+
+          //- script(type='text/javascript').
+          //-   $(document).ready(function () {
+          //-     $('#sidebarCollapse').on('click', function () {
+          //-       $('#agv_settings_sidebar').toggleClass('active');
+          //-     });
+          //-     $('#settings_sidebar_collapse').on('click', function () {
+          //-       $('#agv_settings_sidebar').toggleClass('active');
+          //-     });
+          //-   });

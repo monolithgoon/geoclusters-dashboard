@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+		<title>AGV Dashboard - Alpha</title>
+		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="crossorigin=""/>
+		<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
+		<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css"> -->
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+		<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/fontawesome.min.css" integrity="sha384-wESLQ85D6gbsF459vf1CiZ2+rr+CsxRY0RpiF1tLlQpDnAgg6rwdsUF1+Ics2bni" crossorigin="anonymous"> -->
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.6.21/dist/css/uikit.min.css"/>
+		<link rel="stylesheet" href="./src/css/index.css"/>
+	</head>
+	<body>
+
+		<main>
+
+			<div class="app-container">
+				<div class="d-flex align-items-start">
+					<div class="nav flex-column nav-pills me-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+						<!-- <button class="btn btn-outline" id="view_sidebar_toggle_button" type="button" aria-label="Expand Main Sidebar" aria-controls="" aria-selected="false"><span><img src="https://img.icons8.com/plasticine/30/000000/gps.png" alt="" srcset=""></span></button> -->
+						<!-- <button class="btn btn-outline" id="view_sidebar_toggle_button" type="button" aria-label="Expand Main Sidebar" aria-controls="" aria-selected="false"><span><img src="https://img.icons8.com/plasticine/30/000000/more-details.png" alt="" srcset=""></span></button> -->
+						<!-- <button class="btn btn-outline" id="view_sidebar_toggle_button" type="button" aria-label="Expand Main Sidebar" aria-controls="" aria-selected="false"><span><img src="https://img.icons8.com/plasticine/30/000000/collect.png" alt="" srcset=""></span></button> -->
+						<!-- <button class="btn btn-outline" id="app_launcher_button" type="button" title="App Launcher" aria-haspopup="true" aria-label="App laucher" aria-controls="" aria-selected="false"><span><img src="https://img.icons8.com/plasticine/25/000000/right-2.png" alt="" srcset=""></span></button> -->
+						<!-- <button class="btn btn-outline" id="view_sidebar_toggle_button" type="button" title="Expand App Sidebar" aria-label="expand app sidebar" aria-controls="" aria-selected="false"><span><img src="https://img.icons8.com/material-sharp/24/000000/squared-menu.png"/></span></button> -->
+						<!-- <button class="btn btn-outline" id="view_sidebar_toggle_button" type="button" title="Expand App Sidebar" aria-label="expand app sidebar" aria-controls="" aria-selected="false"><span><img src="https://img.icons8.com/carbon-copy/40/000000/show-sidepanel.png"/></span></button> -->
+						<button class="btn btn-outline" id="view_sidebar_toggle_button" type="button" title="Expand App Sidebar" aria-label="expand app sidebar" aria-controls="" aria-selected="false"><span><img src="https://img.icons8.com/metro/26/000000/chevron-right.png" alt="" srcset=""></span></button>
+						<button class="nav-link" id="v-pills-home-tab" data-bs-toggle="pill" data-bs-target="#v-pills-home" type="button" role="tab" aria-controls="v-pills-home" aria-selected="true"><span><img src="https://img.icons8.com/plasticine/40/000000/compass.png" alt="" srcset=""></span></button>
+						<button class="nav-link active" id="v_pills_agv_dash_tab" data-bs-toggle="pill" data-bs-target="#v_pills_agv_dash_content" type="button" role="tab" aria-controls="v_pills_agv_dash_content" aria-selected="true"><span><img src="https://img.icons8.com/plasticine/40/000000/apple-map.png" alt="" srcset=""></span></button>
+						<button class="nav-link" id="v-pills-profile-tab" data-bs-toggle="pill" data-bs-target="#v-pills-profile" type="button" role="tab" aria-controls="v-pills-profile" aria-selected="false"><span style="font-size: 1rem">🚀</span></button>
+						<button class="nav-link" id="v-pills-messages-tab" data-bs-toggle="pill" data-bs-target="#v-pills-messages" type="button" role="tab" aria-controls="v-pills-messages" aria-selected="false">Messages</button>
+						<button class="nav-link" id="v-pills-user-tab" data-bs-toggle="pill" data-bs-target="#v-pills-user" type="button" role="tab" aria-controls="v-pills-user" aria-selected="false">User</button>
+						<button class="nav-link" id="v-pills-settings-tab" data-bs-toggle="pill" data-bs-target="#v-pills-settings" type="button" role="tab" aria-controls="v-pills-settings" aria-selected="false">Settings</button>
+					</div>
+				<div class="tab-content" id="v-pills-tabContent">
+					<div class="tab-pane fade" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab">
+						<div>On-boarding</div>
+						<div>Cluster Management</div>
+						<div>Farm Monitoring</div>
+					</div>
+					<div class="tab-pane show active" id="v_pills_agv_dash_content" role="tabpanel" aria-labelledby="v_pills_agv_dash_tab">
+						
+						<div class="base-app-grid-container">
+
+							<section class="left-pane-container">
+								<div class="pane-controls">
+									<div class="results-count">30,250 AGCs</div>
+									<button class="btn btn-outline-primary btn-sm" title="Show or Hide Sidebar" aria-label="Show or hide sidebar" aria-haspopup="true" tabindex="0">Collapse</button>
+								</div>
+								<div class="left-pane-content">
+									<div class="search-wrapper line-3pt">
+										<div class="search-input-group">
+											<label for="input"><span><img src="https://img.icons8.com/android/24/000000/search.png"/></span></label>
+											<input type="search" placeholder="Search AGCs, locations or famers" aria-label="Search">
+											<div class="search-action">								
+												<button class="btn btn-outline" type="button" title="Cancel Search" aria-label="Cancel search" aria-haspopup="true" tabindex="0">X</button>
+												<button class="btn btn-outline-primary btn-sm" type="button" title="Search Go" aria-label="Search go" aria-haspopup="true" tabindex="0">Go</button>
+											</div>
+										</div>
+									</div>
+									<div class="results-container">
+
+										<div class="results-header">
+
+											<!-- <div class="results-count">30,250 AGCs</div> -->
+
+											<!-- SANDBOX -->
+											<!-- RESPONSIVE NAVBAR -->
+										<!-- <nav class="navbar navbar-toggle navbar-light bg-light">
+												<div class="container-fluid">
+													<a class="navbar-brand" href="#">Navbar</a>
+													<button class="navbar-toggler btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+														<span class="navbar-toggler-icon"></span>
+													</button>
+													<div class="collapse navbar-collapse" id="navbarSupportedContent">
+														<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+															<li class="nav-item">
+																<a class="nav-link active" aria-current="page" href="#">Home</a>
+															</li>
+															<li class="nav-item">
+																<a class="nav-link" href="#">Link</a>
+															</li>
+															<li class="nav-item dropdown">
+																<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+																	Dropdown
+																</a>
+																<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+																	<li><a class="dropdown-item" href="#">Action</a></li>
+																	<li><a class="dropdown-item" href="#">Another action</a></li>
+																	<li><hr class="dropdown-divider"></li>
+																	<li><a class="dropdown-item" href="#">Something else here</a></li>
+																</ul>
+															</li>
+														</ul>
+														<form class="d-flex">
+														<input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+														<button class="btn btn-outline-success" type="submit">Search</button>
+														</form>
+													</div>
+												</div>
+											</nav> -->
+												
+												<!-- <select class="form-select-sm" aria-label="">
+													<option value="1">Download PDF</option>
+													<option value="2">Download CSV</option>
+													<option value="3">Print</option>
+													<option value="4" selected>Share</option>
+												</select> -->
+												
+												<div class="user-action-container flex-row-center-end pad-round-5px">
+													<div class="btn-group flex-1">
+														<button class="btn btn-outline btn-sm stacked" type="button" title="Download" aria-label="Download" aria-haspopup="true" tabindex="0"><span><img src="https://img.icons8.com/small/16/000000/download.png"/></span><span>download</span></button>
+														<button class="btn btn-outline btn-sm stacked" type="button" title="Print" aria-label="Print" aria-haspopup="true" tabindex="0"><span><img src="https://img.icons8.com/small/16/000000/print.png"/></span><span>Print</span></button>
+														<button class="btn btn-outline btn-sm stacked" type="button" title="Share" aria-label="Email" aria-haspopup="true" tabindex="0"><span><img src="https://img.icons8.com/small/16/000000/send-mass-email.png"/></span><span>Email</span></button>
+													</div>
+													<div class=" btn-group page-view-config-container">
+														<button type="button" id="hide_fields_dd_btn" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-auto-close="outside" data-bs-toggle="dropdown" title="Select Fields" aria-haspopup="true" aria-expanded="false">Hide Fields</button>
+														<ul class="dropdown-menu" aria-labelledby="hide_fields_dd_btn">
+															<li><a class="dropdown-item" href="#">
+																	<div class="form-check form-switch">
+																		<label class="form-check-label" for="flexSwitchCheckDefault">AGC Name</label>
+																		<input class="form-check-input" disabled aria-disabled="true" type="checkbox" id="flexSwitchCheckDefault"/>
+																	</div>
+															</a></li>
+															<li><a class="dropdown-item" href="#">
+																	<div class="form-check form-switch">
+																		<label class="form-check-label" for="flexSwitchCheckDefault">AGC ID</label>
+																		<input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault"/>
+																	</div>
+															</a></li>
+															<li><a class="dropdown-item" href="#">
+																	<div class="form-check form-switch">
+																		<label class="form-check-label" for="flexSwitchCheckDefault">AGC Pres. First Name</label>
+																		<input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault"/>
+																	</div>
+															</a></li>
+															<li><a class="dropdown-item" href="#">
+																	<div class="form-check form-switch">
+																		<label class="form-check-label" for="flexSwitchCheckDefault">AGC Pres. Last Name</label>
+																		<input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault"/>
+																	</div>
+															</a></li>
+															<li><a class="dropdown-item" href="#">
+																	<div class="form-check form-switch">
+																		<label class="form-check-label" for="flexSwitchCheckDefault">Date Added</label>
+																		<input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault"/>
+																	</div>
+															</a></li>
+															<li><a class="dropdown-item" href="#">
+																	<div class="form-check form-switch">
+																		<label class="form-check-label" for="flexSwitchCheckDefault">Primary Crop</label>
+																		<input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault"/>
+																	</div>
+															</a></li>
+															<li><hr class="dropdown-divider"></li>
+															<li style="display: flex; flex-direction: row; justify-content: space-around;">
+																<span><button class="btn btn-outline-primary btn-sm" type="button" title="Hide All Fields" aria-label="Hide all fields" aria-haspopup="true" tabindex="0">Hide All</button></span>
+																<span><button class="btn btn-outline-primary btn-sm" type="button" title="Show All Fields" aria-label="Show all fields" aria-haspopup="true" tabindex="0">Show All</button></span>
+															</li>
+														</ul>
+														<div class="dropdown" title="Sort Options" aria-label="Sort Options" aria-haspopup="true" tabindex="0">
+															<button class="btn btn-outline-secondary dropdown-toggle btn-sm" type="button" id="results_sort_dd_menu_btn" data-bs-auto-close="outside" data-bs-toggle="dropdown" aria-expanded="false">
+																Sort
+															</button>
+															<ul class="dropdown-menu" aria-labelledby="results_sort_dd_menu_btn">
+																<li><a class="dropdown-item" href="#">A-Z</a></li>
+																<li><a class="dropdown-item" href="#">Z-A</a></li>
+																<li><a class="dropdown-item" href="#">Newest</a></li>
+																<li><a class="dropdown-item" href="#">Oldest</a></li>
+																<li><a class="dropdown-item" href="#">Largest</a></li>
+																<li><a class="dropdown-item" href="#">Smallest</a></li>
+															</ul>
+														</div>
+													</div>
+												</div>
+
+											<!-- SANDBOX -->
+											<!-- REMOVE -->
+											<!-- <div class="user-action-container">
+												<nav>
+													<ul class="nav nav-pills">
+														<li class="nav-item">
+															<a class="nav-link active" aria-current="page" href="#">Active</a>
+														</li>
+														<li class="nav-item dropdown">
+															<a class="nav-link dropdown-toggle" role="button" id="hide_fields_dd_btn" href="#" data-bs-toggle="dropdown"  data-bs-auto-close="outside" aria-expanded="false">Hide Fields</a>
+															<ul class="dropdown-menu" aria-labelledby="hide_fields_dd_btn">
+																<li><a class="dropdown-item" href="#">
+																		<div class="form-check form-switch">
+																			<label class="form-check-label" for="flexSwitchCheckDefault">AGC Name</label>
+																			<input class="form-check-input" disabled aria-disabled="true" type="checkbox" id="flexSwitchCheckDefault"/>
+																		</div>
+																</a></li>
+																<li><a class="dropdown-item" href="#">
+																		<div class="form-check form-switch">
+																			<label class="form-check-label" for="flexSwitchCheckDefault">AGC ID</label>
+																			<input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault"/>
+																		</div>
+																</a></li>
+																<li><a class="dropdown-item" href="#">
+																		<div class="form-check form-switch">
+																			<label class="form-check-label" for="flexSwitchCheckDefault">AGC Pres. First Name</label>
+																			<input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault"/>
+																		</div>
+																</a></li>
+																<li><a class="dropdown-item" href="#">
+																		<div class="form-check form-switch">
+																			<label class="form-check-label" for="flexSwitchCheckDefault">AGC Pres. Last Name</label>
+																			<input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault"/>
+																		</div>
+																</a></li>
+																<li><a class="dropdown-item" href="#">
+																		<div class="form-check form-switch">
+																			<label class="form-check-label" for="flexSwitchCheckDefault">Date Added</label>
+																			<input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault"/>
+																		</div>
+																</a></li>
+																<li><a class="dropdown-item" href="#">
+																		<div class="form-check form-switch">
+																			<label class="form-check-label" for="flexSwitchCheckDefault">Primary Crop</label>
+																			<input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault"/>
+																		</div>
+																</a></li>
+																<li><hr class="dropdown-divider"></li>
+																<li style="display: flex; flex-direction: row; justify-content: space-around;">
+																	<span><button class="btn btn-outline-primary btn-sm" type="button" title="Hide All Fields" aria-label="Hide all fields" aria-haspopup="true" tabindex="0">Hide All</button></span>
+																	<span><button class="btn btn-outline-primary btn-sm" type="button" title="Show All Fields" aria-label="Show all fields" aria-haspopup="true" tabindex="0">Show All</button></span>
+																</li>
+															</ul>
+														</li>
+													</ul>
+												</nav>
+											</div> -->
+
+										</div>
+
+										<div class="results-body">
+											<button class="btn btn-primary btn-sm ripplelink" id="results_filter_button" data-bs-toggle="collapse" data-bs-target="#hidden_pane_container" aria-controls="hidden_pane_container" title="Open Result Filters" aria-label="show results filters" tabindex="0"><span><img src="https://img.icons8.com/ios/24/ffffff/vertical-settings-mixer.png"/></span><span></span></button>
+											<button class="btn btn-outline btn-sm ripplelink" id="results_scroll_top_button" data-bs-toggle="" data-bs-target="#" aria-controls="" title="Scroll To Top" aria-label="scroll to top" tabindex="0"><span><img src="https://img.icons8.com/material/16/000000/chevron-up--v1.png"/></span></button>
+											<div class="results-list-wrapper" id="results_list_wrapper">
+												<div class="result-item">Geo Cluster 17</div>
+												<div class="h-divider-grey-50"></div>
+												<div class="result-item">Geo Cluster 18</div>
+												<div class="h-divider-grey-50"></div>
+												<div class="result-item">Geo Cluster 19</div>
+												<div class="h-divider-grey-50"></div>
+												<div class="result-item">Geo Cluster 20</div>
+												<div class="h-divider-grey-50"></div>
+												<div class="result-item flex-col-start">
+													<a href="#" class="result-item-title">Kastina Ala Rice Millers AGC</a>
+													<small class="item-subtitle">
+														<span><a href="#">Kaduna</a></span>
+														<span><a href="#">Wasa</a></span>
+													</small>
+													<div class="result-item-body flex-col-start">
+														<span><a href="#">AGC President</a></span>
+														<span><a href="#">AGC Vice President</a></span>
+														<div class="flex-row-center-btw">
+															<span><a href="#">Commodity</a></span>
+															<span>AGC Size</span>
+															<span>Num. Farmers</span>
+															<span>Date Est.</span>
+														</div>
+													</div>
+													<div class="result-item-hidden">
+														<span>AGC Properties</span>
+													</div>
+												</div>
+											</div>
+										</div>
+
+										<div class="pane-footer flex-row-center-btw pad-lr-5px">
+
+											<div class="page-config-container">
+												<select class="form-select-sm" aria-label="select pagination or scroll">
+													<option value="1">Scroll</option>
+													<option value="2" selected>Pagination</option>
+												</select>
+											</div>
+
+											<div class="pagination-container flex-1 flex-row-center-btw">
+												<select class="form-select-sm" aria-label="select results per page">
+													<option value="1" selected>5</option>
+													<option value="2">10</option>
+													<option value="3">20</option>
+												</select>
+												<ul class="uk-pagination flex-row-center-end flex-1">
+													<li><a href="#"><span uk-pagination-previous></span></a></li>
+													<li><a href="#">1</a></li>
+													<li class="uk-disabled"><span>...</span></li>
+													<li><a href="#">4</a></li>
+													<li class="uk-active"><span>5</span></li>
+													<li><a href="#"><span uk-pagination-next></span></a></li>
+												</ul>
+											</div>
+										</div>											
+									</div>
+								</div>
+							</section>
+			
+							<section class="hidden-pane-container" id="hidden_pane_container">
+
+								<div class="pane-controls">
+									<div class="line-height-pt6">Filters</div>
+									<button class="btn btn-outline-primary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#hidden_pane_content" aria-expanded="false" aria-controls="hidden_pane_content">
+										Collapse
+									</button>
+									<button class="btn btn-outline-danger btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+										Close
+									</button>
+								</div>
+
+								<div class="hidden-pane-content show" id="hidden_pane_content">
+
+									<div class="filter-controls-wrapper">
+										
+										<ul class="list-unstyled components">
+											<li>
+												<a href="#farm_prog_submenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle ripplelink">&#127805; Farmers' Programmes</a>
+												<ul class="collapse list-unstyled filters-submenu" id="farm_prog_submenu">
+													<li><a class="dropdown-item ripplelink" href="#">
+														<div class="form-check form-switch">
+															<label class="form-check-label" for="all_prog_chk">All Programmes</label>
+															<input class="form-check-input results-filter-checkbox master-checkbox" id="all_prog_chk" type="checkbox" checked disabled aria-disabled="true">
+														</div>
+													</a></li>
+													<li><hr class="dropdown-divider"></li>
+													<li><a class="dropdown-item ripplelink" href="#">
+														<div class="form-check form-switch">
+															<label class="form-check-label" for="agric_prog_1_chk">NIRSAL AGC</label>
+															<input class="form-check-input results-filter-checkbox" id="agric_prog_1_chk" type="checkbox" checked disabled aria-disabled="true">
+														</div>
+													</a></li>
+												</ul>
+											</li>
+											<li>
+												<a href="#agc_category_submenu" class="dropdown-toggle ripplelink" data-toggle="collapse" aria-expanded="false">&#128160; AGC Categories</a>
+												<ul class="collapse list-unstyled filters-submenu show" id="agc_category_submenu">
+													<li><a class="dropdown-item ripplelink" href="#">
+														<div class="form-check form-switch">
+															<label class="form-check-label" for="agc_all_cat_chk">All</label>
+															<input class="form-check-input results-filter-checkbox master-checkbox" id="agc_all_cat_chk" type="checkbox">
+														</div>
+													</a></li>
+													<li><hr class="dropdown-divider"></li>
+													<li><a class="dropdown-item ripplelink" href="#">
+														<div class="form-check form-switch">
+															<label class="form-check-label" for="agc_cat_1_chk">Cell</label>
+															<input class="form-check-input results-filter-checkbox" id="agc_cat_1_chk" type="checkbox">
+														</div>
+													</a></li>
+													<li><a class="dropdown-item ripplelink" href="#">
+														<div class="form-check form-switch">
+															<label class="form-check-label" for="agc_cat_2_chk">Block</label>
+															<input class="form-check-input results-filter-checkbox" id="agc_cat_2_chk" type="checkbox">
+														</div>
+													</a></li>
+													<li><a class="dropdown-item ripplelink" href="#">
+														<div class="form-check form-switch">
+															<label class="form-check-label" for="agc_cat_3_chk">AGC Cat. 3</label>
+															<input class="form-check-input results-filter-checkbox" id="agc_cat_3_chk" type="checkbox">
+														</div>
+													</a></li>
+													<li><a class="dropdown-item ripplelink" href="#">
+														<div class="form-check form-switch">
+															<label class="form-check-label" for="agc_cat_4_chk">AGC Cat. 4</label>
+															<input class="form-check-input results-filter-checkbox" id="agc_cat_4_chk" type="checkbox">
+														</div>
+													</a></li>
+													<li><a class="dropdown-item ripplelink" href="#">
+														<div class="form-check form-switch">
+															<label class="form-check-label" for="agc_cat_5_chk">AGC Cat. 5</label>
+															<input class="form-check-input results-filter-checkbox" id="agc_cat_5_chk" type="checkbox">
+														</div>
+													</a></li>
+												</ul>
+											</li>
+											<li>
+												<a href="#commodity_sector_submenu" class="dropdown-toggle ripplelink" data-toggle="collapse" aria-expanded="false">&#128160; Commodity Sectors</a>
+												<ul class="collapse list-unstyled filters-submenu" id="commodity_sector_submenu">
+													<li><a class="dropdown-item ripplelink" href="#">All</a></li>
+													<li><hr class="dropdown-divider"></li>
+													<li><a class="dropdown-item ripplelink" href="#">Consumer</a></li>
+													<li><a class="dropdown-item ripplelink" href="#">Industrial</a></li>
+													<li><a class="dropdown-item ripplelink" href="#">Export</a></li>
+												</ul>
+											</li>
+											<li>
+												<a href="#commodity_types_submenu" class="dropdown-toggle ripplelink" data-toggle="collapse" aria-expanded="false">&#128160; Commodity Types</a>
+												<ul class="collapse list-unstyled filters-submenu" id="commodity_types_submenu">
+													<li><a class="dropdown-item ripplelink" href="#">All</a></li>
+													<li><hr class="dropdown-divider"></li>
+													<li><a class="dropdown-item ripplelink" href="#">Row Crops</a></li>
+													<li><a class="dropdown-item ripplelink" href="#">Tree Crops</a></li>
+													<li><a class="dropdown-item ripplelink" href="#">Poultry</a></li>
+													<li><a class="dropdown-item ripplelink" href="#">Aquaculture</a></li>
+												</ul>
+											</li>
+											<li class="active">
+												<a href="#admin_bounds_filters_submenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle ripplelink">&#127760; Administrative Bounds</a>
+												<ul class="collapse list-unstyled filters-submenu show" id="admin_bounds_filters_submenu">
+													<li>
+														<a href="#states_submenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle ripplelink">States</a>
+														<ul class="collapse list-unstyled" id="states_submenu">
+															<li><a class="dropdown-item ripplelink" href="#">All States</a></li>
+															<li><a class="dropdown-item ripplelink" href="#">Kano</a></li>
+															<li><a class="dropdown-item ripplelink" href="#">Kaduna</a></li>
+															<li><a class="dropdown-item ripplelink" href="#">Delta</a></li>
+															<li><a class="dropdown-item ripplelink" href="#">Kastina</a></li>
+															<li><a class="dropdown-item ripplelink" href="#">Gombe</a></li>
+															<li><a class="dropdown-item ripplelink" href="#">Adamawa</a></li>
+															<li><a class="dropdown-item ripplelink" href="#">Edo</a></li>
+															<li><a class="dropdown-item ripplelink" href="#">Ogun</a></li>
+														</ul>
+													</li>
+													<li>
+														<a href="#lgas_submenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle ripplelink">&#127760; Local Governments</a>
+														<ul class="collapse list-unstyled filters-submenu" id="lgas_submenu">
+															<li><a href="#">All LGAs</a></li>
+															<!-- li*20>a[href=#]{LGA-$} -->
+														</ul>
+													</li>
+													<li>
+														<a href="#wards_submenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle ripplelink">Wards</a>
+													</li>
+												</ul>
+											</li>
+										</ul>
+
+										<div class="accordion accordion-flush" id="poi_overlays_accordion">
+											<div class="accordion-item">
+												<div class="accordion-header" id="poi_overlays_heading">
+													<button class="accordion-button collapsed btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#poi_overlays_accordion_content" aria-expanded="false" aria-controls="poi_overlays_accordion_content">
+														&#128162; POI Overlays
+													</button>
+												</div>
+												<div id="poi_overlays_accordion_content" class="accordion-collapse collapse" aria-labelledby="poi_overlays_heading" data-bs-parent="#poi_overlays_accordion">
+													<div class="accordion-body">
+														<div class="form-check form-switch">
+															<label class="form-check-label" for="flexSwitchCheckDefault">Active Farms</label>
+															<input class="form-check-input" aria-disabled="false" type="checkbox" id="flexSwitchCheckDefault"/>
+														</div>
+														<div class="form-check form-switch">
+															<label class="form-check-label" for="flexSwitchCheckDefault">PMRO Offices</label>
+															<input class="form-check-input" aria-disabled="false" type="checkbox" id="flexSwitchCheckDefault"/>
+														</div>
+														<div class="form-check form-switch">
+															<label class="form-check-label" for="flexSwitchCheckDefault">State Extension Offices</label>
+															<input class="form-check-input" aria-disabled="false" type="checkbox" id="flexSwitchCheckDefault"/>
+														</div>
+													</div>
+												</div>
+											</div>
+
+											<div class="accordion-item">
+												<div class="accordion-header" id="flush-headingOne">
+													<button class="accordion-button collapsed btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+														&#128510; Accordion Item #1
+													</button>
+												</div>
+												<div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#poi_overlays_accordion">
+													<div class="accordion-body">
+														<!-- SANDBOX -->
+														<!-- UIKIT ACCORDION EX. -->
+														<ul uk-accordion>
+															<li class="">
+																<a class="uk-accordion-title" href="#">Administrative Bounds</a>
+																<div class="uk-accordion-content">
+																	<ul uk-accordion>
+																		<li class="">
+																			<a class="uk-accordion-title" href="#">States</a>
+																			<div class="uk-accordion-content">
+																				<ul class="">
+																					<li><a href="#">Kano</a></li>
+																					<li><a href="#">Adamawa</a></li>
+																					<li><a href="#">Anambara</a></li>
+																					<li><a href="#">Delta</a></li>
+																					<li><a href="#">Kastina</a></li>
+																					<li><a href="#">Osun</a></li>
+																					<li><a href="#">Kastina</a></li>
+																					<li><a href="#">Gombe</a></li>
+																					<li><a href="#">Adamawa</a></li>
+																					<li><a href="#">Edo</a></li>
+																					<li><a href="#">Ogun</a></li>
+																					<li><a href="#">Niger</a></li>
+																					<li><a href="#">Sokoto</a></li>
+																					<li><a href="#">Lagos</a></li>
+																				</ul>
+																			</div>
+																		</li>
+																		<li><a href="#" class="uk-accordion-title">LGAs</a></li>
+																	</ul>
+																</div>
+															</li>
+															<li>
+																<a class="uk-accordion-title" href="#">Farm Attributes</a>
+																<div class="uk-accordion-content">
+																	<p>
+																		Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
+																		nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
+																		reprehenderit.
+																	</p>
+																</div>
+															</li>
+															<li>
+																<a class="uk-accordion-title" href="#">POI Overlays</a>
+																<div class="uk-accordion-content">
+																	<p>
+																		Duis aute irure dolor in reprehenderit in voluptate velit esse
+																		cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
+																		cupidatat proident.
+																	</p>
+																</div>
+															</li>
+														</ul>
+													</div>
+												</div>
+											</div>
+										</div>
+
+									</div>
+
+									<div class="selected-filters-wrapper">
+										<div class="selected-filters-control flex-row flex-end pad-trb-5px">
+											<button class="btn btn-outline-danger btn-sm" type="button" title="Clear All Filters" aria-label="clear all filters" aria-haspopup="true" tabindex="0">Clear All</button>
+										</div>
+										<div class="filter-groups">
+											<div class="filter-group">
+												<!-- <div class="filter-group-header">
+													<span>Farmers' Programmes</span>
+													<span>-</span>
+												</div> -->
+												<fieldset>
+													<legend class="filter-group-title"><span>Farmer Programme</span></legend>
+													<div class="filter-group-pills">
+														<div class="filter-pill"><span>NIRSAL AGC</span><span></span></div>
+													</div>
+												</fieldset>
+											</div>
+											<div class="filter-group">
+												<!-- <div class="filter-group-header">
+													<span>AGC Categories</span>
+													<span>-</span>
+												</div> -->
+												<fieldset>
+													<legend class="filter-group-title"><span>AGC Categories</span></legend>
+													<div class="filter-group-pills">
+														<div class="filter-pill"><span>Block</span><span></span></div>
+														<div class="filter-pill"><span>Cell</span><span></span></div>
+														<div class="filter-pill"><span>AGC Cat. 3</span><span></span></div>
+														<div class="filter-pill"><span>AGC Cat. 4</span><span></span></div>
+														<div class="filter-pill"><span>AGC Cat. 5</span><span></span></div>
+													</div>
+												</fieldset>
+											</div>
+											<div class="filter-group">
+												<!-- <div class="filter-group-header">
+													<span>States</span>
+													<span>-</span>
+												</div> -->
+												<fieldset>
+													<legend class="filter-group-title"><span>States</span></legend>
+													<div class="filter-group-pills">
+														<!-- <div class="filter-pill"><span>Lagos</span><span></span></div>
+														<div class="filter-pill"><span>Kastina</span><span></span></div> -->
+														<div class="filter-pill"><span>Adamawa</span><span></span></div>
+														<div class="filter-pill"><span>Kogi</span><span></span></div>
+														<div class="filter-pill"><span>Osun</span><span></span></div>
+														<div class="filter-pill"><span>Delta</span><span></span></div>
+													</div>
+												</fieldset>
+											</div>
+											<!-- <div class="filter-group">Commodity Sectors</div>
+											<div class="filter-group">Commodity Types</div>
+											<div class="filter-group">LGAs</div>
+											<div class="filter-group">Wards</div>
+											<div class="filter-group">POI Overlays</div> -->
+										</div>
+									</div>
+								</div>
+							</section>
+			
+							<header class="header-wrapper">
+								<div><a class="ripplelink" href="google.com">Google</a></div>
+								<div><a class="ripplelink" href="yahoo.com">Yahoo!</a></div>
+								<div><a class="ripplelink" href="nytimes.com">NYTimes</a></div>
+							</header>
+			
+							<section class="right-pane-container">
+
+								<div class="pane-controls">
+									<div class="line-height-pt6">AGC Insights & Details</div>
+									<button class="btn btn-outline-primary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#right_pane_content" aria-expanded="false" aria-controls="right_pane_content">
+										Resize
+									</button>
+								</div>
+
+								<div class="right-pane-content show" id="right_pane_content">
+
+									<div class="right-pane-content-body">
+
+										<!-- NAV TABS -->
+										<ul class="nav nav-tabs nav-fill" id="myTab" role="tablist" style="padding: 3px 3px 0 3px">
+											<li class="nav-item" role="presentation">
+												<button class="nav-link ripplelink" id="agc_insights_tab" data-bs-toggle="tab" data-bs-target="#agc_insights_tab_content" type="button" role="tab" aria-controls="agc_insights_tab_content" aria-selected="true">AGC Insights</button>
+											</li>
+											<li class="nav-item" role="presentation">
+												<button class="nav-link active ripplelink" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">AGC Details</button>
+											</li>
+										</ul>
+										
+										<!-- TAB PANES -->
+										<div class="tab-content" style="padding: 3px; padding-bottom: 0;">
+
+											<div class="tab-pane agc-insights-tab-content" id="agc_insights_tab_content" role="tabpanel" aria-labelledby="agc_insights_tab">
+
+												<!-- BS CAROUSEL -->
+												<div id="carouselExampleIndicators" class="carousel slide carousel-fade" data-bs-ride="carousel">
+													<div class="carousel-indicators">
+														<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+														<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+														<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+													</div>
+													<div class="carousel-inner">
+														<div class="carousel-item active">
+															<img src="" class="d-block w-100" alt="" style="height: 20vh; background-color: limegreen;">
+														</div>
+														<div class="carousel-item">
+															<img src="" class="d-block w-100" alt="" style="height: 20vh; background-color: slateblue;">
+														</div>
+														<div class="carousel-item">
+															<img src="" class="d-block w-100" alt="" style="height: 20vh; background-color: whitesmoke;">
+														</div>
+													</div>
+													<button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+														<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+														<span class="visually-hidden">Previous</span>
+													</button>
+													<button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+														<span class="carousel-control-next-icon" aria-hidden="true"></span>
+														<span class="visually-hidden">Next</span>
+													</button>
+												</div>												
+												
+											</div>
+
+											<div class="tab-pane agc-details-tab-content active" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+												<div class="parcelization-map" id="parcelization_map">
+													<div class="map-overlay">
+														<a class="" role="button" href="https://agcfarmlands.herokuapp.com/private/parcelized-agc/?AGCBEN000005" target="_blank" rel="noopener noreferrer"><span><img src="https://img.icons8.com/material-sharp/18/000000/external-link.png"/></span></a>
+													</div>
+												</div>
+												<div class="geo-cluster-summary flex-col-center">
+													<div class="wrapper flex-1">
+														<div><span>FARMERS</span><span>50</span></div>
+														<span class="v-divider"></span>
+														<div><span>CLUSTER AREA</span><span>50.3 ha.</span></div>
+														<span class="v-divider"></span>
+														<div><span>ALLOCATIONS</span><span>49.8 ha.</span></div>
+														<span class="v-divider"></span>
+														<div><span>UNUSED LAND</span><span>1.8 ha.</span></div>
+													</div>
+												</div>
+												<div class="plot-owner-details">
+													<div class="farmers-list-header">
+														<div class="user-action-container flex-row-center-btw pad-round-5px">
+															<div class="btn-group">
+																<button class="btn btn-outline btn-sm stacked" type="button" title="Download" aria-label="Download" aria-haspopup="true" tabindex="0"><span><img src="https://img.icons8.com/small/16/000000/download.png"/></span><span>download</span></button>
+																<button class="btn btn-outline btn-sm stacked" type="button" title="Print" aria-label="Print" aria-haspopup="true" tabindex="0"><span><img src="https://img.icons8.com/small/16/000000/print.png"/></span><span>Print</span></button>
+																<button class="btn btn-outline btn-sm stacked" type="button" title="Share" aria-label="Email" aria-haspopup="true" tabindex="0"><span><img src="https://img.icons8.com/small/16/000000/send-mass-email.png"/></span><span>Email</span></button>
+															</div>
+															<div class="btn-group page-view-config-container flex-row-center-end" role="group" aria-label="button group with nested dropdown" tabindex="0">
+																<div class="btn-group" tabindex="0">
+																	<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-bs-toggle="dropdown" title="Sort Options" aria-expanded="false" aria-haspopup="true">Sort</button>
+																	<ul class="dropdown-menu">
+																		<li><a class="dropdown-item" href="#">A-Z</a></li>
+																		<li><a class="dropdown-item" href="#">Z-A</a></li>
+																	</ul>
+																</div>			
+																<div class="btn-group" tabindex="0">
+																	<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-bs-toggle="dropdown" title="View Options" aria-expanded="false" aria-haspopup="true">View Mode</button>
+																	<ul class="dropdown-menu">
+																		<li><a class="dropdown-item" href="#">List</a></li>
+																		<li><a class="dropdown-item" href="#">Cards</a></li>
+																		<li><a class="dropdown-item" href="#">Thumbnails</a></li>
+																	</ul>
+																</div>			
+															</div>
+														</div>
+													</div>
+													<div class="plot-owners-list-body grid-1col">
+														<a class="card plot-owner-card ripplediv">
+															<div class="card-media-wrapper">
+																<div class="plot-owner-avatar">
+																	<img src="./assets/images/img_avatar2.png" alt="Plot Owner Avatar">
+																</div>
+															</div>
+															<div class="plot-owner-card-text-wrapper">
+
+																<div class="card-text-top">
+																		<div class="header-title-name"><span>Friday Rajak Suleman</span><span>4.40435°E 12.034462°N</span></div>
+																		<div class="header-title-allocation"><span>Plot 19</span><span>56.9 ha.</span></div>
+																</div>
+																<div class="card-text-bottom">
+																	<div class="plot-owner-card-text-body">
+																		<div>
+																			<span>FARMERID</span><span>AGCBEN000630</span>
+																		</div>
+																		<div>
+																			<span>VASTID</span><span>AGCBEN000_20QW</span>
+																		</div>
+																	</div>	
+																</div>																	
+															</div>
+														</a>
+														<div class="card plot-owner-card ripplediv">
+															<div class="card-media-wrapper">
+																<div class="plot-owner-avatar">
+																	<img src="./assets/images/AGCABU000585.jpg" alt="Plot Owner Avatar">
+																</div>
+															</div>
+															<div class="plot-owner-card-text-wrapper">
+																<div class="card-text-top">
+																		<div class="header-title-name"><span>Monaco Ibrahim</span><span>4.40435°E 12.034462°N</span></div>
+																		<div class="header-title-allocation"><span>Plot 22</span><span>5 ha.</span></div>
+																</div>
+																<div class="card-text-bottom">
+																	<div class="plot-owner-card-text-body">
+																		<div>
+																			<span>FARMERID</span><span>AGCBEN000630</span>
+																		</div>
+																		<div>
+																			<span>VASTID</span><span>AGCBEN000_20QW</span>
+																		</div>
+																	</div>	
+																</div>																	
+															</div>
+														</div>
+														<div class="card plot-owner-card ripplediv">
+															<div class="card-media-wrapper">
+																<div class="plot-owner-avatar">
+																	<img src="./assets/images/AGCNIG000851.jpg" alt="Plot Owner Avatar">
+																</div>
+															</div>
+															<div class="plot-owner-card-text-wrapper">
+																<div class="card-text-top">
+																		<div class="header-title-name"><span>Grace Madueze Ibrahim</span><span>10.40435°E 12.034462°N</span></div>
+																		<div class="header-title-allocation"><span>Plot 32</span><span>5.6 ha.</span></div>
+																</div>
+																<div class="card-text-bottom">
+																	<div class="plot-owner-card-text-body">
+																		<div>
+																			<span>FARMERID</span><span>AGCBEN000630</span>
+																		</div>
+																		<div>
+																			<span>VASTID</span><span>AGCBEN000_20QW</span>
+																		</div>
+																	</div>	
+																</div>																	
+															</div>
+														</div>
+
+														<div class="card plot-owner-card">Farmer-1</div>
+														<div class="card plot-owner-card">Farmer-2</div>
+														<div class="card plot-owner-card">Farmer-3</div>
+														<div class="card plot-owner-card">Farmer-4</div>
+														<div class="card plot-owner-card">Farmer-5</div>
+														<div class="card plot-owner-card">Farmer-6</div>
+														<div class="card plot-owner-card">Farmer-7</div>
+														<div class="card plot-owner-card">Farmer-8</div>
+														<div class="card plot-owner-card">Farmer-9</div>
+														<div class="card plot-owner-card">Farmer-10</div>
+													</div>
+												</div>
+												<div class="plot-detail-map hide">Plot Detail Map</div>
+
+												<div class="tab-pane-footer agc-details-tab-footer flex-row-center-btw">
+
+													<div class="page-config-container">
+														<select class="form-select-sm" aria-label="select pagination or scroll">
+															<option value="1">Scroll</option>
+															<option value="2" selected>Pagination</option>
+														</select>
+													</div>
+		
+													<div class="pagination-container flex-1 flex-row-center-btw">
+														<select class="form-select-sm" aria-label="select results per page">
+															<option value="1" selected>5</option>
+															<option value="2">10</option>
+															<option value="3">20</option>
+														</select>
+														<nav aria-label="Page navigation example">
+														<ul class="pagination justify-content-end">
+															<li class="page-item disabled">
+																<a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+															</li>
+															<li class="page-item"><a class="page-link" href="#">1</a></li>
+															<li class="page-item"><a class="page-link" href="#">2</a></li>
+															<li class="page-item"><a class="page-link" href="#">3</a></li>
+															<li class="page-item">
+																<a class="page-link" href="#">Next</a>
+															</li>
+														</ul>
+														</nav>
+													</div>
+												</div>						
+									
+											</div>
+										</div>
+									</div>
+									<!-- REMOVE -->
+									<!-- <div class="pane-footer flex-row-center-btw pad-lr-5px">
+
+										<div class="page-config-container">
+											<select class="form-select-sm" aria-label="select pagination or scroll">
+												<option value="1">Scroll</option>
+												<option value="2" selected>Pagination</option>
+											</select>
+										</div>
+
+										<div class="pagination-container flex-1 flex-row-center-btw">
+											<select class="form-select-sm" aria-label="select results per page">
+												<option value="1" selected>5</option>
+												<option value="2">10</option>
+												<option value="3">20</option>
+											</select>
+											<nav aria-label="Page navigation example">
+											<ul class="pagination justify-content-end">
+												<li class="page-item disabled">
+													<a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+												</li>
+												<li class="page-item"><a class="page-link" href="#">1</a></li>
+												<li class="page-item"><a class="page-link" href="#">2</a></li>
+												<li class="page-item"><a class="page-link" href="#">3</a></li>
+												<li class="page-item">
+													<a class="page-link" href="#">Next</a>
+												</li>
+											</ul>
+											</nav>
+										</div>
+									</div> -->
+								</div>
+							</section>
+						</div>
+
+						<div id="agv_base_map"></div>
+		
+					</div>
+					<div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">Profile</div>
+					<div class="tab-pane fade" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab">Messages</div>
+					<div class="tab-pane fade" id="v-pills-user" role="tabpanel" aria-labelledby="v-pills-user-tab">User</div>
+					<div class="tab-pane fade" id="v-pills-settings" role="tabpanel" aria-labelledby="v-pills-settings-tab">Settings</div>
+				</div>
+				 </div>
+			</div>
+
+		</main>
+
+		<!-- jQuery CDN - Slim version (=without AJAX) -->
+		<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+		<!-- Popper.JS -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+		<!-- Bootstrap JS -->
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
+		<!-- UIKit JS -->
+		<script src="https://cdn.jsdelivr.net/npm/uikit@3.6.21/dist/js/uikit.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/uikit@3.6.21/dist/js/uikit-icons.min.js"></script>
+		
+		<!-- SHOW / HIDE THE LEFT SIDEBAR -->
+		<!-- <script type="text/javascript">
+			$(document).ready(function () {
+				 $('#sidebarCollapse').on('click', function () {
+					  $('#sidebar').toggleClass('active');
+				 });
+			});
+	  </script> -->
+
+	  <script src="./src/plugins/custom/material-design-ripple.js"></script>
+		
+		<script src="./src/js/index.js" type="module"></script>
+
+	</body>
+</html>

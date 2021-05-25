@@ -1,0 +1,50 @@
+{
+  "name": "agv-dashboard-ssr",
+  "version": "1.0.0",
+  "description": "NIRSAL AGV Dashboard",
+  "main": "app.js",
+  "scripts": {
+    "deploy": "git push && git push heroku master",
+    "deploy:open": "git push && git push heroku master && heroku open",
+    "start": "node server.js",
+    "start:dev": "nodemon server.js",
+    "start:prod": "NODE_ENV=production nodemon server.js"
+  },
+  "author": "Nduka Okpue",
+  "license": "ISC",
+  "dependencies": {
+    "@mapbox/togeojson": "^0.16.0",
+    "@turf/turf": "^5.1.6",
+    "axios": "^0.21.1",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.19.0",
+    "compression": "^1.7.4",
+    "dotenv": "^8.6.0",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.9.19",
+    "morgan": "^1.10.0",
+    "pug": "^3.0.0",
+    "validator": "^13.1.1",
+    "winston": "^3.3.3"
+  },
+  "devDependencies": {
+    "chalk": "^4.1.0",
+    "nodemon": "^2.0.7"
+  },
+  "engines": {
+    "node": "^12"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/monolithgoon/nirsal-agv-dashboard.git"
+  },
+  "keywords": [
+    "dashboard",
+    "geospatial"
+  ],
+  "bugs": {
+    "url": "https://github.com/monolithgoon/nirsal-agv-dashboard/issues"
+  },
+  "homepage": "https://github.com/monolithgoon/nirsal-agv-dashboard#readme"
+}

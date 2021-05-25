@@ -1,0 +1,272 @@
+@import url("https://fonts.googleapis.com/css?family=Shadows+Into+Light+Two&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Fira+Sans&display=swap'); */
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans+Condensed:wght@300&display=swap');
+@import url('http://fonts.cdnfonts.com/css/francophil-sans');
+
+@import url('./bs-custom.css');
+@import url('./uikit-custom.css');
+@import url('./leaflet-custom.css');
+@import url('./material-design-ripple.css');
+@import url('./plot-owner-card.css');
+@import url('./utilities.css');
+@import url('./_left-pane.css');
+@import url('./_middle-pane.css');
+@import url('./_header.css');
+@import url('./_right-pane.css');
+
+:root {
+	--scrollbar-width: 7px;
+	--app-header-height: 40px;
+	
+	/* GRIDS */
+	/* --app-grid-template-cols: 290px 240px 1.2fr 340px; */
+	--app-grid-template-cols: 290px 240px 1.2fr 1.2fr 340px;
+	--app-grid-template-rows: 0.15fr 2fr;
+	/* --app-grid-template-rows: 8vh 2fr; */
+	
+	/* COLORS */
+	--scrollbar-color: #009432;
+	--card-light-grey: #F9F9F9;
+	--bg-light-blue: #EEF3FA;
+	--light-grey-line: #dfe6e9;
+	--grey-line-50: #eee;
+	--grey-line-100: #dfe6e9;
+	--grey-line-200: lightgrey;
+
+	/* FONT SIZES */
+	--pt3r-font: 0.3rem;
+	--pt5r-font: 0.5rem;
+	--pt7r-font: 0.7rem;
+	--pt8r-font: 0.8rem;
+	--tiny-text: 0.54rem;
+	--ux-ele-font: 0.8rem;
+	--header-text-font-size: 11.5px;
+	--header-brand-font-size: 11.5px;
+	--pane-controls-font-size: 0.6rem;
+	--filter-group-font-size: 0.6rem;
+	--pill-font-size: 0.5rem;
+	--plot-owner-card-header-text: 0.7rem;
+	--plot-owner-card-detail-text: 0.54rem;
+
+	/* Z-INDEXES */
+	--z-idx-2: 500;
+	--z-idx-3: 501;
+	--z3: 501;
+	--z4: 502;
+	--zmax: 9999;
+
+	/* PADDING */
+	--pad10p: 10px;
+	--pad15p: 15px;
+	--card-padding-inside: 5px;
+	--pill-text-padding: 5px;
+	--base-app-pad: 10px;
+
+	/* MARGINS */
+	--card-margin-outside: 8px;
+
+	/* LINE HEIGHTS */
+	--card-text-line: 1.5;
+}
+
+* {
+	padding: 0;
+	margin: 0;
+}
+
+body, html {
+	margin: auto;
+	width: 100%;
+	height: 100%;
+
+	font-family: Shadows Into Light Two;
+	/* font-size: 1rem; */
+	
+	line-height: 2.3;
+	/* letter-spacing: 0.1px; */
+
+	-webkit-box-sizing:border-box;
+	-moz-box-sizing:border-box;
+	box-sizing:border-box;
+	-webkit-font-smoothing:antialiased;
+	-moz-font-smoothing:antialiased;
+	-o-font-smoothing:antialiased;
+	text-rendering:optimizeLegibility;
+}
+
+a {
+	color: inherit !important;
+}
+
+
+
+/* @media screen and (min-width: 968px) { */
+@media screen and (min-width: 850px) {
+
+	body {	
+		/* THIS MAKES THE PAGE RESIZE WITH WINDOW */
+		display: flex;
+		overflow: hidden;
+	}
+
+	main {
+		position: relative;
+	}
+
+	.app-container {
+		width: 100vw;
+		height: 100vh;
+		color: black;
+	}
+
+	.app-container .tab-content {
+		width: 100%;
+		position: relative;
+	}
+		
+	.base-app-grid-container {
+		padding: var(--base-app-pad) var(--base-app-pad) 0 var(--base-app-pad);
+		position: relative;
+		display: grid;
+		grid-template-columns: var(--app-grid-template-cols);
+		grid-template-rows: var(--app-grid-template-rows);
+		width: 100%;
+		height: 100vh;
+	
+		/* DEFINE THE GRID AREAS WITH NAMED GRID AREAS */
+		grid-template-areas:
+				/* 'left-pane		hidden-pane 	header	header'
+				'left-pane		hidden-pane 	. 			right-pane'; */
+	
+				'left-pane		hidden-pane 	.	header	header'
+				'left-pane		hidden-pane 	. 			. 			right-pane';
+	
+		background: #EFE9DD;
+		background: #75cff0;
+	}
+	
+	#agv_base_map {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100vh;
+	}
+
+	#parcelization_map {
+		width: 100%;
+		height: 100%;
+	}
+
+	/* .user-action-container {
+		border-bottom: 1px solid var(--light-grey-line);
+	} */
+	
+	.user-action-container > div {
+		color: green;
+		flex: 1;
+	}
+		
+	.pane-controls {
+		padding-left: 10px;
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: flex-end;
+		border: 1px dashed black;
+		background-color: whitesmoke;
+		font-size: var(--pane-controls-font-size);
+		cursor: pointer;
+		height: min-content;
+		
+		/* opacity: 0.7; */
+		background-color: whitesmoke;
+	}
+
+	.pane-controls:hover {
+		opacity: 1;
+		background-color: white;
+	}
+
+	/* FIXME */
+	.pane-controls.ui.segment .ui.loader {
+		z-index: var(--zmax);
+		background: pink;
+	}
+
+	.pane-controls > div {
+		flex: 1;
+		display: flex;
+		justify-content: center;
+	}
+
+	.agv-settings-sidebar-container {
+		font-size: var(--header-text-font-size);
+
+	}
+	
+	#agv_settings_sidebar {
+		height     : 100vh;
+		min-width  : 250px;
+		max-width  : 250px;
+		display: grid;
+		grid-template-rows: var(--app-grid-template-rows);
+		/* border     : 1px solid slateblue; */
+		z-index    : var(--zmax);
+	}
+	
+	#agv_settings_sidebar.active {
+		position: absolute;
+		top: 0px;
+		right: 0px;
+		right: -10px;
+		transition : transform ease-out .2s;
+		transform: translateX(-10px);
+	}
+	
+	.settings-sidebar-header {
+		margin-top: var(--base-app-pad);
+		padding: 0 15px;
+		min-height: var(--app-header-height);
+		width: 100%;
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+		background-color: white;
+	}
+
+	.settings-sidebar-body {
+		padding: 15px;
+		background: #dfe4ea;
+	}
+
+	.settings-sidebar-body .form-check input {
+		font-size: 0.8rem;
+	}
+
+	#settings_default_reset.btn {
+		width: 100%; height: 100%;
+		border-radius: 0;
+	}
+}
+
+@font-face {
+	font-family: 'Segoe UI Web (West European)';
+	src: url('https://static2.sharepointonline.com/files/fabric/assets/fonts/segoeui-westeuropean/segoeui-regular.woff2') format('woff2'), url('https://static2.sharepointonline.com/files/fabric/assets/fonts/segoeui-westeuropean/segoeui-regular.woff') format('woff');
+	font-weight: 300;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: "Fira Santa";
+	/* src: url('../../assets/fonts/FiraSans-ExtraBold.ttf') format('ttf'); */
+	src: url('../../assets/fonts/FiraSans-Bold.ttf') format('ttf');
+	/* src: url('../../assets/fonts/FiraSans-Black.ttf') format('ttf'); */
+	/* src: url('../../assets/fonts/HelveticaNeueThin.woff') format('ttf'); */
+	/* src: url('../../assets/fonts/duolingo-next-rounded-pro.woff2') format('ttf'); */
+	/* src: url('../../assets/fonts/cnnstencil-regular.woff2') format('ttf'); */
+	font-style: normal;
+}
