@@ -1,3 +1,4 @@
+/* UL */
 ul {
    padding: 0 !important;
    margin: 0 !important;
@@ -18,7 +19,6 @@ ul.uk-accordion .uk-accordion-content {
 
 
 /* MARGIN & PADDING */
-
 ul.uk-pagination {
    margin: 0;
    padding: 0;
@@ -28,4 +28,10 @@ ul.uk-pagination {
    margin: 0 !important;
    padding: 0 5px !important;
    background-color: whitesmoke;
+}
+
+
+/* FIELDSET */
+fieldset {
+   margin: 0; padding: 0;
 }

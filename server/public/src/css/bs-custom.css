@@ -1,8 +1,15 @@
 /* VERTICAL NAV SIDEBAR */
 .app-container .nav.flex-column {
 	height: 100vh !important;
+	background-color: #2f3640; /* gb-electromagnetic */
 	background-color: #666;
+	background-color: #2d3436; /* us-dracula-orchid */
 	min-width: 40px;
+	transition: min-width ease-out .1s;
+}
+
+#v_pills_tab.expanded {
+	min-width: 100px;
 }
 
 .nav-pills button, 

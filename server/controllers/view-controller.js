@@ -44,11 +44,11 @@ exports.getAPIData = async (req, res, next) => {
    next();
 }
 
-exports.renderAGVDashboard = async (req, res, next) => {
+exports.renderAVGDashboard = async (req, res, next) => {
 
    // console.log(chalk.console(res.locals.returnedClusters));
 
-   console.log(chalk.success(`SUCCESSFULLY CALLED 'renderAGVDashboard' VIEW CONTROLLER FN. `));
+   console.log(chalk.success(`SUCCESSFULLY CALLED 'renderAVGDashboard' VIEW CONTROLLER FN. `));
 
    try {
 
@@ -57,9 +57,9 @@ exports.renderAGVDashboard = async (req, res, next) => {
       console.log(fsClusters);
       
       // RENDER THE agv-dashboard.pug TEMPLATE
-      res.status(200).render('agv-dashboard', {
-         title: "AGV Dashboard - SSR Alpha",
-         user: "NIRSAL",
+      res.status(200).render('avg-dashboard', {
+         title: "AVG Dashboard - SSR Alpha",
+         user: "FieldDev Group",
          geoclustersData: fsClusters.data.parcelized_agcs,
       });
 
@@ -69,8 +69,4 @@ exports.renderAGVDashboard = async (req, res, next) => {
 
       console.log(chalk.fail(`renderAGVErr: ${renderAGVErr.message}`));
    }
-};
-
-exports.renderAGVLeftSidebar = async (req, res, next) => {
-   console.log(chalk.highlight(`rendering data on sidebar`))
 };

@@ -1,6 +1,6 @@
 'use strict'
 
-function GetFilterCheckboxes() {
+function getFilterCheckboxes() {
 
    const filterCheckboxes = document.querySelectorAll(`.results-filter-checkbox[type=checkbox]`);
 
@@ -76,7 +76,7 @@ function GetAdjacentInputs(inputElement) {
 function AddEventListeners() {
          
    // CHECKBOX EVENT
-   GetFilterCheckboxes().filterCheckboxes.forEach(filterCheckbox => {
+   getFilterCheckboxes().filterCheckboxes.forEach(filterCheckbox => {
       filterCheckbox.addEventListener(`change`, (e)=>{
          const checkboxLabelTxt = e.target.labels[0].innerText; 
          if (e.target.checked) {
@@ -90,7 +90,7 @@ function AddEventListeners() {
    });
 
    // CONTROL SLAVE CHECKBOXES WITH MASTER CHECKBOX EVENT
-   GetFilterCheckboxes().filterCheckboxMasters.forEach(masterCheckbox => {
+   getFilterCheckboxes().filterCheckboxMasters.forEach(masterCheckbox => {
       const slaveCheckboxes = GetAdjacentInputs(masterCheckbox);
       masterCheckbox.addEventListener(`change`, (e)=>{
          if (e.target.checked) {

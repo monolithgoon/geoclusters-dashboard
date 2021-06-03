@@ -31,7 +31,6 @@ section.right-pane-container {
    display: grid;
    grid-template-columns: 1fr;
    grid-template-rows: auto 1fr;
-   background-color: wheat;
    background-color: white;
    opacity: 0.8;
    opacity: 1;
@@ -155,15 +154,16 @@ section.right-pane-container {
    display: grid;
    grid-template-columns: 1fr;
    grid-template-rows: auto 1fr;
-   background-color: white;
    background-color: #f8f8f8;
    background-color: #eef3fa;
+   background-color: white;
    min-height: max-content;
 }
 
 .plot-owner-details .plot-owners-list-body {
    padding: var(--card-margin-outside);
    padding-top: 0;
+   background-color: #f8f9fa;
    overflow-y: scroll;
 }
 

@@ -11,8 +11,11 @@ block append agv-dashboard-head-map-scripts
   script(src='https://unpkg.com/leaflet@1.7.1/dist/leaflet.js' integrity='sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==' crossorigin='')
   link(rel='stylesheet' href='https://unpkg.com/leaflet@1.7.1/dist/leaflet.css' integrity='sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==' crossorigin='')
 
+  //- TURF JS
+  script(src='/src/plugins/turf.min.js')
+
   //- LEAFLET BING MAPS
-  //- script(src='/src/plugins/LeafletBingLayer/bing.js')
+  script(src='/src/plugins/LeafletBingLayer/bing.js')
 
   //- LEAFLET CONTROL CUSTOM
   //- script(src="/src/plugins/LeafletControlCustom/Leaflet.Control.Custom.js")    
@@ -20,9 +23,9 @@ block append agv-dashboard-head-map-scripts
 
 block agv-dashboard
 
-  //- THIS ALLOWS THE FRONTEND RECEIVE DATA FROM THE API & PASS IT TO THE SCRIPT BELOW
+  //- THIS ALLOWS THE FRONTEND RECEIVE DATA FROM THE API & PASS IT TO 'ui-controller.js' BELOW
   .data-container
-    div#parcelized_geoclusters_api_data_stream(data-parcelizedgeoclusters=`${JSON.stringify(geoclustersData)}`)
+    div#api_data_stream(data-geoclustersdatastream=`${JSON.stringify(geoclustersData)}`)
 
   main
 
@@ -30,35 +33,29 @@ block agv-dashboard
 
       .d-flex.align-items-start
 
-        #v-pills-tab.nav.flex-column.nav-pills.me-3(role='tablist' aria-orientation='vertical')
-          //- <button class="btn btn-outline" id="app_sidebar_toggle_button" type="button" aria-label="Expand Main Sidebar" aria-controls="" aria-selected="false"><span><img src="https://img.icons8.com/plasticine/30/000000/gps.png" alt="" srcset=""></span></button>
-          //- <button class="btn btn-outline" id="app_sidebar_toggle_button" type="button" aria-label="Expand Main Sidebar" aria-controls="" aria-selected="false"><span><img src="https://img.icons8.com/plasticine/30/000000/more-details.png" alt="" srcset=""></span></button>
-          //- <button class="btn btn-outline" id="app_sidebar_toggle_button" type="button" aria-label="Expand Main Sidebar" aria-controls="" aria-selected="false"><span><img src="https://img.icons8.com/plasticine/30/000000/collect.png" alt="" srcset=""></span></button>
-          //- <button class="btn btn-outline" id="app_launcher_button" type="button" title="App Launcher" aria-haspopup="true" aria-label="App laucher" aria-controls="" aria-selected="false"><span><img src="https://img.icons8.com/plasticine/25/000000/right-2.png" alt="" srcset=""></span></button>
-          //- <button class="btn btn-outline" id="app_sidebar_toggle_button" type="button" title="Expand App Sidebar" aria-label="expand app sidebar" aria-controls="" aria-selected="false"><span><img src="https://img.icons8.com/material-sharp/24/000000/squared-menu.png"/></span></button>
-          //- <button class="btn btn-outline" id="app_sidebar_toggle_button" type="button" title="Expand App Sidebar" aria-label="expand app sidebar" aria-controls="" aria-selected="false"><span><img src="https://img.icons8.com/carbon-copy/40/000000/show-sidepanel.png"/></span></button>
-          button#app_sidebar_toggle_button.btn.btn-outline(type='button' title='Expand App Sidebar' aria-label='expand app sidebar' aria-controls='' aria-selected='false')
+        #v_pills_tab.nav.flex-column.nav-pills.me-3(role='tablist' aria-orientation='vertical')
+          button#app_sidebar_expand_button.btn.btn-outline(type='button' title='Expand App Sidebar' aria-label='expand app sidebar' aria-controls='' aria-selected='false')
             span
               img(src='https://img.icons8.com/metro/26/000000/chevron-right.png' alt='Sidebar Toggle Button' srcset='')
           button#v-pills-home-tab.nav-link(title='Home' data-bs-toggle='pill' data-bs-target='#v-pills-home' type='button' role='tab' aria-controls='v-pills-home' aria-selected='true')
             span
-              img(src="https://img.icons8.com/windows/28/ffffff/compass.png" alt='Home Tab' srcset='')
-              //- img(src="https://img.icons8.com/dotty/28/ffffff/compass.png" alt='Home Tab' srcset='')
-          button#v_pills_agv_dash_tab.nav-link.active(title='AGV Dashsboard' data-bs-toggle='pill' data-bs-target='#v_pills_agv_dash_content' type='button' role='tab' aria-controls='v_pills_agv_dash_content' aria-selected='true')
+              img(src="https://img.icons8.com/windows/28/ffffff/compass.png" alt='Home' srcset='')
+              //- img(src="https://img.icons8.com/dotty/28/ffffff/compass.png" alt='Home' srcset='')
+          button#v_pills_avg_map_tab.nav-link.active(title='AVG Map' data-bs-toggle='pill' data-bs-target='#v_pills_avg_map_tab_content' type='button' role='tab' aria-controls='v_pills_avg_map_tab_content' aria-selected='true')
             span
-              img(src="https://img.icons8.com/wired/24/ffffff/layers.png" alt='AGV Dashboard Tab' srcset='')
+              img(src="https://img.icons8.com/wired/24/ffffff/layers.png" alt='AVG Map' srcset='')
+          button#v_pills_manage_clusters_tab.nav-link(title='Manage Clusters' data-bs-toggle='pill' data-bs-target='#v_pills_manage_clusters_tab_content' type='button' role='tab' aria-controls='v_pills_manage_clusters_tab_content' aria-selected='true')
+            span
+              img(src="https://img.icons8.com/dotty/28/ffffff/add-database.png" alt='Manage Clusters' srcset='')
           button#v-pills-profile-tab.nav-link(title="" data-bs-toggle='pill' data-bs-target='#v-pills-profile' type='button' role='tab' aria-controls='v-pills-profile' aria-selected='false')
             span(style='font-size: 1rem') &#x1F680;
+          .flex-spacer.flex-1
           button#v-pills-users-tab.nav-link.flex-row-center-around(title="Users" data-bs-toggle='pill' data-bs-target='#v-pills-user' type='button' role='tab' aria-controls='v-pills-user' aria-selected='false')
             span
               img(src="https://img.icons8.com/small/24/ffffff/user.png")
           button#v-pills-settings-tab.nav-link(title="Dashboard App Settings" data-bs-toggle='pill' data-bs-target='#v-pills-settings' type='button' role='tab' aria-controls='v-pills-settings' aria-selected='false')
             span
               img(src="https://img.icons8.com/wired/24/ffffff/settings.png")
-          //- button#v-pills-semantic-loader-tab.nav-link(data-bs-toggle='pill' data-bs-target='#v-pills-semantic-loader' type='button' role='tab' aria-controls='v-pills-semantic-loader' aria-selected='false')
-          //- .ui.segment
-          //-   .ui.active.dimmer
-          //-     .ui.medium.text.loader Loading
 
         #v-pills-tabContent.tab-content
 
@@ -67,7 +64,7 @@ block agv-dashboard
             div Cluster Management
             div Farm Monitoring
 
-          #v_pills_agv_dash_content.tab-pane.show.active(role='tabpanel' aria-labelledby='v_pills_agv_dash_tab')
+          #v_pills_avg_map_tab_content.tab-pane.show.active(role='tabpanel' aria-labelledby='v_pills_avg_map_tab')
 
             .base-app-grid-container
 
@@ -204,15 +201,40 @@ block agv-dashboard
                               li
                                 a.dropdown-item(href='#') Smallest
 
-                    .results-body
+                    #result_item_modal.result-item-modal
+                      .result-item-modal-header.flex-row-center-btw
+                        span Block AGC
+                        span 25 Ha.
+                      .result-item-modal-title.flex-row-center-btw
+                        span KASTINA ALA MAIZE ASSOC..
+                        button#result_item_modal_close_btn.btn-close(type="button" aria-label="close")
+                      .result-item-modal-body.flex-col-center
+                        span.modal-person-avatar
+                          img.rounded-circle(src='./assets/images/users/img_avatar2.png' alt='Modal Avatar')
+                        span.modal-person-details.flex-col-center Abdulsalam Dansuki, President
+                        span.modal-person-contact.flex-row-center-btw
+                          span 08022242548
+                          span mallam-dan@gmail.com
+                          span Directions
+                      .result-item-modal-subtext
+                        span  Prim. commodity: Maize, Rice . Clay soil . No irriation . Closest PMRO site 40km away . No power . Closest market 10km away . No processing capability . Funded June 17, 2019. 13.3 hectares unused.
+                      .result-item-modal-footer.flex-row-center-btw
+                        span 200 Farmers
+                        span Kastina State
 
+                    .results-body
                       #results_list_wrapper.results-list-wrapper
+                        .list-controls-wrapper.flex-row-center-end
+                          label(for='select_all_results') Select All
+                          input#select_all_results_chk(type='checkbox' aria-label='select all results checkbox')
+
+                        //- // FIXME > CREATE INTERFACE TO HANDLE DIFF. FIELDS
                         //- each geocluster in geoclustersData
                         //-   .result-item.flex-col-start
                         //-     small.result-item-pill
                         //-       span= `${geocluster.properties.geo_cluster_details.delineated_area.toFixed(0)} HA.`
                         //-       span= `${geocluster.features.length} FARMERS`
-                        //-     a.result-item-title(href='#')= geocluster.properties.geo_cluster_name
+                        //-     a.result-item-titles(href='#')= geocluster.properties.geo_cluster_name
                         //-     small.item-subtitle
                         //-       a(href='#')= geocluster.properties.geo_cluster_details.lga[0]
                         //-     .result-item-body.flex-col-start
@@ -233,36 +255,55 @@ block agv-dashboard
                         //-         img(src="https://img.icons8.com/windows/12/000000/home-button.png")
                         //-       span= `${geocluster.properties.geo_cluster_details.primary_crop.toUpperCase()}`
                         //-   .h-divider-grey-50
-                        each geocluster in geoclustersData
-                          .result-item.flex-col-start
-                            small.result-item-pill
-                              span= `${geocluster.properties.agc_area.toFixed(0)} HA.`
-                              span= `${geocluster.features.length} FARMERS`
-                            a.result-item-title(href='#')= geocluster.properties.agc_extended_name
-                            small.item-subtitle
-                              a(href='#')= geocluster.properties.agc_location
+
+                        each geocluster, clusterIdx in geoclustersData
+                          .result-item.flex-col-start(data-geoclusterdatastream=`${JSON.stringify(geocluster)}`)
+                            //- .result-item-controls.flex-1.flex-row-center-end
+                            //-   .btn-group
+                            //-     button#dropdownMenuClickableInside.btn.btn-outline.btn-sm.dropdown-toggle(type='button' data-bs-toggle='dropdown' data-bs-auto-close='outside' aria-expanded='false') ...
+                            //-     ul.dropdown-menu(aria-labelledby='dropdownMenuClickableInside')
+                            //-       li
+                            //-         a.dropdown-item(href='#') Menu item
+                            //-       li
+                            //-         a.dropdown-item(href='#') Menu item
+                            //-       li
+                            //-         a.dropdown-item(href='#') Menu item
+                            //-   input.form-check-input(id=`select_result_item_chk_${clusterIdx}` type='checkbox' value=`resultItemCheckbox${clusterIdx}` aria-label='select result checkbox')
+                            .result-item-header.flex-row-start
+                              .result-item-titles.flex-col-start.flex-1
+                                a#result_item_title.result-item-title(href='#' title=`Geocluster Name`)= geocluster.properties.agc_extended_name
+                                small.result-item-subtitle
+                                  a(href='#')= geocluster.properties.agc_location
+                              .result-item-controls.flex-row-center-end
+                                .btn-group
+                                  button#dropdownMenuClickableInside.btn.btn-outline.btn-sm.dropdown-toggle(type='button' data-bs-toggle='dropdown' data-bs-auto-close='outside' aria-expanded='false') ...
+                                  ul.dropdown-menu(aria-labelledby='dropdownMenuClickableInside')
+                                    li
+                                      a.dropdown-item(href='#') Copy Map Preview Link
+                                    li
+                                      a.dropdown-item(href='#') Open In New Tab
+                                    li
+                                      a.dropdown-item(href='#') Share Cluster Details
+                                input.form-check-input.result-item-checkbox(id=`select_result_item_chk_${clusterIdx}` type='checkbox' value=`resultItemCheckbox${clusterIdx}` aria-label='select result checkbox')
+                            //- small.result-item-subtitle
+                            //-   a(href='#')= geocluster.properties.agc_location
                             .result-item-body.flex-col-start
-                              span
-                                a(href='#') AGC President Abubara Ibrahim Ismaila
-                              span
-                                a(href='#') AGC Vice President Vivian Okonji Adaeze
-                              //- .flex-row-center-btw
-                              div
-                                span= `Allocated: ${geocluster.properties.total_allocation.toFixed(1)} ha.`
-                                br
-                            .result-item-hidden
+                              div.result-item-pill
+                                span= `${geocluster.features.length} farmers`
+                                span=`•`
+                                span= `${geocluster.properties.agc_area.toFixed(0)} hectares`
+                                //- span= `${geocluster.properties.total_allocation.toFixed(1)} ha. allocated`
+                              a(href='#') AGC President Abubara Ibrahim Ismaila
+                            .result-item-footer.flex-row-center-btw
                               span
                                 //- img(src="https://img.icons8.com/small/16/000000/place-marker.png")
-                                //- img(src="https://img.icons8.com/cotton/14/000000/place-marker.png")
-                                //- img(src="https://img.icons8.com/wired/16/000000/point-objects.png")
                                 img(src="https://img.icons8.com/small/16/000000/point-objects.png")
                               span
-                                a(href="#")= `${JSON.stringify(geocluster.properties.agc_center_coords[0].geometry.coordinates[0].toFixed(9))}°N 6.3255411°E`
+                                a(href="#")= `${JSON.stringify(geocluster.properties.agc_center_coords[0].geometry.coordinates[0].toFixed(6))}°N 6.214541°E`
                               span
-                                //- img(src="https://img.icons8.com/small/12/000000/puzzle.png")
                                 img(src="https://img.icons8.com/windows/12/000000/home-button.png")
                               span= `${geocluster.properties.unused_land_area.toFixed(1)} ha. unused`
-                          .h-divider-grey-50
+                          .h-divider-grey-100
 
                     .pane-footer.flex-row-center-btw.pad-lr-5px
                       .page-config-container
@@ -303,7 +344,7 @@ block agv-dashboard
                     ul.list-unstyled.components
                       li
                         a.dropdown-toggle.ripplelink(href='#farm_prog_submenu' data-toggle='collapse' aria-expanded='false') &#xF33D; Intervention Programmes
-                        ul#farm_prog_submenu.collapse.list-unstyled.filters-submenu
+                        ul#farm_prog_submenu.list-unstyled.filters-submenu
                           li
                             a.dropdown-item.ripplelink(href='#')
                               .form-check.form-switch
@@ -318,7 +359,7 @@ block agv-dashboard
                                 input#agric_prog_1_chk.form-check-input.results-filter-checkbox(type='checkbox' checked='' disabled aria-disabled='true')
                       li
                         a.dropdown-toggle.ripplelink(href='#agc_category_submenu' data-toggle='collapse' aria-expanded='false') &#xF4A0; AGC Categories
-                        ul#agc_category_submenu.collapse.list-unstyled.filters-submenu.show
+                        ul#agc_category_submenu.list-unstyled.filters-submenu
                           li
                             a.dropdown-item.ripplelink(href='#')
                               .form-check.form-switch
@@ -498,7 +539,7 @@ block agv-dashboard
                           <span>Farmers' Programmes</span>
                           <span>-</span>
                           </div>
-                        fieldset
+                        fieldset.filter-group-pills
                           legend.filter-group-title
                             span Farmer Programme
                           .filter-group-pills
@@ -511,7 +552,7 @@ block agv-dashboard
                           <span>AGC Categories</span>
                           <span>-</span>
                           </div>
-                        fieldset
+                        fieldset.filter-group-pills
                           legend.filter-group-title
                             span AGC Categories
                           .filter-group-pills
@@ -536,7 +577,7 @@ block agv-dashboard
                           <span>States</span>
                           <span>-</span>
                           </div>
-                        fieldset
+                        fieldset.filter-group-pills
                           legend.filter-group-title
                             span States
                           .filter-group-pills
@@ -564,13 +605,17 @@ block agv-dashboard
 
               header.header-wrapper
 
+                .app-activity-indicator-wrapper
+                  .app-activity-indicator
+
                 .navbar__container.flex-1
 
-                  .hide-on-small
+                  .hide-on-small.flex-row-center-btw
+
                     a.navbar-brand.ripplelink(href='#')
                       span.business-logo
                         img.rounded-circle(src=`./assets/images/nirsal-agc-2.png`)
-                      span ...
+                      span Active Virtual Graphic Map
 
                   nav.navbar.navbar-expand-lg.sticky-top
 
@@ -580,15 +625,14 @@ block agv-dashboard
 
                     #navbarNav.collapse.navbar-collapse
                       ul.navbar-nav
-                        li.nav-item.active
-                          a.nav-link.ripplelink(href='#') Language 
+                        //- li.nav-item.active
+                        //- //-   a.nav-link.ripplelink(href='#') Language 
+                        //- button#avg_settings_sidebar_toggle_btn.nav-link.btn.btn-sm.text-sidebar(type='button' title='AVG Language') en
                         li.nav-item
-                          button#sidebarCollapse.nav-link.btn.btn-sm.text-sidebar.bg-turbo-yellow(type='button' title='Open Settings Sidebar')
-                            span
-                              img(src="https://img.icons8.com/wired/24/000000/settings.png")
-                            span
-                        //- li.nav-item
-                        //-   a.nav-link.ripplelink(href='#') Settings
+                          button#avg_settings_sidebar_toggle_btn.nav-link.btn.btn-sm.text-sidebar.pos-relative(type='button' title='AVG Settings')
+                            img(src="https://img.icons8.com/wired/24/000000/settings.png")
+                            span.notification-badge.red-badge.tiny-badge
+                            //- span
                         li.nav-item.user-nav-item
                           .dropdown
                             a#topbar_user_drop.dropdown-toggle.ripplelink(href='#' role='button' data-bs-toggle='dropdown' aria-expanded='false')
@@ -711,7 +755,7 @@ block agv-dashboard
                               span
                                 //- img(src='https://img.icons8.com/material-sharp/18/000000/external-link.png')
                                 img(src='https://img.icons8.com/small/18/000000/external-link.png')
-                        .geo-cluster-summary.flex-col-center-center
+                        .geo-cluster-summary.flex-col-center
                           .wrapper.flex-1
                             div.pad-tb5p
                               span FARMERS
@@ -762,66 +806,67 @@ block agv-dashboard
                                     li
                                       a.dropdown-item(href='#') Thumbnails
                           .plot-owners-list-body.grid-1col
-                            a.card.plot-owner-card.ripplediv
-                              .card-media-wrapper
-                                .plot-owner-avatar
-                                  img(src='./assets/images/plot-owners/AGCABI000712.jpg' alt='Plot Owner Avatar')
-                              .plot-owner-card-text-wrapper
-                                .card-text-top
-                                  .header-title-name
-                                    span Friday Rajak Suleman
-                                    span 4.40435&deg;E 12.034462&deg;N
-                                  .header-title-allocation
-                                    span Plot 19
-                                    span 56.9 ha.
-                                .card-text-bottom
-                                  .plot-owner-card-text-body
-                                    div
+                            card.plot-owner-card
+                              .card-content-wrapper
+                                .card-media-wrapper
+                                  .plot-owner-avatar
+                                    img(src='./assets/images/plot-owners/AGCABI000712.jpg' alt='Plot Owner Avatar')
+                                    span.notification-badge.orange-badge.small-badge.shadow-badge.spinner-grow.spinner-grow-sm
+                                .card-text-wrapper
+                                  .card-text-top
+                                    .main-card-text
+                                      span.flex-center.justify-start Friday Rajak Suleman
+                                      span 4.40435&deg;E 12.034462&deg;N
+                                    .card-pills
+                                      span.flex-row-center Plot 19
+                                      span.flex-row-center 56.9 ha.
+                                  .card-text-bottom
+                                    div.flex-row-center
                                       span FARMERID
                                       span AGCBEN000630
-                                    div
-                                      span VASTID
-                                      span AGCBEN000_20QW
-                            .card.plot-owner-card.ripplediv
-                              .card-media-wrapper
-                                .plot-owner-avatar
-                                  img(src='./assets/images/AGCABU000585.jpg' alt='Plot Owner Avatar')
-                              .plot-owner-card-text-wrapper
-                                .card-text-top
-                                  .header-title-name
-                                    span Kabiru Ibrahim
-                                    span 4.40435&deg;E 12.034462&deg;N
-                                  .header-title-allocation
-                                    span Plot 22
-                                    span 5 ha.
-                                .card-text-bottom
-                                  .plot-owner-card-text-body
-                                    div
+                                    div.flex-row-center
+                                      span.flex-row-center VASTID
+                                      span.flex-row-center AGCBEN000_20QW
+                            card.plot-owner-card
+                              .card-content-wrapper
+                                .card-media-wrapper
+                                  .plot-owner-avatar
+                                    img(src='./assets/images/plot-owners/AGCABU000585.jpg' alt='Plot Owner Avatar')
+                                .card-text-wrapper
+                                  .card-text-top
+                                    .main-card-text
+                                      span Bello Jubril Kasim
+                                      span 4.40435&deg;E 12.034462&deg;N
+                                    .card-pills
+                                      span.flex-row-center Plot 20
+                                      span.flex-row-center 56.9 ha.
+                                  .card-text-bottom
+                                    div.flex-row-center
                                       span FARMERID
                                       span AGCBEN000630
-                                    div
-                                      span VASTID
-                                      span AGCBEN000_20QW
-                            .card.plot-owner-card.ripplediv
-                              .card-media-wrapper
-                                .plot-owner-avatar
-                                  img(src='./assets/images/AGCNIG000851.jpg' alt='Plot Owner Avatar')
-                              .plot-owner-card-text-wrapper
-                                .card-text-top
-                                  .header-title-name
-                                    span Grace Madueze Ibrahim
-                                    span 10.40435&deg;E 12.034462&deg;N
-                                  .header-title-allocation
-                                    span Plot 32
-                                    span 5.6 ha.
-                                .card-text-bottom
-                                  .plot-owner-card-text-body
-                                    div
+                                    div.flex-row-center
+                                      span.flex-row-center VASTID
+                                      span.flex-row-center AGCBEN000_20QW
+                            card.plot-owner-card
+                              .card-content-wrapper
+                                .card-media-wrapper
+                                  .plot-owner-avatar
+                                    img(src='./assets/images/plot-owners/AGCNIG000851.jpg' alt='Plot Owner Avatar')
+                                .card-text-wrapper
+                                  .card-text-top
+                                    .main-card-text
+                                      span Hajia Mustapha Diya
+                                      span 4.40435&deg;E 12.034462&deg;N
+                                    .card-pills
+                                      span.flex-row-center Plot 21
+                                      span.flex-row-center 56.9 ha.
+                                  .card-text-bottom
+                                    div.flex-row-center
                                       span FARMERID
                                       span AGCBEN000630
-                                    div
-                                      span VASTID
-                                      span AGCBEN000_20QW
+                                    div.flex-row-center
+                                      span.flex-row-center VASTID
+                                      span.flex-row-center AGCBEN000_20QW
                             .card.plot-owner-card Farmer-1
                             .card.plot-owner-card Farmer-2
                             .card.plot-owner-card Farmer-3
@@ -856,38 +901,92 @@ block agv-dashboard
                                 li.page-item
                                   a.page-link(href='#') Next
 
-            #agv_base_map
+            #avg_base_map
 
             .agv-settings-sidebar-container
               #agv_settings_sidebar.agv-settings-sidebar-content
                 .settings-sidebar-header
-                  span AGV Settings
+                  span AVG Settings
                   span
-                    button#settings_sidebar_collapse.btn-close(type="button" aria-label="Close")
+                    button#settings_sidebar_close.btn-close(type="button" aria-label="Close")
                 .settings-sidebar-body
                   .form-check.form-switch
-                    label.form-check-label(for='agv_sidebar_setting_1') Activate Dark Mode
-                    input#agv_sidebar_setting_1.form-check-input.results-filter-checkbox(type='checkbox' checked='' aria-disabled='false')
+                    label.form-check-label(for='activate_dark_mode_setting_chk') Activate Dark Mode
+                    input#activate_dark_mode_setting_chk.form-check-input(type='checkbox' checked='' aria-disabled='false')
                   .form-check.form-switch
-                    label.form-check-label(for='agv_sidebar_setting_1') Default Base Map
-                    input#agv_sidebar_setting_1.form-check-input.results-filter-checkbox(type='checkbox' checked='' aria-disabled='false')
+                    label.form-check-label(for='hide_sidebars_setting_chk') Hide Sidebars on Map Pan
+                    input#hide_sidebars_setting_chk.form-check-input(type='checkbox' checked='' aria-disabled='false')
                   .form-check.form-switch
-                    label.form-check-label(for='agv_sidebar_setting_2') Hide Sidebars on Map Pan
-                    input#agv_sidebar_setting_2.form-check-input.results-filter-checkbox(type='checkbox' checked='' aria-disabled='false')
+                    label.form-check-label(for='agv_sidebar_setting_4') Pan Base Map
+                    input#agv_sidebar_setting_4.form-check-input.results-filter-checkbox(type='checkbox' checked='' aria-disabled='false')
+                  fieldset
+                    legend Base Map Tile Provider
+                    .form-check.form-check-inline
+                      label.form-check-label(for='inlineRadio1') OSM
+                      input#inlineRadio1.form-check-input.base-map-tile-radio(type='radio' name='baseMapTileRadio' value='osm' checked)
+                    .form-check.form-check-inline
+                      label.form-check-label(for='inlineRadio2') Google
+                      input#inlineRadio2.form-check-input.base-map-tile-radio(type='radio' name='baseMapTileRadio' value='google')
+                    .form-check.form-check-inline
+                      label.form-check-label(for='inlineRadio3') Bing
+                      input#inlineRadio3.form-check-input.base-map-tile-radio(type='radio' name='baseMapTileRadio' value='bing')
+                  fieldset
+                    legend Cluster Plots Map Tile Styles
+                    .form-check.form-check-inline
+                      label.form-check-label(for='cluster_plots_map_style_1') Outdoors V.11
+                      input#cluster_plots_map_style_1.form-check-input.cluster-plots-map-style-radio(type='radio' name='plotsMapStyleRadio' value='outdoors' checked)
+                    .form-check.form-check-inline
+                      label.form-check-label(for='cluster_plots_map_style_2') Lè Shine
+                      input#cluster_plots_map_style_2.form-check-input.cluster-plots-map-style-radio(type='radio' name='plotsMapStyleRadio' value='le-shine')
+                    .form-check.form-check-inline
+                      label.form-check-label(for='cluster_plots_map_style_3') Minimo
+                      input#cluster_plots_map_style_3.form-check-input.cluster-plots-map-style-radio(type='radio' name='plotsMapStyleRadio' value='minimo')
+                    .form-check.form-check-inline
+                      label.form-check-label(for='cluster_plots_map_style_4') Cali Terrain
+                      input#cluster_plots_map_style_4.form-check-input.cluster-plots-map-style-radio(type='radio' name='plotsMapStyleRadio' value='cali-terrain')
+                    .form-check.form-check-inline
+                      label.form-check-label(for='cluster_plots_map_style_5') Moonlight
+                      input#cluster_plots_map_style_5.form-check-input.cluster-plots-map-style-radio(type='radio' name='plotsMapStyleRadio' value='moonlight')
+                    .form-check.form-check-inline
+                      label.form-check-label(for='cluster_plots_map_style_6') Navigation Day
+                      input#cluster_plots_map_style_6.form-check-input.cluster-plots-map-style-radio(type='radio' name='plotsMapStyleRadio' value='nav-day')
+                  fieldset
+                    legend Map Distance Units
+                    .form-check.form-check-inline
+                      label.form-check-label(for='map_distance_units_radio_1') Kilometers
+                      input#map_distance_units_radio_1.form-check-input.map-distance-units-radio(type='radio' name='distUnitsRadio' value='km' checked)
+                    .form-check.form-check-inline
+                      label.form-check-label(for='map_distance_units_radio_2') Miles
+                      input#map_distance_units_radio_2.form-check-input.map-distance-units-radio(type='radio' name='distUnitsRadio' value='miles')
+                  fieldset
+                    legend Map Area Units
+                    .form-check.form-check-inline
+                      label.form-check-label(for='map_area_units_radio_1') Hectares
+                      input#map_area_units_radio_1.map-area-units-radio.form-check-input(type='radio' name='flexRadioDefault' value='ha.' checked)
+                    .form-check.form-check-inline
+                      label.form-check-label(for='map_area_units_radio_2') Acres
+                      input#map_area_units_radio_2.map-area-units-radio.form-check-input(type='radio' name='flexRadioDefault' value='ac.')
+                    .form-check.form-check-inline
+                      label.form-check-label(for='map_area_units_radio_3') SQ. KM
+                      input#map_area_units_radio_3.map-area-units-radio.form-check-input(type='radio' name='flexRadioDefault' value='sqkm')
+                    .form-check.form-check-inline
+                      label.form-check-label(for='map_area_units_radio_4') SQM
+                      input#map_area_units_radio_4.map-area-units-radio.form-check-input(type='radio' name='flexRadioDefault' value='sqm')
                 .settings-sidebar-footer
                   button#settings_default_reset.btn.btn-danger.btn-sm Reset to Defaults
 
+          #v_pills_manage_clusters_tab_content.tab-pane(role='tabpanel' aria-labelledby='v_pills_manage_clusters_tab_content') Cluster Management
           #v-pills-profile.tab-pane.fade(role='tabpanel' aria-labelledby='v-pills-profile-tab') Profile
           #v-pills-messages.tab-pane.fade(role='tabpanel' aria-labelledby='v-pills-messages-tab') Messages
           #v-pills-user.tab-pane.fade(role='tabpanel' aria-labelledby='v-pills-users-tab') User
           #v-pills-settings.tab-pane.fade(role='tabpanel' aria-labelledby='v-pills-settings-tab') Dashboard App Settings
 
           //- LOAD UI SCRIPT
-          script(src='/src/js/ui-controller.js' type='module')
+          script(src='/src/js/avg-controllers/ui-controller.js' type='module')
 
           //- script(type='text/javascript').
           //-   $(document).ready(function () {
-          //-     $('#sidebarCollapse').on('click', function () {
+          //-     $('#avg_settings_sidebar_toggle_btn').on('click', function () {
           //-       $('#agv_settings_sidebar').toggleClass('active');
           //-     });
           //-     $('#settings_sidebar_collapse').on('click', function () {

@@ -10,7 +10,7 @@
 @import url('./leaflet-custom.css');
 @import url('./material-design-ripple.css');
 @import url('./plot-owner-card.css');
-@import url('./utilities.css');
+@import url('./utility-classes.css');
 @import url('./_left-pane.css');
 @import url('./_middle-pane.css');
 @import url('./_header.css');
@@ -27,10 +27,10 @@
 	/* --app-grid-template-rows: 8vh 2fr; */
 	
 	/* COLORS */
-	--scrollbar-color: #009432;
+	--theme-color: #0D6EFD;
+	--theme-color: #009432;
 	--card-light-grey: #F9F9F9;
 	--bg-light-blue: #EEF3FA;
-	--light-grey-line: #dfe6e9;
 	--grey-line-50: #eee;
 	--grey-line-100: #dfe6e9;
 	--grey-line-200: lightgrey;
@@ -41,7 +41,7 @@
 	--pt7r-font: 0.7rem;
 	--pt8r-font: 0.8rem;
 	--tiny-text: 0.54rem;
-	--ux-ele-font: 0.8rem;
+	--fieldset-legend-font: 0.6rem;
 	--header-text-font-size: 11.5px;
 	--header-brand-font-size: 11.5px;
 	--pane-controls-font-size: 0.6rem;
@@ -80,13 +80,9 @@ body, html {
 	margin: auto;
 	width: 100%;
 	height: 100%;
-
 	font-family: Shadows Into Light Two;
-	/* font-size: 1rem; */
-	
+	font-size: 1rem;
 	line-height: 2.3;
-	/* letter-spacing: 0.1px; */
-
 	-webkit-box-sizing:border-box;
 	-moz-box-sizing:border-box;
 	box-sizing:border-box;
@@ -96,8 +92,75 @@ body, html {
 	text-rendering:optimizeLegibility;
 }
 
+::-webkit-scrollbar {
+   width: var(--scrollbar-width);
+   border-left: 0;
+   background: rgba(0, 0, 0, 0.2);
+   background-color: inherit;
+}
+
+/* ::-webkit-scrollbar-track {
+   background: none;
+} */
+
+::-webkit-scrollbar-thumb {
+   background: var(--scrollbar-color);
+   background: var(--theme-color);
+   /* background: #e84118 ; */
+   height: auto;
+   border-radius: 0;
+}
+
 a {
 	color: inherit !important;
+	cursor: pointer !important;
+   /* text-decoration: none !important; */
+}
+
+fieldset {
+	border: 1px solid var(--grey-line-200);
+}
+
+fieldset > legend {
+	margin: 0;
+	padding-left: 5px;
+	font-size: var(--fieldset-legend-font);
+}
+
+/* Step 1 – Hide the boxes */
+input[type=radio],
+input[type=checkbox] {
+	margin: 0;
+	/* display: none; */
+}
+
+/* TODO > MAKE THE CHECKBOXES ROUND */
+/* Step 2 – Stylize the before */
+.radio label:before {
+border-radius: 8px;
+}
+.checkbox label:before {
+border-radius: 3px;
+border-radius: 50%;
+
+}
+
+/* Step 3 – Stylize the after */
+input[type=radio]:checked {
+content: "\2022";
+color: #f3f3f3;
+font-size: 30px;
+text-align: center;
+line-height: 18px;
+}
+
+input[type=checkbox]:checked {
+content: "\2713";
+text-shadow: 1px 1px 1px rgba(0, 0, 0, .2);
+font-size: 15px;
+color: #f3f3f3;
+text-align: center;
+line-height: 15px;
 }
 
 
@@ -147,7 +210,7 @@ a {
 		background: #75cff0;
 	}
 	
-	#agv_base_map {
+	#avg_base_map {
 		position: absolute;
 		top: 0;
 		left: 0;
@@ -160,9 +223,10 @@ a {
 		height: 100%;
 	}
 
-	/* .user-action-container {
-		border-bottom: 1px solid var(--light-grey-line);
-	} */
+	.user-action-container {
+		/* box-shadow: 0 1px 2px rgb(0 0 0 / 15%); */
+		border-bottom: 1px solid var(--grey-line-50);
+	}
 	
 	.user-action-container > div {
 		color: green;
@@ -204,20 +268,23 @@ a {
 
 	.agv-settings-sidebar-container {
 		font-size: var(--header-text-font-size);
-
+		position: absolute;
+		top: 0px;
+		right: 0px;
 	}
 	
 	#agv_settings_sidebar {
-		height     : 100vh;
+		height     : 0;
 		min-width  : 250px;
 		max-width  : 250px;
 		display: grid;
 		grid-template-rows: var(--app-grid-template-rows);
 		/* border     : 1px solid slateblue; */
-		z-index    : var(--zmax);
+		z-index: var(--zmax);
 	}
 	
 	#agv_settings_sidebar.active {
+		height     : 100vh;
 		position: absolute;
 		top: 0px;
 		right: 0px;

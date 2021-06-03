@@ -1,16 +1,16 @@
+
 doctype html
 head
    meta(charset='UTF-8')
    meta(name='viewport' content='width=device-width, initial-scale=1.0')
 
-   //- title AGV Dashboard - Alpha | #{title}
    title #{title}
 
    //- jQuery CDN - Slim version (=without AJAX)
    script(src='https://code.jquery.com/jquery-3.3.1.slim.min.js' integrity='sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo' crossorigin='anonymous')
 
-   //- TURF JS
-   script(src='/src/plugins/turf.min.js')
+   //- MAPBOX OMNIVORE PLUGIN
+   script(src='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.2.0/leaflet-omnivore.min.js')
 
    //- FONT AWESOME
    link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA==" crossorigin="anonymous")
@@ -30,14 +30,12 @@ head
    //- MAIN STYLESHEET
    link(rel='stylesheet' href='/src/css/index.css')
 
-   //- MAP SCRIPTS FROM agv-dashboard.pug WILL APPEND HERE
+   //- { MAP } SCRIPTS FROM agv-dashboard.pug WILL APPEND HERE
    block agv-dashboard-head-map-scripts
 
 body
 
    block agv-dashboard
-
-   block agv-dash-left-sidebar
 
    //- //- jQuery CDN - Slim version (=without AJAX)
    //- script(src='https://code.jquery.com/jquery-3.3.1.slim.min.js' integrity='sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo' crossorigin='anonymous')
@@ -56,12 +54,8 @@ body
    script(src='https://cdn.jsdelivr.net/npm/uikit@3.6.21/dist/js/uikit-icons.min.js')
 
    //- SEMANTIC UI
-   script(src='https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js')
+   //- script(src='https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js')
 
    //- MAIN SCRIPTS
    script(src='/src/plugins/custom/material-design-ripple.js')
    script(src='/src/js/main.js' type='module')
-
-   //- //- LOAD DATA
-   script(src="../localdata/legacy-clusters.geojson") 
-   script(src="../localdata/parcelized-clusters.geojson")

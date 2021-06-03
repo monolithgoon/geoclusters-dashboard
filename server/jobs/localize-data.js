@@ -11,7 +11,7 @@ function reportFileStats(file) {
    console.log(chalk.success(`File saved was ${fileMBSize.toFixed(2)} MB`))
 }
 
-// SAVE RETURNED DB DATA TO DISK
+// SAVE RETURNED DB. DATA TO DISK
 function saveData(data, collectionName) {
    console.log(chalk.working(`SAVING DB. COLLECTION [ ${collectionName} ] TO LOCAL STORAGE ..`))
    const filePath = path.resolve(`${__approotdir}/localdata/${collectionName}.geojson`)
@@ -29,7 +29,8 @@ async function returnAllParcelizedClusters() {
       
       const axiosRequest = axios({
          method: 'get',
-         url: `http://127.0.0.1:9090/api/v1/parcelized-agcs/?fields=properties,features.properties,`,
+         // url: `http://127.0.0.1:9090/api/v1/parcelized-agcs/?fields=properties,features.properties,`,
+         url: `http://127.0.0.1:9090/api/v1/parcelized-agcs/`,
          crossDomain: true,
          responseType: 'application/json',
          headers: {
@@ -97,6 +98,8 @@ async function returnAllLegacyClusters() {
 };
 
 async function localizeData() {
+
+   console.log(chalk.working(`Dowloading DB. collections to local-storage...`))
 
    try {
       

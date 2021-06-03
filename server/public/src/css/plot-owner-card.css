@@ -9,30 +9,53 @@
 }
 
 .plot-owner-card {
-   display: grid;
-   grid-template-columns: auto 1fr;
-   grid-template-rows: auto 1fr;
-   font-family: 'Roboto', sans-serif;
-   font-weight: 300;
+   margin-bottom: var(--card-margin-outside);
+   /* background-color: #eef3fa; */
+   background-color: white;
    border: 1px solid rgba(25, 25, 26, 0.3);
-
-   /* box-shadow: 0 1px 2px 0 rgba(25, 25, 26, 0.3), 0 2px 6px 2px rgba(60,64,67,.15);
-   box-shadow: 1px 1px 2px rgba(74, 74, 74, 0.2); */
-   transition: padding 100ms cubic-bezier(0.4,0,0.2,1), margin 300ms cubic-bezier(0.4,0,0.2,1);
+   border-radius: 10px;
+   border-top-right-radius: 0;
+   border-bottom-right-radius: 0;
+   box-shadow: 0 2px 3px 0 rgb(50 50 50 / 11%);
+   cursor: pointer;
 }
+
+.plot-owner-card:first-of-type {
+   margin-top: var(--card-margin-outside);
+}
+
+/* TODO */
+/* .plot-owner-card:first-of-type .card-media-wrapper {
+   border-top-left-radius: 10px;
+   border-bottom-left-radius: 10px;
+   background-color: #FFD333;
+} */
+/* .plot-owner-card:first-of-type .main-card-text > span:first-of-type::after {
+   content: url('https://img.icons8.com/color/14/000000/star--v1.png');
+   content: url('https://img.icons8.com/material-outlined/16/000000/star--v2.png');
+   content: url('https://img.icons8.com/fluent/14/000000/star.png');
+} */
 
 .plot-owner-card:hover {
    background: var(--card-light-grey);
    box-shadow: 0 1px 2px 0 rgba(25, 25, 26, 0.3), 0 2px 6px 2px rgba(60,64,67,.15);
    box-shadow: 1px 1px 2px rgba(74, 74, 74, 0.2);
    border-image: linear-gradient( 270deg, #6E60F9 0%, #2F9FC5 100% ) 1;
+   border-radius: 4px;
+}
+
+.plot-owner-card .card-content-wrapper {
+   display: grid;
+   grid-template-columns: auto 1fr;
+   grid-template-rows: auto 1fr;
+   font-family: 'Roboto', sans-serif;
+   font-weight: 400;
 }
 
 .card-media-wrapper {
    padding: var(--card-padding-inside);
    display: grid;
    grid-template-rows: repeat(2, auto);
-   background-color: white;
 }
 
 .card-media-wrapper .plot-owner-avatar {
@@ -40,25 +63,27 @@
    flex-direction: column;
    align-items: center;
    justify-content: flex-start;
+   position: relative;
+}
+
+.plot-owner-avatar img:hover {
+   /* TODO */
+   /* content: "";
+   background-color: pink; */
+   opacity: 0.7;
 }
 
 .plot-owner-avatar > img,
 .plot-owner-avatar > a > img {
    border-radius: 50%;
-   width: 40px;
-   height: 40px;
+   width: 45px;
+   height: 45px;
    object-fit: cover;
    vertical-align: middle;
    font-size: 0.5rem;
 }
 
-.plot-owner-avatar img:hover {
-   content: "";
-   background-color: pink;
-   opacity: 0.7;
-}
-
-.plot-owner-card-text-wrapper {
+.card-text-wrapper {
    display: grid;
    grid-template-columns: 1fr;
    grid-template-rows: auto 1fr;
@@ -72,53 +97,45 @@
    line-height: 1.5;
 }
 
-.header-title-name {
+.main-card-text {
    display: flex;
    flex-direction: column;
 }
 
-.header-title-name > span:first-of-type {
+.main-card-text > span:first-of-type {
    padding-top: 5px;
    font-weight: 600;
-   font-size: var(--plot-owner-card-header-text)
+   font-size: var(--plot-owner-card-header-text);
 }
 
-.header-title-name > span:last-of-type {
-   font-size: var(--plot-owner-card-detail-text)
+.main-card-text > span:last-of-type {
+   font-size: var(--plot-owner-card-detail-text);
 }
 
-.header-title-allocation {
-   display: flex;
-   flex-direction: row;
-   justify-content: center;
-   align-items: center;
+.card-pills {
    /* color: white;
    background-color: #0D6EFD;
    background-color: #576574; */
-   
    display: grid;
    grid-template-columns: repeat(2, 1fr);
    grid-template-rows: 1rem 0.8fr;
 }
 
-.header-title-allocation > span {
+.card-pills > span {
    min-height: 1rem;
    padding: 0 5px;
-   /* border-bottom: 3px solid var(--grey-line-200); */
-   display: flex;
-   align-items: center;
    background-color: grey;
    color: white;
-   display: flex;
-   justify-content: center;
+   font-family: 'Fira Sans', sans-serif;
+   font-size: 10.5px;
 }
 
-.header-title-allocation > span:hover {
+.card-pills > span:hover {
    background-color: #0984e3;
    color: white;
 }
 
-.header-title-allocation > span:first-child {
+.card-pills > span:first-child {
    /* border-left: 1px solid var(--grey-line-200); */
    /* border-right: 1px dotted skyblue; */
    border-right: 1px dotted white;
@@ -126,38 +143,29 @@
 
 .card-text-bottom {
    margin-top: 5px;
-}
-
-.plot-owner-card-text-body {
    display: flex;
    justify-content: flex-end;
    flex-wrap: wrap;
 }
 
-.plot-owner-card-text-body > div {
+.card-text-bottom > div {
    border: 1px solid var(--grey-line-200);
    border-bottom: none;
    border-right: none;
    font-size: var(--plot-owner-card-detail-text);
    line-height: 2;
-   display: flex;
-   flex-direction: row;
-   align-items: center;
 }
 
-.plot-owner-card-text-body > div:hover {
+.card-text-bottom > div:hover {
    background-color: slateblue;
    color: white;
 }
 
-.plot-owner-card-text-body > div > span {
+.card-text-bottom > div > span {
    padding: 1px 3px 0 3px;
-   display: flex;
-   align-items: center;
-   justify-content: center;
 }
 
-.plot-owner-card-text-body > div > span:first-child {
+.card-text-bottom > div > span:first-child {
    border-right: 1px dotted var(--grey-line-200);
    background-color: 1px solid lightgrey;
 }

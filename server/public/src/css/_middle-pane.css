@@ -47,7 +47,7 @@ section.hidden-pane-container {
    padding: 0 5px;
 }
 
-fieldset {
+fieldset.filter-group-pills {
    margin-bottom: 5px;
    border: 1px solid var(--grey-line-200);
    display: flex;

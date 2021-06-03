@@ -20,7 +20,7 @@ async function startServer() {
 		process.exit(1);
 	});
 
-	await LOCALIZE_DATA();
+	// await LOCALIZE_DATA();
 }
 
 startServer();
