@@ -124,6 +124,7 @@ section.left-pane-container {
    border-radius: 50%;
    border: 1px solid white;
    z-index: var(--zmax);
+   display: none;
 }
 
 .result-item-modal {
