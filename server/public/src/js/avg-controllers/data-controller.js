@@ -1,27 +1,4 @@
-// RETREIVE DATA FROM BACKEND VIA HTML DATASET ATTRIBUTE IN [ 'agv-dashboard.pug' ]
-export function getDatastreamData(div, datasetName) {
-	try {
-		
-		const datastream = div.dataset[datasetName];
-		return datastream;
-
-	} catch (getDataStreamErr) {
-		console.error(`getDataStreamErr: ${getDataStreamErr}`);
-	};
-};
-
-// REMOVE
-// check status of data returned from API call
-function checkStatus(status) {
-	// try {
-		if (status === `fail`) { return null };
-		// if (status === `fail`) { throw new Error(`Request status check: request failed (404)`) };
-	// } catch (checkStatusErr) {
-	// 	console.error(`checkStatusErr: ${checkStatusErr.message}`);
-	// };
-};
-
-export async function queryAPI(apiHost, apiCollectionPath, {queryString=``}) {
+export async function _queryAPI(fetch, apiHost, apiCollectionPath, {queryString=``}) {
 
 	console.log(`%c ${this.currentTarget} is getting latest data from API`, `background-color: lightgrey; color: blue;`);
 
@@ -42,9 +19,10 @@ export async function queryAPI(apiHost, apiCollectionPath, {queryString=``}) {
 	}
 	catch (queryAPIErr) {
 		console.error(`queryAPIErr: ${queryAPIErr.message}`);
-		return [null];
+		return null;
 	};
 };
+
 
 // REMOVE > DEPRC.
 export async function APIHTTPRequest(queryString) {

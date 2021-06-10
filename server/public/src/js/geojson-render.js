@@ -1,6 +1,6 @@
 `use strict`
 import { LAYER_COLORS } from "./mapbox-layer-colors.js";
-import { _calcPolyArea, _getBufferedPolygon, _isValidFeatOrColl } from "./_utils.js";
+import { _calcPolyArea, _getBufferedPolygon, _CheckGeoJSON } from "./_utils.js";
 
 
 const getLayerColor = (index) => {
@@ -125,7 +125,7 @@ function removeMapboxMarkers (markersArray) {
 
 
 // IIFE TO KEEP TRACK OF RENDERED MAPBOX LAYERS
-const layersController = (function() {
+const LayersController = (function() {
    const renderedLayers = [];
    return {
       saveLayers: function(outlineLayer) {
@@ -152,7 +152,8 @@ const markersController = (function() {
 })();
 
 
-function mapboxPanToGeoJSON(map, centerCoords, bounds, {zoom=16, pitch=0, bearing=0, boundsPadding=0}) {
+// PAN MAP TO GEOJSON'S CENTER
+export function _mapboxPanToGeoJSON(map, centerCoords, bounds, {zoom=16, pitch=0, bearing=0, boundsPadding=0}) {
    // PAN TO LOCATION
    map.flyTo({
 		center: centerCoords,
@@ -166,58 +167,84 @@ function mapboxPanToGeoJSON(map, centerCoords, bounds, {zoom=16, pitch=0, bearin
 };
 
 
-// RENDER LABELS @ CENTER OF POLYGONS
-export function _mapboxDrawLabels(mapboxMap, polygon, {featureIdx, bufferAmt=0, bufferUnits="kilometers", areaUnits=`hectares`}) {
-
-   const plotIndex = featureIdx + 1;   
-   const plotArea = _calcPolyArea(polygon, {units: areaUnits});
-   const labelText = `${plotArea.toFixed(0)} ${areaUnits}`;
-   // const labelPosition = turf.centerOfMass(polygon);
-   const labelPosition = turf.centerOfMass(_getBufferedPolygon(polygon, bufferAmt, {bufferUnits: bufferUnits}));
-   
-   const labelLayer = getMapboxLabelLayer({labelIdx: plotIndex, labelText, labelPosition});
-
-   addMapboxLayer(mapboxMap, labelLayer);
-
-   layersController.saveLayers(labelLayer);
+// TODO > 
+const getPresentationPolygon = (polygon, {useBuffer=false}) => {
+   return userBuffer ? _getBufferedPolygon(polygon) : polygon;
 };
 
 
 // PLOT/CHUNK RENDER FUNCTION
-export function _mapboxDrawFeature(mapboxMap, polygon, {featureIdx, bufferAmt=0, bufferUnits=`kilometers`}) {
+export function _mapboxDrawFeature(mapboxMap, polygon, useBuffer, {featureIdx, bufferAmt=0, bufferUnits=`kilometers`}) {
 
-   const presentationPolygon = _getBufferedPolygon(polygon, bufferAmt, {bufferUnits});
+   try {
       
-   // GET THE CHUNK POLYGON LAYERS
-   let polygonOutlineLayer = getMapboxLayers(presentationPolygon, {featureIndex: featureIdx, color: null, thickness: 2, fillOpacity: 0.1}).outlineLayer;
-   let polygonFillLayer = getMapboxLayers(presentationPolygon, {featureIndex: featureIdx, color: null, thickness: 2, fillOpacity: 0.1}).fillLayer;
+      // const presentationPolygon = _getBufferedPolygon(polygon, bufferAmt, {bufferUnits});
+      // const presentationPolygon = getPresentationPolygon(polygon, {useBuffer})
+      const presentationPolygon = polygon;
+         
+      // GET THE CHUNK POLYGON LAYERS
+      let polygonOutlineLayer = getMapboxLayers(presentationPolygon, {featureIndex: featureIdx, color: null, thickness: 2, fillOpacity: 0.1}).outlineLayer;
+      let polygonFillLayer = getMapboxLayers(presentationPolygon, {featureIndex: featureIdx, color: null, thickness: 2, fillOpacity: 0.1}).fillLayer;
+      
+      // ADD THE LAYERS TO THE MAPBOX MAP
+      addMapboxLayer(mapboxMap, polygonOutlineLayer);
+      addMapboxLayer(mapboxMap, polygonFillLayer);
+      
+      // SAVE THE LAYERS
+      LayersController.saveLayers(polygonOutlineLayer);
+      LayersController.saveLayers(polygonFillLayer);
+
+      // SANDBOX
+      // console.log(LayersController.returnSavedLayers());
+      
+      // ADD CLICKABILITY TO THE FILL LAYER
+      // TODO
+      // POLYGON_FILL_BEHAVIOR(map, leaflet_map, polygonFillLayer);
+
+   } catch (mapboxDrawFeatErr) {
+      console.log(`mapboxDrawFeatErr: ${mapboxDrawFeatErr.message}`)
+   };
+};
+
+
+// RENDER LABELS @ CENTER OF POLYGONS
+export function _mapboxDrawLabels(mapboxMap, polygon, useBuffer, {featureIdx, bufferAmt=0, bufferUnits="kilometers", areaUnits=`hectares`}) {
+
+   try {
+
+      // const presentationPolygon = _getBufferedPolygon(polygon, bufferAmt, {bufferUnits});
+      // const presentationPolygon = getPresentationPolygon(polygon, {useBuffer})
+      const presentationPolygon = polygon;
+      
+      const plotIndex = featureIdx + 1;   
+      const plotArea = _calcPolyArea(polygon, {units: areaUnits});
+      const labelText = `${plotArea.toFixed(0)} ${areaUnits}`;
+      const labelPosition = turf.centerOfMass(presentationPolygon);
+      
+      const labelLayer = getMapboxLabelLayer({labelIdx: plotIndex, labelText, labelPosition});
    
-   // ADD THE LAYERS TO THE MAPBOX MAP
-   addMapboxLayer(mapboxMap, polygonOutlineLayer);
-   addMapboxLayer(mapboxMap, polygonFillLayer);
+      addMapboxLayer(mapboxMap, labelLayer);
    
-   // SAVE THE LAYERS
-   layersController.saveLayers(polygonOutlineLayer);
-   layersController.saveLayers(polygonFillLayer);
-   
-   // ADD CLICKABILITY TO THE FILL LAYER
-   // TODO
-   // POLYGON_FILL_BEHAVIOR(map, leaflet_map, polygonFillLayer)
-}
+      LayersController.saveLayers(labelLayer);
+
+   } catch (mapboxDrawLabelsErr) {
+      console.log(`mapboxDrawLabelsErr: ${mapboxDrawLabelsErr.message}`)
+   };
+};
 
 
 // SIMPLE MAPBOX GJ. RENDER FN.
-export const _mapboxRenderGeojson = function ({mapboxMap, featOrFeatColl}) {
+export const _mapboxDrawFeatFeatColl = function ({mapboxMap, featOrFeatColl}) {
 
    try {
 
       // RENDER ONLY FEATS. OR FEAT. COLLS.
-      if (mapboxMap && _isValidFeatOrColl(featOrFeatColl)) {
+      if (mapboxMap && _CheckGeoJSON.isValidFeatOrColl(featOrFeatColl)) {
    
          // CALC. SOME METADATA
          const gjUniqueID = featOrFeatColl._id;
          const gjCenterCoords = turf.coordAll(turf.centerOfMass(featOrFeatColl))[0];
-         const gjBounds = turf.bbox(featOrFeatColl);
+         // const gjBounds = turf.bbox(featOrFeatColl);
          
    
          // INIT. MAPBOX LAYERS
@@ -230,13 +257,13 @@ export const _mapboxRenderGeojson = function ({mapboxMap, featOrFeatColl}) {
    
          
          // CLEAR PREVIOUSLY RENDERED LAYERS
-         sanitizeMapboxLayers({map: mapboxMap, renderedLayers: layersController.returnSavedLayers()});
-         sanitizeMapboxLayers({map: mapboxMap, renderedLayers: layersController.returnSavedLayers()});
+         sanitizeMapboxLayers({map: mapboxMap, renderedLayers: LayersController.returnSavedLayers()});
+         sanitizeMapboxLayers({map: mapboxMap, renderedLayers: LayersController.returnSavedLayers()});
          removeMapboxMarkers(markersController.returnSavedMarkers());
       
             
-         // PAN MAP TO GEOJSON'S CENTER
-         mapboxPanToGeoJSON(mapboxMap, gjCenterCoords, gjBounds, {zoom: 16, pitch: 0, bearing: 0, boundsPadding: 20});
+         // // PAN MAP TO GEOJSON'S CENTER
+         // _mapboxPanToGeoJSON(mapboxMap, gjCenterCoords, gjBounds, {zoom: 16, pitch: 0, bearing: 0, boundsPadding: 20});
       
          
          // ADD LAYERS TO MAPBOX MAP
@@ -246,12 +273,15 @@ export const _mapboxRenderGeojson = function ({mapboxMap, featOrFeatColl}) {
          
          
          // SAVE THE LAYERS & MARKERS
-         layersController.saveLayers(gjOutlineLayer);
-         layersController.saveLayers(gjFillLayer);
+         LayersController.saveLayers(gjOutlineLayer);
+         LayersController.saveLayers(gjFillLayer);
          markersController.saveMarker(mapboxMarker);
 
-         // console.log(layersController.returnSavedLayers());
-      };   
+         // console.log(LayersController.returnSavedLayers());
+
+      } else {
+         throw new Error(`This function requires a GeoJSON Feature or FeatureCollection`)
+      }
       
    } catch (mapboxGJRenderErr) {
       console.error(`mapboxGJRenderErr: ${mapboxGJRenderErr.message}`)

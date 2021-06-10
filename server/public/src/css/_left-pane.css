@@ -220,19 +220,22 @@ section.left-pane-container {
 
 .result-item-body {
    font-size: 11.5px;
-   font-weight: 400;
 }
 
 .result-item-footer {
+   width: 100%;
    display: flex;
    flex-direction: row;
-   align-items: center;
+   justify-content: space-between;
+   align-items: flex-end;
 }
 
 .result-item-footer > span {
    padding-right: 2px;
-   color: rgba(136, 136, 136, 0.877);
    font-size: 10px;
+   /* font-weight: 400;
+   color: #333; */
+   /* color: rgba(136, 136, 136, 0.877); */
    font-weight: 400;
 }
 

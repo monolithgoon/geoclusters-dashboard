@@ -9,7 +9,7 @@
 @import url('./uikit-custom.css');
 @import url('./leaflet-custom.css');
 @import url('./material-design-ripple.css');
-@import url('./plot-owner-card.css');
+@import url('./_cluster-feature-card.css');
 @import url('./utility-classes.css');
 @import url('./_left-pane.css');
 @import url('./_middle-pane.css');
@@ -47,8 +47,8 @@
 	--pane-controls-font-size: 0.6rem;
 	--filter-group-font-size: 0.6rem;
 	--pill-font-size: 0.5rem;
-	--plot-owner-card-header-text: 0.7rem;
-	--plot-owner-card-detail-text: 0.54rem;
+	--cluster-feature-card-header-text: 0.7rem;
+	--cluster-feature-card-detail-text: 0.54rem;
 
 	/* Z-INDEXES */
 	--z-idx-2: 500;
@@ -271,6 +271,7 @@ line-height: 15px;
 		position: absolute;
 		top: 0px;
 		right: 0px;
+
 	}
 	
 	#agv_settings_sidebar {
@@ -281,6 +282,7 @@ line-height: 15px;
 		grid-template-rows: var(--app-grid-template-rows);
 		/* border     : 1px solid slateblue; */
 		z-index: var(--zmax);
+		overflow-y: hidden;
 	}
 	
 	#agv_settings_sidebar.active {
@@ -308,16 +310,55 @@ line-height: 15px;
 	.settings-sidebar-body {
 		padding: 15px;
 		background: #dfe4ea;
+		overflow-y: scroll;
 	}
 
 	.settings-sidebar-body .form-check input {
 		font-size: 0.8rem;
+	};
+
+	.settings-sidebar-body .range-input-wrapper {
+		width: 100%;
+	}
+	
+	.range-input-wrapper .range-input {
+		-webkit-appearance: none;  /* Override default CSS styles */
+		appearance: none;
+		width: 100%; /* Full-width */
+		height: 8px; /* Specified height */
+		background: lightslategray; /* Grey background */
+		outline: none; /* Remove outline */
+		opacity: 0.6; /* Set transparency (for mouse-over effects on hover) */
+		-webkit-transition: .2s; /* 0.2 seconds transition on hover */
+		transition: opacity .2s;
+	}
+
+	/* Mouse-over effects */
+	.range-input:hover {
+		opacity: 1; /* Fully shown on mouse-over */
+	}
+
+	/* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
+	.range-input::-webkit-slider-thumb {
+		-webkit-appearance: none; /* Override default look */
+		appearance: none;
+		width: 10px; /* Set a specific slider handle width */
+		height: 10px; /* Slider handle height */
+		background: orange; /* Green background */
+		cursor: pointer; /* Cursor on hover */
+	}
+
+	.range-input::-moz-range-thumb {
+		width: 10px; /* Set a specific slider handle width */
+		height: 10px; /* Slider handle height */
+		background: #04AA6D; /* Green background */
+		cursor: pointer; /* Cursor on hover */
 	}
 
 	#settings_default_reset.btn {
 		width: 100%; height: 100%;
 		border-radius: 0;
-	}
+	};
 }
 
 @font-face {

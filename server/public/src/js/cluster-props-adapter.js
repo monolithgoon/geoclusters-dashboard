@@ -1,7 +1,6 @@
 `use strict`;
-const mandatory = () => {
-	throw new Error(`Parameter is required.`);
-};
+import { _CheckGeoJSON, _mandatoryParam, _TraverseObject} from "./_utils.js";
+
 
 // REMOVE > DEPRC.
 const traverseObject = (...args) => {
@@ -32,133 +31,115 @@ const traverseObject = (...args) => {
 	}
 };
 
-// TRAVERSE AN OBJECT WITH AN ARRAY OF OBJ. PROPS.
-const TraverseObject = (() => {
 
-	let finalValue;
+// PIPELINE FN.
+function evaluateObjProps (baseProp, ...otherProps) {
+	_TraverseObject.evaluateValue(baseProp, ...otherProps);
+	if (_TraverseObject.getFinalValue()) return _TraverseObject.getFinalValue();
+	else return null;
+};
 
-	return {
 
-		evaluateValue: function thisFunction(...args) {
-			// console.log(thisFunction)
-
-			const keys = [...args];
-
-			try {
-
-				let tempValue = keys[0];
-
-				for (let idx = 0; idx < keys.length - 1; idx++) {
-					tempValue = tempValue[keys[idx + 1]];
-               // console.log({tempValue});
-				};
-
-				finalValue = tempValue;
-            // console.log({finalValue});
-            
-            // IMPORTANT > RETURN THIS TO INDICATE THAT THIS EVALUATED TO VALUE OR UNDEF.
-            return finalValue;
-            
-			} catch (evaluateValueErr) {
-            console.log(`%c evaluateValueErr: ${evaluateValueErr.message}`,"background-color: orange; color: black;");
-            return null;
-			};
-		},
-
-		getFinalValue: function() {
-                  
-			return finalValue;
-		},
-	};
-})();
-
-// TODO > IMPLETEMENT "CLUSTER" CLASS HERE
-
-export function _getClusterFeatureProps(clusterFeature = mandatory()) {
-	const props = clusterFeature.properties;
-	const featureID = TraverseObject.evaluateValue(props, "chunk_id")
-		? TraverseObject.getFinalValue()
-		: TraverseObject.evaluateValue(props, "plot_id")
-		? TraverseObject.getFinalValue()
-		: null;
-	const plotOwnerID = TraverseObject.evaluateValue(props, "plot_owner_bvn") // REMOVE
-		? TraverseObject.getFinalValue()
-		: TraverseObject.evaluateValue(props, "owner_id")
-		? TraverseObject.getFinalValue()
-		: null;
-	return {
-		featureID,
-		plotOwnerID,
-	}
-}
-
-export function _getClusterProps(clusterFeatureCollection = mandatory()) {
-
+export const _GetClusterProps = (clusterFeatureCollection = _mandatoryParam()) => {
+	
 	try {
+		
+		// FIXME > REMOVE TO OUTSIDE CONTEXT
+		if (!_CheckGeoJSON.isValidFeatColl(clusterFeatureCollection)) {
+			throw new Error(`The supplied GeoJSON is not a valid FeatureCollection`);
+		};
+      
+		// FIXME > REMOVE TO OUTSIDE CONTEXT
+		if (!_CheckGeoJSON.hasItirableFeats(clusterFeatureCollection.features)) {
+			throw new Error(`The supplied FeatureCollection does not have itirable Features`);
+		};
       
 		const props = clusterFeatureCollection.properties;
 
-		const clusterID = TraverseObject.evaluateValue(props, "geo_cluster_id")
-			? TraverseObject.getFinalValue()
-			: TraverseObject.evaluateValue(props, "agc_id")
-			? TraverseObject.getFinalValue()
+		const clusterID = _TraverseObject.evaluateValue(props, "geo_cluster_id")
+			? _TraverseObject.getFinalValue()
+			: _TraverseObject.evaluateValue(props, "agc_id")
+			? _TraverseObject.getFinalValue()
 			: null;
       
-		const clusterName = TraverseObject.evaluateValue(props, "geo_cluster_name")
-			? TraverseObject.getFinalValue()
-			: TraverseObject.evaluateValue(props, "agc_extended_name")
-			? TraverseObject.getFinalValue()
+		let clusterName = _TraverseObject.evaluateValue(props, "geo_cluster_name")
+			? _TraverseObject.getFinalValue()
+			: _TraverseObject.evaluateValue(props, "agc_extended_name")
+			? _TraverseObject.getFinalValue()
 			: null;
-      
-		const clusterCreated = props.db_insert_timestamp || null;
-		const clusterFeatsNum = clusterFeatureCollection.features.length;
+		// TODO
+		// clusterName = _removeUnderscores(clusterName);
+		// clusterName = _includeHyphens(clusterNam);
+		// clusterName = _camelize(clusterName);
+		// clusterName = _capitalizeWords(clusterName, 'pmro', 'agc');
 
-		const clusterArea = TraverseObject.evaluateValue(
+		const clusterFeatsNum = clusterFeatureCollection.features.length;
+      
+		const clusterCreated = evaluateObjProps(props, 'cluster_created_timestamp') || 
+									evaluateObjProps(props, 'db_insert_timestamp') || 
+									null;
+
+		const clusterArea = _TraverseObject.evaluateValue(
 			props,
 			"geo_cluster_details",
 			"delineated_area"
 		)
-			? TraverseObject.getFinalValue()
-			: TraverseObject.evaluateValue(props, "agc_area")
-			? TraverseObject.getFinalValue()
+			? _TraverseObject.getFinalValue()
+			: _TraverseObject.evaluateValue(props, "agc_area")
+			? _TraverseObject.getFinalValue()
 			: null;
 
-		const clusterUsedArea = TraverseObject.evaluateValue(
+		const clusterUsedArea = _TraverseObject.evaluateValue(
 			props,
 			"geo_cluster_details",
 			"total_allocations_area"
 		)
-			? TraverseObject.getFinalValue()
-			: TraverseObject.evaluateValue(props, "total_allocation")
-			? TraverseObject.getFinalValue()
+			? _TraverseObject.getFinalValue()
+			: _TraverseObject.evaluateValue(props, "total_allocation")
+			? _TraverseObject.getFinalValue()
 			: null;
 
-		const clusterUnusedArea = props.unused_land_area;
-		const clusterCenterFeat = props.agc_center_coords;
-
-		const clusterAdminLvl1 = TraverseObject.evaluateValue(props, "geo_cluster_details", "country")
-      ? TraverseObject.getFinalValue()
-      : null;
-
-		const clusterAdminLvl2 = TraverseObject.evaluateValue(props, "geo_cluster_details", "lga")
-      ? TraverseObject.getFinalValue()
-      : null;
-
-		const clusterAdminLvl3 = TraverseObject.evaluateValue(props, "geo_cluster_details", "ward")
-      ? TraverseObject.getFinalValue()
-      : null;
-
-		const clusterRenderHash = TraverseObject.evaluateValue(props, "preview_map_url_hash")
-			? TraverseObject.getFinalValue()
+		const clusterUnusedArea = _TraverseObject.evaluateValue(props, 'unused_land_area')
+			? _TraverseObject.getFinalValue()
+			: null;
+			
+		const clusterCenterFeat = _TraverseObject.evaluateValue(props, 'agc_center_coords')
+			? _TraverseObject.getFinalValue()
 			: null;
 
-		const subdivideMetadata = TraverseObject.evaluateValue(props, "parcelization_metadata")
-			? TraverseObject.getFinalValue()
+		const clusterAdminLvl1 = _TraverseObject.evaluateValue(props, "geo_cluster_details", "country")
+			? _TraverseObject.getFinalValue()
 			: null;
 
-		const primaryCommodity = TraverseObject.evaluateValue(props, "geo_cluster_details", "primary_crop")
-			? TraverseObject.getFinalValue()
+		const clusterAdminLvl2 = _TraverseObject.evaluateValue(props, "geo_cluster_details", "lga")
+			? _TraverseObject.getFinalValue()
 			: null;
+
+		const clusterAdminLvl3 = _TraverseObject.evaluateValue(props, "geo_cluster_details", "ward")
+			? _TraverseObject.getFinalValue()
+			: null;
+
+		const clusterRenderHash = _TraverseObject.evaluateValue(props, "preview_map_url_hash")
+			? _TraverseObject.getFinalValue()
+			: null;
+
+		const subdivideMetadata = _TraverseObject.evaluateValue(props, "parcelization_metadata")
+			? _TraverseObject.getFinalValue()
+			: null;
+
+		const primaryCommodity = evaluateObjProps(props, 'geo_cluster_details', 'primary_crop');
+
+		const clusterGovAdmin1 = Object.freeze({
+			adminTitle1: evaluateObjProps(props, 'geo_cluster_governance_structure', 'president', 'first_name'),
+			adminTitle2: evaluateObjProps(props, 'geo_cluster_governance_structure', 'president', 'middle_name'),
+			adminTitle3: evaluateObjProps(props, 'geo_cluster_governance_structure', 'president', 'last_name'),
+		});
+
+		const clusterGovAdmin2 = Object.freeze({
+			adminTitle1: evaluateObjProps(props, 'geo_cluster_governance_structure', 'vice_president', 'first_name'),
+			adminTitle2: evaluateObjProps(props, 'geo_cluster_governance_structure', 'vice_president', 'middle_name'),
+			adminTitle3: evaluateObjProps(props, 'geo_cluster_governance_structure', 'vice_president', 'last_name'),
+		});
 
 		return {
 			clusterID,
@@ -175,33 +156,68 @@ export function _getClusterProps(clusterFeatureCollection = mandatory()) {
 			clusterRenderHash,
          subdivideMetadata,
          primaryCommodity,
-
-			// clusterGov: {
-			//    president: {
-			//       fistName,
-			//       middleName,
-			//       lastName,
-			//    }
-			// },
-			
-			// clusterFeatures: {
-			//    featIndex,
-			//    featArea,
-			//    featCenterFeat,
-			//    featCenterLat,
-			//    featCenerLng,
-			//    featOwnerID,
-			//    featOwnerName: {
-			//       firstName,
-			//       middleName,
-			//       lastName,
-			//    },
-			//    featOwnerPhotoBase64,
-			//    featOwnerPhotoURL,
-			//    featRenderHash,
-			// },
+			clusterGovAdmin1,
+			clusterGovAdmin2,
+			// firstVisit,
+			// lastVisit,
+			// firstFunded,
+			// lastFunded,
+			// hasIrrigation,
+			// hasPowr,
+			// hasProcessing,		
 		};
-	} catch (gjInterfaceErr) {
-		console.error(`gjInterfaceErr: ${gjInterfaceErr.message}`);
-	}
-}
+
+	} catch (getClusterProps) {
+		console.error(`getClusterProps: ${getClusterProps.message}`);
+	};
+};
+
+
+export function _GetClusterFeatProps(featIdx= _mandatoryParam(), clusterFeature = _mandatoryParam()) {
+	try {
+		      
+		const props = clusterFeature.properties;
+		const featureID = _TraverseObject.evaluateValue(props, "chunk_id")
+			? _TraverseObject.getFinalValue()
+			: _TraverseObject.evaluateValue(props, "plot_id")
+			? _TraverseObject.getFinalValue()
+			: null;
+		const featureAdmin1ID = _TraverseObject.evaluateValue(props, "plot_owner_bvn") // REMOVE
+			? _TraverseObject.getFinalValue()
+			: _TraverseObject.evaluateValue(props, "owner_id")
+			? _TraverseObject.getFinalValue()
+			: null;
+		const featureIndex = featIdx + 1;
+		const featureAdmin1 = Object.freeze({
+			adminTitle1: evaluateObjProps(props, 'owner_name'),
+			// TODO > PROPERLY DEFINE FEATURE ADMIN. MODEL
+			// adminTitle1: evaluateObjProps(props, 'owner_name') || evaluateObjProps(props, 'feature_owner_name'),
+			// adminTitle2: evaluateObjProps(props, 'geo_cluster_governance_structure', 'vice_president', 'middle_name'),
+			// adminTitle3: evaluateObjProps(props, 'geo_cluster_governance_structure', 'vice_president', 'last_name'),
+		});
+		const featureArea = evaluateObjProps(props, 'chunk_size');
+		
+		return {
+			featureID,
+			featureAdmin1ID,
+		   featureIndex,
+			featureAdmin1,
+		   featureArea,
+		   // featCenterFeat,
+		   // featCenterLat,
+		   // featCenerLng,
+		   // featOwnerID,
+		   // featOwnerName: {
+		   //    firstName,
+		   //    middleName,
+		   //    lastName,
+		   // },
+		   // featOwnerPhotoBase64,
+		   // featOwnerPhotoURL,
+		   // featRenderHash,
+	};
+
+	} catch (getClusterFeatPropsErr) {
+		console.error(`getClusterFeatPropsErr: ${getClusterFeatPropsErr.message}`);
+	};
+};

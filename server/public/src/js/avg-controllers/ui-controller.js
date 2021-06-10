@@ -1,10 +1,13 @@
 'use strict'
-import { getDatastreamData, APIHTTPRequest, queryAPI } from "./data-controller.js";
-import { _mapboxRenderGeojson, _mapboxDrawFeature, _leafletRenderGeojson, _mapboxDrawLabels } from "../geojson-render.js";
+import { _queryAPI } from "./data-controller.js";
+import { _mapboxPanToGeoJSON, _mapboxDrawFeatFeatColl, _mapboxDrawFeature, _leafletRenderGeojson, _mapboxDrawLabels } from "../geojson-render.js";
+import { _getDataset, _joinWordsArray, _createDiv, _TraverseObject, _getCheckedRadio } from "../_utils.js";
+import { _sanitizeFeatCollCoords, _populateDataset, _replaceDataset, _CheckGeoJSON, _getBufferedPolygon } from "../_utils.js";
 import { AVG_BASE_MAP, CLUSTER_PLOTS_MAP } from "./maps-controller.js";
-import { _getCheckedRadio, _calcPolyArea } from "../_utils.js";
 import { APP_STATE } from "./state-controller.js";
-import { _getClusterProps, _getClusterFeatureProps } from "../cluster-props-adapter.js";
+import { _GetClusterFeatProps, _GetClusterProps } from "../cluster-props-adapter.js";
+import { _ClusterFeatMarkupGenerator, _ClusterMarkupGenerator } from "./markup-generator.js";
+
 
 function getDOMElements () {
 
@@ -22,17 +25,19 @@ function getDOMElements () {
    const plotsMapStyleRadios = document.querySelectorAll(`.cluster-plots-map-style-radio`);
    const distanceUnitsRadios = document.querySelectorAll(`.map-distance-units-radio`);
    const areaUnitsRadios = document.querySelectorAll(`.map-area-units-radio`);
+   const clusterMapZoomRange = document.getElementById("cluster_map_zoom");
    
-   const datastreamDiv = document.getElementById('api_data_stream');
-   const apiTriggerBtn = document.getElementById('results_scroll_top_button');
    
    const resultsCountDiv = document.getElementById('results_count');
    const resultsStatus = document.getElementById('results_status');
 
-   const resultModal = document.getElementById(`result_item_modal`);
+   const resultModalDiv = document.getElementById(`result_item_modal`);
    const resultModalCloseBtn = document.getElementById(`result_item_modal_close_btn`);
+   const resultsListWrapper = document.getElementById(`results_list_wrapper`);
    const resultItemDivs = document.querySelectorAll(`.result-item`);
    const resultTitleDivs = document.querySelectorAll(`.result-item-title`);
+
+   const clusterFeatsListDiv = document.getElementById(`cluster_feats_list_body`);
 
    return {
       appSidebar,
@@ -44,16 +49,18 @@ function getDOMElements () {
       baseMapRadios,
       distanceUnitsRadios,
       areaUnitsRadios,
-      datastreamDiv,
+      clusterMapZoomRange,
       resultsCountDiv,
       resultsStatus,
+      resultModalDiv,
+      resultModalCloseBtn,
+      resultsListWrapper,      
       resultItemDivs,
       resultTitleDivs,
-      resultModal,
-      resultModalCloseBtn,
-      apiTriggerBtn,
+      clusterFeatsListDiv,
    };
-}
+};
+
 
 function getFilterCheckboxes() {
 
@@ -66,6 +73,7 @@ function getFilterCheckboxes() {
    };
 };
 
+
 function getResultCheckboxes() {
    const masterResultCheckbox = document.getElementById(`select_all_results_chk`);
    const resultItemCheckboxes = document.querySelectorAll(`.result-item-checkbox[type=checkbox]`);
@@ -75,13 +83,12 @@ function getResultCheckboxes() {
    }
 };
 
+
 function getAreaUnitsRadios() {
    const areaUnitsRadios = document.querySelectorAll(`.map-area-units-radio`);
-   for (const radio of areaUnitsRadios) {
-      if (radio.checked) { APP_STATE.saveDefaultAreaUnitRadio(radio) };
-   };
    return areaUnitsRadios;
 };
+
 
 // TODO > GET SETTINGS INPUTS
 // TODO > SAVE TO APP_STATE IF INPUTS ABOVE CHANGE
@@ -94,8 +101,9 @@ function getAppSettingsInputs() {
    };
 };
 
+
 // GET SETTINGS VALUES
-function pollAppSettingsValues() {
+function pollAVGSettingsValues() {
 
    try {
             
@@ -110,6 +118,10 @@ function pollAppSettingsValues() {
          plotsMapStyleKey,
          distanceUnits,
          areaUnits,
+
+         clusterMap: {
+            zoomValue: (getDOMElements().clusterMapZoomRange).value,
+         }
       };
       
    } catch (pollAppSettingsErr) {
@@ -117,23 +129,27 @@ function pollAppSettingsValues() {
    };
 };
 
+
 // TODO > MOVE TO _utils.js
 function togleBlockElement(element) {
    console.log(element.style.display);
    if (element.style.display !== `block`) { element.style.display = `block`}
    else if (element.style.display === `block`) { element.style.display = `none`}
    else if (element.style.display === `none`) { element.style.display = `block`}
-}
+};
+
 
 // TODO > MOVE TO _utils.js
 function blockElement(element) {
    element.style.display = `block`;
 };
 
+
 // TODO > MOVE TO _utils.js
 function hideElement(element) {
    element.style.display = `none`;
 };
+
 
 // TODO > MOVE TO _utils.js
 function toggleClassList(element, styleClass) {
@@ -142,12 +158,14 @@ function toggleClassList(element, styleClass) {
    };
 };
 
+
 // TODO > MOVE TO _utils.js
 function removeClass(element, styleClass) {
    if (element && element.nodeType === 1 ) {
       element.classList.remove(styleClass);
    };
 };
+
 
 // TODO > MOVE TO _utils.js
 function getSiblingElements(element) {
@@ -185,6 +203,7 @@ function getSiblingElements(element) {
    return siblingElements;
 };
 
+
 // TODO > MOVE TO _utils.js
 function getAdjacentInputs(inputElement) {
    
@@ -199,12 +218,13 @@ function getAdjacentInputs(inputElement) {
       for (const input of inputs) {
          if (input !== inputElement) {
             adjacentInputs.push(input)
-         }
-      }
-   }
+         };
+      };
+   };
 
    return adjacentInputs;  
 };
+
 
 // TODO > MOVE TO _utils.js
 function getParentElement(element, {parentLevel=1}) {
@@ -214,11 +234,12 @@ function getParentElement(element, {parentLevel=1}) {
          parent = element.parentElement;
          element = parent;
       } {
-      }
+      };
       return parent;
       return null;
    }
 };
+
 
 // TODO > MOVE TO _utils.js
 // FIXME > ENDLESS WHILE LOOP
@@ -232,7 +253,7 @@ function getNestedSiblings(resultDiv, numParents, nestPosition) {
    while(numParents > 0) {
       parentDiv = resultDiv.parentNode;
       numParents = numParents - 1;
-   }
+   };
    
    // get first sibling of parent (ie., self)
    let nestedSibling = parentDiv.childNodes[nestPosition-1];
@@ -251,34 +272,71 @@ function getNestedSiblings(resultDiv, numParents, nestPosition) {
    return siblingResults;
 };
 
+
 // SEQ. THAT HAPPENS TO RENDER GEOJSON ON BOTH MAPS
 const RenderMaps = (function() {
 
-   const drawFeatureColl = (geojson) => {
-      _mapboxRenderGeojson({mapboxMap: CLUSTER_PLOTS_MAP, featOrFeatColl: geojson});
-   };
-   const drawFeature = (geojson) => {
-      geojson.features.forEach((clusterPlot,idx)=>{
-         _mapboxDrawFeature(CLUSTER_PLOTS_MAP, clusterPlot, {featureIdx: idx, bufferAmt: APP_STATE.CONFIG_DEFAULTS.RENDERED_PLOT_BUFFER, bufferUnits: pollAppSettingsValues().distanceUnits});
-      });
-   };
-   const drawFeatureLabels = (geojson) => {
-      geojson.features.forEach((clusterPlot,idx)=>{
-         _mapboxDrawLabels(CLUSTER_PLOTS_MAP, clusterPlot, {featureIdx: idx, bufferAmt: APP_STATE.CONFIG_DEFAULTS.RENDERED_PLOT_BUFFER, areaUnits: pollAppSettingsValues().areaUnits});
-      });
-   };
-   const panBaseMap__ = (geojson) => {
-      _leafletRenderGeojson(AVG_BASE_MAP, geojson, {zoomLevel: APP_STATE.CONFIG_DEFAULTS.LEAFLET_ADMIN_LEVEL_3_ZOOM})
-   };
-
    try {
+
+      console.log(pollAVGSettingsValues());
+
+      // pan map to entire cluster
+      const panToClusterGeoJSON = (geoJSON) => {
+         const gjCenterCoords = turf.coordAll(turf.centerOfMass(geoJSON))[0];
+         const gjBounds = turf.bbox(geoJSON);
+         _mapboxPanToGeoJSON(CLUSTER_PLOTS_MAP, gjCenterCoords, gjBounds, {zoom:16, pitch:0, bearing:0, boundsPadding:0});
+      };
+      
+      // pan to a single cluster feat.
+      const panToClusterFeat = (geoJSONFeat) => {
+
+         try {
+            
+            console.log(geoJSONFeat)
+                        
+            const gjCenterCoords = turf.coordAll(turf.centerOfMass(geoJSONFeat))[0];
+            const gjBounds = turf.bbox(geoJSONFeat);
+            // FIXME > ZOOM VALUE OVER-RIDDEN BY BOUNDS
+            _mapboxPanToGeoJSON(CLUSTER_PLOTS_MAP, gjCenterCoords, gjBounds, {zoom:pollAVGSettingsValues().clusterMap.zoomValue, pitch:0, bearing:0, boundsPadding:0});
+            
+         } catch (panClusterMapErr) {
+            console.error(`panClusterMapErr: ${panClusterMapErr.message}`);
+         };
+      };
+
+      const drawFeatureColl = (geojson) => {
+         _mapboxDrawFeatFeatColl({mapboxMap: CLUSTER_PLOTS_MAP, featOrFeatColl: geojson});
+      };
+
+      const drawFeatures = (geojson, useBuffer) => {
+         geojson.features.forEach((clusterPlot,idx)=>{
+            _mapboxDrawFeature(CLUSTER_PLOTS_MAP, clusterPlot, useBuffer, {featureIdx: idx, bufferAmt: APP_STATE.CONFIG_DEFAULTS.RENDERED_PLOT_BUFFER, bufferUnits: pollAVGSettingsValues().distanceUnits});
+         });
+      };
+
+      const drawFeatureLabels = (geojson, useBuffer) => {
+         geojson.features.forEach((clusterPlot,idx)=>{
+            _mapboxDrawLabels(CLUSTER_PLOTS_MAP, clusterPlot, useBuffer, {featureIdx: idx, bufferAmt: APP_STATE.CONFIG_DEFAULTS.RENDERED_PLOT_BUFFER, areaUnits: pollAVGSettingsValues().areaUnits});
+         });
+      };
+      
+      const panBaseMap__ = (geojson) => {
+         _leafletRenderGeojson(AVG_BASE_MAP, geojson, {zoomLevel: APP_STATE.CONFIG_DEFAULTS.LEAFLET_ADMIN_LEVEL_3_ZOOM})
+      };
       
       return {
-         renderClusterPlotsMap: (geojson) => {
+         // TODO > CHANGE "geojson" TO "featureCollection"
+         panClusterPlotsMap: (geojson) => {
+            panToClusterGeoJSON(geojson);
+         },
+         panClusterPlotsFeatMap: (geoJSONFeat) => {
+            panToClusterFeat(geoJSONFeat);
+         },
+         renderCluster: (geojson) => {
             drawFeatureColl(geojson);
          },
-         renderClusterPlot: (geojson) => {
-            drawFeature(geojson);
+         renderClusterPlots: (geojson) => {
+            drawFeatures(geojson);
          },
          renderClusterPlotLabel: (geojson) => {
             drawFeatureLabels(geojson);
@@ -286,13 +344,17 @@ const RenderMaps = (function() {
          renderBaseMap: (geojson) => {
             panBaseMap__(geojson);
          },
-         renderEverythingNow: (geojson) => {
+         renderEverythingNow: (geojson, {useBuffer=false}) => {
+            
             const previousRenderedGJ = APP_STATE.retreiveLastRenderedGJ();
             console.log({previousRenderedGJ});
+
+            panToClusterGeoJSON(geojson);
             drawFeatureColl(geojson);
-            drawFeature(geojson);
-            drawFeatureLabels(geojson);
+            drawFeatures(geojson, useBuffer);
+            drawFeatureLabels(geojson, useBuffer);
             panBaseMap__(geojson);
+
             APP_STATE.saveRenderedGeojson(geojson);
          },
       };
@@ -303,8 +365,9 @@ const RenderMaps = (function() {
    
 })();
 
+
 // RESULT TITLE MAIN PARENT SEQ.
-function clickedResultWrapperSeq(resultItemDiv, otherResultItems) {
+function clickedResultContainerSeq(resultItemDiv, otherResultItems) {
    
    // scroll the result into view
    resultItemDiv.scrollIntoView({
@@ -324,6 +387,7 @@ function clickedResultWrapperSeq(resultItemDiv, otherResultItems) {
    // set clicked result to active
    toggleClassList(resultItemDiv, `is-active`);
 };
+
 
 // MASTER-SLAVE CHECKBOX BEHAVIOR
 function masterSlaveControl(master, slaves) {
@@ -354,6 +418,7 @@ function masterSlaveControl(master, slaves) {
    // toggle master to "on" if ALL slaves are "on"
 };
 
+
 // ACTIVATE THE DIV THAT DISPLAYS APP ACTIVITY
 function toggleActivityIndicator(indDivWrapper, indDiv) {
    indDivWrapper.classList.toggle(`reveal`);
@@ -362,6 +427,7 @@ function toggleActivityIndicator(indDivWrapper, indDiv) {
    indDiv.classList.toggle(`text-light`);
    indDiv.classList.toggle(`spinner-grow-sm`);
 };
+
 
 // CALC. TIME TO EXE. A FN. && DISPLAY INDICATOR
 const MonitorExecution = (function() {
@@ -398,60 +464,284 @@ const MonitorExecution = (function() {
 	};
 })();
 
+
+// TODO > PUT AFTER LINE 590
+function buildResultModal() {
+
+};
+// open modal for clicked result
+function activateResultModal(modalDiv, featureCollection) {
+
+   modalDiv.innerHTML = ``;
+   console.log(modalDiv.innerHTML)
+
+   const clusterProps = _GetClusterProps(featureCollection);
+
+   modalDiv.innerHTML += generateModalMarkup(clusterProps);
+
+   blockElement(modalDiv);
+
+   // MODAL CLOSE BTN.
+   getDOMElements().resultModalCloseBtn.addEventListener(`click`, () => {
+      hideElement(getDOMElements().resultModalDiv);
+   });
+
+   // TODO > MODAL TITLE CLICK EVENT HANDLER
+
+   // TODO > MODAL AVATAR CLICK EVENT HANDLER
+};
+
+
+// FIXME > THIS SHOULD FIRE ON FILTER INPUT CHANGES????
+async function appendClusterFeatsList(listDiv, clusterFeatDiv) {
+   try {
+      listDiv.appendChild(clusterFeatDiv);
+   } catch (appendFeatsListErr) {
+      console.error(`appendFeatsListErr: ${appendFeatsListErr}`)
+   };
+};
+
+
+async function populateClusterFeatsSidebar(clusterFeatColl) {
+   
+   try {
+
+      if (clusterFeatColl) {
+
+         // 1.
+         // SANITIZE COORDS.
+         clusterFeatColl = _sanitizeFeatCollCoords(clusterFeatColl);
+
+         // get the features
+         const clusterFeatures = clusterFeatColl.features;
+
+         // remove prev. rendered feats.
+         const featsListDiv = getDOMElements().clusterFeatsListDiv
+         featsListDiv.innerHTML = ``
+         
+         // 2.
+         for (let idx = 0; idx < clusterFeatures.length; idx++) {
+
+            let clusterFeature = clusterFeatures[idx];
+            
+            // _CheckGeoJSON.isValidFeat(clusterFeature+1); // TODO <
+
+            const clusterFeatDiv = await _ClusterFeatMarkupGenerator.getClusterFeatDiv(_GetClusterFeatProps(idx, clusterFeature))
+            
+            _populateDataset(clusterFeatDiv, `clusterfeatdatastream`, JSON.stringify(clusterFeature));
+
+            appendClusterFeatsList(featsListDiv, clusterFeatDiv);
+         };
+      };
+      
+   } catch (clusterFeatsSidebarErr) {
+      console.error(`clusterFeatsSidebarErr: ${clusterFeatsSidebarErr.message}`);
+   };
+};
+
+
+function resultTitleClickHandler(resultTitleDivs) {
+
+   try {
+
+      for (const resultTitle of resultTitleDivs) {
+            
+         resultTitle.addEventListener(`click`, async (e) => {
+               
+            e.preventDefault();
+            
+            // get the main parent container
+            const resultContainerDiv = getParentElement(e.target, {parentLevel: 3});
+
+            // get the siblings of the main parent container
+            const adjacentResultDivs = getSiblingElements(resultContainerDiv);
+
+            // get the geojson for that result
+            const clusterGeoJSON = JSON.parse(_getDataset(resultContainerDiv));
+            _getDataset
+
+            // TODO > VALIDATE GJ. HERE
+            if (clusterGeoJSON) {
+               
+               // 1.
+               activateResultModal(getDOMElements().resultModalDiv, clusterGeoJSON);
+
+               // 1b.
+               // render cluster feature cards.
+               populateClusterFeatsSidebar(clusterGeoJSON);
+               
+               // 2.
+               RenderMaps.renderEverythingNow(clusterGeoJSON, {useBuffer: false});
+               
+               // 3.
+               clickedResultContainerSeq(resultContainerDiv, adjacentResultDivs);
+   
+               // 4. 
+               APP_STATE.saveRenderedGeojson(clusterGeoJSON);
+            };
+         });
+      };
+
+   } catch (resultTitleClickErr) {
+      console.error(`resultTitleClickErr: ${resultTitleClickErr.message}`)
+   };
+};
+
+
+// DOWNLOAD & SAVE DB. COLLECTIONS
+async function downloadDBCollections(eventObj) {
+
+   try {
+      
+      for (const APIResourcePath of APP_STATE.CONFIG_DEFAULTS.API_RESOURCE_PATHS) {
+         
+         // const dbQueryStr = APP_STATE.CONFIG_DEFAULTS.LEGACY_CLUSTER_QUERY_STR;
+         
+         // create an intermediate "pipeline"?? fn.
+         const apiDataQuery = function() {
+            // return _queryAPI.call(eventObj, APP_STATE.CONFIG_DEFAULTS.API_HOST_LOCAL, APIResourcePath, {});
+            return _queryAPI.call(eventObj, window.fetch, APP_STATE.CONFIG_DEFAULTS.API_HOST_LOCAL, APIResourcePath, {});
+         };
+   
+         // EXECUTE THE API CALL
+         await MonitorExecution.execute(apiDataQuery);
+
+         MonitorExecution.getExecutionTime();
+         
+         // get the resource name
+         const dbCollectionName = APIResourcePath.slice(APIResourcePath.indexOf('/')+1);
+         
+         // SAVE THE RETURNED DATA
+         APP_STATE.saveDBCollection(dbCollectionName, MonitorExecution.getData());
+
+         // console.info(MonitorExecution.getData());
+
+         console.log(...APP_STATE.returnDBCollections());
+      };
+
+   } catch (getDBCollErr) {
+      console.error(`getDBCollErr: ${getDBCollErr}`);
+   };
+};
+
+
+// FIXME > THIS SHOULD FIRE ON FILTER INPUT CHANGES????
+function appendResultsSidebar(resultItemDiv) {
+   const dividerDiv = _createDiv([`h-divider-grey-100`, "fuck-chicken"]);
+   getDOMElements().resultsListWrapper.appendChild(resultItemDiv);
+   getDOMElements().resultsListWrapper.appendChild(dividerDiv);
+};
+
+
+function populateResultsSidebar(dbCollection) {
+
+   try {
+      
+      // CREATE NEW RESULT DIVS FOR EACH LEGACY CLUSTER
+      if (dbCollection) {
+
+         for (let idx = 0; idx < dbCollection.length; idx++) {
+
+            let clusterGeoJSON = dbCollection[idx];
+
+            // 1.
+            // CONVERT STRING COORDS. IN ANY FEAT. TO INTEGER COORDS.
+            clusterGeoJSON = _sanitizeFeatCollCoords(clusterGeoJSON);
+   
+            // 2.
+            const clusterResultDiv = _ClusterMarkupGenerator.getClusterResultDiv(clusterGeoJSON);
+
+            // 2a.
+            _populateDataset(clusterResultDiv, APP_STATE.CONFIG_DEFAULTS.CLUSTER_CARD_DATA_ATTR_NAME, JSON.stringify(clusterGeoJSON));
+
+            // append result item div to sidebar
+            appendResultsSidebar(clusterResultDiv);
+         };
+      };
+
+   } catch (popResultsSidebarErr) {
+      console.error(`popResultsSidebarErr: ${popResultsSidebarErr}`)
+   };
+};
+
+
 function DOMLoadEvents() {
    
    try {
-      
-      //
-      $(`api_data_stream`).ready(()=> {
-         const datasetName = `geoclustersdatastream`
-         const datastreamData = JSON.parse(getDatastreamData(getDOMElements().datastreamDiv, datasetName));
-         console.log(datastreamData);
-      });
-      
-      //
-      window.addEventListener(`DOMContentLoaded`, async (e) => {
+
+      window.addEventListener(`DOMContentLoaded`, async (windowObj) => {
 
          // save the UI default settings
-         APP_STATE.saveDefaultSettings(pollAppSettingsValues());
-         console.log(APP_STATE.retreiveDefaultSettings());
+         APP_STATE.saveDefaultSettings(pollAVGSettingsValues());
+                  
+         await downloadDBCollections(windowObj);
+
+         const legacyClustersColl = _TraverseObject.evaluateValue(APP_STATE.returnDBCollections(), [0], "data", "legacy_agcs");
          
-         for (const apiCollectionPath of APP_STATE.CONFIG_DEFAULTS.API_COLLECTION_PATHS) {
-            
-            const dbQueryStr = APP_STATE.CONFIG_DEFAULTS.LEGACY_CLUSTER_QUERY_STR;
-            
-            // create an intermediate "pipeline"?? fn.
-            const apiDataQuery = function() {
-               return queryAPI.call(e, APP_STATE.CONFIG_DEFAULTS.API_HOST_LOCAL, apiCollectionPath, {});
-            };
-      
-            // EXECUTE THE API CALL
-            await MonitorExecution.execute(apiDataQuery);
+         populateResultsSidebar(legacyClustersColl);
    
-           MonitorExecution.getExecutionTime();
-            
-            // SAVE THE RETURNED DATA
-            APP_STATE.saveDBCollection(apiCollectionPath, MonitorExecution.getData());
-
-            console.info(MonitorExecution.getData());
-            // console.log(...APP_STATE.returnDBCollections());   
-         };
+         // ADD CLICK HAND. AFTER DIVS HAVE BEEN MADE
+         resultTitleClickHandler(getDOMElements().resultTitleDivs);
       });
 
-      // SETTINGS SIDEBAR TOGGLE
-      $(document).ready(function () {
-         $("#avg_settings_sidebar_toggle_btn").on("click", function () {
-            $("#agv_settings_sidebar").toggleClass("active");
-         });
-         $("#settings_sidebar_close").on("click", function () {
-            $("#agv_settings_sidebar").toggleClass("active");
-         });
-      });
 
    } catch (DOMEventsErr) {
       console.error(`DOMEventsErr: ${DOMEventsErr}`);
    };
 };
+
+
+// FIXME > DON'T USE JQUERY
+// SETTINGS SIDEBAR TOGGLE
+$(document).ready(function () {
+   $("#avg_settings_sidebar_toggle_btn").on("click", function () {
+      $("#agv_settings_sidebar").toggleClass("active");
+   });
+   $("#settings_sidebar_close").on("click", function () {
+      $("#agv_settings_sidebar").toggleClass("active");
+   });
+});
+
+
+function generateModalMarkup (clusterProps) {
+   const HTMLMarkup = `
+         <div class="result-item-modal-header flex-row-center-btw">
+            <span>Block AGC</span><span>25 Ha.</span>
+         </div>
+         <div class="result-item-modal-title flex-row-center-btw">
+            <span id="modal_title">${clusterProps.clusterName}</span>
+            <button
+               class="btn-close"
+               id="result_item_modal_close_btn"
+               type="button"
+               aria-label="close"
+            ></button>
+         </div>
+         <div class="result-item-modal-body flex-col-center">
+            <span class="modal-person-avatar">
+               <img
+                  class="rounded-circle"
+                  src="./assets/images/users/img_avatar2.png"
+                  alt="Modal Avatar" />
+            </span>
+            <span class="modal-person-details flex-col-center">Abdulsalam Dansuki, President</span>
+            <span class="modal-person-contact flex-row-center-btw">
+               <span>08022242548</span><span>mallam-dan@gmail.com</span>
+               <span>Directions</span></span>
+         </div>
+         <div class="result-item-modal-subtext">
+            <span>
+               Prim. commodity: Maize, Rice . Clay soil . No irriation . Closest PMRO
+               site 40km away . No power . Closest market 10km away . No processing
+               capability . Funded June 17, 2019. 13.3 hectares unused.</span>
+         </div>
+         <div class="result-item-modal-footer flex-row-center-btw">
+            <span>200 Farmers</span><span>Kastina State</span>
+         </div>
+   `;
+   return HTMLMarkup;
+};
+
 
 // DOM ELEM. EVT. LIST'NRS.
 function AddEventListeners() {
@@ -465,47 +755,16 @@ function AddEventListeners() {
             RenderMaps.renderClusterPlotLabel(APP_STATE.retreiveLastRenderedGJ());
          });
       });
-      console.log(APP_STATE.retreiveDefaultAreaUnitRadio());
 
-      // RESULT ITEM TITLE CLICK
-      for (const resultTitle of getDOMElements().resultTitleDivs) {
-         
-         resultTitle.addEventListener(`click`, async (e) => {
-
-            e.preventDefault();
-            
-            // get the main parent container
-            const resultItemWrapper = getParentElement(e.target, {parentLevel: 3});
-            // get the siblings of the main parent container
-            const adjacentResultItems = getSiblingElements(resultItemWrapper);
-            // get the geojson for that result
-            const clusterGeoJSON = JSON.parse(getDatastreamData(resultItemWrapper, `geoclusterdatastream`));
-
-            // 3.
-            clickedResultWrapperSeq(resultItemWrapper, adjacentResultItems);
-            // 1.
-            activateResultModal(getDOMElements().resultModal, clusterGeoJSON);
-            // 2.
-            console.info(pollAppSettingsValues());
-            // await renderMaps(clusterGeoJSON);
-            RenderMaps.renderEverythingNow(clusterGeoJSON);
-            // 4. 
-            APP_STATE.saveRenderedGeojson(clusterGeoJSON);
-            
-         });
-      };
-
+      // RESULT ITEM TITLE CLICK HAND.
+      resultTitleClickHandler(getDOMElements().resultTitleDivs);
+      
       // RESULT ITEM CHECKBOX BEH.
       const slaveResultCheckboxes = getResultCheckboxes().resultItemCheckboxes;
       masterSlaveControl(getResultCheckboxes().masterResultCheckbox, slaveResultCheckboxes);
 
       // TODO
       // RESULT ITEM CHECKBOX EVENT SEQ.
-
-      // MODAL CLOSE BTN.
-      getDOMElements().resultModalCloseBtn.addEventListener(`click`, () => {
-         hideElement(getDOMElements().resultModal);
-      });
 
       // TODO
       // FILTER CHECKBOX EVENT SEQ.
@@ -516,7 +775,7 @@ function AddEventListeners() {
                console.log(`%c ${checkboxLabelTxt} checked`, `color: white; background-color:blue;`);
             } else {
                console.log(`%c ${checkboxLabelTxt} un-checked`, `color: white; background-color:green;`);
-            }
+            };
             // filterResults(checkboxLabelTxt);
             // renderFilterPill(checkboxLabelTxt);
          });
@@ -532,55 +791,11 @@ function AddEventListeners() {
       getDOMElements().sidebarExpandBtn.addEventListener(`click`, ()=>{
          getDOMElements().appSidebar.classList.toggle(`expanded`);
       });
-
-      // SANDBOX > API BTN TRIGGER EVENT SEQ.
-      // pass params. using call
-      // getDOMElements().apiTriggerBtn.addEventListener(`click`, evt => APIHTTPRequest.call(evt.target, queryString));
-      // pass params. using bind
-      const queryString = `?fields=properties,features.properties.plot_owner_bvn,`      
-      const triggerBtn = getDOMElements().apiTriggerBtn;
-      triggerBtn.addEventListener(`click`, APIHTTPRequest.bind(triggerBtn, queryString), false);
       
    } catch (addEvtListenErr) {
       console.error(addEvtListenErr.message);
    };
-;}
-
-// FIXME > THIS SHOULD FIRE ON INPUT CHANGES????
-function populateModal(jsonObj) {
-
-   // renderJSONOnDOM(jsonObj, domElement);
-
-   jsonObj.forEach(legacyAGC => {
-
-      const legacyAGCDiv = document.createElement('div');
-      legacyAGCDiv.className = 'result-item flex-col-start';
-      document.getElementById('results_list_wrapper').appendChild(legacyAGCDiv);
-
-      const legacyAGCTitleDiv = document.createElement('a')
-      const legacyAGCSubtitleDiv = document.createElement('small')
-      legacyAGCTitleDiv.innerText = legacyAGC.properties.geo_cluster_name;
-      legacyAGCTitleDiv.className = `result-item-titles`;
-      legacyAGCSubtitleDiv.innerText = legacyAGC.properties.geo_cluster_total_features
-      
-      legacyAGCDiv.appendChild(legacyAGCTitleDiv);
-      legacyAGCDiv.appendChild(legacyAGCSubtitleDiv);
-
-      const horizontalDividerDiv = document.createElement('div');
-      horizontalDividerDiv.className = `h-divider-grey-50`;
-      legacyAGCDiv.insertAdjacentHTML(`afterend`, horizontalDividerDiv);
-   });
-
 };
 
-// open modal for clicked result
-function activateResultModal(modalElement, featureCollection) {
-   blockElement(modalElement);
-   console.log(_getClusterProps(featureCollection));
-   featureCollection.features.forEach(feature => {
-      console.log(_getClusterFeatureProps(feature))
-   })
-   // populateModal(_getClusterProps(featureCollection));
-};
 
 export {DOMLoadEvents, AddEventListeners};

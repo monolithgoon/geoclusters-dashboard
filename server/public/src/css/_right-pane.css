@@ -57,7 +57,7 @@ section.right-pane-container {
 }
 
 .agc-insights-tab-content.active,
-.agc-details-tab-content.active {
+.cluster-details-tab-content.active {
    display: none;
 }
 
@@ -66,19 +66,19 @@ section.right-pane-container {
    flex-direction: column;
 }
 
-.agc-details-tab-content.active {
+.cluster-details-tab-content.active {
    display: grid;
    grid-template-rows: 40vh 45px calc(40vh - 60px) auto;
 }
 
-.agc-details-tab-content .tab-pane-footer,
-.agc-details-tab-footer {
+.cluster-details-tab-content .tab-pane-footer,
+.cluster-details-tab-footer {
    max-height: 5vh;
 }
 
 .parcelization-map,
-.geo-cluster-summary,
-.plot-owner-details,
+.cluster-summary,
+.cluster-features-list,
 .plot-detail-map {
    overflow: hidden;
    height: 100%;
@@ -104,7 +104,7 @@ section.right-pane-container {
    z-index: var(--z-idx-3);
 }
 
-.geo-cluster-summary .wrapper {
+.cluster-summary .wrapper {
    margin: 3px 0;
    margin-top: 0;
    /* padding: 5px 0; */
@@ -124,7 +124,7 @@ section.right-pane-container {
    background-color: #f2f2f2;
 }
 
-.geo-cluster-summary .wrapper > div {
+.cluster-summary .wrapper > div {
    flex: 1;
    display: flex;
    flex-direction: column;
@@ -134,23 +134,23 @@ section.right-pane-container {
    line-height: 1.4;
 }
 
-.geo-cluster-summary .wrapper > div > span {
+.cluster-summary .wrapper > div > span {
    flex: 1;
 }
 
-.geo-cluster-summary .wrapper > div > span:first-of-type {
+.cluster-summary .wrapper > div > span:first-of-type {
    font-family: 'Roboto', sans-serif;
    font-size: var(--tiny-text);
    font-weight: 300;
 }
 
-.geo-cluster-summary .wrapper > div > span:last-of-type {
+.cluster-summary .wrapper > div > span:last-of-type {
    font-family: 'Roboto', sans-serif;
    font-size: 0.7rem;
    font-weight: 600;
 }
 
-.plot-owner-details {
+.cluster-features-list {
    display: grid;
    grid-template-columns: 1fr;
    grid-template-rows: auto 1fr;
@@ -160,7 +160,7 @@ section.right-pane-container {
    min-height: max-content;
 }
 
-.plot-owner-details .plot-owners-list-body {
+.cluster-features-list .cluster-features-list-body {
    padding: var(--card-margin-outside);
    padding-top: 0;
    background-color: #f8f9fa;

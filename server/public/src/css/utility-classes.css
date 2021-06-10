@@ -195,11 +195,20 @@ div.line-1pt {
 }
 
 .notification-badge.orange-badge {
-   border: 1px solid whitesmoke;
-   background-color: orange;
+   border: 2px solid white;
+   background-color: darkorange;
 }
 
 .notification-badge.red-badge {
    background-color: red;
    border: none;
+}
+
+.orange-border-1px {
+   border: 1px solid darkorange;
+}
+
+.rounded-left-borders-10px {
+   border-top-left-radius: 10px;
+   border-bottom-left-radius: 10px;
 }

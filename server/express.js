@@ -22,7 +22,7 @@ EXPRESS_SERVER.head("/status", (req, res) => {
 
 // SET THE TEMPLATING ENGINE TO "PUG"
 EXPRESS_SERVER.set("view engine", "pug");
-EXPRESS_SERVER.set("views", path.join(__dirname, "templates"));
+EXPRESS_SERVER.set("views", path.join(__dirname, "views"));
 
 // 3RD PARTY M-WARE > SERVE STATIC FILES
 EXPRESS_SERVER.use(express.static(path.join(__dirname, "public")));

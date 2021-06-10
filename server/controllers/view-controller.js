@@ -54,13 +54,16 @@ exports.renderAVGDashboard = async (req, res, next) => {
 
       const fileData = fs.readFileSync(path.resolve(`${__approotdir}/localdata/parcelized-clusters.geojson`), {encoding: 'utf8'})
       const fsClusters = JSON.parse(fileData);
+
+      // SANDBOX
       console.log(fsClusters);
       
       // RENDER THE agv-dashboard.pug TEMPLATE
       res.status(200).render('avg-dashboard', {
          title: "AVG Dashboard - SSR Alpha",
          user: "FieldDev Group",
-         geoclustersData: fsClusters.data.parcelized_agcs,
+         // FIXME > THIS DATA SHOULD PASS THRU. THE CLUSTER PROPS ADAPTER!!!
+         geoClustersData: fsClusters.data.parcelized_agcs,
       });
 
       next();
