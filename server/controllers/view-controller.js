@@ -2,17 +2,16 @@ const fs = require('fs');
 const path = require('path');
 const chalk = require('../utils/chalk-messages.js');
 const axios = require("axios");
-const { nextTick } = require('process');
+const { deprecate } = require('util');
 
+// REMOVE > DEPRECATED
 async function returnLegacyCluster(agc_id) {
 
 	try {
       
       const axiosRequest = axios({
          method: 'get',
-         // url: `https://agcfarmlands.herokuapp.com/api/v1/agcs/?${agc_id}`,
-         // url: `http://127.0.0.1:9090/api/v1/agcs/agc/?${agc_id}`,
-         url: `http://127.0.0.1:9090/api/v1/agcs/`,
+         url: `https://geoclusters.herokuapp.com/api/v1/legacy-agcs/`,
          crossDomain: true,
          responseType: 'application/json',
          headers: {
@@ -37,6 +36,7 @@ async function returnLegacyCluster(agc_id) {
 	};
 };
 
+// REMOVE > DEPRECATED
 exports.getAPIData = async (req, res, next) => {
    console.log(chalk.success(`called [ getAPIData ] controller fn.`))
    res.locals.returnedClusters = await returnLegacyCluster();

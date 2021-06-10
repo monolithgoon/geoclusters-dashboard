@@ -30,7 +30,8 @@ async function returnAllParcelizedClusters() {
       const axiosRequest = axios({
          method: 'get',
          // url: `http://127.0.0.1:9090/api/v1/parcelized-agcs/?fields=properties,features.properties,`,
-         url: `http://127.0.0.1:9090/api/v1/parcelized-agcs/`,
+         // url: `http://127.0.0.1:9090/api/v1/parcelized-agcs/`,
+         url: `https://geoclusters.herokuapp.com/api/v1/parcelized-agcs/`,
          crossDomain: true,
          responseType: 'application/json',
          headers: {
@@ -66,8 +67,9 @@ async function returnAllLegacyClusters() {
       
       const axiosRequest = axios({
          method: 'get',
-         url: `http://127.0.0.1:9090/api/v2/legacy-agcs/`,
+         // url: `http://127.0.0.1:9090/api/v2/legacy-agcs/`,
          // url: `http://127.0.0.1:9090/api/v2/legacy-agcs/?fields=properties.geo_cluster_id,properties.geo_cluster_name,properties.geo_cluster_details,features.properties,`,
+         url: `https://geoclusters.herokuapp.com/api/v2/legacy-agcs/`,
          crossDomain: true,
          responseType: 'application/json',
          headers: {

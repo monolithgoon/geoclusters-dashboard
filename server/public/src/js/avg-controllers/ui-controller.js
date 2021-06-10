@@ -599,8 +599,8 @@ async function downloadDBCollections(eventObj) {
          
          // create an intermediate "pipeline"?? fn.
          const apiDataQuery = function() {
-            // return _queryAPI.call(eventObj, APP_STATE.CONFIG_DEFAULTS.API_HOST_LOCAL, APIResourcePath, {});
-            return _queryAPI.call(eventObj, window.fetch, APP_STATE.CONFIG_DEFAULTS.API_HOST_LOCAL, APIResourcePath, {});
+            // return _queryAPI.call(eventObj, window.fetch, APP_STATE.CONFIG_DEFAULTS.API_HOST_LOCAL, APIResourcePath, {});
+            return _queryAPI.call(eventObj, window.fetch, APP_STATE.CONFIG_DEFAULTS.API_HOST_HEROKU, APIResourcePath, {});
          };
    
          // EXECUTE THE API CALL
