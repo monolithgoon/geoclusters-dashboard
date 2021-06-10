@@ -50,7 +50,8 @@ export async function APIHTTPRequest(queryString) {
 		appActivityInd.classList.add(`spinner-grow-sm`);
 	
 		const xhttp = new XMLHttpRequest();
-		const url = `http://127.0.0.1:9090/api/v2/legacy-agcs/${queryString}`
+		// const url = `http://127.0.0.1:9090/api/v2/legacy-agcs/${queryString}`
+		const url = `https://avg-dashboard.herokuapp.com/api/v2/legacy-agcs/${queryString}`
 	
 		xhttp.open('GET', url, true);
 		xhttp.setRequestHeader('Content-type', 'application/json');
