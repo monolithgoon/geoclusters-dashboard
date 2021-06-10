@@ -4,9 +4,6 @@ const chalk = require('../utils/chalk-messages.js');
 // set the NODE_ENV to 'development' by default
 process.env.NODE_ENV = process.env.NODE_ENV || "development";
 
-// FIXME > WHY DOES THIS WRONG PATH CRASH HEROKU, BUT NOT LOCALHOST??
-// const envFound = dotenv.config({path: `./config.env`}) // IMPORTANT > CONFIGURE ENV. VARIABLES BEFORE U CALL THE APP 
-
 const envFound = dotenv.config({path: `../config.env`}) // IMPORTANT > CONFIGURE ENV. VARIABLES BEFORE U CALL THE APP 
 
 if (envFound.error) {
