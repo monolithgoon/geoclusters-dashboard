@@ -30,8 +30,8 @@ const result = chalk.yellowBright.bgCyan.bold
 // const result = chalk.blueBright.bgCyanBright.bold
 const working = chalk.blueBright.bgGrey.bold
 const interaction = chalk.blue.bgWhiteBright.bold
-const running = chalk.blue.bgCyanBright.bold
-// const called = chalk.blue.bgGreenBright.bold
+// const running = chalk.blue.bgCyanBright.bold
+const running = chalk.blue.bgGreenBright.bold
 const success = chalk.white.bgGreen.bold
 const connected = chalk.white.bgBlue.bold
 // const connected = chalk.whiteBright.bgBlueBright.bold
@@ -47,7 +47,7 @@ module.exports = {
    working,
    interaction,
    running,
-   // called,
+   running,
    success,
    connected,
    fail,

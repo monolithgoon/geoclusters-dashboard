@@ -57,5 +57,6 @@ CLUSTER_PLOTS_MAP.on(`load`, function() {
       "type": "raster-dem", 
       "url": "mapbox://mapbox.mapbox-terrain-dem-v1",
    });
+   // FIXME > NOT WORKING
    CLUSTER_PLOTS_MAP.setTerrain({"source": "mapbox-dem"});
 });
