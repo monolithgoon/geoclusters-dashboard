@@ -368,9 +368,9 @@ line-height: 15px;
 }
 
 @font-face {
-	font-family: "Fira Santa";
+	font-family: "Fira Sans";
 	/* src: url('../../assets/fonts/FiraSans-ExtraBold.ttf') format('ttf'); */
-	src: url('../../assets/fonts/FiraSans-Bold.ttf') format('ttf');
+	src: url('../../assets/fonts/FiraSans-ExtraBold.ttf') format('ttf');
 	/* src: url('../../assets/fonts/FiraSans-Black.ttf') format('ttf'); */
 	/* src: url('../../assets/fonts/HelveticaNeueThin.woff') format('ttf'); */
 	/* src: url('../../assets/fonts/duolingo-next-rounded-pro.woff2') format('ttf'); */
