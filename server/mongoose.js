@@ -28,8 +28,8 @@ async function DB_CONNECT() {
          process.exit();
       });
    
-   } catch(_err) {
-      console.log(chalk.fail(_err.message));
+   } catch(dbConnectErr) {
+      console.log(chalk.fail(`dbConnectErr: ${dbConnectErr.message}`));
       process.exit();
    } 
 }
