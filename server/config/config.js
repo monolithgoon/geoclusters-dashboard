@@ -5,12 +5,12 @@ const chalk = require('../utils/chalk-messages.js');
 // set the NODE_ENV to 'development' by default
 process.env.NODE_ENV = process.env.NODE_ENV || "development";
 
-const envFound = dotenv.config({path: path.resolve(__dirname, `../config.env`)}) // IMPORTANT > CONFIGURE ENV. VARIABLES BEFORE U CALL THE APP 
+// const envFound = dotenv.config({path: path.resolve(__dirname, `../config.env`)}) // IMPORTANT > CONFIGURE ENV. VARIABLES BEFORE U CALL THE APP 
 
-if (envFound.error) {
-	// this error should crash the whole process
-	throw new Error(chalk.fail(`Couldn't find .env file. ${envFound.error}`));
-}
+// if (envFound.error) {
+// 	// this error should crash the whole process
+// 	throw new Error(chalk.fail(`Couldn't find .env file. ${envFound.error}`));
+// };
 
 module.exports = {
 	port: parseInt(process.env.PORT, 10) || 8080,
