@@ -1,7 +1,7 @@
 {
-  "name": "agv-dashboard-ssr",
+  "name": "avg-dashboard-ssr",
   "version": "1.0.0",
-  "description": "NIRSAL AGV Dashboard",
+  "description": "NIRSAL AVG Dashboard - SSR Alpha",
   "main": "express.js",
   "scripts": {
     "deploy": "git push && git push heroku master",
@@ -46,5 +46,5 @@
   "bugs": {
     "url": "https://github.com/monolithgoon/nirsal-avg-dashboard/issues"
   },
-  "homepage": "https://github.com/monolithgoon/nirsal-agv-dashboard#readme"
+  "homepage": "https://github.com/monolithgoon/nirsal-avg-dashboard#readme"
 }
