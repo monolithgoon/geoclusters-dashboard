@@ -131,7 +131,7 @@ button.btn {
 	display: flex;
 	align-items: center;
 	font-family: 'FrancophilSans', sans-serif;
-	font-family: 'Fira Sans', sans-serif;
+	font-family: 'Fira Santa', sans-serif;
 	font-size: 11.5px;
 }
 
@@ -144,7 +144,7 @@ select.form-select-sm {
 ul.dropdown-menu {
 	font-size: var(--pt7r-font);
 	font-family: 'FrancophilSans', sans-serif;
-	font-family: 'Fira Sans', sans-serif;
+	font-family: 'Fira Santa', sans-serif;
 	font-size: 11.5px;
 }
 

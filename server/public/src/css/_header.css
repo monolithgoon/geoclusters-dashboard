@@ -7,7 +7,7 @@ header.header-wrapper {
    flex-direction: row;
    justify-content: flex-end;
    font-size: var(--header-text-font-size);
-   font-family: 'Fira Sans';
+   font-family: 'Fira Santa';
    /* border: 1px solid var(--grey-line-200); */
    z-index: var(--z4);
 }
