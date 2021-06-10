@@ -1,10 +1,11 @@
 const dotenv = require("dotenv"); // read the data from the config file. and use them as env. variables in NODE
+const path = require('path');
 const chalk = require('../utils/chalk-messages.js');
 
 // set the NODE_ENV to 'development' by default
 process.env.NODE_ENV = process.env.NODE_ENV || "development";
 
-const envFound = dotenv.config({path: `../config.env`}) // IMPORTANT > CONFIGURE ENV. VARIABLES BEFORE U CALL THE APP 
+const envFound = dotenv.config({path: path.resolve(__dirname, `../../config.env`)}) // IMPORTANT > CONFIGURE ENV. VARIABLES BEFORE U CALL THE APP 
 
 if (envFound.error) {
 	// this error should crash the whole process
