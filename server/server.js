@@ -3,7 +3,7 @@ const EXPRESS_SERVER = require("./express.js");
 const DB_CONNECT = require("./mongoose.js");
 const LOCALIZE_DATA = require(`./jobs/localize-data.js`) 
 const logger = require("./logger.js");
-const chalk = require("./utils/chalk-messages.js");
+// const chalk = require("./utils/chalk-messages.js");
 
 async function startServer() {
 	
@@ -11,7 +11,7 @@ async function startServer() {
 
 	EXPRESS_SERVER.listen(appConfig.port, () => {
 		logger.info(
-			chalk.running(
+			(
 				`🛡️ EXPRESS server listening on port: ${appConfig.port} 🛡️`
 			)
 		);
