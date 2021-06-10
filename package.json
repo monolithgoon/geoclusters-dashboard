@@ -6,7 +6,8 @@
   "scripts": {
     "deploy": "git push && git push heroku master",
     "deploy:open": "git push && git push heroku master && heroku open",
-    "start": "cd server && nodemon server.js",
+    "start": "node server.js",
+    "start:dev": "cd server && nodemon server.js",
     "start:prod": "NODE_ENV=production nodemon server.js"
   },
   "author": "Nduka Okpue",
@@ -36,14 +37,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/monolithgoon/nirsal-agv-dashboard.git"
+    "url": "git+ssh://git@github.com/monolithgoon/nirsal-avg-dashboard.git"
   },
   "keywords": [
     "dashboard",
     "geospatial"
   ],
   "bugs": {
-    "url": "https://github.com/monolithgoon/nirsal-agv-dashboard/issues"
+    "url": "https://github.com/monolithgoon/nirsal-avg-dashboard/issues"
   },
   "homepage": "https://github.com/monolithgoon/nirsal-agv-dashboard#readme"
 }
