@@ -271,33 +271,36 @@ block agv-dashboard
                                     li
                                       a.dropdown-item(href='#') Copy Map Preview Link
                                     li
+                                      a.dropdown-item(href='#') Copy Coordinates
+                                    li
                                       a.dropdown-item(href='#') Open In New Tab
                                     li
-                                      a.dropdown-item(href='#') Share Cluster Details
+                                      a.dropdown-item(href='#') Share Cluster
                                 input.form-check-input.result-item-checkbox(id=`select_result_item_chk_${clusterIdx}` type='checkbox' value=`resultItemCheckbox${clusterIdx}` aria-label='select result checkbox')
+                            //- .result-item-footer
+                            //-   span
+                            //-     //- img(src="https://img.icons8.com/small/14/000000/place-marker.png")
+                            //-     img(src="https://img.icons8.com/small/16/000000/point-objects.png")
+                            //-   span
+                            //-     a(href="#")= `${JSON.stringify(geoCluster.properties.agc_center_coords[0].geometry.coordinates[0].toFixed(6))}°N 6.214541°E`
+                            //-   span
+                            //-     //- img(src="https://img.icons8.com/material-two-tone/13/small/spinach.png")
+                            //-     //- img(src="https://img.icons8.com/plumpy/16/000000/sprout.png")
+                            //-     //- img(src="https://img.icons8.com/plumpy/16/000000/plant.png")
+                            //-     //- img(src="https://img.icons8.com/material-two-tone/15/000000/natural-food.png")
+                            //-     img(src="https://img.icons8.com/windows/16/000000/natural-food.png")
+                            //-   span= `${geoCluster.properties.unused_land_area.toFixed(1)} ha. UNUSED`
+                            //-   span
+                            //-   span
+                            //-   span
                             .result-item-body.flex-col-start
                               .result-item-pill
-                                .pill-wrapper
-                                  span= `${geoCluster.features.length} FARMERS`
-                                  span=`•`
-                                  span= `${geoCluster.properties.agc_area.toFixed(0)} HECTARES`
+                                span= `${geoCluster.features.length} FARMERS`
+                                span=`•`
+                                span= `${geoCluster.properties.agc_area.toFixed(0)} HECTARES`
+                                span=`•`
+                                span= `${geoCluster.properties.agc_area.toFixed(0)} HA. MAIZE`
                               //- a.admin1-name(href='#') President • Abubara Ibrahim Ismaila
-                            .result-item-footer
-                              span
-                                //- img(src="https://img.icons8.com/small/14/000000/place-marker.png")
-                                img(src="https://img.icons8.com/small/16/000000/point-objects.png")
-                              span
-                                a(href="#")= `${JSON.stringify(geoCluster.properties.agc_center_coords[0].geometry.coordinates[0].toFixed(6))}°N 6.214541°E`
-                              span
-                                //- img(src="https://img.icons8.com/material-two-tone/13/small/spinach.png")
-                                //- img(src="https://img.icons8.com/plumpy/16/000000/sprout.png")
-                                //- img(src="https://img.icons8.com/plumpy/16/000000/plant.png")
-                                //- img(src="https://img.icons8.com/material-two-tone/15/000000/natural-food.png")
-                                img(src="https://img.icons8.com/windows/16/000000/natural-food.png")
-                              span= `${geoCluster.properties.unused_land_area.toFixed(1)} ha. UNUSED`
-                              span
-                              span
-                              span
                           .h-divider-grey-100
 
                     .pane-footer.flex-row-center-btw.pad-lr-5px
