@@ -87,5 +87,5 @@ marker.on('mouseover', function (e) {
 });
 
 marker.on('mouseout', function (e) {
-    e.target.link.style.backgroundColor = 'none';
+    e.target.link.style.backgroundColor = 'white';
 });
