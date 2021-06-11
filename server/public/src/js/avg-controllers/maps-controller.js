@@ -83,9 +83,9 @@ L.DomEvent.addListener(link, 'mouseout', function (e) {
 });
 
 marker.on('mouseover', function (e) {
-    e.target.link.style.color = 'red';
+    e.target.link.style.backgroundColor = 'pink';
 });
 
 marker.on('mouseout', function (e) {
-    e.target.link.style.color = 'black';
+    e.target.link.style.backgroundColor = 'none';
 });

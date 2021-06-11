@@ -217,8 +217,8 @@ section.left-pane-container {
 .result-item-titles > a {
    font-size: 13.5px;
    font-weight: 500;
-   font-family: 'Fira Sans', sans-serif;
    font-family: 'Roboto', sans-serif;
+   font-family: 'Fira Sans', sans-serif;
    font-size: .9rem;
    font-weight: 600;
    letter-spacing: -0.5px;
