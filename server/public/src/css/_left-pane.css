@@ -190,6 +190,7 @@ section.left-pane-container {
 
 .result-item span {
    font-size: 11.5px;
+   background-color: whitesmoke;
 }
 
 .result-item-pill {
@@ -210,6 +211,7 @@ section.left-pane-container {
    color: #333;
 
    letter-spacing: 0.09px;
+   letter-spacing: -0.1px;
 }
 
 .result-item-header {
