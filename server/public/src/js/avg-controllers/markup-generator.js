@@ -40,11 +40,11 @@ export const _ClusterMarkupGenerator = ((classList) => {
             <div class="result-item-body flex-col-start">
             <a href="#" class="admin1-name" id="cluster_gov_admin1">President ${_.startCase(_joinWordsArray(Object.values(props.clusterGovAdmin1)))}</a>
             <div class="result-item-pill">
-               <span id="cluster_num_features">${props.clusterFeatsNum} FARMERS</span>
+               <span id="cluster_num_features">${props.clusterFeatsNum} Farmers</span>
                <span>•</span>
-               <span id="cluster_area">${props.clusterArea} HECTARES</span>
+               <span id="cluster_area">${props.clusterArea} Hectares</span>
                <span>•</span>
-               <span id="cluster_area">${props.clusterArea} RICE</span>
+               <span id="cluster_area">${props.clusterArea} Cassava</span>
             </div>
             </div>
          `;

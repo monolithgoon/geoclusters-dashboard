@@ -293,13 +293,14 @@ block agv-dashboard
                             //-   span
                             //-   span
                             .result-item-body.flex-col-start
+                              a.admin1-name(href='#') President • Abubara Ibrahim Ismaila
                               .result-item-pill
-                                span= `${geoCluster.features.length} FARMERS`
+                                span= `${geoCluster.features.length} Farmers`
                                 span=`•`
-                                span= `${geoCluster.properties.agc_area.toFixed(0)} HECTARES`
+                                span= `${geoCluster.properties.agc_area.toFixed(0)} Hectares`
                                 span=`•`
-                                span= `${geoCluster.properties.agc_area.toFixed(0)} MAIZE`
-                              //- a.admin1-name(href='#') President • Abubara Ibrahim Ismaila
+                                span Rice
+                                //- span= `${geoCluster.properties.agc_area.toFixed(0)} Rice`
                           .h-divider-grey-100
 
                     .pane-footer.flex-row-center-btw.pad-lr-5px
