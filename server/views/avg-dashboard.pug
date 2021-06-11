@@ -257,7 +257,6 @@ block agv-dashboard
                         //-   .h-divider-grey-50
 
                         each geoCluster, clusterIdx in geoClustersData
-                          //- geo-cluster-div(gcid='gc001', gcname='BITCHES BE TRIPPIN', gc-admin-lvl2="Kastina", gc-admin-lvl3="Kontangora" data-geoclusterdatastream=`${JSON.stringify(geoCluster)}`).result-item.flex-col.start
                           .result-item.flex-col-start(data-geoclusterdatastream=`${JSON.stringify(geoCluster)}`)
                             .result-item-header.flex-row-start
                               .result-item-titles.flex-col-start.flex-1
@@ -273,7 +272,7 @@ block agv-dashboard
                                     li
                                       a.dropdown-item(href='#') Copy Coordinates
                                     li
-                                      a.dropdown-item(href='#') Open In New Tab
+                                      a.dropdown-item(href='#') Open Cluster Map
                                     li
                                       a.dropdown-item(href='#') Share Cluster
                                 input.form-check-input.result-item-checkbox(id=`select_result_item_chk_${clusterIdx}` type='checkbox' value=`resultItemCheckbox${clusterIdx}` aria-label='select result checkbox')
@@ -299,7 +298,7 @@ block agv-dashboard
                                 span=`•`
                                 span= `${geoCluster.properties.agc_area.toFixed(0)} HECTARES`
                                 span=`•`
-                                span= `${geoCluster.properties.agc_area.toFixed(0)} HA. MAIZE`
+                                span= `${geoCluster.properties.agc_area.toFixed(0)} MAIZE`
                               //- a.admin1-name(href='#') President • Abubara Ibrahim Ismaila
                           .h-divider-grey-100
 

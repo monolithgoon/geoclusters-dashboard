@@ -566,7 +566,7 @@ function clusterTitleClickSeq(evtObj) {
       populateClusterFeatsSidebar(clusterGeoJSON);
       
       // 2.
-      RenderMaps.renderEverythingNow(clusterGeoJSON, {useBuffer: false});
+      RenderMaps.renderEverythingNow(clusterGeoJSON, {useBuffer: true});
       
       // 3.
       clickedResultContainerSeq(resultContainerDiv, adjacentResultDivs);

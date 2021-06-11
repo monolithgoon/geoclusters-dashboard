@@ -29,35 +29,23 @@ export const _ClusterMarkupGenerator = ((classList) => {
                      <button class="btn btn-outline btn-sm dropdown-toggle" id="dropdownMenuClickableInside" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">...</button>
                      <ul class="dropdown-menu" aria-labelledby="dropdownMenuClickableInside">
                         <li><a class="dropdown-item" href="#">Copy Map Preview Link</a></li>
-                        <li><a class="dropdown-item" href="#">Open In New Tab</a></li>
-                        <li><a class="dropdown-item" href="#">Share Cluster Details</a></li>
+                        <li><a class="dropdown-item" href="#">Copy Coordinates</a></li>
+                        <li><a class="dropdown-item" href="#">Open Cluster Map</a></li>
+                        <li><a class="dropdown-item" href="#">Share Cluster</a></li>
                      </ul>
                   </div>
                   <input class="form-check-input result-item-checkbox" id="select_result_item_chk_25" type="checkbox" value="resultItemCheckbox25" aria-label="select result checkbox">
             </div>
             </div>
             <div class="result-item-body flex-col-start">
-               <div class="result-item-pill">
-                  <span id="cluster_num_features">${props.clusterFeatsNum} farmers</span>
-                  <span>•</span>
-                  <span id="cluster_area">${props.clusterArea} hectares</span>
-               </div>
-               <a href="#" class="admin1-name" id="cluster_gov_admin1">AGC President ${_joinWordsArray(Object.values(props.clusterGovAdmin1))}</a>
+            <a href="#" class="admin1-name" id="cluster_gov_admin1">President ${_.startCase(_joinWordsArray(Object.values(props.clusterGovAdmin1)))}</a>
+            <div class="result-item-pill">
+               <span id="cluster_num_features">${props.clusterFeatsNum} FARMERS</span>
+               <span>•</span>
+               <span id="cluster_area">${props.clusterArea} HECTARES</span>
+               <span>•</span>
+               <span id="cluster_area">${props.clusterArea} RICE</span>
             </div>
-            <div class="result-item-footer">
-               <span>
-                  <img src="https://img.icons8.com/small/16/000000/point-objects.png" alt="Cluster Coords.">
-               </span>
-               <span>
-                  <a href="" id="cluster_coords">5.3366065°E 6.0205548°N</a>
-               </span>
-               <span>
-                  <img src="https://img.icons8.com/material-two-tone/13/small/spinach.png" alt="Cluster Unused Land">
-               </span>
-               <span id="cluster_unused_land">${props.clusterUnusedArea}</span>
-               <span></span>
-               <span></span>
-               <span></span>
             </div>
          `;
          return HTMLMarkup;
