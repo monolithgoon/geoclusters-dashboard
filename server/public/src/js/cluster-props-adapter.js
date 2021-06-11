@@ -68,6 +68,7 @@ export const _GetClusterProps = (clusterFeatureCollection = _mandatoryParam()) =
 			? _TraverseObject.getFinalValue()
 			: null;
 		// TODO
+		clusterName = _.startCase(clusterName);
 		// clusterName = _removeUnderscores(clusterName);
 		// clusterName = _includeHyphens(clusterNam);
 		// clusterName = _camelize(clusterName);
