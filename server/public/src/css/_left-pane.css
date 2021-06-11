@@ -99,6 +99,7 @@ section.left-pane-container {
    overflow-y: auto;
    position: relative;
    font-family: 'Fira Sans', sans-serif;
+   font-family: 'Roboto', sans-serif;
 }
 
 .results-body .results-list-wrapper {
@@ -197,6 +198,7 @@ section.left-pane-container {
    padding: 2px 5px 2px 0;
    margin: 1px 0;
    font-family: 'Fira Sans', sans-serif;
+   font-family: 'Roboto', sans-serif;
    color: #130f40; /* au-deep cove */
    background-color: whitesmoke;
 }
@@ -209,7 +211,7 @@ section.left-pane-container {
    font-size: 13.5px;
    font-weight: 500;
    font-family: 'Roboto', sans-serif;
-   font-size: 1rem;
+   font-size: .9rem;
    font-weight: 600;
 }
 
@@ -254,5 +256,5 @@ section.left-pane-container {
 .result-item > * > * {
    line-height: 1.35;
    line-height: 1.4;
-   line-height: 1.1;
+   line-height: 1.2;
 }
