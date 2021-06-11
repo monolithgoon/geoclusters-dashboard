@@ -683,7 +683,7 @@ function DOMLoadEvents() {
          // save the UI default settings
          APP_STATE.saveDefaultSettings(pollAVGSettingsValues());
                   
-         await downloadDBCollections(windowObj);
+         // await downloadDBCollections(windowObj);
 
          const legacyClustersColl = _TraverseObject.evaluateValue(APP_STATE.returnDBCollections(), [0], "data", "legacy_agcs");
          

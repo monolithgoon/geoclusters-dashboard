@@ -202,7 +202,7 @@ section.left-pane-container {
 .result-item-pill .pill-wrapper {
    padding: 2px;
    border: 1px solid wh1ite;
-   border-radius: 5px;
+   border-radius: 3px;
 }
 
 .result-item-pill .pill-wrapper > span {
