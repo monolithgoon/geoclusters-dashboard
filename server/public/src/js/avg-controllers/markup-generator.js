@@ -95,6 +95,7 @@ export const _ClusterFeatMarkupGenerator = ((classList) => {
       // };
 
       const populateMarkup = function(props) {
+         console.log(props.featureAdmin1ID)
          const HTMLMarkup = `
             <div class="card-content-wrapper">
                <div class="card-media-wrapper">

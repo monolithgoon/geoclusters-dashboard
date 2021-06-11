@@ -639,6 +639,8 @@ function populateResultsSidebar(dbCollection) {
       // CREATE NEW RESULT DIVS FOR EACH LEGACY CLUSTER
       if (dbCollection) {
 
+         dbCollection = dbCollection.slice(1)
+
          for (let idx = 0; idx < dbCollection.length; idx++) {
 
             let clusterGeoJSON = dbCollection[idx];
