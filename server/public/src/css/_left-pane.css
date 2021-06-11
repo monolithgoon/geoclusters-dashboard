@@ -168,7 +168,7 @@ section.left-pane-container {
 }
 
 .result-item {
-   padding: 8px 5px 8px 15px;
+   padding: 6px 5px 4px 15px;
    cursor: pointer;
 }
 
@@ -187,7 +187,7 @@ section.left-pane-container {
 }
 
 .result-item span {
-   font-size: 11.5px;
+   font-size: 10px;
 }
 
 .result-item-pill {
