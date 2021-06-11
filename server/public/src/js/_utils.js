@@ -31,6 +31,7 @@ export function _createCard(classArray) {
 
 // RETREIVE DATA (FROM BACKEND) VIA HTML DATASET ATTRIBUTE
 export function _getDataset(div) {
+
 	try {
 
 		const divDataset = div.dataset; // this returns: DOMStringMap => {[dataAttrName], [data]}
@@ -136,6 +137,25 @@ export const _TraverseObject = (() => {
 		},
 	};
 })();
+
+
+// CONVERT THE OBJ'S VALUES TO STRINGS
+export const _stringifyPropValues = (obj) => {
+	return Object.keys(obj).reduce((modObject, key) => {
+		// modObject[key] = (obj[key]).toString();
+		modObject[key] = ``+obj[key];
+		return modObject;
+	}, {});
+};
+
+
+// CONVERT THE OBJ'S VALUES TO UPPERCASE STRINGS
+export const _capitalizePropValues = (obj) => {
+	return Object.keys(obj).reduce((modObject, key) => {
+		modObject[key] = (``+obj[key]).toUpperCase();
+		return modObject;
+	}, {});
+};
 
 
 // get element states

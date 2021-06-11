@@ -263,7 +263,7 @@ block agv-dashboard
                               .result-item-titles.flex-col-start.flex-1
                                 a.result-item-title(href='#' title=`Geo Cluster Name`)= geoCluster.properties.agc_extended_name
                                 small.result-item-subtitle
-                                  a(href='#')= geoCluster.properties.agc_location
+                                  a(href='#')= (geoCluster.properties.agc_location)
                               .result-item-controls.flex-row-center-end
                                 .btn-group
                                   button#dropdownMenuClickableInside.btn.btn-outline.btn-sm.dropdown-toggle(type='button' data-bs-toggle='dropdown' data-bs-auto-close='outside' aria-expanded='false') ...

@@ -1,5 +1,5 @@
 `use strict`;
-import { _CheckGeoJSON, _mandatoryParam, _TraverseObject} from "./_utils.js";
+import { _CheckGeoJSON, _mandatoryParam, _capitalizePropValues, _TraverseObject} from "./_utils.js";
 
 
 // REMOVE > DEPRC.
@@ -130,13 +130,13 @@ export const _GetClusterProps = (clusterFeatureCollection = _mandatoryParam()) =
 
 		const primaryCommodity = evaluateObjProps(props, 'geo_cluster_details', 'primary_crop');
 
-		const clusterGovAdmin1 = Object.freeze({
+		let clusterGovAdmin1 = Object.freeze({
 			adminTitle1: evaluateObjProps(props, 'geo_cluster_governance_structure', 'president', 'first_name'),
 			adminTitle2: evaluateObjProps(props, 'geo_cluster_governance_structure', 'president', 'middle_name'),
 			adminTitle3: evaluateObjProps(props, 'geo_cluster_governance_structure', 'president', 'last_name'),
 		});
-
-		const clusterGovAdmin2 = Object.freeze({
+		
+		let clusterGovAdmin2 = Object.freeze({
 			adminTitle1: evaluateObjProps(props, 'geo_cluster_governance_structure', 'vice_president', 'first_name'),
 			adminTitle2: evaluateObjProps(props, 'geo_cluster_governance_structure', 'vice_president', 'middle_name'),
 			adminTitle3: evaluateObjProps(props, 'geo_cluster_governance_structure', 'vice_president', 'last_name'),

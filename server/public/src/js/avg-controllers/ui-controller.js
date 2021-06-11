@@ -1,7 +1,7 @@
 'use strict'
 import { _queryAPI } from "./data-controller.js";
 import { _mapboxPanToGeoJSON, _mapboxDrawFeatFeatColl, _mapboxDrawFeature, _leafletRenderGeojson, _mapboxDrawLabels } from "../geojson-render.js";
-import { _getDataset, _joinWordsArray, _createDiv, _TraverseObject, _getCheckedRadio } from "../_utils.js";
+import { _getDataset, _joinWordsArray, _createDiv, _TraverseObject, _getCheckedRadio, _stringifyPropValues } from "../_utils.js";
 import { _sanitizeFeatCollCoords, _populateDataset, _replaceDataset, _CheckGeoJSON, _getBufferedPolygon } from "../_utils.js";
 import { AVG_BASE_MAP, CLUSTER_PLOTS_MAP } from "./maps-controller.js";
 import { APP_STATE } from "./state-controller.js";
@@ -347,7 +347,7 @@ const RenderMaps = (function() {
          renderEverythingNow: (geojson, {useBuffer=false}) => {
             
             const previousRenderedGJ = APP_STATE.retreiveLastRenderedGJ();
-            console.log({previousRenderedGJ});
+            console.info({previousRenderedGJ});
 
             panToClusterGeoJSON(geojson);
             drawFeatureColl(geojson);
@@ -473,7 +473,6 @@ function buildResultModal() {
 function activateResultModal(modalDiv, featureCollection) {
 
    modalDiv.innerHTML = ``;
-   console.log(modalDiv.innerHTML)
 
    const clusterProps = _GetClusterProps(featureCollection);
 
@@ -526,7 +525,7 @@ async function populateClusterFeatsSidebar(clusterFeatColl) {
             
             // _CheckGeoJSON.isValidFeat(clusterFeature+1); // TODO <
 
-            const clusterFeatDiv = await _ClusterFeatMarkupGenerator.getClusterFeatDiv(_GetClusterFeatProps(idx, clusterFeature))
+            const clusterFeatDiv = await _ClusterFeatMarkupGenerator.getClusterFeatDiv(_stringifyPropValues(_GetClusterFeatProps(idx, clusterFeature)))
             
             _populateDataset(clusterFeatDiv, `clusterfeatdatastream`, JSON.stringify(clusterFeature));
 
@@ -540,46 +539,82 @@ async function populateClusterFeatsSidebar(clusterFeatColl) {
 };
 
 
+function clusterTitleClickSeq(evtObj) {
+
+   evtObj.preventDefault();
+
+   // get the main parent container
+   const resultContainerDiv = getParentElement(evtObj.target, {parentLevel: 3});
+
+   // get the siblings of the main parent container
+   const adjacentResultDivs = getSiblingElements(resultContainerDiv);
+
+   // get the geojson for that result
+   const clusterGeoJSON = JSON.parse(_getDataset(resultContainerDiv));
+
+   // TODO > VALIDATE GJ. HERE
+   if (clusterGeoJSON) {
+      
+      // 1.
+      activateResultModal(getDOMElements().resultModalDiv, clusterGeoJSON);
+
+      // 1b.
+      // render cluster feature cards.
+      populateClusterFeatsSidebar(clusterGeoJSON);
+      
+      // 2.
+      RenderMaps.renderEverythingNow(clusterGeoJSON, {useBuffer: false});
+      
+      // 3.
+      clickedResultContainerSeq(resultContainerDiv, adjacentResultDivs);
+
+      // 4. 
+      APP_STATE.saveRenderedGeojson(clusterGeoJSON);
+   };
+};
+
 function resultTitleClickHandler(resultTitleDivs) {
 
    try {
 
       for (const resultTitle of resultTitleDivs) {
+
+         // CLEAR THE CLICK LISTENERS ON "PRE-LOADED" RESULT DIVS
+         resultTitle.removeEventListener(`click`, clusterTitleClickSeq);
             
-         resultTitle.addEventListener(`click`, async (e) => {
+         resultTitle.addEventListener(`click`, clusterTitleClickSeq)
+         // resultTitle.addEventListener(`click`, async (e) => {
                
-            e.preventDefault();
+         //    e.preventDefault();
             
-            // get the main parent container
-            const resultContainerDiv = getParentElement(e.target, {parentLevel: 3});
+            // // get the main parent container
+            // const resultContainerDiv = getParentElement(e.target, {parentLevel: 3});
 
-            // get the siblings of the main parent container
-            const adjacentResultDivs = getSiblingElements(resultContainerDiv);
+            // // get the siblings of the main parent container
+            // const adjacentResultDivs = getSiblingElements(resultContainerDiv);
 
-            // get the geojson for that result
-            const clusterGeoJSON = JSON.parse(_getDataset(resultContainerDiv));
-            _getDataset
+            // // get the geojson for that result
 
-            // TODO > VALIDATE GJ. HERE
-            if (clusterGeoJSON) {
+            // // TODO > VALIDATE GJ. HERE
+            // if (clusterGeoJSON) {
                
-               // 1.
-               activateResultModal(getDOMElements().resultModalDiv, clusterGeoJSON);
+            //    // 1.
+            //    activateResultModal(getDOMElements().resultModalDiv, clusterGeoJSON);
 
-               // 1b.
-               // render cluster feature cards.
-               populateClusterFeatsSidebar(clusterGeoJSON);
+            //    // 1b.
+            //    // render cluster feature cards.
+            //    populateClusterFeatsSidebar(clusterGeoJSON);
                
-               // 2.
-               RenderMaps.renderEverythingNow(clusterGeoJSON, {useBuffer: false});
+            //    // 2.
+            //    RenderMaps.renderEverythingNow(clusterGeoJSON, {useBuffer: false});
                
-               // 3.
-               clickedResultContainerSeq(resultContainerDiv, adjacentResultDivs);
+            //    // 3.
+            //    clickedResultContainerSeq(resultContainerDiv, adjacentResultDivs);
    
-               // 4. 
-               APP_STATE.saveRenderedGeojson(clusterGeoJSON);
-            };
-         });
+            //    // 4. 
+            //    APP_STATE.saveRenderedGeojson(clusterGeoJSON);
+            // };
+         // });
       };
 
    } catch (resultTitleClickErr) {
@@ -599,6 +634,7 @@ async function downloadDBCollections(eventObj) {
          
          // create an intermediate "pipeline"?? fn.
          const apiDataQuery = function() {
+            console.log(document.domain)
             return _queryAPI.call(eventObj, window.fetch, APP_STATE.CONFIG_DEFAULTS.API_HOST_HEROKU, APIResourcePath, {});
          };
    
@@ -639,6 +675,7 @@ function populateResultsSidebar(dbCollection) {
       // CREATE NEW RESULT DIVS FOR EACH LEGACY CLUSTER
       if (dbCollection) {
 
+         // TODO > FILTER OUT UNWANTED LEGACY AGCS
          dbCollection = dbCollection.slice(1)
 
          for (let idx = 0; idx < dbCollection.length; idx++) {

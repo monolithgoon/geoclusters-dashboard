@@ -17,6 +17,9 @@ if (process.env.NODE_ENV === `development`) {
 };
 
 module.exports = {
+	
+	nodeEnv: process.env_NODE_ENV,
+
 	port: parseInt(process.env.PORT, 10) || 8080,
 
 	databaseURL: process.env.ATLAS_DB_STRING,

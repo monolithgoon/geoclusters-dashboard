@@ -62,9 +62,7 @@ export const _ClusterMarkupGenerator = ((classList) => {
          `;
          return HTMLMarkup;
       };
-      
-      const clusterFeatMarkup = ``;
-   
+         
       return {
    
          getClusterResultDiv: function(featureCollection) {
@@ -90,12 +88,7 @@ export const _ClusterFeatMarkupGenerator = ((classList) => {
          return _createCard(classList);
       };
    
-      // const getFeatureProps = function(featPropsGen, feature) {
-      //    return featPropsGen(feature);
-      // };
-
       const populateMarkup = function(props) {
-         console.log(props.featureAdmin1ID)
          const HTMLMarkup = `
             <div class="card-content-wrapper">
                <div class="card-media-wrapper">
@@ -135,7 +128,6 @@ export const _ClusterFeatMarkupGenerator = ((classList) => {
    
          getClusterFeatDiv: async function(featureProps) {
             const div = initContainerDiv();
-            // const featProps = getFeatureProps(_GetClusterFeatProps, feature);
             div.innerHTML = populateMarkup(featureProps);
             return div;
          },   
