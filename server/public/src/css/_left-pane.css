@@ -187,22 +187,33 @@ section.left-pane-container {
 }
 
 .result-item span {
-   font-size: 11.5px;
+   font-size: 10px;
 }
 
 .result-item-pill {
+
    margin: 3px 0;
    margin: 4px 0;
-   border-radius: 50%;
+
+   background-color: lightgrey;
+   border-radius: 5px;
 }
 
-.result-item-pill > span {
+.result-item-pill .pill-wrapper {
+   padding: 2px;
+   border: 1px solid wh1ite;
+   border-radius: 5px;
+}
+
+.result-item-pill .pill-wrapper > span {
+
    padding: 2px 5px 2px 0;
+   padding: 2px 5px;
+
    margin: 1px 0;
    font-family: 'Fira Sans', sans-serif;
-   font-family: 'Roboto', sans-serif;
-   color: #130f40; /* au-deep cove */
-   background-color: whitesmoke;   
+   font-family: 'Roboto Condensed', sans-serif;
+   /* background-color: whitesmoke;    */
 }
 
 .result-item-header {

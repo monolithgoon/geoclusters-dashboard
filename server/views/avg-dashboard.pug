@@ -276,10 +276,11 @@ block agv-dashboard
                                       a.dropdown-item(href='#') Share Cluster Details
                                 input.form-check-input.result-item-checkbox(id=`select_result_item_chk_${clusterIdx}` type='checkbox' value=`resultItemCheckbox${clusterIdx}` aria-label='select result checkbox')
                             .result-item-body.flex-col-start
-                              div.result-item-pill
-                                span= `${geoCluster.features.length} farmers`
-                                span=`•`
-                                span= `${geoCluster.properties.agc_area.toFixed(0)} hectares`
+                              .result-item-pill
+                                .pill-wrapper
+                                  span= `${geoCluster.features.length} FARMERS`
+                                  span=`•`
+                                  span= `${geoCluster.properties.agc_area.toFixed(0)} HECTARES`
                               //- a.admin1-name(href='#') President • Abubara Ibrahim Ismaila
                             .result-item-footer
                               span
