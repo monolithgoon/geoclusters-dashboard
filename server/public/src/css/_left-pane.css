@@ -192,6 +192,8 @@ section.left-pane-container {
 
 .result-item-pill {
    margin: 3px 0;
+   margin: 4px 0;
+   border-radius: 50%;
 }
 
 .result-item-pill > span {
@@ -200,7 +202,7 @@ section.left-pane-container {
    font-family: 'Fira Sans', sans-serif;
    font-family: 'Roboto', sans-serif;
    color: #130f40; /* au-deep cove */
-   background-color: whitesmoke;
+   background-color: whitesmoke;   
 }
 
 .result-item-header {
@@ -224,7 +226,7 @@ section.left-pane-container {
 
 .result-item-body,
 .result-item-footer {
-   padding-top: 5px;
+   /* padding-top: 5px; */
 }
 
 .result-item-body {

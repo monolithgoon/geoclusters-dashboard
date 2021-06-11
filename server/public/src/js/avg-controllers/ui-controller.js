@@ -525,7 +525,10 @@ async function populateClusterFeatsSidebar(clusterFeatColl) {
             
             // _CheckGeoJSON.isValidFeat(clusterFeature+1); // TODO <
 
-            const clusterFeatDiv = await _ClusterFeatMarkupGenerator.getClusterFeatDiv(_stringifyPropValues(_GetClusterFeatProps(idx, clusterFeature)))
+            // FIXME > _stringifyPropValues NOT WORKING
+            console.log(_stringifyPropValues(_GetClusterFeatProps(idx, clusterFeature)));
+            // const clusterFeatDiv = await _ClusterFeatMarkupGenerator.getClusterFeatDiv(_stringifyPropValues(_GetClusterFeatProps(idx, clusterFeature)));
+            const clusterFeatDiv = await _ClusterFeatMarkupGenerator.getClusterFeatDiv(_GetClusterFeatProps(idx, clusterFeature));
             
             _populateDataset(clusterFeatDiv, `clusterfeatdatastream`, JSON.stringify(clusterFeature));
 
@@ -583,38 +586,6 @@ function resultTitleClickHandler(resultTitleDivs) {
          resultTitle.removeEventListener(`click`, clusterTitleClickSeq);
             
          resultTitle.addEventListener(`click`, clusterTitleClickSeq)
-         // resultTitle.addEventListener(`click`, async (e) => {
-               
-         //    e.preventDefault();
-            
-            // // get the main parent container
-            // const resultContainerDiv = getParentElement(e.target, {parentLevel: 3});
-
-            // // get the siblings of the main parent container
-            // const adjacentResultDivs = getSiblingElements(resultContainerDiv);
-
-            // // get the geojson for that result
-
-            // // TODO > VALIDATE GJ. HERE
-            // if (clusterGeoJSON) {
-               
-            //    // 1.
-            //    activateResultModal(getDOMElements().resultModalDiv, clusterGeoJSON);
-
-            //    // 1b.
-            //    // render cluster feature cards.
-            //    populateClusterFeatsSidebar(clusterGeoJSON);
-               
-            //    // 2.
-            //    RenderMaps.renderEverythingNow(clusterGeoJSON, {useBuffer: false});
-               
-            //    // 3.
-            //    clickedResultContainerSeq(resultContainerDiv, adjacentResultDivs);
-   
-            //    // 4. 
-            //    APP_STATE.saveRenderedGeojson(clusterGeoJSON);
-            // };
-         // });
       };
 
    } catch (resultTitleClickErr) {

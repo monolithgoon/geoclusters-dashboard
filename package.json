@@ -7,6 +7,8 @@
     "deploy": "git push && git push heroku master",
     "deploy:stable": "git add -A && git commit -m `installed-lodash` && git push && git push heroku master",
     "deploy:open": "git push && git push heroku master && heroku open",
+    "on": "heroku maintenance:on",
+    "off": "heroku maintenance:off",
     "start": "node server.js",
     "start:dev": "cd server && nodemon server.js",
     "start:prod": "NODE_ENV=production nodemon server.js"

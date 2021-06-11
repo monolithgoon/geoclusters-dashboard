@@ -42,7 +42,7 @@ export const _ClusterMarkupGenerator = ((classList) => {
                   <span>•</span>
                   <span id="cluster_area">${props.clusterArea} hectares</span>
                </div>
-               <a href="#" id="cluster_gov_admin1">AGC President ${_joinWordsArray(Object.values(props.clusterGovAdmin1))}</a>
+               <a href="#" class="admin1-name" id="cluster_gov_admin1">AGC President ${_joinWordsArray(Object.values(props.clusterGovAdmin1))}</a>
             </div>
             <div class="result-item-footer">
                <span>

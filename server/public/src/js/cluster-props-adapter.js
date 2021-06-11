@@ -178,6 +178,7 @@ export function _GetClusterFeatProps(featIdx= _mandatoryParam(), clusterFeature 
 	try {
 		      
 		const props = clusterFeature.properties;
+
 		const featureID = _TraverseObject.evaluateValue(props, "chunk_id")
 			? _TraverseObject.getFinalValue()
 			: _TraverseObject.evaluateValue(props, "plot_id")
@@ -188,7 +189,9 @@ export function _GetClusterFeatProps(featIdx= _mandatoryParam(), clusterFeature 
 			: _TraverseObject.evaluateValue(props, "owner_id")
 			? _TraverseObject.getFinalValue()
 			: null;
+
 		const featureIndex = featIdx + 1;
+
 		const featureAdmin1 = Object.freeze({
 			adminTitle1: evaluateObjProps(props, 'owner_name'),
 			// TODO > PROPERLY DEFINE FEATURE ADMIN. MODEL
@@ -196,6 +199,8 @@ export function _GetClusterFeatProps(featIdx= _mandatoryParam(), clusterFeature 
 			// adminTitle2: evaluateObjProps(props, 'geo_cluster_governance_structure', 'vice_president', 'middle_name'),
 			// adminTitle3: evaluateObjProps(props, 'geo_cluster_governance_structure', 'vice_president', 'last_name'),
 		});
+		console.log(featureAdmin1)
+
 		const featureArea = evaluateObjProps(props, 'chunk_size');
 		
 		return {

@@ -142,8 +142,8 @@ export const _TraverseObject = (() => {
 // CONVERT THE OBJ'S VALUES TO STRINGS
 export const _stringifyPropValues = (obj) => {
 	return Object.keys(obj).reduce((modObject, key) => {
-		// modObject[key] = (obj[key]).toString();
-		modObject[key] = ``+obj[key];
+		modObject[key] = (obj[key]).toString();
+		// modObject[key] = ``+obj[key];
 		return modObject;
 	}, {});
 };
