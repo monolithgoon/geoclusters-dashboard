@@ -1,9 +1,9 @@
 'use strict'
 import { _queryAPI } from "./data-controller.js";
-import { _mapboxPanToGeoJSON, _mapboxDrawFeatFeatColl, _mapboxDrawFeature, _leafletRenderGeojson, _mapboxDrawLabels } from "../geojson-render.js";
-import { _getDataset, _joinWordsArray, _createDiv, _TraverseObject, _getCheckedRadio, _stringifyPropValues } from "../_utils.js";
+import { _mapboxPanToGeoJSON, _mapboxDrawFeatFeatColl, _mapboxDrawFeature, _leafletRenderGeojson, _mapboxDrawLabels, _openMapboxPopup } from "../geojson-render.js";
+import { _getDataset, _joinWordsArray, _createDiv, _TraverseObject, _getCheckedRadio, _stringifyPropValues, _TurfHelpers, _ManipulateDOM } from "../_utils.js";
 import { _sanitizeFeatCollCoords, _populateDataset, _replaceDataset, _CheckGeoJSON, _getBufferedPolygon } from "../_utils.js";
-import { AVG_BASE_MAP, CLUSTER_PLOTS_MAP } from "./maps-controller.js";
+import { AVG_BASE_MAP, CLUSTER_PLOTS_MAP, _switchMapboxMapLayer } from "./maps-controller.js";
 import { APP_STATE } from "./state-controller.js";
 import { _GetClusterFeatProps, _GetClusterProps } from "../cluster-props-adapter.js";
 import { _ClusterFeatMarkupGenerator, _ClusterMarkupGenerator } from "./markup-generator.js";
@@ -37,7 +37,7 @@ function getDOMElements () {
    const resultItemDivs = document.querySelectorAll(`.result-item`);
    const resultTitleDivs = document.querySelectorAll(`.result-item-title`);
 
-   const clusterFeatsListDiv = document.getElementById(`cluster_feats_list_body`);
+   const clusterFeatsListingDiv = document.getElementById(`cluster_feats_list_body`);
 
    return {
       appSidebar,
@@ -57,7 +57,7 @@ function getDOMElements () {
       resultsListWrapper,      
       resultItemDivs,
       resultTitleDivs,
-      clusterFeatsListDiv,
+      clusterFeatsListingDiv,
    };
 };
 
@@ -148,14 +148,6 @@ function blockElement(element) {
 // TODO > MOVE TO _utils.js
 function hideElement(element) {
    element.style.display = `none`;
-};
-
-
-// TODO > MOVE TO _utils.js
-function toggleClassList(element, styleClass) {
-   if (element && element.nodeType === 1 ) {
-      element.classList.toggle(styleClass);
-   };
 };
 
 
@@ -288,7 +280,7 @@ const RenderMaps = (function() {
       };
       
       // pan to a single cluster feat.
-      const panToClusterFeat = (geoJSONFeat) => {
+      const panToClusterFeat = (map, geoJSONFeat) => {
 
          try {
             
@@ -297,7 +289,7 @@ const RenderMaps = (function() {
             const gjCenterCoords = turf.coordAll(turf.centerOfMass(geoJSONFeat))[0];
             const gjBounds = turf.bbox(geoJSONFeat);
             // FIXME > ZOOM VALUE OVER-RIDDEN BY BOUNDS
-            _mapboxPanToGeoJSON(CLUSTER_PLOTS_MAP, gjCenterCoords, gjBounds, {zoom:pollAVGSettingsValues().clusterMap.zoomValue, pitch:0, bearing:0, boundsPadding:0});
+            _mapboxPanToGeoJSON(map, gjCenterCoords, gjBounds, {zoom:pollAVGSettingsValues().clusterMap.zoomValue, pitch:0, bearing:0, boundsPadding:0});
             
          } catch (panClusterMapErr) {
             console.error(`panClusterMapErr: ${panClusterMapErr.message}`);
@@ -323,14 +315,22 @@ const RenderMaps = (function() {
       const panBaseMap__ = (geojson) => {
          _leafletRenderGeojson(AVG_BASE_MAP, geojson, {zoomLevel: APP_STATE.CONFIG_DEFAULTS.LEAFLET_ADMIN_LEVEL_3_ZOOM})
       };
+
+      const createMapboxPopup = (map, lnglat, popupMarkup) => {
+         _openMapboxPopup(map, lnglat, popupMarkup);
+      };
       
       return {
          // TODO > CHANGE "geojson" TO "featureCollection"
+         // TODO > USE DEP. INJ. TO PASS THE MAPBOX MAP
+         renderPopup: (map, lnglat, HTMLMarkup) => {
+            createMapboxPopup(map, lnglat, HTMLMarkup);
+         },         
          panClusterPlotsMap: (geojson) => {
             panToClusterGeoJSON(geojson);
          },
-         panClusterPlotsFeatMap: (geoJSONFeat) => {
-            panToClusterFeat(geoJSONFeat);
+         panClusterPlotsFeatMap: (map, geoJSONFeat) => {
+            panToClusterFeat(map, geoJSONFeat);
          },
          renderCluster: (geojson) => {
             drawFeatureColl(geojson);
@@ -385,7 +385,7 @@ function clickedResultContainerSeq(resultItemDiv, otherResultItems) {
    });
 
    // set clicked result to active
-   toggleClassList(resultItemDiv, `is-active`);
+   _ManipulateDOM.toggleClassList(resultItemDiv, `is-active`);
 };
 
 
@@ -465,10 +465,46 @@ const MonitorExecution = (function() {
 })();
 
 
-// TODO > PUT AFTER LINE 590
-function buildResultModal() {
-
+function generateModalMarkup (clusterProps) {
+   const HTMLMarkup = `
+         <div class="result-item-modal-header flex-row-center-btw">
+            <span>Block AGC</span><span>25 Ha.</span>
+         </div>
+         <div class="result-item-modal-title flex-row-center-btw">
+            <span id="modal_title">${clusterProps.clusterName}</span>
+            <button
+               class="btn-close"
+               id="result_item_modal_close_btn"
+               type="button"
+               aria-label="close"
+            ></button>
+         </div>
+         <div class="result-item-modal-body flex-col-center">
+            <span class="modal-person-avatar">
+               <img
+                  class="rounded-circle"
+                  src="./assets/images/users/img_avatar2.png"
+                  alt="Modal Avatar" />
+            </span>
+            <span class="modal-person-details flex-col-center">Abdulsalam Dansuki, President</span>
+            <span class="modal-person-contact flex-row-center-btw">
+               <span>08022242548</span><span>mallam-dan@gmail.com</span>
+               <span>Directions</span></span>
+         </div>
+         <div class="result-item-modal-subtext">
+            <span>
+               Prim. commodity: Maize, Rice . Clay soil . No irriation . Closest PMRO
+               site 40km away . No power . Closest market 10km away . No processing
+               capability . Funded June 17, 2019. 13.3 hectares unused.</span>
+         </div>
+         <div class="result-item-modal-footer flex-row-center-btw">
+            <span>200 Farmers</span><span>Kastina State</span>
+         </div>
+   `;
+   return HTMLMarkup;
 };
+
+
 // open modal for clicked result
 function activateResultModal(modalDiv, featureCollection) {
 
@@ -491,12 +527,30 @@ function activateResultModal(modalDiv, featureCollection) {
 };
 
 
-// FIXME > THIS SHOULD FIRE ON FILTER INPUT CHANGES????
-async function appendClusterFeatsList(listDiv, clusterFeatDiv) {
+/**
+ * Listen to the element and when it is clicked, do four things:
+ * 1. Get the geoJSON associated with the clicked link
+ * 2. Fly to the point
+ * 3. Close all other popups and display popup for clicked store
+ * 4. Highlight listing in sidebar (and remove highlight for all other listings)
+ **/
+function featCardClickSeq(clusterFeatures) {
+
    try {
-      listDiv.appendChild(clusterFeatDiv);
-   } catch (appendFeatsListErr) {
-      console.error(`appendFeatsListErr: ${appendFeatsListErr}`)
+      
+      for (var i = 0; i < clusterFeatures.length; i++) {
+
+         // this => clusterFeatCard
+         if (this.currentTarget.id === `cluster_feat_${clusterFeatures[i].geometry._id}`) {
+            RenderMaps.panClusterPlotsFeatMap(CLUSTER_PLOTS_MAP, clusterFeatures[i]);
+            RenderMaps.renderPopup(CLUSTER_PLOTS_MAP, _TurfHelpers.getLngLat(clusterFeatures[i]));
+         };
+      };
+
+      _ManipulateDOM.addRemoveClass(this.currentTarget, 'selected');
+
+   } catch (cardClickSeqErr) {
+      console.error(`cardClickSeqErr: ${cardClickSeqErr.message}`);
    };
 };
 
@@ -515,8 +569,8 @@ async function populateClusterFeatsSidebar(clusterFeatColl) {
          const clusterFeatures = clusterFeatColl.features;
 
          // remove prev. rendered feats.
-         const featsListDiv = getDOMElements().clusterFeatsListDiv
-         featsListDiv.innerHTML = ``
+         const listingWrapper = getDOMElements().clusterFeatsListingDiv
+         listingWrapper.innerHTML = ``
          
          // 2.
          for (let idx = 0; idx < clusterFeatures.length; idx++) {
@@ -526,13 +580,25 @@ async function populateClusterFeatsSidebar(clusterFeatColl) {
             // _CheckGeoJSON.isValidFeat(clusterFeature+1); // TODO <
 
             // FIXME > _stringifyPropValues NOT WORKING
-            console.log(_stringifyPropValues(_GetClusterFeatProps(idx, clusterFeature)));
-            // const clusterFeatDiv = await _ClusterFeatMarkupGenerator.getClusterFeatDiv(_stringifyPropValues(_GetClusterFeatProps(idx, clusterFeature)));
-            const clusterFeatDiv = await _ClusterFeatMarkupGenerator.getClusterFeatDiv(_GetClusterFeatProps(idx, clusterFeature));
-            
-            _populateDataset(clusterFeatDiv, `clusterfeatdatastream`, JSON.stringify(clusterFeature));
+            // console.log(_stringifyPropValues(_GetClusterFeatProps(idx, clusterFeature)));
+            // const clusterFeatCard = await _ClusterFeatMarkupGenerator.getClusterFeatDiv(_stringifyPropValues(_GetClusterFeatProps(idx, clusterFeature)));
+            const clusterFeatCard = await _ClusterFeatMarkupGenerator.getClusterFeatDiv(_GetClusterFeatProps(idx, clusterFeature));
 
-            appendClusterFeatsList(featsListDiv, clusterFeatDiv);
+            // SANDBOX
+            // ASSIGN A UNIQE ID TO THE CARD DIV
+            clusterFeatCard.id = `cluster_feat_${clusterFeature.geometry._id}`;
+
+            // SANDBOX
+            // REMOVE
+            /* Add the link to the individual listing created above. */
+            // const featTitleLink = clusterFeatCard.querySelector(`.feat-admin1-title`);
+            // featTitleLink.id = `cluster_feat_${clusterFeature.geometry._id}`;
+
+            clusterFeatCard.addEventListener('click', e => { featCardClickSeq.call(e, clusterFeatures); });
+
+            _populateDataset(clusterFeatCard, `clusterfeatdatastream`, JSON.stringify(clusterFeature));
+
+            _ManipulateDOM.appendList(listingWrapper, clusterFeatCard);
          };
       };
       
@@ -683,7 +749,7 @@ function DOMLoadEvents() {
          // save the UI default settings
          APP_STATE.saveDefaultSettings(pollAVGSettingsValues());
                   
-         await downloadDBCollections(windowObj);
+         // await downloadDBCollections(windowObj);
 
          const legacyClustersColl = _TraverseObject.evaluateValue(APP_STATE.returnDBCollections(), [0], "data", "legacy_agcs");
          
@@ -712,46 +778,6 @@ $(document).ready(function () {
 });
 
 
-function generateModalMarkup (clusterProps) {
-   const HTMLMarkup = `
-         <div class="result-item-modal-header flex-row-center-btw">
-            <span>Block AGC</span><span>25 Ha.</span>
-         </div>
-         <div class="result-item-modal-title flex-row-center-btw">
-            <span id="modal_title">${clusterProps.clusterName}</span>
-            <button
-               class="btn-close"
-               id="result_item_modal_close_btn"
-               type="button"
-               aria-label="close"
-            ></button>
-         </div>
-         <div class="result-item-modal-body flex-col-center">
-            <span class="modal-person-avatar">
-               <img
-                  class="rounded-circle"
-                  src="./assets/images/users/img_avatar2.png"
-                  alt="Modal Avatar" />
-            </span>
-            <span class="modal-person-details flex-col-center">Abdulsalam Dansuki, President</span>
-            <span class="modal-person-contact flex-row-center-btw">
-               <span>08022242548</span><span>mallam-dan@gmail.com</span>
-               <span>Directions</span></span>
-         </div>
-         <div class="result-item-modal-subtext">
-            <span>
-               Prim. commodity: Maize, Rice . Clay soil . No irriation . Closest PMRO
-               site 40km away . No power . Closest market 10km away . No processing
-               capability . Funded June 17, 2019. 13.3 hectares unused.</span>
-         </div>
-         <div class="result-item-modal-footer flex-row-center-btw">
-            <span>200 Farmers</span><span>Kastina State</span>
-         </div>
-   `;
-   return HTMLMarkup;
-};
-
-
 // DOM ELEM. EVT. LIST'NRS.
 function AddEventListeners() {
 
@@ -764,6 +790,11 @@ function AddEventListeners() {
             RenderMaps.renderClusterPlotLabel(APP_STATE.retreiveLastRenderedGJ());
          });
       });
+
+      // CHANGE CLUSTER PLOTS MAP STYLE
+      getDOMElements().plotsMapStyleRadios.forEach(radio => {
+         radio.addEventListener(`change`, _switchMapboxMapLayer)
+      })
 
       // RESULT ITEM TITLE CLICK HAND.
       resultTitleClickHandler(getDOMElements().resultTitleDivs);

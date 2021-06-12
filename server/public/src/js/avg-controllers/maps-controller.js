@@ -62,7 +62,15 @@ CLUSTER_PLOTS_MAP.on(`load`, function() {
 });
 
 
+// CALBACK FN. FOR TO SWITCH MAP STYLES
+export function _switchMapboxMapLayer(evtObj) {
+   var layerId = evtObj.target.id;
+   CLUSTER_PLOTS_MAP.setStyle(`mapbox://styles/mapbox/${layerId}`);
+};
 
+
+
+// SANDBOX
 const clusterFeatsListCont = document.getElementById('cluster_feats_list_body')
 var link = L.DomUtil.create('a', 'link', clusterFeatsListCont);
         

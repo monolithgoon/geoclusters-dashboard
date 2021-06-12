@@ -176,10 +176,12 @@ section.left-pane-container {
 
 .result-item:hover {
    background-color: lightgrey;
+   /* background-color: #f1f2f6; */
+   background-color: #f2f2f2;
 }
 
 .result-item.is-active {
-   background-color: lightgrey;
+   background-color: #CAD3C8; /*in-falling-star*/
    opacity: 1;
 }
 

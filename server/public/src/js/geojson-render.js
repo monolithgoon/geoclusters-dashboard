@@ -139,7 +139,7 @@ const LayersController = (function() {
 
 
 // KEEP TRACK OF RENDERED MAPBOX MARKERS
-const markersController = (function() {
+const MarkersController = (function() {
    const renderedMarkers = [];
    return {
       saveMarker: function(marker) {
@@ -150,6 +150,48 @@ const markersController = (function() {
       }
    }
 })();
+
+
+// IIFE TO KEEP TRACK OF OPEN MAPBOX POPUPS
+const PopupsController = (function() {
+   const openPopups = [];
+   return {
+      savePopup: function(popup) {
+         if (popup) openPopups.push(popup);
+      },
+      returnOpenPopups: function() {
+         return openPopups;
+      },
+   };
+})();
+
+
+function clearPopups() {
+   var popUps = document.getElementsByClassName("mapboxgl-popup");
+   if (popUps[0]) popUps[0].remove();
+   const openPopups = PopupsController.returnOpenPopups();
+   openPopups.forEach(openPopup => {
+      if (openPopup) openPopup.remove;
+   });
+};
+
+
+export function _openMapboxPopup(map, lnglat, HTMLMarkup) {
+   
+   clearPopups();
+   
+   var popup = new mapboxgl.Popup({ closeOnClick: false })
+      .setLngLat(lnglat)
+      .setHTML(
+         "<h3>Sweetgreen</h3>" +
+            "<h4>" +
+            // currentFeature.properties.address +
+            "</h4>"
+      )
+      .addTo(map);
+   
+   PopupsController.savePopup(popup);
+};
 
 
 // PAN MAP TO GEOJSON'S CENTER
@@ -259,7 +301,7 @@ export const _mapboxDrawFeatFeatColl = function ({mapboxMap, featOrFeatColl}) {
          // CLEAR PREVIOUSLY RENDERED LAYERS
          sanitizeMapboxLayers({map: mapboxMap, renderedLayers: LayersController.returnSavedLayers()});
          sanitizeMapboxLayers({map: mapboxMap, renderedLayers: LayersController.returnSavedLayers()});
-         removeMapboxMarkers(markersController.returnSavedMarkers());
+         removeMapboxMarkers(MarkersController.returnSavedMarkers());
       
             
          // // PAN MAP TO GEOJSON'S CENTER
@@ -275,7 +317,7 @@ export const _mapboxDrawFeatFeatColl = function ({mapboxMap, featOrFeatColl}) {
          // SAVE THE LAYERS & MARKERS
          LayersController.saveLayers(gjOutlineLayer);
          LayersController.saveLayers(gjFillLayer);
-         markersController.saveMarker(mapboxMarker);
+         MarkersController.saveMarker(mapboxMarker);
 
          // console.log(LayersController.returnSavedLayers());
 

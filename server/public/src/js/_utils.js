@@ -29,6 +29,47 @@ export function _createCard(classArray) {
 };
 
 
+export const _ManipulateDOM = (() => {
+
+	return {
+
+		toggleClassList: function (element, styleClass) {
+			if (element && element.nodeType === 1 ) {
+				element.classList.toggle(styleClass);
+			};
+		},
+
+		addRemoveClass: function (element, classList) {
+			try {
+				const activeItem = document.getElementsByClassName(`${classList}`);
+				if (activeItem[0]) {
+					activeItem[0].classList.remove(`${classList}`);
+				};
+				element.classList.add(`${classList}`);
+			} catch (addRemoveClassErr) {
+				console.error(`addRemoveClassErr: ${addRemoveClassErr.message}`)
+			};
+		},
+
+		appendList: function (listDiv, clusterFeatCard) {
+			try {
+				listDiv.appendChild(clusterFeatCard);
+			} catch (appendListErr) {
+				console.error(`appendListErr: ${appendListErr}`)
+			};   
+		},
+	}
+})();
+
+export function _addRemoveClass(classList) {
+	const activeItem = document.getElementsByClassName(`${classList}`);
+	if (activeItem[0]) {
+		activeItem[0].classList.remove('selected');
+	};
+	this.classList.add('selected');
+};
+
+
 // RETREIVE DATA (FROM BACKEND) VIA HTML DATASET ATTRIBUTE
 export function _getDataset(div) {
 
@@ -210,6 +251,23 @@ export function _replaceDataset(div, dataAttribute, data) {
 export const _mandatoryParam = () => {
 	throw new Error(`Parameter is required.`);
 };
+
+
+export const _TurfHelpers = (()=>{
+	return {
+		centerOfMass: function(geoJSONFeature) {
+			try {
+				return turf.centerOfMass(geoJSONFeature);
+			} catch (pointOnFeatErr) {
+				console.log(`pointOnFeatErr: ${pointOnFeatErr.message}`)
+			};
+		},
+		getLngLat: function(geoJSONFeature) {
+			const lngLat = this.centerOfMass(geoJSONFeature).geometry.coordinates;
+			return lngLat;
+		}
+	};
+})();
 
 
 export const _CheckGeoJSON = (()=>{

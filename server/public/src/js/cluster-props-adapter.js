@@ -69,6 +69,7 @@ export const _GetClusterProps = (clusterFeatureCollection = _mandatoryParam()) =
 			: null;
 		// TODO
 		clusterName = _.startCase(clusterName);
+		// capitalze the word 'agc'
 		// clusterName = _removeUnderscores(clusterName);
 		// clusterName = _includeHyphens(clusterNam);
 		// clusterName = _camelize(clusterName);

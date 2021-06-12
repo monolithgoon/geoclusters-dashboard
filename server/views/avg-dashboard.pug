@@ -46,6 +46,7 @@ block agv-dashboard
           button#v_pills_manage_clusters_tab.nav-link(title='Manage Clusters' data-bs-toggle='pill' data-bs-target='#v_pills_manage_clusters_tab_content' type='button' role='tab' aria-controls='v_pills_manage_clusters_tab_content' aria-selected='true')
             span
               img(src="https://img.icons8.com/dotty/28/ffffff/add-database.png" alt='Manage Clusters' srcset='')
+              //- span.spinner-grow.spinner-grow-sm.text-primary.notification-badge.red-badge.tiny-badge
           button#v-pills-profile-tab.nav-link(title="" data-bs-toggle='pill' data-bs-target='#v-pills-profile' type='button' role='tab' aria-controls='v-pills-profile' aria-selected='false')
             span(style='font-size: 1rem') &#x1F680;
           .flex-spacer.flex-1
@@ -926,23 +927,14 @@ block agv-dashboard
                   fieldset
                     legend Cluster Plots Map Tile Styles
                     .form-check.form-check-inline
-                      label.form-check-label(for='cluster_plots_map_style_1') Outdoors V.11
-                      input#cluster_plots_map_style_1.form-check-input.cluster-plots-map-style-radio(type='radio' name='plotsMapStyleRadio' value='outdoors' checked)
+                      label.form-check-label(for='outdoors-v11') Outdoors V.11
+                      input#outdoors-v11.form-check-input.cluster-plots-map-style-radio(type='radio' name='plotsMapStyleRadio' value='outdoors' checked)
                     .form-check.form-check-inline
-                      label.form-check-label(for='cluster_plots_map_style_2') Lè Shine
-                      input#cluster_plots_map_style_2.form-check-input.cluster-plots-map-style-radio(type='radio' name='plotsMapStyleRadio' value='le-shine')
+                      label.form-check-label(for='cjcunv5ae262f2sm9tfwg8i0w') Lè Shine
+                      input#cjcunv5ae262f2sm9tfwg8i0w.form-check-input.cluster-plots-map-style-radio(type='radio' name='plotsMapStyleRadio' value='le-shine')
                     .form-check.form-check-inline
-                      label.form-check-label(for='cluster_plots_map_style_3') Minimo
-                      input#cluster_plots_map_style_3.form-check-input.cluster-plots-map-style-radio(type='radio' name='plotsMapStyleRadio' value='minimo')
-                    .form-check.form-check-inline
-                      label.form-check-label(for='cluster_plots_map_style_4') Cali Terrain
-                      input#cluster_plots_map_style_4.form-check-input.cluster-plots-map-style-radio(type='radio' name='plotsMapStyleRadio' value='cali-terrain')
-                    .form-check.form-check-inline
-                      label.form-check-label(for='cluster_plots_map_style_5') Moonlight
-                      input#cluster_plots_map_style_5.form-check-input.cluster-plots-map-style-radio(type='radio' name='plotsMapStyleRadio' value='moonlight')
-                    .form-check.form-check-inline
-                      label.form-check-label(for='cluster_plots_map_style_6') Navigation Day
-                      input#cluster_plots_map_style_6.form-check-input.cluster-plots-map-style-radio(type='radio' name='plotsMapStyleRadio' value='nav-day')
+                      label.form-check-label(for='dark-v10') Dark
+                      input#dark-v10.form-check-input.cluster-plots-map-style-radio(type='radio' name='plotsMapStyleRadio' value='moonlight')
                   br
                   fieldset
                     legend Map Distance Units
@@ -1008,3 +1000,13 @@ block agv-dashboard
                 rangeOutput.innerHTML = this.value;
               };
             })();
+
+            //- For the JavaScript .remove() method to work in older browsers
+            //- This will let you use the .remove() function later on
+            if (!('remove' in Element.prototype)) {
+              Element.prototype.remove = function() {
+                if (this.parentNode) {
+                  this.parentNode.removeChild(this);
+                };
+              };
+            };
