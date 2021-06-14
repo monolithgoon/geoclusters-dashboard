@@ -285,11 +285,37 @@ function masterSlaveControl(master, slaves) {
 
 
 // ACTIVATE THE DIV THAT DISPLAYS APP ACTIVITY
-function toggleActivityIndicator(indDivWrapper, indDiv) {
-   indDiv.innerHTML = ``;
-   _ManipulateDOM.toggleClassList(indDivWrapper, "reveal");
-   _ManipulateDOM.toggleClassList(indDiv, "spinner-grow", "text-light", "spinner-grow-md");
-};
+const ShowActivity = (()=>{
+   
+   try {
+      
+      function toggleIndicatorWrapper (wrapperDiv) {
+         _ManipulateDOM.toggleClassList(wrapperDiv, "reveal");         
+      };
+      function toggleIndicator (indicatorDiv) {
+         _ManipulateDOM.toggleClassList(indicatorDiv, "spinner-grow", "text-light", "spinner-grow-sm");
+      };
+      return {
+         activityStart: (wrapperDiv, indicatorDiv) => {
+            toggleIndicatorWrapper(wrapperDiv)
+            toggleIndicator(indicatorDiv)
+         },
+         activityEnd: (wrapperDiv, indicatorDiv) => {
+            // indicatorDiv.innerText = `Data Loaded`;
+            // setTimeout(() => {
+            //    indicatorDiv.innerText = ``
+            //    toggleIndicator(indicatorDiv);
+            //    toggleIndicatorWrapper(wrapperDiv);
+            // }, 3000);
+            toggleIndicator(indicatorDiv);
+            toggleIndicatorWrapper(wrapperDiv);
+         },
+      };
+
+   } catch (showActivityErr) {
+      console.error(`showActivityErr: ${showActivityErr.message}`)
+   };
+})();
 
 
 // CALC. TIME TO EXE. A FN. && DISPLAY INDICATOR
@@ -301,7 +327,7 @@ const MonitorExecution = (function() {
 
 		execute: async function(callback) {
 						
-			toggleActivityIndicator(getDOMElements().appActivityIndWrapper, getDOMElements().appActivityInd);
+			ShowActivity.activityStart(getDOMElements().appActivityIndWrapper, getDOMElements().appActivityInd);
 	
          console.log(`%c This funciton [${callback}] is executing ..`, `background-color: lightgrey; color: blue;`);
 
@@ -313,7 +339,7 @@ const MonitorExecution = (function() {
 
 			executionMs = exeEnd - exeStart;
 
-			toggleActivityIndicator(getDOMElements().appActivityIndWrapper, getDOMElements().appActivityInd);
+			ShowActivity.activityEnd(getDOMElements().appActivityIndWrapper, getDOMElements().appActivityInd);
 		},
 
 		getExecutionTime: function() {
