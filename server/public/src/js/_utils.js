@@ -88,6 +88,41 @@ export const _ManipulateDOM = (() => {
 		hideElement: (element) => {
 			element.style.display = `none`;
 		},
+
+		// RETREIVE DATA (FROM BACKEND) VIA HTML DATASET ATTRIBUTE
+		getDataset: (div) => {
+
+			try {
+
+				const divDataset = div.dataset; // this returns: DOMStringMap => {[dataAttrName], [data]}
+
+				if (!divDataset) return null;
+
+				// MTD. 1
+				// TODO > NOT TESTED
+				const DOMStringMapToObject = function(dataset) {
+					return Object.keys(dataset).reduce((object, key) => {
+						object[key] = dataset[key];
+						return object;
+					}, {});
+				};
+				
+				// MTD. 2
+				for (const d in divDataset) {
+
+					// console.log(d, divDataset[d])
+
+					const dataAttrName = d;
+
+					const dataStream = divDataset[dataAttrName];
+
+					return dataStream;
+				};
+				
+			} catch (getDataStreamErr) {
+				console.error(`getDataStreamErr: ${getDataStreamErr}`);
+			};
+		},
 		
 		populateDataset: (div, dataAttribute, data) => {
 			if (!(div.dataset[dataAttribute])) {
@@ -188,55 +223,9 @@ export const _ManipulateDOM = (() => {
 			} catch (getSubElementsErr) {
 				console.error(`getSubElementsErr: ${getSubElementsErr.message}`)
 			};
-		},
-		
+		},		
 	}
 })();
-
-
-export function _addRemoveClass(classList) {
-	const activeItem = document.getElementsByClassName(`${classList}`);
-	if (activeItem[0]) {
-		activeItem[0].classList.remove('selected');
-	};
-	this.classList.add('selected');
-};
-
-
-// RETREIVE DATA (FROM BACKEND) VIA HTML DATASET ATTRIBUTE
-export function _getDataset(div) {
-
-	try {
-
-		const divDataset = div.dataset; // this returns: DOMStringMap => {[dataAttrName], [data]}
-
-		if (!divDataset) return null;
-
-		// MTD. 1
-		// TODO > NOT TESTED
-		const DOMStringMapToObject = function(dataset) {
-			return Object.keys(dataset).reduce((object, key) => {
-				object[key] = dataset[key];
-				return object;
-			}, {});
-		};
-		
-		// MTD. 2
-		for (const d in divDataset) {
-
-			// console.log(d, divDataset[d])
-
-			const dataAttrName = d;
-
-			const dataStream = divDataset[dataAttrName];
-
-			return dataStream;
-		};
-		
-	} catch (getDataStreamErr) {
-		console.error(`getDataStreamErr: ${getDataStreamErr}`);
-	};
-};
 
 
 // CALC. TIME TO EXE. A FN.

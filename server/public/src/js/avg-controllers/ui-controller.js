@@ -1,7 +1,7 @@
 'use strict'
 import { _queryAPI } from "./data-controller.js";
 import { _mapboxPanToGeoJSON, _mapboxDrawFeatFeatColl, _mapboxDrawFeature, _leafletRenderGeojson, _mapboxDrawLabels, _openMapboxPopup } from "../geojson-render.js";
-import { _getDataset, _joinWordsArray, _createDiv, _TraverseObject, _getCheckedRadio, _stringifyPropValues, _TurfHelpers, _ManipulateDOM } from "../_utils.js";
+import { _joinWordsArray, _TraverseObject, _getCheckedRadio, _stringifyPropValues, _TurfHelpers, _ManipulateDOM } from "../_utils.js";
 import { _sanitizeFeatCollCoords, _CheckGeoJSON, _getBufferedPolygon } from "../_utils.js";
 import { AVG_BASE_MAP, CLUSTER_PLOTS_MAP, _switchMapboxMapLayer } from "./maps-controller.js";
 import { APP_STATE } from "./state-controller.js";
@@ -387,7 +387,7 @@ function clusterTitleClickSeq(evtObj) {
    const adjacentResultDivs = _ManipulateDOM.getSiblingElements(resultContainerDiv);
 
    // get the geojson for that result
-   const clusterGeoJSON = JSON.parse(_getDataset(resultContainerDiv));
+   const clusterGeoJSON = JSON.parse(_ManipulateDOM.getDataset(resultContainerDiv));
 
    // TODO > VALIDATE GJ. HERE
    if (clusterGeoJSON) {
@@ -667,7 +667,6 @@ function AddEventListeners() {
    
       // FILTER CHECKBOX BEH.
       getFilterCheckboxes().filterCheckboxMasters.forEach(masterCheckbox => {
-
          const inputGroupWrapper = _ManipulateDOM.getParentElement(masterCheckbox, {parentLevel: 4})
          const slaveCheckboxes = _ManipulateDOM.getSubordinates(inputGroupWrapper, masterCheckbox, ".form-check-input")
          masterSlaveControl(masterCheckbox, slaveCheckboxes);
