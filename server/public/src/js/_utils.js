@@ -33,13 +33,23 @@ export const _ManipulateDOM = (() => {
 
 	return {
 
-		toggleClassList: function (element, styleClass) {
+		createDiv: (...styleClasses) => {
+			const newDiv = document.createElement('div');
+			styleClasses.forEach(member => {
+				newDiv.classList.add(member);
+			});
+			return newDiv;		
+		},
+
+		toggleClassList: (element, ...styleClasses) => {
 			if (element && element.nodeType === 1 ) {
-				element.classList.toggle(styleClass);
+				styleClasses.forEach(member => {
+					element.classList.toggle(member);
+				});
 			};
 		},
 
-		addRemoveClass: function (element, classList) {
+		addRemoveClass: (element, classList) => {
 			try {
 				const activeItem = document.getElementsByClassName(`${classList}`);
 				if (activeItem[0]) {
@@ -51,15 +61,138 @@ export const _ManipulateDOM = (() => {
 			};
 		},
 
-		appendList: function (listDiv, clusterFeatCard) {
+		removeClass: (element, styleClass) => {
+			if (element && element.nodeType === 1 ) {
+				element.classList.remove(styleClass);
+			};
+		},	
+
+		appendList: (listWrapper, element) => {
 			try {
-				listDiv.appendChild(clusterFeatCard);
+				listWrapper.appendChild(element);
 			} catch (appendListErr) {
 				console.error(`appendListErr: ${appendListErr}`)
 			};   
 		},
+
+		togleBlockElement: (element) => {
+			if (element.style.display !== `block`) { element.style.display = `block`}
+			else if (element.style.display === `block`) { element.style.display = `none`}
+			else if (element.style.display === `none`) { element.style.display = `block`}
+		},
+
+		blockElement: (element) => {
+			element.style.display = `block`;
+		},
+
+		hideElement: (element) => {
+			element.style.display = `none`;
+		},
+		
+		populateDataset: (div, dataAttribute, data) => {
+			if (!(div.dataset[dataAttribute])) {
+				div.dataset[dataAttribute] = data;
+			};
+		},
+
+		getParentElement: (element, {parentLevel=1}) => {
+			let parent;
+			if (element && element.nodeType === 1) {
+				for (let idx = 0; idx < parentLevel; idx++) {
+					parent = element.parentElement;
+					element = parent;
+				};
+				return parent;
+			};
+			return null;		
+		},
+
+		getSiblingElements: (element) => {
+			
+			try {
+
+				// var for collecting siblings
+				let siblingElements = [];
+			
+				// if no parent, return no sibling
+				if (!element.parentNode) return siblingElements;
+			
+				// get fist child of parent node
+				let siblingElement = element.parentNode.firstChild;
+			
+				// collect siblings
+				while (siblingElement) {
+					if (siblingElement.nodeType === 1 && siblingElement !== element) {
+						siblingElements.push(siblingElement);
+					};
+					siblingElement = siblingElement.nextSibling;
+				}
+						
+				return siblingElements;
+				
+			} catch (getSibElemErr) {
+				console.error(`getSibElemErr: ${getSibElemErr}`)
+			};		
+		},
+
+		// FIXME > ENDLESS WHILE LOOP
+		getNestedSiblings: (element, numParents, nestPosition) => {
+
+			var siblingResults = [];
+
+			// return nothing if no parent
+			if (!element.parentNode) return siblingResults;
+
+			// find the relevant parent to target
+			let parentDiv;
+			while(numParents > 0) {
+				parentDiv = element.parentNode;
+				numParents = numParents - 1;
+			};
+			
+			// get first sibling of parent (ie., self)
+			let nestedSibling = parentDiv.childNodes[nestPosition-1];
+			console.log(nestedSibling)
+
+			// while (nestedSibling) {
+				//    if (nestedSibling.nodeType === 1 && nestedSibling !== element) {
+					//       siblingResults.push(nestedSibling);
+					//    };
+					//    // get next nested sibling
+					//    nestedSibling = parentDiv.nextSibling.childNodes[nestPosition-1];
+							const nextNestedSibling = parentDiv.nextSibling.childNodes[nestPosition-1];
+							nestedSibling = nextNestedSibling;
+				// };
+			console.log(siblingResults);
+			return siblingResults;
+		},
+
+		getSubordinates: (parentWrapper, masterElement, elementsClass) => {
+
+			try {
+				
+				let slaveElements = [];
+				
+				// collect adjacent parents
+				if (parentWrapper.nodeType === 1) {
+					let inputs = parentWrapper.querySelectorAll(`${elementsClass}`);
+					for (const input of inputs) {
+						if (input !== masterElement) {
+							slaveElements.push(input)
+						};
+					};
+				};
+			
+				return slaveElements; 
+
+			} catch (getSubElementsErr) {
+				console.error(`getSubElementsErr: ${getSubElementsErr.message}`)
+			};
+		},
+		
 	}
 })();
+
 
 export function _addRemoveClass(classList) {
 	const activeItem = document.getElementsByClassName(`${classList}`);
@@ -230,14 +363,6 @@ export function _getCheckedRadio(radioGroup) {
    } catch (getCheckedRadioErr) {
       console.error(`getCheckedRadioErr: ${getCheckedRadioErr.message}`)
    };
-};
-
-
-// populate 
-export function _populateDataset(div, dataAttribute, data) {
-	if (!(div.dataset[dataAttribute])) {
-		div.dataset[dataAttribute] = data;
-	};
 };
 
 

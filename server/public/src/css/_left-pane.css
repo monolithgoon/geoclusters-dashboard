@@ -181,7 +181,7 @@ section.left-pane-container {
 }
 
 .result-item.is-active {
-   background-color: #CAD3C8; /*in-falling-star*/
+   background-color: lightgrey;
    opacity: 1;
 }
 

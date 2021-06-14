@@ -2,11 +2,11 @@
 import { _queryAPI } from "./data-controller.js";
 import { _mapboxPanToGeoJSON, _mapboxDrawFeatFeatColl, _mapboxDrawFeature, _leafletRenderGeojson, _mapboxDrawLabels, _openMapboxPopup } from "../geojson-render.js";
 import { _getDataset, _joinWordsArray, _createDiv, _TraverseObject, _getCheckedRadio, _stringifyPropValues, _TurfHelpers, _ManipulateDOM } from "../_utils.js";
-import { _sanitizeFeatCollCoords, _populateDataset, _replaceDataset, _CheckGeoJSON, _getBufferedPolygon } from "../_utils.js";
+import { _sanitizeFeatCollCoords, _CheckGeoJSON, _getBufferedPolygon } from "../_utils.js";
 import { AVG_BASE_MAP, CLUSTER_PLOTS_MAP, _switchMapboxMapLayer } from "./maps-controller.js";
 import { APP_STATE } from "./state-controller.js";
 import { _GetClusterFeatProps, _GetClusterProps } from "../cluster-props-adapter.js";
-import { _ClusterFeatMarkupGenerator, _ClusterMarkupGenerator } from "./markup-generator.js";
+import { _GenerateClusterFeatMarkup, _GenerateClusterMarkup, _GenClusterModalMarkup } from "./markup-generator.js";
 
 
 function getDOMElements () {
@@ -130,141 +130,6 @@ function pollAVGSettingsValues() {
 };
 
 
-// TODO > MOVE TO _utils.js
-function togleBlockElement(element) {
-   console.log(element.style.display);
-   if (element.style.display !== `block`) { element.style.display = `block`}
-   else if (element.style.display === `block`) { element.style.display = `none`}
-   else if (element.style.display === `none`) { element.style.display = `block`}
-};
-
-
-// TODO > MOVE TO _utils.js
-function blockElement(element) {
-   element.style.display = `block`;
-};
-
-
-// TODO > MOVE TO _utils.js
-function hideElement(element) {
-   element.style.display = `none`;
-};
-
-
-// TODO > MOVE TO _utils.js
-function removeClass(element, styleClass) {
-   if (element && element.nodeType === 1 ) {
-      element.classList.remove(styleClass);
-   };
-};
-
-
-// TODO > MOVE TO _utils.js
-function getSiblingElements(element) {
-
-   // var for collecting siblings
-   let siblingElements = [];
-
-   // if no parent, return no sibling
-   if (!element.parentNode) return siblingElements;
-
-   // get fist child of parent node
-   let siblingElement = element.parentNode.firstChild;
-
-   // collect siblings
-   while (siblingElement) {
-      if (siblingElement.nodeType === 1 && siblingElement !== element) {
-         siblingElements.push(siblingElement);
-      };
-      siblingElement = siblingElement.nextSibling;
-   }
-
-   // get parent node
-   let parentElement = element.parentNode.parentNode.parentNode.parentNode;
-
-   // collect adjacent parents
-   while (parentElement) {
-      if (parentElement.nodeType === 1) {
-         let adjacentInput = parentElement.querySelectorAll('.form-check-input');
-         if (adjacentInput !== element) {
-         };
-      };
-      parentElement = parentElement.nextSibling;
-   }
-
-   return siblingElements;
-};
-
-
-// TODO > MOVE TO _utils.js
-function getAdjacentInputs(inputElement) {
-   
-   let adjacentInputs = [];
-   
-   // get main parent wrapper node
-   let parentElement = inputElement.parentNode.parentNode.parentNode.parentNode;
-
-   // collect adjacent parents
-   if (parentElement.nodeType === 1) {
-      let inputs = parentElement.querySelectorAll('.form-check-input');
-      for (const input of inputs) {
-         if (input !== inputElement) {
-            adjacentInputs.push(input)
-         };
-      };
-   };
-
-   return adjacentInputs;  
-};
-
-
-// TODO > MOVE TO _utils.js
-function getParentElement(element, {parentLevel=1}) {
-   let parent;
-   if (element && element.nodeType === 1) {
-      for (let idx = 0; idx < parentLevel; idx++) {
-         parent = element.parentElement;
-         element = parent;
-      } {
-      };
-      return parent;
-      return null;
-   }
-};
-
-
-// TODO > MOVE TO _utils.js
-// FIXME > ENDLESS WHILE LOOP
-function getNestedSiblings(resultDiv, numParents, nestPosition) {
-   var siblingResults = [];
-   // return nothing if no parent
-   if (!resultDiv.parentNode) return siblingResults;
-
-   // find the relevant parent to target
-   let parentDiv;
-   while(numParents > 0) {
-      parentDiv = resultDiv.parentNode;
-      numParents = numParents - 1;
-   };
-   
-   // get first sibling of parent (ie., self)
-   let nestedSibling = parentDiv.childNodes[nestPosition-1];
-   console.log(nestedSibling)
-
-   // while (nestedSibling) {
-      //    if (nestedSibling.nodeType === 1 && nestedSibling !== resultDiv) {
-         //       siblingResults.push(nestedSibling);
-         //    };
-         //    // get next nested sibling
-         //    nestedSibling = parentDiv.nextSibling.childNodes[nestPosition-1];
-               const nextNestedSibling = parentDiv.nextSibling.childNodes[nestPosition-1];
-               nestedSibling = nextNestedSibling;
-      // };
-   console.log(siblingResults);
-   return siblingResults;
-};
-
-
 // SEQ. THAT HAPPENS TO RENDER GEOJSON ON BOTH MAPS
 const RenderMaps = (function() {
 
@@ -380,7 +245,7 @@ function clickedResultContainerSeq(resultItemDiv, otherResultItems) {
    // remove "active" class from other result items
    otherResultItems.forEach(result => {
       if (result !== resultItemDiv) {
-         removeClass(result, `is-active`);
+         _ManipulateDOM.removeClass(result, `is-active`);
       };
    });
 
@@ -421,11 +286,9 @@ function masterSlaveControl(master, slaves) {
 
 // ACTIVATE THE DIV THAT DISPLAYS APP ACTIVITY
 function toggleActivityIndicator(indDivWrapper, indDiv) {
-   indDivWrapper.classList.toggle(`reveal`);
    indDiv.innerHTML = ``;
-   indDiv.classList.toggle(`spinner-grow`);
-   indDiv.classList.toggle(`text-light`);
-   indDiv.classList.toggle(`spinner-grow-sm`);
+   _ManipulateDOM.toggleClassList(indDivWrapper, "reveal");
+   _ManipulateDOM.toggleClassList(indDiv, "spinner-grow", "text-light", "spinner-grow-md");
 };
 
 
@@ -465,46 +328,6 @@ const MonitorExecution = (function() {
 })();
 
 
-function generateModalMarkup (clusterProps) {
-   const HTMLMarkup = `
-         <div class="result-item-modal-header flex-row-center-btw">
-            <span>Block AGC</span><span>25 Ha.</span>
-         </div>
-         <div class="result-item-modal-title flex-row-center-btw">
-            <span id="modal_title">${clusterProps.clusterName}</span>
-            <button
-               class="btn-close"
-               id="result_item_modal_close_btn"
-               type="button"
-               aria-label="close"
-            ></button>
-         </div>
-         <div class="result-item-modal-body flex-col-center">
-            <span class="modal-person-avatar">
-               <img
-                  class="rounded-circle"
-                  src="./assets/images/users/img_avatar2.png"
-                  alt="Modal Avatar" />
-            </span>
-            <span class="modal-person-details flex-col-center">Abdulsalam Dansuki, President</span>
-            <span class="modal-person-contact flex-row-center-btw">
-               <span>08022242548</span><span>mallam-dan@gmail.com</span>
-               <span>Directions</span></span>
-         </div>
-         <div class="result-item-modal-subtext">
-            <span>
-               Prim. commodity: Maize, Rice . Clay soil . No irriation . Closest PMRO
-               site 40km away . No power . Closest market 10km away . No processing
-               capability . Funded June 17, 2019. 13.3 hectares unused.</span>
-         </div>
-         <div class="result-item-modal-footer flex-row-center-btw">
-            <span>200 Farmers</span><span>Kastina State</span>
-         </div>
-   `;
-   return HTMLMarkup;
-};
-
-
 // open modal for clicked result
 function activateResultModal(modalDiv, featureCollection) {
 
@@ -512,18 +335,71 @@ function activateResultModal(modalDiv, featureCollection) {
 
    const clusterProps = _GetClusterProps(featureCollection);
 
-   modalDiv.innerHTML += generateModalMarkup(clusterProps);
+   modalDiv.innerHTML += _GenClusterModalMarkup.getInnerMarkup(clusterProps);
 
-   blockElement(modalDiv);
+   _ManipulateDOM.blockElement(modalDiv);
 
    // MODAL CLOSE BTN.
    getDOMElements().resultModalCloseBtn.addEventListener(`click`, () => {
-      hideElement(getDOMElements().resultModalDiv);
+      _ManipulateDOM.hideElement(getDOMElements().resultModalDiv);
    });
 
    // TODO > MODAL TITLE CLICK EVENT HANDLER
 
    // TODO > MODAL AVATAR CLICK EVENT HANDLER
+};
+
+
+function clusterTitleClickSeq(evtObj) {
+
+   evtObj.preventDefault();
+
+   // get the main parent container
+   const resultContainerDiv = _ManipulateDOM.getParentElement(evtObj.target, {parentLevel: 3});
+
+   // get the siblings of the main parent container
+   const adjacentResultDivs = _ManipulateDOM.getSiblingElements(resultContainerDiv);
+
+   // get the geojson for that result
+   const clusterGeoJSON = JSON.parse(_getDataset(resultContainerDiv));
+
+   // TODO > VALIDATE GJ. HERE
+   if (clusterGeoJSON) {
+      
+      // 1.
+      activateResultModal(getDOMElements().resultModalDiv, clusterGeoJSON);
+
+      // 1b.
+      // render cluster feature cards.
+      populateClusterFeatsSidebar(clusterGeoJSON);
+      
+      // 2.
+      RenderMaps.renderEverythingNow(clusterGeoJSON, {useBuffer: true});
+      
+      // 3.
+      clickedResultContainerSeq(resultContainerDiv, adjacentResultDivs);
+
+      // 4. 
+      APP_STATE.saveRenderedGeojson(clusterGeoJSON);
+   };
+};
+
+
+function resultTitleClickHandler(resultTitleDivs) {
+
+   try {
+
+      for (const resultTitle of resultTitleDivs) {
+
+         // CLEAR THE CLICK LISTENERS ON "PRE-LOADED" RESULT DIVS
+         resultTitle.removeEventListener(`click`, clusterTitleClickSeq);
+            
+         resultTitle.addEventListener(`click`, clusterTitleClickSeq)
+      };
+
+   } catch (resultTitleClickErr) {
+      console.error(`resultTitleClickErr: ${resultTitleClickErr.message}`)
+   };
 };
 
 
@@ -534,7 +410,7 @@ function activateResultModal(modalDiv, featureCollection) {
  * 3. Close all other popups and display popup for clicked store
  * 4. Highlight listing in sidebar (and remove highlight for all other listings)
  **/
-function featCardClickSeq(clusterFeatures) {
+ function featCardClickSeq(clusterFeatures) {
 
    try {
       
@@ -581,8 +457,8 @@ async function populateClusterFeatsSidebar(clusterFeatColl) {
 
             // FIXME > _stringifyPropValues NOT WORKING
             // console.log(_stringifyPropValues(_GetClusterFeatProps(idx, clusterFeature)));
-            // const clusterFeatCard = await _ClusterFeatMarkupGenerator.getClusterFeatDiv(_stringifyPropValues(_GetClusterFeatProps(idx, clusterFeature)));
-            const clusterFeatCard = await _ClusterFeatMarkupGenerator.getClusterFeatDiv(_GetClusterFeatProps(idx, clusterFeature));
+            // const clusterFeatCard = await _GenerateClusterFeatMarkup.getClusterFeatDiv(_stringifyPropValues(_GetClusterFeatProps(idx, clusterFeature)));
+            const clusterFeatCard = await _GenerateClusterFeatMarkup.getClusterFeatDiv(_GetClusterFeatProps(idx, clusterFeature));
 
             // SANDBOX
             // ASSIGN A UNIQE ID TO THE CARD DIV
@@ -596,7 +472,7 @@ async function populateClusterFeatsSidebar(clusterFeatColl) {
 
             clusterFeatCard.addEventListener('click', e => { featCardClickSeq.call(e, clusterFeatures); });
 
-            _populateDataset(clusterFeatCard, `clusterfeatdatastream`, JSON.stringify(clusterFeature));
+            _ManipulateDOM.populateDataset(clusterFeatCard, `clusterfeatdatastream`, JSON.stringify(clusterFeature));
 
             _ManipulateDOM.appendList(listingWrapper, clusterFeatCard);
          };
@@ -604,58 +480,6 @@ async function populateClusterFeatsSidebar(clusterFeatColl) {
       
    } catch (clusterFeatsSidebarErr) {
       console.error(`clusterFeatsSidebarErr: ${clusterFeatsSidebarErr.message}`);
-   };
-};
-
-
-function clusterTitleClickSeq(evtObj) {
-
-   evtObj.preventDefault();
-
-   // get the main parent container
-   const resultContainerDiv = getParentElement(evtObj.target, {parentLevel: 3});
-
-   // get the siblings of the main parent container
-   const adjacentResultDivs = getSiblingElements(resultContainerDiv);
-
-   // get the geojson for that result
-   const clusterGeoJSON = JSON.parse(_getDataset(resultContainerDiv));
-
-   // TODO > VALIDATE GJ. HERE
-   if (clusterGeoJSON) {
-      
-      // 1.
-      activateResultModal(getDOMElements().resultModalDiv, clusterGeoJSON);
-
-      // 1b.
-      // render cluster feature cards.
-      populateClusterFeatsSidebar(clusterGeoJSON);
-      
-      // 2.
-      RenderMaps.renderEverythingNow(clusterGeoJSON, {useBuffer: true});
-      
-      // 3.
-      clickedResultContainerSeq(resultContainerDiv, adjacentResultDivs);
-
-      // 4. 
-      APP_STATE.saveRenderedGeojson(clusterGeoJSON);
-   };
-};
-
-function resultTitleClickHandler(resultTitleDivs) {
-
-   try {
-
-      for (const resultTitle of resultTitleDivs) {
-
-         // CLEAR THE CLICK LISTENERS ON "PRE-LOADED" RESULT DIVS
-         resultTitle.removeEventListener(`click`, clusterTitleClickSeq);
-            
-         resultTitle.addEventListener(`click`, clusterTitleClickSeq)
-      };
-
-   } catch (resultTitleClickErr) {
-      console.error(`resultTitleClickErr: ${resultTitleClickErr.message}`)
    };
 };
 
@@ -697,14 +521,7 @@ async function downloadDBCollections(eventObj) {
 };
 
 
-// FIXME > THIS SHOULD FIRE ON FILTER INPUT CHANGES????
-function appendResultsSidebar(resultItemDiv) {
-   const dividerDiv = _createDiv([`h-divider-grey-100`, "fuck-chicken"]);
-   getDOMElements().resultsListWrapper.appendChild(resultItemDiv);
-   getDOMElements().resultsListWrapper.appendChild(dividerDiv);
-};
-
-
+// TODO > THIS SHOULD FIRE ON FILTER INPUT CHANGES
 function populateResultsSidebar(dbCollection) {
 
    try {
@@ -724,13 +541,14 @@ function populateResultsSidebar(dbCollection) {
             clusterGeoJSON = _sanitizeFeatCollCoords(clusterGeoJSON);
    
             // 2.
-            const clusterResultDiv = _ClusterMarkupGenerator.getClusterResultDiv(clusterGeoJSON);
+            const clusterResultDiv = _GenerateClusterMarkup.getClusterResultDiv(clusterGeoJSON);
 
             // 2a.
-            _populateDataset(clusterResultDiv, APP_STATE.CONFIG_DEFAULTS.CLUSTER_CARD_DATA_ATTR_NAME, JSON.stringify(clusterGeoJSON));
-
+            _ManipulateDOM.populateDataset(clusterResultDiv, APP_STATE.CONFIG_DEFAULTS.CLUSTER_CARD_DATA_ATTR_NAME, JSON.stringify(clusterGeoJSON));
+            
             // append result item div to sidebar
-            appendResultsSidebar(clusterResultDiv);
+            _ManipulateDOM.appendList(getDOMElements().resultsListWrapper, clusterResultDiv)
+            _ManipulateDOM.appendList(getDOMElements().resultsListWrapper, _ManipulateDOM.createDiv(`h-divider-grey-100`, "fuck-chicken"))
          };
       };
 
@@ -749,7 +567,7 @@ function DOMLoadEvents() {
          // save the UI default settings
          APP_STATE.saveDefaultSettings(pollAVGSettingsValues());
                   
-         // await downloadDBCollections(windowObj);
+         await downloadDBCollections(windowObj);
 
          const legacyClustersColl = _TraverseObject.evaluateValue(APP_STATE.returnDBCollections(), [0], "data", "legacy_agcs");
          
@@ -770,10 +588,10 @@ function DOMLoadEvents() {
 // SETTINGS SIDEBAR TOGGLE
 $(document).ready(function () {
    $("#avg_settings_sidebar_toggle_btn").on("click", function () {
-      $("#agv_settings_sidebar").toggleClass("active");
+      $("#agv_settings_sidebar").toggleClassList("active");
    });
    $("#settings_sidebar_close").on("click", function () {
-      $("#agv_settings_sidebar").toggleClass("active");
+      $("#agv_settings_sidebar").toggleClassList("active");
    });
 });
 
@@ -823,7 +641,9 @@ function AddEventListeners() {
    
       // FILTER CHECKBOX BEH.
       getFilterCheckboxes().filterCheckboxMasters.forEach(masterCheckbox => {
-         const slaveCheckboxes = getAdjacentInputs(masterCheckbox);
+
+         const inputGroupWrapper = _ManipulateDOM.getParentElement(masterCheckbox, {parentLevel: 4})
+         const slaveCheckboxes = _ManipulateDOM.getSubordinates(inputGroupWrapper, masterCheckbox, ".form-check-input")
          masterSlaveControl(masterCheckbox, slaveCheckboxes);
       });
 

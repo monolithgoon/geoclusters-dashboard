@@ -1,8 +1,8 @@
 import { _GetClusterProps, _GetClusterFeatProps } from "../cluster-props-adapter.js";
-import { _createCard, _createDiv, _joinWordsArray, _populateDataset } from "../_utils.js";
+import { _createCard, _createDiv, _joinWordsArray } from "../_utils.js";
 
 
-export const _ClusterMarkupGenerator = ((classList) => {
+export const _GenerateClusterMarkup = ((classList) => {
 
    try {
       
@@ -68,7 +68,61 @@ export const _ClusterMarkupGenerator = ((classList) => {
 })(["result-item", "flex-col-start"]);
 
 
-export const _ClusterFeatMarkupGenerator = ((classList) => {
+export const _GenClusterModalMarkup = (() => {
+   try {
+      const populateMarkup = function(props) {
+         const HTMLMarkup = `
+            <div class="result-item-modal-header flex-row-center-btw">
+               <span>Block AGC</span><span>25 Ha.</span>
+            </div>
+            <div class="result-item-modal-title flex-row-center-btw">
+               <span id="modal_title">${props.clusterName}</span>
+               <button
+                  class="btn-close"
+                  id="result_item_modal_close_btn"
+                  type="button"
+                  aria-label="close"
+               ></button>
+            </div>
+            <div class="result-item-modal-body flex-col-center">
+               <span class="modal-person-avatar">
+                  <img
+                     class="rounded-circle"
+                     src="./assets/images/users/img_avatar2.png"
+                     alt="Modal Avatar" />
+               </span>
+               <span class="modal-person-details flex-col-center">Abdulsalam Dansuki, President</span>
+               <span class="modal-person-contact flex-row-center-btw">
+                  <span>08022242548</span><span>mallam-dan@gmail.com</span>
+                  <span>Directions</span></span>
+            </div>
+            <div class="result-item-modal-subtext">
+               <span>
+                  Prim. commodity: Maize, Rice . Clay soil . No irriation . Closest PMRO
+                  site 40km away . No power . Closest market 10km away . No processing
+                  capability . Funded June 17, 2019. 13.3 hectares unused.</span>
+            </div>
+            <div class="result-item-modal-footer flex-row-center-btw">
+               <span>200 Farmers</span><span>Kastina State</span>
+            </div>
+         `;
+         return HTMLMarkup;
+      };
+
+      return {
+
+         getInnerMarkup: (modalProps) => {
+            return populateMarkup(modalProps);
+         },
+      };
+
+   } catch (modalMarkupGenErr) {
+      console.error(`modalMarkupGenErr: ${modalMarkupGenErr}`)
+   };
+})();
+
+
+export const _GenerateClusterFeatMarkup = ((classList) => {
 
    try {
       
