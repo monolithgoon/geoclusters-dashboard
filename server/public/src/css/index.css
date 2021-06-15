@@ -227,12 +227,7 @@ line-height: 15px;
 		/* box-shadow: 0 1px 2px rgb(0 0 0 / 15%); */
 		border-bottom: 1px solid var(--grey-line-50);
 	}
-	
-	.user-action-container > div {
-		color: green;
-		flex: 1;
-	}
-		
+			
 	.pane-controls {
 		padding-left: 10px;
 		display: flex;

@@ -437,6 +437,17 @@ export const _CheckGeoJSON = (()=>{
 				return featureCollection;
 			};
 		},
+
+		getId: (geoJSON) => {
+			try {
+				
+				if (turf.getType(geoJSON) === `FeatureCollection`) return geoJSON._id
+				else if (geoJSON.geometry._id) return geoJSON.geometry._id
+
+			} catch (getGeoJSONIdErr) {
+				console.error(`getGeoJSONIdErr: ${getGeoJSONIdErr.message}`)
+			};
+		},
 	};
 })();
 
@@ -482,29 +493,36 @@ export function _sanitizeFeatCollCoords(featureCollection = mandatoryParam()) {
 // HACK > REMOVES THE "TAILS"  FROM THE CHUNKS
 export function _getBufferedPolygon(polygon, bufferAmt, {bufferUnits="kilometers"}) {
 
-	let bufferedPolygon;
-
-	if (bufferAmt) {
-
-		bufferedPolygon = turf.buffer(polygon, bufferAmt, { unit: bufferUnits });
-
-		// SOMETIMES turf.buffer RETURNS "undefined" > DEAL WITH IT
-		bufferedPolygon = bufferedPolygon ? bufferedPolygon : polygon;
-
-		switch (true) {
-			case calcArea:
-				
-				break;
+	try {
 		
-			default:
-				break;
-		}
-		
-	} else {
-		bufferedPolygon = polygon;
+		let bufferedPolygon;
+	
+		if (bufferAmt) {
+	
+			bufferedPolygon = turf.buffer(polygon, bufferAmt, { unit: bufferUnits });
+	
+			// SOMETIMES turf.buffer RETURNS "undefined" > DEAL WITH IT
+			bufferedPolygon = bufferedPolygon ? bufferedPolygon : polygon;
+	
+			// switch (true) {
+			// 	case calcArea:
+					
+			// 		break;
+			
+			// 	default:
+			// 		break;
+			// }
+			
+		} else {
+			bufferedPolygon = polygon;
+		};
+	
+		return bufferedPolygon;
+
+	} catch (bufferPolyErr) {
+		console.error(`bufferPolyErr: ${bufferPolyErr.message}`);
+		return polygon;
 	};
-
-	return bufferedPolygon;
 };
 
 

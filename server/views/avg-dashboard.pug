@@ -134,36 +134,36 @@ block agv-dashboard
                           button.btn.btn-outline.btn-sm.stacked(type='button' title='Download' aria-label='Download' aria-haspopup='true' tabindex='0')
                             span
                               img(src='https://img.icons8.com/small/16/000000/download.png')
-                            span download
+                            //- span download
                           button.btn.btn-outline.btn-sm.stacked(type='button' title='Print' aria-label='Print' aria-haspopup='true' tabindex='0')
                             span
                               img(src='https://img.icons8.com/small/16/000000/print.png')
-                            span Print
+                            //- span Print
                           button.btn.btn-outline.btn-sm.stacked(type='button' title='Share' aria-label='Email' aria-haspopup='true' tabindex='0')
                             span
                               img(src='https://img.icons8.com/small/16/000000/send-mass-email.png')
-                            span Email
+                            //- span Email
 
-                        .btn-group.page-view-config-container
-                          button#hide_fields_dd_btn.btn.btn-outline-secondary.btn-sm.dropdown-toggle(type='button' data-bs-auto-close='outside' data-bs-toggle='dropdown' title='Select Fields' aria-haspopup='true' aria-expanded='false') Hide Fields
-                          ul.dropdown-menu(aria-labelledby='hide_fields_dd_btn')
-                            li
-                              a.dropdown-item(href='#')
-                                .form-check.form-switch
-                                  label.form-check-label(for='flexSwitchCheckDefault') Date Added
-                                  input#flexSwitchCheckDefault.form-check-input(type='checkbox')
-                            li
-                              a.dropdown-item(href='#')
-                                .form-check.form-switch
-                                  label.form-check-label(for='flexSwitchCheckDefault') Primary Crop
-                                  input#flexSwitchCheckDefault.form-check-input(type='checkbox')
-                            li
-                              hr.dropdown-divider
-                            li(style='display: flex; flex-direction: row; justify-content: space-around;')
-                              span
-                                button.btn.btn-outline-primary.btn-sm(type='button' title='Hide All Fields' aria-label='Hide all fields' aria-haspopup='true' tabindex='0') Hide All
-                              span
-                                button.btn.btn-outline-primary.btn-sm(type='button' title='Show All Fields' aria-label='Show all fields' aria-haspopup='true' tabindex='0') Show All
+                        .btn-group.btn-sm.page-view-config-container
+                          //- button#hide_fields_dd_btn.btn.btn-outline-secondary.btn-sm.dropdown-toggle(type='button' data-bs-auto-close='outside' data-bs-toggle='dropdown' title='Select Fields' aria-haspopup='true' aria-expanded='false') Hide Fields
+                          //- ul.dropdown-menu(aria-labelledby='hide_fields_dd_btn')
+                          //-   li
+                          //-     a.dropdown-item(href='#')
+                          //-       .form-check.form-switch
+                          //-         label.form-check-label(for='flexSwitchCheckDefault') Date Added
+                          //-         input#flexSwitchCheckDefault.form-check-input(type='checkbox')
+                          //-   li
+                          //-     a.dropdown-item(href='#')
+                          //-       .form-check.form-switch
+                          //-         label.form-check-label(for='flexSwitchCheckDefault') Primary Crop
+                          //-         input#flexSwitchCheckDefault.form-check-input(type='checkbox')
+                          //-   li
+                          //-     hr.dropdown-divider
+                          //-   li(style='display: flex; flex-direction: row; justify-content: space-around;')
+                          //-     span
+                          //-       button.btn.btn-outline-primary.btn-sm(type='button' title='Hide All Fields' aria-label='Hide all fields' aria-haspopup='true' tabindex='0') Hide All
+                          //-     span
+                          //-       button.btn.btn-outline-primary.btn-sm(type='button' title='Show All Fields' aria-label='Show all fields' aria-haspopup='true' tabindex='0') Show All
                           .dropdown(title='Sort Options' aria-label='Sort Options' aria-haspopup='true' tabindex='0')
                             button#results_sort_dd_menu_btn.btn.btn-outline-secondary.dropdown-toggle.btn-sm(type='button' data-bs-auto-close='outside' data-bs-toggle='dropdown' aria-expanded='false')
                               | Sort
@@ -204,8 +204,9 @@ block agv-dashboard
                       //-   span Kastina State
 
                     .results-body
+
                       #results_list_wrapper.results-list-wrapper
-                        .list-controls-wrapper.flex-row-center-end
+                        #listing_control_wrapper.list-controls-wrapper.flex-row-center-end
                           label(for='select_all_results') Select All
                           input#select_all_results_chk(type='checkbox' aria-label='select all results checkbox')
 

@@ -108,7 +108,7 @@ section.left-pane-container {
 
 .list-controls-wrapper {
    padding: 0 5px 0 15px;
-   /* display: none; */
+   display: none;
 }
 
 .list-controls-wrapper > input {

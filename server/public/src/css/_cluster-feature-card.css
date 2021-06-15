@@ -37,6 +37,7 @@
 
 .cluster-feature-card.selected {
    border: 1px solid orange;
+   background-color: antiquewhite;
 }
 
 .cluster-feature-card .card-content-wrapper {

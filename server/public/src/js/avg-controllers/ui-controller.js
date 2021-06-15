@@ -31,6 +31,7 @@ function getDOMElements () {
    const resultsCountDiv = document.getElementById('results_count');
    const resultsStatus = document.getElementById('results_status');
 
+   const listingControlWrapper = document.getElementById(`listing_control_wrapper`); 
    const resultModalDiv = document.getElementById(`result_item_modal`);
    const resultModalCloseBtn = document.getElementById(`result_item_modal_close_btn`);
    const resultsListWrapper = document.getElementById(`results_list_wrapper`);
@@ -167,7 +168,7 @@ const RenderMaps = (function() {
 
       const drawFeatures = (geojson, useBuffer) => {
          geojson.features.forEach((clusterPlot,idx)=>{
-            _mapboxDrawFeature(CLUSTER_PLOTS_MAP, clusterPlot, useBuffer, {featureIdx: idx, bufferAmt: APP_STATE.CONFIG_DEFAULTS.RENDERED_PLOT_BUFFER, bufferUnits: pollAVGSettingsValues().distanceUnits});
+            _mapboxDrawFeature(CLUSTER_PLOTS_MAP, clusterPlot, idx, useBuffer, {bufferAmt: APP_STATE.CONFIG_DEFAULTS.RENDERED_PLOT_BUFFER, bufferUnits: pollAVGSettingsValues().distanceUnits});
          });
       };
 
@@ -256,6 +257,7 @@ function clickedResultContainerSeq(resultItemDiv, otherResultItems) {
 
 // MASTER-SLAVE CHECKBOX BEHAVIOR
 function masterSlaveControl(master, slaves) {
+  
    master.addEventListener(`change`, (e)=>{
       if (e.target.checked) {
          // check slaves
@@ -273,12 +275,21 @@ function masterSlaveControl(master, slaves) {
          });
       };
    });
+
    // TOGGLE MASTER TO 'OFF' WHEN SLAVE IS 'OFF'
    slaves.forEach(slaveCheckbox => {
       slaveCheckbox.addEventListener(`change`, (e)=>{
+
+         // FIXME > THIS HARDCODED PARENT BEH. WILL FAIL
+         // show master when slave is clicked
+         console.log(master.parentNode)
+         console.log(master.parentNode.style.display)
+         _ManipulateDOM.blockElement(master.parentNode);
+
          if (slaveCheckbox.checked === false) { master.checked = false}
       });
    });
+
    // TODO
    // toggle master to "on" if ALL slaves are "on"
 };
@@ -443,7 +454,7 @@ function resultTitleClickHandler(resultTitleDivs) {
       for (var i = 0; i < clusterFeatures.length; i++) {
 
          // this => clusterFeatCard
-         if (this.currentTarget.id === `cluster_feat_${clusterFeatures[i].geometry._id}`) {
+         if (this.currentTarget.id === `cluster_feature_${clusterFeatures[i].geometry._id}`) {
             RenderMaps.panClusterPlotsFeatMap(CLUSTER_PLOTS_MAP, clusterFeatures[i]);
             RenderMaps.renderPopup(CLUSTER_PLOTS_MAP, _TurfHelpers.getLngLat(clusterFeatures[i]));
          };
@@ -488,13 +499,7 @@ async function populateClusterFeatsSidebar(clusterFeatColl) {
 
             // SANDBOX
             // ASSIGN A UNIQE ID TO THE CARD DIV
-            clusterFeatCard.id = `cluster_feat_${clusterFeature.geometry._id}`;
-
-            // SANDBOX
-            // REMOVE
-            /* Add the link to the individual listing created above. */
-            // const featTitleLink = clusterFeatCard.querySelector(`.feat-admin1-title`);
-            // featTitleLink.id = `cluster_feat_${clusterFeature.geometry._id}`;
+            clusterFeatCard.id = `cluster_feature_${clusterFeature.geometry._id}`;
 
             clusterFeatCard.addEventListener('click', e => { featCardClickSeq.call(e, clusterFeatures); });
 
@@ -614,10 +619,10 @@ function DOMLoadEvents() {
 // SETTINGS SIDEBAR TOGGLE
 $(document).ready(function () {
    $("#avg_settings_sidebar_toggle_btn").on("click", function () {
-      $("#agv_settings_sidebar").toggleClassList("active");
+      $("#agv_settings_sidebar")._ManipulateDOM.toggleClassList("active");
    });
    $("#settings_sidebar_close").on("click", function () {
-      $("#agv_settings_sidebar").toggleClassList("active");
+      $("#agv_settings_sidebar")._ManipulateDOM.toggleClassList("active");
    });
 });
 
@@ -645,7 +650,8 @@ function AddEventListeners() {
       
       // RESULT ITEM CHECKBOX BEH.
       const slaveResultCheckboxes = getResultCheckboxes().resultItemCheckboxes;
-      masterSlaveControl(getResultCheckboxes().masterResultCheckbox, slaveResultCheckboxes);
+      const selectAllResultsChk = getResultCheckboxes().masterResultCheckbox
+      masterSlaveControl(selectAllResultsChk, slaveResultCheckboxes);
 
       // TODO
       // RESULT ITEM CHECKBOX EVENT SEQ.
