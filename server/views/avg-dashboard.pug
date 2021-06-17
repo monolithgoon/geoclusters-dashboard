@@ -701,17 +701,22 @@ block agv-dashboard
                   .line-height-pt6 AGC Insights &amp; Details
                   button.btn.btn-outline-primary.btn-sm(type='button' data-bs-toggle='collapse' data-bs-target='#right_pane_content' aria-expanded='false' aria-controls='right_pane_content')
                     | Resize
+
                 #right_pane_content.right-pane-content.show
+
                   .right-pane-content-body
+
                     // NAV TABS
                     ul#myTab.nav.nav-tabs.nav-fill(role='tablist' style='padding: 3px 3px 0 3px')
                       li.nav-item(role='presentation')
-                        button#agc_insights_tab.nav-link.ripplelink(data-bs-toggle='tab' data-bs-target='#agc_insights_tab_content' type='button' role='tab' aria-controls='agc_insights_tab_content' aria-selected='true') AGC Insights
+                        button#agc_insights_tab.nav-link.ripplelink(data-bs-toggle='tab' data-bs-target='#agc_insights_tab_pane' type='button' role='tab' aria-controls='agc_insights_tab_content' aria-selected='true') AGC Insights
                       li.nav-item(role='presentation')
-                        button#profile-tab.nav-link.active.ripplelink(data-bs-toggle='tab' data-bs-target='#profile' type='button' role='tab' aria-controls='profile' aria-selected='false') AGC Details
+                        button#profile-tab.nav-link.active.ripplelink(data-bs-toggle='tab' data-bs-target='#cluster_details_tab_pane' type='button' role='tab' aria-controls='profile' aria-selected='false') AGC Details
+                    
                     // TAB PANES
                     .tab-content(style='padding: 3px; padding-bottom: 0;')
-                      #agc_insights_tab_content.tab-pane.agc-insights-tab-content(role='tabpanel' aria-labelledby='agc_insights_tab')
+
+                      #agc_insights_tab_pane.tab-pane.agc-insights-tab-pane(role='tabpanel' aria-labelledby='agc_insights_tab')
                         // BS CAROUSEL
                         #carouselExampleIndicators.carousel.slide.carousel-fade(data-bs-ride='carousel')
                           .carousel-indicators
@@ -731,13 +736,16 @@ block agv-dashboard
                           button.carousel-control-next(type='button' data-bs-target='#carouselExampleIndicators' data-bs-slide='next')
                             span.carousel-control-next-icon(aria-hidden='true')
                             span.visually-hidden Next
-                      #profile.tab-pane.cluster-details-tab-content.active(role='tabpanel' aria-labelledby='profile-tab')
+                            
+                      #cluster_details_tab_pane.tab-pane.cluster-details-tab-pane.active(role='tabpanel' aria-labelledby='profile-tab')
+
                         #parcelization_map.parcelization-map
                           .map-overlay
                             a(role='button' href='https://agcfarmlands.herokuapp.com/private/parcelized-agc/?AGCBEN000005' target='_blank' rel='noopener noreferrer')
                               span
                                 //- img(src='https://img.icons8.com/material-sharp/18/000000/external-link.png')
                                 img(src='https://img.icons8.com/small/18/000000/external-link.png')
+                                
                         .cluster-summary.flex-col-center
                           .wrapper.flex-1
                             div.pad-tb5p
@@ -755,8 +763,10 @@ block agv-dashboard
                             div.pad-tb5p
                               span UNUSED LAND
                               span 1.8 ha.
-                        .cluster-features-list
-                          .cluster-features-list-header
+
+                        #cluster_features_listing.cluster-features-listing
+
+                          .cluster-features-listing-header
                             .user-action-container.flex-row-center-btw.pad-round-5px
                               .btn-group
                                 button.btn.btn-outline.btn-sm.stacked(type='button' title='Download' aria-label='Download' aria-haspopup='true' tabindex='0')
@@ -788,7 +798,8 @@ block agv-dashboard
                                       a.dropdown-item(href='#') Cards
                                     li
                                       a.dropdown-item(href='#') Thumbnails
-                          #cluster_feats_list_body.cluster-features-list-body.grid-1col
+                                      
+                          #cluster_feats_listing_body.cluster-features-listing-body.grid-1col
                             card.cluster-feature-card.orange-border-1px.rounded-left-borders-10px
                               .card-content-wrapper
                                 .card-media-wrapper
@@ -850,29 +861,31 @@ block agv-dashboard
                                     div.flex-row-center
                                       span.flex-row-center VASTID
                                       span.flex-row-center AGCBEN000_20QW
-                        .plot-detail-map.hide Plot Detail Map
-                        .tab-pane-footer.cluster-details-tab-footer.flex-row-center-btw
-                          .page-config-container
-                            select.form-select-sm(aria-label='select pagination or scroll')
-                              option(value='1') Scroll
-                              option(value='2' selected='') Pagination
-                          .pagination-container.flex-1.flex-row-center-btw
-                            select.form-select-sm(aria-label='select results per page')
-                              option(value='1' selected='') 5
-                              option(value='2') 10
-                              option(value='3') 20
-                            nav(aria-label='Page navigation example')
-                              ul.pagination.justify-content-end
-                                li.page-item.disabled
-                                  a.page-link(href='#' tabindex='-1' aria-disabled='true') Previous
-                                li.page-item
-                                  a.page-link(href='#') 1
-                                li.page-item
-                                  a.page-link(href='#') 2
-                                li.page-item
-                                  a.page-link(href='#') 3
-                                li.page-item
-                                  a.page-link(href='#') Next
+
+                          .tab-pane-footer.flex-row-center-btw
+                            .page-config-container
+                              select.form-select-sm(aria-label='select pagination or scroll')
+                                option(value='1') Scroll
+                                option(value='2' selected='') Pagination
+                            .pagination-container.flex-1.flex-row-center-btw
+                              select.form-select-sm(aria-label='select results per page')
+                                option(value='1' selected='') 5
+                                option(value='2') 10
+                                option(value='3') 20
+                              nav(aria-label='Page navigation example')
+                                ul.pagination.justify-content-end
+                                  li.page-item.disabled
+                                    a.page-link(href='#' tabindex='-1' aria-disabled='true') Previous
+                                  li.page-item
+                                    a.page-link(href='#') 1
+                                  li.page-item
+                                    a.page-link(href='#') 2
+                                  li.page-item
+                                    a.page-link(href='#') 3
+                                  li.page-item
+                                    a.page-link(href='#') Next
+
+                        #cluster_feature_detail_map.hide Plot Detail Map
 
             #avg_base_map
 

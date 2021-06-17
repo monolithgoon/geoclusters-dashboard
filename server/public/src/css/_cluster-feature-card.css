@@ -36,8 +36,7 @@
 }
 
 .cluster-feature-card.selected {
-   border: 1px solid orange;
-   background-color: antiquewhite;
+   border: 2px solid orange;
 }
 
 .cluster-feature-card .card-content-wrapper {
@@ -69,8 +68,7 @@
    opacity: 0.7;
 }
 
-.plot-owner-avatar > img,
-.plot-owner-avatar > a > img {
+.plot-owner-avatar > img {
    border-radius: 50%;
    width: 45px;
    height: 45px;

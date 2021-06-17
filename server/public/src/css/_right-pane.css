@@ -49,36 +49,36 @@ section.right-pane-container {
    height: 100% !important;
 }
 
-.tab-content .agc-insights-tab-content {
+.tab-content .agc-insights-tab-pane {
    background: paleturquoise;
    height: 100%;
    font-family: 'Fira Sans' sans-serif !important;
 
 }
 
-.agc-insights-tab-content.active,
-.cluster-details-tab-content.active {
+.agc-insights-tab-pane.active,
+.cluster-details-tab-pane.active {
    display: none;
 }
 
-.agc-insights-tab-content.active {
+.agc-insights-tab-pane.active {
    display: flex;
    flex-direction: column;
 }
 
-.cluster-details-tab-content.active {
+.cluster-details-tab-pane.active {
    display: grid;
-   grid-template-rows: 40vh 45px calc(40vh - 60px) auto;
+   /* grid-template-rows: 40vh 45px calc(40vh - 60px) auto; */
+   grid-template-rows: 35vh 45px calc(43vh - 20px);
 }
 
-.cluster-details-tab-content .tab-pane-footer,
-.cluster-details-tab-footer {
+.cluster-details-tab-pane .tab-pane-footer {
    max-height: 5vh;
 }
 
 .parcelization-map,
 .cluster-summary,
-.cluster-features-list,
+.cluster-features-listing,
 .plot-detail-map {
    overflow: hidden;
    height: 100%;
@@ -150,24 +150,25 @@ section.right-pane-container {
    font-weight: 600;
 }
 
-.cluster-features-list {
+.cluster-features-listing {
    display: grid;
    grid-template-columns: 1fr;
-   grid-template-rows: auto 1fr;
+   /* grid-template-rows: auto 1fr; */
+   grid-template-rows: auto 1fr auto;
    background-color: #f8f8f8;
    background-color: #eef3fa;
    background-color: white;
    min-height: max-content;
 }
 
-.cluster-features-list .cluster-features-list-body {
+.cluster-features-listing-body {
    padding: var(--card-margin-outside);
    padding-top: 0;
    background-color: #f8f9fa;
    overflow-y: scroll;
 }
 
-.plot-detail-map {
+#cluster_feature_detail_map {
    background-image: url('../../assets/images/noun-contour-topography.svg');
    background-color: azure;
 }

@@ -223,7 +223,16 @@ export const _ManipulateDOM = (() => {
 			} catch (getSubElementsErr) {
 				console.error(`getSubElementsErr: ${getSubElementsErr.message}`)
 			};
-		},		
+		},
+		
+		scrollDOMElement: (elementId) => {
+			const elem = document.getElementById(elementId)
+			elem.scrollIntoView({
+				behavior: `smooth`,
+				block: `start`,
+				inline: `nearest`,
+			});	
+		}
 	}
 })();
 
@@ -379,7 +388,34 @@ export const _TurfHelpers = (()=>{
 		getLngLat: function(geoJSONFeature) {
 			const lngLat = this.centerOfMass(geoJSONFeature).geometry.coordinates;
 			return lngLat;
-		}
+		},
+		 calcPolyArea: (polygon, {units = `hectares`}) => {
+			let polyArea;
+			try {
+				if (polygon) {
+					polyArea = turf.area(polygon);
+					switch (true) {
+						case units === `hectares` || units === `ha.` || units === `ha`:
+							polyArea = polyArea / 10000;
+							break;
+						case units === `acres` || units === `ac.` || units === `ac`:
+							polyArea = polyArea / 4046.86;
+							break;
+						case units === `sqkm` || units === `square kilometers`:
+							polyArea = polyArea / 1000000;
+							break;
+						case units === `sqm` || units === `square meters`:
+							polyArea = polyArea;
+							break;
+						default:
+							break;
+					}
+					return polyArea;
+				};
+			} catch (calcPolyAreaErr) {
+				console.error(`calcPolyAreaErr: ${calcPolyAreaErr.message}`)
+			};
+		},
 	};
 })();
 
@@ -441,8 +477,8 @@ export const _CheckGeoJSON = (()=>{
 		getId: (geoJSON) => {
 			try {
 				
-				if (turf.getType(geoJSON) === `FeatureCollection`) return geoJSON._id
-				else if (geoJSON.geometry._id) return geoJSON.geometry._id
+				if (turf.getType(geoJSON) === `FeatureCollection`) return `feature_collection_${geoJSON._id}`
+				else if (geoJSON.geometry._id) return `feature_${geoJSON.geometry._id}`
 
 			} catch (getGeoJSONIdErr) {
 				console.error(`getGeoJSONIdErr: ${getGeoJSONIdErr.message}`)
@@ -526,26 +562,26 @@ export function _getBufferedPolygon(polygon, bufferAmt, {bufferUnits="kilometers
 };
 
 
-export function _calcPolyArea(polygon, { units = `hectares` }) {
-	let polyArea;
-	if (polygon) {
-		polyArea = turf.area(polygon);
-		switch (true) {
-			case units === `hectares` || units === `ha.` || units === `ha`:
-				polyArea = polyArea / 10000;
-				break;
-			case units === `acres` || units === `ac.` || units === `ac`:
-				polyArea = polyArea / 4046.86;
-				break;
-			case units === `sqkm` || units === `square kilometers`:
-				polyArea = polyArea / 1000000;
-				break;
-			case units === `sqm` || units === `square meters`:
-				polyArea = polyArea;
-				break;
-			default:
-				break;
-		}
-		return polyArea;
-	};
-};
+// export function _calcPolyArea(polygon, { units = `hectares` }) {
+// 	let polyArea;
+// 	if (polygon) {
+// 		polyArea = turf.area(polygon);
+// 		switch (true) {
+// 			case units === `hectares` || units === `ha.` || units === `ha`:
+// 				polyArea = polyArea / 10000;
+// 				break;
+// 			case units === `acres` || units === `ac.` || units === `ac`:
+// 				polyArea = polyArea / 4046.86;
+// 				break;
+// 			case units === `sqkm` || units === `square kilometers`:
+// 				polyArea = polyArea / 1000000;
+// 				break;
+// 			case units === `sqm` || units === `square meters`:
+// 				polyArea = polyArea;
+// 				break;
+// 			default:
+// 				break;
+// 		}
+// 		return polyArea;
+// 	};
+// };

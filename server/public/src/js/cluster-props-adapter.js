@@ -33,9 +33,13 @@ const traverseObject = (...args) => {
 
 
 // PIPELINE FN.
-function evaluateObjProps (baseProp, ...otherProps) {
+function evaluateObjProps (baseProp, {defaultReturn}, ...otherProps) {
 	_TraverseObject.evaluateValue(baseProp, ...otherProps);
-	if (_TraverseObject.getFinalValue()) return _TraverseObject.getFinalValue();
+	if (
+		_TraverseObject.getFinalValue() && 
+		_TraverseObject.getFinalValue() !== "undefined" && 
+		_TraverseObject.getFinalValue() !== "null") return _TraverseObject.getFinalValue();
+	else if (defaultReturn) return defaultReturn;
 	else return null;
 };
 
@@ -77,8 +81,8 @@ export const _GetClusterProps = (clusterFeatureCollection = _mandatoryParam()) =
 
 		const clusterFeatsNum = clusterFeatureCollection.features.length;
       
-		const clusterCreated = evaluateObjProps(props, 'cluster_created_timestamp') || 
-									evaluateObjProps(props, 'db_insert_timestamp') || 
+		const clusterCreated = evaluateObjProps(props, {}, 'cluster_created_timestamp') || 
+									evaluateObjProps(props, {}, 'db_insert_timestamp') || 
 									null;
 
 		const clusterArea = _TraverseObject.evaluateValue(
@@ -129,18 +133,18 @@ export const _GetClusterProps = (clusterFeatureCollection = _mandatoryParam()) =
 			? _TraverseObject.getFinalValue()
 			: null;
 
-		const primaryCommodity = evaluateObjProps(props, 'geo_cluster_details', 'primary_crop');
+		const primaryCommodity = evaluateObjProps(props, {}, 'geo_cluster_details', 'primary_crop');
 
 		let clusterGovAdmin1 = Object.freeze({
-			adminTitle1: evaluateObjProps(props, 'geo_cluster_governance_structure', 'president', 'first_name'),
-			adminTitle2: evaluateObjProps(props, 'geo_cluster_governance_structure', 'president', 'middle_name'),
-			adminTitle3: evaluateObjProps(props, 'geo_cluster_governance_structure', 'president', 'last_name'),
+			adminTitle1: evaluateObjProps(props, {}, 'geo_cluster_governance_structure', 'president', 'first_name'),
+			adminTitle2: evaluateObjProps(props, {}, 'geo_cluster_governance_structure', 'president', 'middle_name'),
+			adminTitle3: evaluateObjProps(props, {}, 'geo_cluster_governance_structure', 'president', 'last_name'),
 		});
 		
 		let clusterGovAdmin2 = Object.freeze({
-			adminTitle1: evaluateObjProps(props, 'geo_cluster_governance_structure', 'vice_president', 'first_name'),
-			adminTitle2: evaluateObjProps(props, 'geo_cluster_governance_structure', 'vice_president', 'middle_name'),
-			adminTitle3: evaluateObjProps(props, 'geo_cluster_governance_structure', 'vice_president', 'last_name'),
+			adminTitle1: evaluateObjProps(props, {}, 'geo_cluster_governance_structure', 'vice_president', 'first_name'),
+			adminTitle2: evaluateObjProps(props, {}, 'geo_cluster_governance_structure', 'vice_president', 'middle_name'),
+			adminTitle3: evaluateObjProps(props, {}, 'geo_cluster_governance_structure', 'vice_president', 'last_name'),
 		});
 
 		return {
@@ -175,7 +179,7 @@ export const _GetClusterProps = (clusterFeatureCollection = _mandatoryParam()) =
 };
 
 
-export function _GetClusterFeatProps(featIdx= _mandatoryParam(), clusterFeature = _mandatoryParam()) {
+export function _GetClusterFeatProps(clusterFeature = _mandatoryParam(), {featIdx}={}) {
 	try {
 		      
 		const props = clusterFeature.properties;
@@ -185,28 +189,34 @@ export function _GetClusterFeatProps(featIdx= _mandatoryParam(), clusterFeature 
 			: _TraverseObject.evaluateValue(props, "plot_id")
 			? _TraverseObject.getFinalValue()
 			: null;
-		const featureAdmin1ID = _TraverseObject.evaluateValue(props, "plot_owner_bvn") // REMOVE
-			? _TraverseObject.getFinalValue()
-			: _TraverseObject.evaluateValue(props, "owner_id")
-			? _TraverseObject.getFinalValue()
-			: null;
 
-		const featureIndex = featIdx + 1;
+		const featureIndex = featIdx + 1;		
 
+		const featureAdmin = Object.freeze({
+			admin1: {
+				id: evaluateObjProps(props, {}, "plot_owner_bvn") || evaluateObjProps(props, {}, "owner_id"), // REMOVE
+				titles: {
+					title1: evaluateObjProps(props, {}, 'owner_name'),
+					title2: "",
+					title3: "",
+				},
+				photoBase64: "",
+				photoURL: evaluateObjProps(props, {defaultReturn: "/assets/icons/icons8-person-48.png"}, "owner_photo_url")
+			},
+		})
 		const featureAdmin1 = Object.freeze({
-			adminTitle1: evaluateObjProps(props, 'owner_name'),
+			adminTitle1: evaluateObjProps(props, {}, 'owner_name'),
 			// TODO > PROPERLY DEFINE FEATURE ADMIN. MODEL
-			// adminTitle1: evaluateObjProps(props, 'owner_name') || evaluateObjProps(props, 'feature_owner_name'),
-			// adminTitle2: evaluateObjProps(props, 'geo_cluster_governance_structure', 'vice_president', 'middle_name'),
-			// adminTitle3: evaluateObjProps(props, 'geo_cluster_governance_structure', 'vice_president', 'last_name'),
+			// adminTitle1: evaluateObjProps(props, {}, 'owner_name') || evaluateObjProps(props, {}, 'feature_owner_name'),
+			// adminTitle2: evaluateObjProps(props, {}, 'geo_cluster_governance_structure', 'vice_president', 'middle_name'),
+			// adminTitle3: evaluateObjProps(props, {}, 'geo_cluster_governance_structure', 'vice_president', 'last_name'),
 		});
-		console.log(featureAdmin1)
+		console.log(featureAdmin1);
 
-		const featureArea = evaluateObjProps(props, 'chunk_size');
+		const featureArea = evaluateObjProps(props, {}, 'chunk_size');
 		
 		return {
 			featureID,
-			featureAdmin1ID,
 		   featureIndex,
 			featureAdmin1,
 		   featureArea,
@@ -219,8 +229,7 @@ export function _GetClusterFeatProps(featIdx= _mandatoryParam(), clusterFeature 
 		   //    middleName,
 		   //    lastName,
 		   // },
-		   // featOwnerPhotoBase64,
-		   // featOwnerPhotoURL,
+			featureAdmin,
 		   // featRenderHash,
 	};
 

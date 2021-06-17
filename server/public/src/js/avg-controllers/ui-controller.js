@@ -38,7 +38,7 @@ function getDOMElements () {
    const resultItemDivs = document.querySelectorAll(`.result-item`);
    const resultTitleDivs = document.querySelectorAll(`.result-item-title`);
 
-   const clusterFeatsListingDiv = document.getElementById(`cluster_feats_list_body`);
+   const clusterFeatsListingDiv = document.getElementById(`cluster_feats_listing_body`);
 
    return {
       appSidebar,
@@ -179,7 +179,7 @@ const RenderMaps = (function() {
       };
       
       const panBaseMap__ = (geojson) => {
-         _leafletRenderGeojson(AVG_BASE_MAP, geojson, {zoomLevel: APP_STATE.CONFIG_DEFAULTS.LEAFLET_ADMIN_LEVEL_3_ZOOM})
+         _leafletRenderGeojson(AVG_BASE_MAP, geojson, {zoomLevel: APP_STATE.CONFIG_DEFAULTS.LEAFLET_ADMIN_LEVEL_3_ZOOM});
       };
 
       const createMapboxPopup = (map, lnglat, popupMarkup) => {
@@ -210,25 +210,27 @@ const RenderMaps = (function() {
          renderBaseMap: (geojson) => {
             panBaseMap__(geojson);
          },
-         renderEverythingNow: (geojson, {useBuffer=false}) => {
+         renderEverythingNow: (geoJSON, mapboxMap, {useBuffer=false}) => {
             
             const previousRenderedGJ = APP_STATE.retreiveLastRenderedGJ();
-            console.info({previousRenderedGJ});
+            console.log({previousRenderedGJ});
 
-            panToClusterGeoJSON(geojson);
-            drawFeatureColl(geojson);
-            drawFeatures(geojson, useBuffer);
-            drawFeatureLabels(geojson, useBuffer);
-            panBaseMap__(geojson);
+            // fire custom fn.
+            mapboxMap.fire('closeAllPopups');
+            
+            panToClusterGeoJSON(geoJSON);
+            drawFeatureColl(geoJSON);
+            drawFeatures(geoJSON, useBuffer);
+            drawFeatureLabels(geoJSON, useBuffer);
+            panBaseMap__(geoJSON);
 
-            APP_STATE.saveRenderedGeojson(geojson);
+            APP_STATE.saveRenderedGeojson(geoJSON);
          },
       };
 
    } catch (renderMapsErr) {
       console.error(`renderMapsErr: ${renderMapsErr.message}`)
-   };
-   
+   };   
 })();
 
 
@@ -241,7 +243,6 @@ function clickedResultContainerSeq(resultItemDiv, otherResultItems) {
       block: `start`,
       inline: `nearest`,
    });
-   // resultItemDiv.scrollIntoView(true);
    
    // remove "active" class from other result items
    otherResultItems.forEach(result => {
@@ -411,7 +412,7 @@ function clusterTitleClickSeq(evtObj) {
       populateClusterFeatsSidebar(clusterGeoJSON);
       
       // 2.
-      RenderMaps.renderEverythingNow(clusterGeoJSON, {useBuffer: true});
+      RenderMaps.renderEverythingNow(clusterGeoJSON, CLUSTER_PLOTS_MAP, {useBuffer: true});
       
       // 3.
       clickedResultContainerSeq(resultContainerDiv, adjacentResultDivs);
@@ -454,7 +455,7 @@ function resultTitleClickHandler(resultTitleDivs) {
       for (var i = 0; i < clusterFeatures.length; i++) {
 
          // this => clusterFeatCard
-         if (this.currentTarget.id === `cluster_feature_${clusterFeatures[i].geometry._id}`) {
+         if (this.currentTarget.id === _CheckGeoJSON.getId(clusterFeatures[i])) {
             RenderMaps.panClusterPlotsFeatMap(CLUSTER_PLOTS_MAP, clusterFeatures[i]);
             RenderMaps.renderPopup(CLUSTER_PLOTS_MAP, _TurfHelpers.getLngLat(clusterFeatures[i]));
          };
@@ -495,11 +496,11 @@ async function populateClusterFeatsSidebar(clusterFeatColl) {
             // FIXME > _stringifyPropValues NOT WORKING
             // console.log(_stringifyPropValues(_GetClusterFeatProps(idx, clusterFeature)));
             // const clusterFeatCard = await _GenerateClusterFeatMarkup.getClusterFeatDiv(_stringifyPropValues(_GetClusterFeatProps(idx, clusterFeature)));
-            const clusterFeatCard = await _GenerateClusterFeatMarkup.getClusterFeatDiv(_GetClusterFeatProps(idx, clusterFeature));
+            const clusterFeatCard = await _GenerateClusterFeatMarkup.getClusterFeatDiv(_GetClusterFeatProps(clusterFeature, {featIdx:idx}));
 
             // SANDBOX
             // ASSIGN A UNIQE ID TO THE CARD DIV
-            clusterFeatCard.id = `cluster_feature_${clusterFeature.geometry._id}`;
+            clusterFeatCard.id = _CheckGeoJSON.getId(clusterFeature);
 
             clusterFeatCard.addEventListener('click', e => { featCardClickSeq.call(e, clusterFeatures); });
 
@@ -598,7 +599,7 @@ function DOMLoadEvents() {
          // save the UI default settings
          APP_STATE.saveDefaultSettings(pollAVGSettingsValues());
                   
-         await downloadDBCollections(windowObj);
+         // await downloadDBCollections(windowObj);
 
          const legacyClustersColl = _TraverseObject.evaluateValue(APP_STATE.returnDBCollections(), [0], "data", "legacy_agcs");
          

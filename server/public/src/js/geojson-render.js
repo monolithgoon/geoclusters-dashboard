@@ -1,6 +1,8 @@
 `use strict`
+import { _clusterFeatPopupMarkup, _GenerateClusterFeatMarkup } from "./avg-controllers/markup-generator.js";
+import { _GetClusterFeatProps } from "./cluster-props-adapter.js";
 import { LAYER_COLORS } from "./mapbox-layer-colors.js";
-import { _calcPolyArea, _getBufferedPolygon, _CheckGeoJSON, _ManipulateDOM } from "./_utils.js";
+import { _TurfHelpers, _getBufferedPolygon, _CheckGeoJSON, _ManipulateDOM } from "./_utils.js";
 
 
 const getLayerColor = (index) => {
@@ -9,12 +11,13 @@ const getLayerColor = (index) => {
 
 
 // CREATE LINE & FILL LAYERS FROM GEOJSON POLY.
-function getMapboxLayers(geoJSON, {featureIndex, color, thickness, fillOpacity} = {}) {
+// function getMapboxClickLayer(geoJSON, {color, thickness, fillOpacity})
+function getMapboxLayers(geoJSON, {featureIndex, layerId, color, thickness, fillOpacity} = {}) {
     
    let layerColor = getLayerColor(featureIndex);
 
-   // this id is identical to a div
-   const layerId = `cluster_feature_${_CheckGeoJSON.getId(geoJSON)}`;
+   // this layerId has a correspondig featCard with an identical id
+   layerId = layerId ? layerId : _CheckGeoJSON.getId(geoJSON);
    
    const fillLayer = {
       // id: `gjFillLayer_${featureIndex}`,
@@ -130,15 +133,31 @@ function removeMapboxMarkers (markersArray) {
 
 // IIFE TO KEEP TRACK OF RENDERED MAPBOX LAYERS
 const LayersController = (function() {
-   const renderedLayers = [];
-   return {
-      saveLayers: function(outlineLayer) {
-         if (outlineLayer) { renderedLayers.push(outlineLayer) };
-      },
-      returnSavedLayers: function() {
-         return renderedLayers;
-      }
-   }
+
+   try {
+      
+      const renderedLayers = [];
+      const tempLayers = [];
+
+      return {
+         saveLayers: function(mapboxLayer) {
+            if (mapboxLayer) { renderedLayers.push(mapboxLayer) };
+         },
+         returnSavedLayers: function() {
+            return renderedLayers;
+         },
+         saveTempLayers: function(mapboxLayer) {
+            if (mapboxLayer) { tempLayers.push(mapboxLayer) };
+         },
+         returnTempLayers: function() {
+            return tempLayers;
+         },
+      };
+
+   } catch (layersControllerErr) {
+      console.error(`layersControllerErr: ${layersControllerErr.message}`)
+   };
+
 })();
 
 
@@ -218,17 +237,64 @@ const getPresentationPolygon = (polygon, {useBuffer=false}) => {
    return useBuffer ? _getBufferedPolygon(polygon) : polygon;
 };
 
+function toggleLayerPopup(map, layerProps, layerCenter) {
+
+   // const popup = new mapboxgl.Popup({ className: "mapbox-metadata-popup" })
+   const popup = new mapboxgl.Popup( {closeOnClick: true} )
+      .setLngLat(layerCenter)
+      .setHTML(_clusterFeatPopupMarkup(layerProps))
+      .addTo(map);
+
+   // CREATE A CUSTOM EVENT LISTENER >> TRIGGERED BY: map.fire('closeAllPopups')
+   map.on('closeAllPopups', () => {
+      popup.remove();
+   });
+};
+
 
 const FillLayerHandler = (()=>{
+
+   function affectDOMElement(elementId, activeClass) {
+      const relatedElement = document.getElementById(elementId)
+      _ManipulateDOM.addRemoveClass(relatedElement, activeClass);
+   };
 
    try {
       
       const layerClick = (map, fillLayer) => {
+
          map.on(`click`, `${fillLayer.id}`, (e) => {
-            console.log(fillLayer.id)
-            console.log(document.getElementById(fillLayer.id))
-            const clusterFeatCard = document.getElementById(fillLayer.id)
-            _ManipulateDOM.toggleClassList(clusterFeatCard, 'selected')
+            
+            console.log(document.getElementById(fillLayer.id));
+            
+            // GEOJSON PROPS.
+            const layerGeoJSON = e.features[0]
+            const layerProps = _GetClusterFeatProps(layerGeoJSON);
+            const layerCenter = e.lngLat;
+
+            affectDOMElement(fillLayer.id, `selected`);
+            
+            toggleLayerPopup(map, layerProps, layerCenter);
+
+            // get a new mapbox layer
+            const clickedLayerId = `clickedLayer_${fillLayer.id}`;
+            const clickedLayer = getMapboxLayers(layerGeoJSON, {layerId: clickedLayerId, color: "black", thickness: 4, fillOpacity: .2}).fillLayer;
+
+            // clear prev. clicked layers
+            sanitizeMapboxLayers({map, renderedLayers: LayersController.returnTempLayers()});
+            
+            // add clicked layer to map
+            addMapboxLayer(map, clickedLayer);
+            
+            // KEEP TRACK OF THE CLICKED LAYER
+            LayersController.saveLayers(clickedLayer);
+            LayersController.saveTempLayers(clickedLayer);
+
+            // openFeatureDetailMap();
+            document.getElementById('cluster_features_listing').classList.toggle('hide')
+            document.getElementById('cluster_feature_detail_map').classList.toggle('hide')
+            
+            // renderFeatureDetailMap();
          });      
       };
 
@@ -239,30 +305,9 @@ const FillLayerHandler = (()=>{
             // Change the cursor to a pointer when the mouse is over the grid fill layer.
             map.getCanvas().style.cursor = 'pointer';
 
-            const clusterFeatCard = document.getElementById(fillLayer.id)
-            _ManipulateDOM.toggleClassList(clusterFeatCard, 'selected');
-
-            clusterFeatCard.scrollIntoView({
-               behavior: `smooth`,
-               block: `start`,
-               inline: `nearest`,
-            });
-         
-
-            // // GEOJSON PROPS.
-            // const props = e.features[0].properties;
-            // const center = e.lngLat
-
-            // // MAPBOX LAYER ID
-            // const layerIndex = props.chunk_index;
-            // const layerID = `${layerIndex}_${Math.random() * 99999998}`;
-
-            // // KEEP TRACK OF THE MOUSED OVER LAYERS
-            // const mouseoverLayerID = `mousedOverPolygon_${layerID}`
-            // activeLayersIDs.push(mouseoverLayerID);
+            affectDOMElement(fillLayer.id, `selected`)
+            _ManipulateDOM.scrollDOMElement(fillLayer.id);         
             
-            // // CREATE POPUP
-            // toggleMetadataPopup(map, props, center);
          });
       };
 
@@ -272,10 +317,7 @@ const FillLayerHandler = (()=>{
             
             map.getCanvas().style.cursor = '';
 
-            map.fire('closeAllPopups');
-
-            const clusterFeatCard = document.getElementById(fillLayer.id)
-            _ManipulateDOM.toggleClassList(clusterFeatCard, 'selected')
+            affectDOMElement(fillLayer.id, `selected`);
 
          });
       };
@@ -317,7 +359,6 @@ export const _mapboxDrawFeatFeatColl = function ({mapboxMap, featOrFeatColl}) {
    
          
          // CLEAR PREVIOUSLY RENDERED LAYERS
-         sanitizeMapboxLayers({map: mapboxMap, renderedLayers: LayersController.returnSavedLayers()});
          sanitizeMapboxLayers({map: mapboxMap, renderedLayers: LayersController.returnSavedLayers()});
          removeMapboxMarkers(MarkersController.returnSavedMarkers());
       
@@ -390,7 +431,7 @@ export function _mapboxDrawLabels(mapboxMap, polygon, useBuffer, {featureIdx, bu
       const presentationPolygon = polygon;
       
       const plotIndex = featureIdx + 1;   
-      const plotArea = _calcPolyArea(polygon, {units: areaUnits});
+      const plotArea = _TurfHelpers.calcPolyArea(polygon, {units: areaUnits});
       const labelText = `${plotArea.toFixed(0)} ${areaUnits}`;
       const labelPosition = turf.centerOfMass(presentationPolygon);
       

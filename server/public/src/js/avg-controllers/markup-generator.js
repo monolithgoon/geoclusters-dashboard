@@ -136,7 +136,7 @@ export const _GenerateClusterFeatMarkup = ((classList) => {
                <div class="card-media-wrapper">
                   <div class="plot-owner-avatar">
                      <img
-                        src="./assets/images/plot-owners/icons8-person-48.png"
+                        src="./assets/icons/icons8-person-48.png"
                         alt="Plot Owner Avatar"/>
                   </div>
                </div>
@@ -144,7 +144,7 @@ export const _GenerateClusterFeatMarkup = ((classList) => {
                   <div class="card-text-top">
                      <div class="main-card-text">
                         <span>
-                           <a class="feat-admin1-title flex-center justify-start" href="#">${props.featureAdmin1.adminTitle1}</a>
+                           <a class="feat-admin1-title flex-center justify-start" href="#">${_.startCase(_joinWordsArray(Object.values(props.featureAdmin.admin1.titles)))}</a>
                         </span>
                         <span>4.40435°E 12.034462°N</span>
                      </div>
@@ -155,7 +155,7 @@ export const _GenerateClusterFeatMarkup = ((classList) => {
                   </div>
                   <div class="card-text-bottom">
                      <div class="flex-row-center">
-                        <span>FARMERID</span><span>${(props.featureAdmin1ID).slice(-2)}</span>
+                        <span>FARMERID</span><span>${(props.featureAdmin.admin1.id).slice(6)}</span>
                      </div>
                      <div class="flex-row-center">
                         <span class="flex-row-center">VASTID</span>
@@ -182,3 +182,30 @@ export const _GenerateClusterFeatMarkup = ((classList) => {
    };
 
 })(["cluster-feature-card"]);
+
+
+export const _clusterFeatPopupMarkup = (props) => {
+
+   try {
+      
+      const HTMLMarkup = `
+         <div class="mapboxgl-popup-body flex-row-center">
+         
+            <div class="mapboxgl-popup-media-wrapper">
+               <img src="${props.featureAdmin.admin1.photoURL}" alt=Feature Admin Photo" style="max-width:100%; opacity: 1;">
+            </div>
+      
+            <div class="mapboxgl-popup-text-wrapper">
+               <span class="mapboxgl-popup-title">${_.startCase(_joinWordsArray(Object.values(props.featureAdmin.admin1.titles)))}</span>
+               <span>VASTID • ${undefined}</span>
+               <span>Lat ${undefined}°N Lng ${undefined}°E </span>
+            </div>      
+
+         </div>`
+
+      return HTMLMarkup;
+
+   } catch (featPopupMarkupErr) {
+      console.error(`featPopupMarkupErr: ${featPopupMarkupErr.message}`)
+   };
+}
