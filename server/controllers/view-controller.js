@@ -43,6 +43,7 @@ const axios = require("axios");
 //    next();
 // }
 
+
 exports.renderAVGDashboard = async (req, res, next) => {
 
    // console.log(chalk.console(res.locals.returnedClusters));
@@ -58,7 +59,7 @@ exports.renderAVGDashboard = async (req, res, next) => {
       console.log(fsClusters);
       
       // RENDER THE agv-dashboard.pug TEMPLATE
-      res.status(200).render('avg-dashboard', {
+      res.status(200).render('dashboard', {
          title: "AVG Dashboard - SSR Alpha",
          user: "FieldDev Group",
          // FIXME > THIS DATA SHOULD PASS THRU. THE CLUSTER PROPS ADAPTER!!!
@@ -72,3 +73,11 @@ exports.renderAVGDashboard = async (req, res, next) => {
       console.log(chalk.fail(`renderAGVErr: ${renderAGVErr.message}`));
    };
 };
+
+
+exports.renderLandingPage = async (req, res, next) => {
+   res.status(200).render('landing', {
+      title: "AGC Platform - SSR V1.0",
+      user: "FieldDev Group"
+   })
+}

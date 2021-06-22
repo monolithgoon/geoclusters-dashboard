@@ -90,7 +90,7 @@ export const APP_STATE = (function() {
 
       saveRenderedGeojson: function(geojson) {
          // FIXME > TOO WEAK FOR CHECKING VALID GJ.
-         // TODO> REPORT BACK SAVED SUCCEED OR NO
+         // TODO > REPORT BACK SAVED SUCCEED OR NO
          if (geojson) { renderedGeojson.push(geojson) }
       },
       retreiveRenderedGJ: function() {

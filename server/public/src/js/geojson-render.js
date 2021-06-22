@@ -1,8 +1,10 @@
 `use strict`
-import { _clusterFeatPopupMarkup, _GenerateClusterFeatMarkup } from "./avg-controllers/markup-generator.js";
-import { _GetClusterFeatProps } from "./cluster-props-adapter.js";
+import { AVG_BASE_MAP, CLUSTER_PLOTS_MAP, FEAT_DETAIL_MAP } from "./avg-controllers/maps-controller.js";
+import { _clusterFeatPopupMarkup, _GenerateClusterFeatMarkup, _leafletMarkerMarkup } from "./avg-controllers/markup-generator.js";
+import { pollAVGSettingsValues, _getDOMElements, _PollAVGSettings } from "./avg-controllers/ui-controller.js";
+import { _getClusterFeatProps } from "./cluster-props-adapter.js";
 import { LAYER_COLORS } from "./mapbox-layer-colors.js";
-import { _TurfHelpers, _getBufferedPolygon, _CheckGeoJSON, _ManipulateDOM } from "./_utils.js";
+import { _TurfHelpers, _getBufferedPolygon, _CheckGeoJSON, _ManipulateDOM, _GeometryMath } from "./_utils.js";
 
 
 const getLayerColor = (index) => {
@@ -137,7 +139,7 @@ const LayersController = (function() {
    try {
       
       const renderedLayers = [];
-      const tempLayers = [];
+      const clickedLayers = [];
 
       return {
          saveLayers: function(mapboxLayer) {
@@ -146,12 +148,18 @@ const LayersController = (function() {
          returnSavedLayers: function() {
             return renderedLayers;
          },
-         saveTempLayers: function(mapboxLayer) {
-            if (mapboxLayer) { tempLayers.push(mapboxLayer) };
+         saveClickedLayers: function(mapboxLayer) {
+            if (mapboxLayer) { clickedLayers.push(mapboxLayer) };
          },
-         returnTempLayers: function() {
-            return tempLayers;
+         returnClickedLayers: function() {
+            return clickedLayers;
          },
+         returnPrevClickedLayer: () => {
+            // return clickedLayers[clickedLayers.length - 1];
+            if (clickedLayers.length >= 2) {
+               return clickedLayers[clickedLayers.length - 2];
+            }
+         }
       };
 
    } catch (layersControllerErr) {
@@ -187,6 +195,24 @@ const PopupsController = (function() {
       },
    };
 })();
+
+
+const LLayerGroupController = ((leafletBasemap, leafletMinimap)=>{
+   // Create a group to hold the leaflet layers and add it to the map
+   const basemapLayerGroup = L.layerGroup().addTo(leafletBasemap)
+   const minimapLayerGroup = L.layerGroup().addTo(leafletMinimap);
+   return {
+      getMinimapLayerGroup: () => {
+         return minimapLayerGroup;
+      },
+      getLayerGroups: () => {
+         return {
+            basemapLayerGroup,
+            minimapLayerGroup,
+         }
+      }
+   }
+})(AVG_BASE_MAP, FEAT_DETAIL_MAP);
 
 
 function clearPopups() {
@@ -232,17 +258,14 @@ export function _mapboxPanToGeoJSON(map, centerCoords, bounds, {zoom=16, pitch=0
 };
 
 
-// TODO > 
-const getPresentationPolygon = (polygon, {useBuffer=false}) => {
-   return useBuffer ? _getBufferedPolygon(polygon) : polygon;
-};
+export function _openMapboxFeatPopup(map, props, centerLngLat) {
 
-function toggleLayerPopup(map, layerProps, layerCenter) {
+   clearPopups();
 
    // const popup = new mapboxgl.Popup({ className: "mapbox-metadata-popup" })
    const popup = new mapboxgl.Popup( {closeOnClick: true} )
-      .setLngLat(layerCenter)
-      .setHTML(_clusterFeatPopupMarkup(layerProps))
+      .setLngLat(centerLngLat)
+      .setHTML(_clusterFeatPopupMarkup(props))
       .addTo(map);
 
    // CREATE A CUSTOM EVENT LISTENER >> TRIGGERED BY: map.fire('closeAllPopups')
@@ -252,49 +275,263 @@ function toggleLayerPopup(map, layerProps, layerCenter) {
 };
 
 
-const FillLayerHandler = (()=>{
+function getLeafletPolyOutline(geometry, {lineColor="white", lineWeight=4, lineOpacity=1}={}) {
+   const polygonOutline = L.geoJSON(geometry, {
+      "color": lineColor, 
+      "weight": lineWeight,
+      "opacity": lineOpacity,
+   });
+   return polygonOutline;
+};
+
+
+function getLeafletPolyFill(coords, {fillColor="green", fillOpacity=0.5}={}) {
+   // FIXME > THE COORD. SYSTEM HERE IS OFF..
+   const polygonFill = L.polygon([...coords], {
+      style: {
+         fillColor: fillColor,
+         fillOpacity: fillOpacity,
+         color: "white",
+         weight: 3,
+         dashArray: '3',
+         opacity: 3,
+      }
+   });
+   return polygonFill;
+};
+
+
+function createHTMLMarker(props, latLngPosition, styleClass, {draggable=true}) {
+   const HTMLMarker = L.marker(latLngPosition, {
+      draggable: draggable,
+      icon: L.divIcon({
+         className: `${styleClass}`,
+         html: _leafletMarkerMarkup(props),
+      }),
+      zIndexOffset: 100
+   })
+   return HTMLMarker;
+};
+
+
+// TODO
+function renderFeatVertices(props) {
+
+}
+
+
+const FillLayerHandler = ((dom, leafletBasemap, mapboxMap, leafletMinimap)=>{
+
+   const minimapLayerGroup = LLayerGroupController.getMinimapLayerGroup();
+   const basemapLayerGroup = LLayerGroupController.getLayerGroups().basemapLayerGroup;
 
    function affectDOMElement(elementId, activeClass) {
       const relatedElement = document.getElementById(elementId)
       _ManipulateDOM.addRemoveClass(relatedElement, activeClass);
    };
 
+   // EXTRACT GEOJSON DATA FROM A MAPBOX LAYER EVENT
+   function getLayerData(layer) {
+      const layerGeoJSON = layer.features[0]
+      const layerProps = _getClusterFeatProps(layerGeoJSON);
+      const lngLatCenter = layer.lngLat;
+      const layerGeometry = layer.features[0].geometry;
+      const layerCoords = layerGeometry.coordinates[0];
+
+      const turfCenter = turf.centerOfMass(layerGeometry).geometry.coordinates; // LNG. LAT. FORMAT
+      const latLngCenter = [turfCenter[1], turfCenter[0]] // CONVERT TO LAT. LNG FORMAT
+
+      return {
+         layerGeoJSON, 
+         layerProps,
+         lngLatCenter,
+         layerGeometry,
+         layerCoords,
+         latLngCenter,
+      };
+   };
+
+   // BUILD A GLOBAL DATA OBJ. WITH THE NAV. INFO. FOR EACH PLOT
+   const FEAT_BOUNDARY_DATA = {
+      feature_index: 0,
+      start_coords: 0,
+      vertex_pairs: [],
+      vertex_bearings: [],
+      vertex_deltas: [],
+   };   
+
    try {
       
       const layerClick = (map, fillLayer) => {
 
          map.on(`click`, `${fillLayer.id}`, (e) => {
-            
-            console.log(document.getElementById(fillLayer.id));
-            
-            // GEOJSON PROPS.
-            const layerGeoJSON = e.features[0]
-            const layerProps = _GetClusterFeatProps(layerGeoJSON);
-            const layerCenter = e.lngLat;
 
+            const layerData = getLayerData(e);
+
+            // SANDBOX
+            // var myModal = document.getElementById('exampleModal');
+            // console.log(myModal)
+            // myModal.show();
+            
             affectDOMElement(fillLayer.id, `selected`);
             
-            toggleLayerPopup(map, layerProps, layerCenter);
+            _openMapboxFeatPopup(map, layerData.layerProps, layerData.lngLatCenter);
 
             // get a new mapbox layer
             const clickedLayerId = `clickedLayer_${fillLayer.id}`;
-            const clickedLayer = getMapboxLayers(layerGeoJSON, {layerId: clickedLayerId, color: "black", thickness: 4, fillOpacity: .2}).fillLayer;
+            const clickedLayer = getMapboxLayers(layerData.layerGeoJSON, {layerId: clickedLayerId, color: "black", thickness: 4, fillOpacity: .2}).fillLayer;
 
+            // TODO > clear prev. popups
+            
             // clear prev. clicked layers
-            sanitizeMapboxLayers({map, renderedLayers: LayersController.returnTempLayers()});
+            sanitizeMapboxLayers({map, renderedLayers: LayersController.returnClickedLayers()});
             
             // add clicked layer to map
             addMapboxLayer(map, clickedLayer);
             
             // KEEP TRACK OF THE CLICKED LAYER
             LayersController.saveLayers(clickedLayer);
-            LayersController.saveTempLayers(clickedLayer);
+            LayersController.saveClickedLayers(clickedLayer);
 
-            // openFeatureDetailMap();
-            document.getElementById('cluster_features_listing').classList.toggle('hide')
-            document.getElementById('cluster_feature_detail_map').classList.toggle('hide')
+            // OPEN / CLOSE FEAT. DETAIL MAP
+            (function openFeatureDetailMap(clickedLayerId) {
+               
+               dom.featsListingWrapper.classList.add('hide');
+               dom.featureDetailMap.classList.remove('hide')
+               
+               const prevClickedLayer = LayersController.returnPrevClickedLayer();
+               
+               if (prevClickedLayer) {
+
+                  // // SANDBOX
+                  // myModal.toggle();
+
+                  console.log(prevClickedLayer.id)
+                  console.log(LayersController.returnClickedLayers())
+   
+                  if (clickedLayerId === prevClickedLayer.id) {
+                     dom.featsListingWrapper.classList.toggle('hide');
+                     dom.featureDetailMap.classList.toggle('hide')
+                     sanitizeMapboxLayers({map, renderedLayers: LayersController.returnClickedLayers()});
+                  };
+               };     
+            })(clickedLayer.id);
             
-            // renderFeatureDetailMap();
+            // RENDER THE CLUSTER FEATURE     
+            (function renderFeatureDetailMap(featureData, leafletLayerGroup, leafletMap) {
+
+               // if (!_PollAVGSettings.renderMultiFeatsChk) {
+               if (!pollAVGSettingsValues().renderMultiFeatsChk) {
+                  leafletLayerGroup.clearLayers();
+               };
+
+               const featIdx = featureData.featureIndex;
+               const featProps = featureData.layerProps;
+               const featCoords = featureData.layerCoords;
+               const featCenter = featureData.latLngCenter;
+               const featGeometry = featureData.layerGeometry;
+               const featBounds = L.geoJson(featGeometry).getBounds();
+
+               leafletMap.fitBounds(featBounds, {padding: [150, 50]}); // PADDING: [L-R, T-D]
+
+               // ADD A MARKER TO PLOT CENTER
+               L.marker(featureData.latLngCenter).addTo(leafletLayerGroup);
+
+               // RENDER A LEAFLET POLYGON
+               getLeafletPolyOutline(featGeometry).addTo(leafletLayerGroup);
+
+               // FILL THE POLYGON
+               getLeafletPolyFill(featCoords).addTo(leafletLayerGroup);
+
+               // DISPLAY PLOT METADATA AT CENTER OF FEATURE
+               createHTMLMarker(featProps, featCenter, 'plot-metadata-label', {draggable:true}).addTo(leafletLayerGroup);
+      
+               // TODO
+               // renderFeatVertices()
+               
+               // SHOW THE DISTANCE & BEARING BTW. FARM PLOT CORNERS
+               for (let idx = 0; idx < featCoords.length; idx++) {
+      
+                  // REFERENCE THE INDEX OF THIS PLOT
+                  FEAT_BOUNDARY_DATA.feature_index = featIdx;
+      
+                  const plotCorner = featCoords[idx];
+      
+                  const fromPlotCorner = featCoords[idx];
+                  const toPlotCorner = featCoords[idx + 1] === undefined ? featCoords[0] : featCoords[idx + 1]; // RETURN BACK TO STARTING CORNER
+      
+                  // SAVE THE CURRENT PLOT CORNERS > REMOVE THE REDUNDANT PAIR @ START POINT..
+                  FEAT_BOUNDARY_DATA.vertex_pairs.push([fromPlotCorner, toPlotCorner]);
+      
+                  const midpoint = _TurfHelpers.midpoint(fromPlotCorner, toPlotCorner)
+                  const midpointCoords = midpoint.geometry.coordinates; // TO PLACE THE DIST. LABELS
+                  const distance = _TurfHelpers.distance(fromPlotCorner, toPlotCorner, {distUnits: 'kilometers'}) * 1000;
+                  const turfBearing = _TurfHelpers.distance(fromPlotCorner, toPlotCorner, {distUnits: 'degrees'});
+                  const mathBearing = _GeometryMath.computeBearing(fromPlotCorner, toPlotCorner);
+                  const degMinSec = _GeometryMath.getDegMinSec(mathBearing); // CONVERT bearing to 0° 0' 4.31129" FORMAT    
+
+                  // YOU ARE AT STARTING POINT WHEN BEARING === 0
+                  // DON'T SHOW A MIDPOINT DIST. MARKER HERE
+                  // ONLY SHOW LABELS IF DIST. BTW. VERTICES > 5.0 meters
+                  if (turfBearing !== 0 && distance > 5) {
+      
+                     // SHOW THE PLOT VERTICES AS LEAFLET ICONS
+                     // IMPORTANT 
+                     // NOTE: COORDS. IN LEAFLET ARE "latLng" 
+                     // NOTE: COORDS. IN MAPBOX ARE "lngLat"
+                     L.marker([plotCorner[1], plotCorner[0]], {
+                        icon: L.divIcon({
+                           className: `plot-polygon-vertex-coords-label`,
+                           html: `<span>${idx}</span> ${plotCorner[0].toFixed(6)}°N, ${plotCorner[1].toFixed(6)}°E`,
+                           iconSize: [70, 15]
+                        }),
+                        zIndexOffset: 98
+                        
+                     }).addTo(leafletLayerGroup);   
+      
+                     // SHOW DIST. BTW. CORNERS ONLY (FOR SMALL SCREENS)
+                     L.marker([midpointCoords[1], midpointCoords[0]], {
+                        draggable: true,
+                        icon: L.divIcon({
+                           className: 'plot-polygon-vertex-dist-label',
+                           html: `${distance.toFixed(0)} m`,
+                           iconSize: [30, 15]
+                        }),
+                        zIndexOffset: 99
+         
+                     }).addTo(leafletLayerGroup);
+                     
+                     // SHOW DIST. & BEARING (FOR DESKTOP)
+                     L.marker([midpointCoords[1], midpointCoords[0]], {
+                        draggable: true,
+                        icon: L.divIcon({
+                           className: 'plot-polygon-vertex-dist-bearing-label',
+                           html: `${distance.toFixed(0)} m, ${degMinSec}`,
+                           iconSize: [30, 15]
+                        }),
+                        zIndexOffset: 99
+         
+                     }).addTo(leafletLayerGroup);
+                     
+                     // SAVE THE BEARING BTW. THE VERTICES
+                     FEAT_BOUNDARY_DATA.vertex_bearings.push(mathBearing);
+                     FEAT_BOUNDARY_DATA.vertex_deltas.push(distance);
+      
+                  } else if (turfBearing === 0) {
+                     // THE BEARING == 0 => THAT CORNER IS THE PLOT "STARTING" POINT
+      
+                     // SAVE THE BEARING & COORDS. @ 0
+                     FEAT_BOUNDARY_DATA.start_coords = plotCorner;
+                     
+                     // ADD AN ANIMATED MARKER
+                     // leafletLayerGroup.addLayer(getAnimatedPersonMarker([plotCorner[1], plotCorner[0]]));
+                  };
+               };
+      
+               // DATA OBJ. WITH THE NAV. INFO. FOR EACH PLOT
+               // console.log({...FEAT_BOUNDARY_DATA});
+               
+            })(layerData, basemapLayerGroup, leafletBasemap);
          });      
       };
 
@@ -332,8 +569,9 @@ const FillLayerHandler = (()=>{
 
    } catch (fillLayerHandlerErr) {
       console.error(`fillLayerHandlerErr: ${fillLayerHandlerErr.message}`)
-   }
-})();
+   };
+
+})(_getDOMElements(), AVG_BASE_MAP, CLUSTER_PLOTS_MAP, FEAT_DETAIL_MAP);
 
 
 // SIMPLE MAPBOX GJ. RENDER FN.
@@ -390,18 +628,13 @@ export const _mapboxDrawFeatFeatColl = function ({mapboxMap, featOrFeatColl}) {
 
 
 // PLOT/CHUNK RENDER FUNCTION
-export function _mapboxDrawFeature(mapboxMap, polygon, featureIdx, useBuffer, {bufferAmt=0, bufferUnits=`kilometers`}) {
+export function _mapboxDrawFeature(mapboxMap, polygon, featureIdx) {
 
    try {
-      
-      // const presentationPolygon = _getBufferedPolygon(polygon, bufferAmt, {bufferUnits});
-      // const presentationPolygon = getPresentationPolygon(polygon, {useBuffer});
-      // const presentationPolygon = useBuffer ? _getBufferedPolygon(polygon, bufferAmt, {bufferUnits}) : polygon;
-      const presentationPolygon = polygon;
-         
+               
       // GET THE CHUNK POLYGON LAYERS
-      let polygonOutlineLayer = getMapboxLayers(presentationPolygon, {featureIndex: featureIdx, color: null, thickness: 2, fillOpacity: 0.1}).outlineLayer;
-      let polygonFillLayer = getMapboxLayers(presentationPolygon, {featureIndex: featureIdx, color: null, thickness: 2, fillOpacity: 0.1}).fillLayer;
+      let polygonOutlineLayer = getMapboxLayers(polygon, {featureIndex: featureIdx, color: null, thickness: 2, fillOpacity: 0.1}).outlineLayer;
+      let polygonFillLayer = getMapboxLayers(polygon, {featureIndex: featureIdx, color: null, thickness: 2, fillOpacity: 0.1}).fillLayer;
       
       // ADD THE LAYERS TO THE MAPBOX MAP
       addMapboxLayer(mapboxMap, polygonOutlineLayer);
@@ -421,19 +654,14 @@ export function _mapboxDrawFeature(mapboxMap, polygon, featureIdx, useBuffer, {b
 
 
 // RENDER LABELS @ CENTER OF POLYGONS
-export function _mapboxDrawLabels(mapboxMap, polygon, useBuffer, {featureIdx, bufferAmt=0, bufferUnits="kilometers", areaUnits=`hectares`}) {
+export function _mapboxDrawLabels(mapboxMap, polygon, featureIdx, {areaUnits=`hectares`}) {
 
    try {
-
-      // const presentationPolygon = _getBufferedPolygon(polygon, bufferAmt, {bufferUnits});
-      // const presentationPolygon = getPresentationPolygon(polygon, {useBuffer});
-      // const presentationPolygon = useBuffer ? _getBufferedPolygon(polygon) : polygon;
-      const presentationPolygon = polygon;
       
       const plotIndex = featureIdx + 1;   
       const plotArea = _TurfHelpers.calcPolyArea(polygon, {units: areaUnits});
       const labelText = `${plotArea.toFixed(0)} ${areaUnits}`;
-      const labelPosition = turf.centerOfMass(presentationPolygon);
+      const labelPosition = turf.centerOfMass(polygon);
       
       const labelLayer = getMapboxLabelLayer({labelIdx: plotIndex, labelText, labelPosition});
    
@@ -454,8 +682,8 @@ function leafletPanToPoint(map, pointFeature, {zoomLevel=8}) {
 };
 
 
-export const _leafletRenderGeojson = function (leafletMap, geojson, {zoomLevel=8}) {
+export const _leafletRenderGeojson = function (leafletBasemap, geojson, {zoomLevel=8}) {
    const gjCenterFeature = turf.centerOfMass(geojson);
    // RE-POSITION THE LEAFLET MAP
-   leafletPanToPoint(leafletMap, gjCenterFeature, {zoomLevel});
+   leafletPanToPoint(leafletBasemap, gjCenterFeature, {zoomLevel});
 };

@@ -179,7 +179,8 @@ export const _GetClusterProps = (clusterFeatureCollection = _mandatoryParam()) =
 };
 
 
-export function _GetClusterFeatProps(clusterFeature = _mandatoryParam(), {featIdx}={}) {
+export function _getClusterFeatProps(clusterFeature = _mandatoryParam(), {featIdx}={}) {
+	
 	try {
 		      
 		const props = clusterFeature.properties;

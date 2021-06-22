@@ -1,4 +1,4 @@
-import { _GetClusterProps, _GetClusterFeatProps } from "../cluster-props-adapter.js";
+import { _GetClusterProps, _getClusterFeatProps } from "../cluster-props-adapter.js";
 import { _createCard, _createDiv, _joinWordsArray } from "../_utils.js";
 
 
@@ -155,7 +155,7 @@ export const _GenerateClusterFeatMarkup = ((classList) => {
                   </div>
                   <div class="card-text-bottom">
                      <div class="flex-row-center">
-                        <span>FARMERID</span><span>${(props.featureAdmin.admin1.id).slice(6)}</span>
+                        <span>FID</span><span>${(props.featureAdmin.admin1.id).slice(6)}</span>
                      </div>
                      <div class="flex-row-center">
                         <span class="flex-row-center">VASTID</span>
@@ -208,4 +208,24 @@ export const _clusterFeatPopupMarkup = (props) => {
    } catch (featPopupMarkupErr) {
       console.error(`featPopupMarkupErr: ${featPopupMarkupErr.message}`)
    };
+};
+
+
+export const _leafletMarkerMarkup = (props) => {
+   const HTMLMarkup =  `
+      <div class= "plot-metadata-label--chunk-size"> 
+         <span> ${props.featureArea} hectares </span>
+         <span> ${(props.featureArea * 2.47105).toFixed(1)} acres </span> 
+      </div>
+      <div class="metadata-label--owner-info"> 
+         <span> Plot-${props.featureIndex} </span>
+         <span> ${_.startCase(_joinWordsArray(Object.values(props.featureAdmin.admin1.titles)))} </span>
+      </div>
+      <div class="metadata-label--turn-by-turn" id="metadata_label_turn_by_turn">
+         <a href="#" role="button" title="Plot boundary turn-by-turn directions" aria-label="Plot boundary turn-by-turn directions"></a>
+            <span >
+               <i id="" class="fas fa-route"></i>
+            </span>
+      </div>`
+   return HTMLMarkup;
 }

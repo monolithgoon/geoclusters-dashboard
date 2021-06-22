@@ -376,20 +376,81 @@ export const _mandatoryParam = () => {
 };
 
 
+export const _GeometryMath = (()=>{
+
+	return {
+
+		// MATH FORMULA TO CALC. BEARING
+		computeBearing: (fromCoords, toCoords) => {
+			const lat1 = fromCoords[0];
+			const long1 = fromCoords[1];
+			const lat2 = toCoords[0];
+			const long2 = toCoords[1];
+			
+			// CONVERT COORDS. TO RADIANS > φ is latitude, λ is longitude in radians
+			const φ1 = lat1 * Math.PI/180; 
+			const φ2 = lat2 * Math.PI/180;
+			const λ1 = long1 * Math.PI/180;
+			const λ2 = long2 * Math.PI/180;
+		
+			const y = Math.sin(λ2-λ1) * Math.cos(φ2);
+			const x = Math.cos(φ1)*Math.sin(φ2) - Math.sin(φ1)*Math.cos(φ2)*Math.cos(λ2-λ1);
+			const θ = Math.atan2(y, x);
+			const bearing = (θ*180/Math.PI + 360) % 360; // in degrees
+			
+			return bearing;		
+		},
+		
+		// CONVERT DEGREES TO DEG. MIN. SEC. (DMS) FORMAT
+		getDegMinSec: (deg) => {
+			var absolute = Math.abs(deg);
+		
+			var degrees = Math.floor(absolute);
+			var minutesNotTruncated = (absolute - degrees) * 60;
+			var minutes = Math.floor(minutesNotTruncated);
+			var seconds = ((minutesNotTruncated - minutes) * 60).toFixed(2);
+		
+			return `${degrees}° ${minutes}' ${seconds}"`		
+		},
+	};
+})();
+
+
 export const _TurfHelpers = (()=>{
 	return {
-		centerOfMass: function(geoJSONFeature) {
+		midpoint: (coords1, coords2) => {
+			try {
+				return turf.midpoint(coords1, coords2)
+			} catch (turfMidpointErr) {
+				console.error(`turfMidpointErr: ${turfMidpointErr.message}`)
+			};
+		},
+
+		distance: (coords1, coords2, {distUnits}) => {
+			try {
+				return turf.distance(coords1, coords2, {units: distUnits})
+			} catch (turfDistanceErr) {
+				console.error(`turfDistanceErr: ${turfDistanceErr.message}`)
+			};
+		},
+
+		centerOfMass: (geoJSONFeature) => {
 			try {
 				return turf.centerOfMass(geoJSONFeature);
 			} catch (pointOnFeatErr) {
-				console.log(`pointOnFeatErr: ${pointOnFeatErr.message}`)
+				console.error(`pointOnFeatErr: ${pointOnFeatErr.message}`)
 			};
 		},
-		getLngLat: function(geoJSONFeature) {
-			const lngLat = this.centerOfMass(geoJSONFeature).geometry.coordinates;
-			return lngLat;
+
+		getLngLat: (geoJSONFeature) => {
+			try {
+				return _TurfHelpers.centerOfMass(geoJSONFeature).geometry.coordinates;
+			} catch (getLngLatErr) {
+				console.error(`getLngLatErr: ${getLngLatErr.message}`)
+			};
 		},
-		 calcPolyArea: (polygon, {units = `hectares`}) => {
+
+		calcPolyArea: (polygon, {units = `hectares`}) => {
 			let polyArea;
 			try {
 				if (polygon) {
