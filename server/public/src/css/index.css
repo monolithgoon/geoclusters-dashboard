@@ -57,6 +57,7 @@
 	--z-idx-3: 501;
 	--z3: 501;
 	--z4: 502;
+	--z5: 999;
 	--zmax: 9999;
 
 	/* PADDING */
@@ -165,6 +166,12 @@ text-align: center;
 line-height: 15px;
 }
 
+#cluster_feature_detail_map {
+	position: absolute;
+	top: 0; left: 0;
+	width: 100%; height: 100%;
+}
+
 
 
 /* @media screen and (min-width: 968px) { */
@@ -220,11 +227,15 @@ line-height: 15px;
 		height: 100vh;
 	}
 
-	#parcelization_map,
-	#cluster_feature_detail_map {
+	#parcelization_map {
 		width: 100%;
 		height: 100%;
 	}
+
+	/* #cluster_feature_detail_map {
+		position: absolute;
+		top: 0; left: 0;
+	} */
 
 	.user-action-container {
 		/* box-shadow: 0 1px 2px rgb(0 0 0 / 15%); */

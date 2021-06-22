@@ -210,3 +210,11 @@ button.accordion-button {
 .accordion-body {
 	padding: 0;
 }
+
+
+/* MODAL */
+.modal .modal-dialog .modal-body {
+	position: relative !important;
+	height: 70vh !important;
+	/* z-index: 99999999!important; */
+}

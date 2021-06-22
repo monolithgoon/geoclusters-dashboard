@@ -369,9 +369,7 @@ const FillLayerHandler = ((dom, leafletBasemap, mapboxMap, leafletMinimap)=>{
             const layerData = getLayerData(e);
 
             // SANDBOX
-            // var myModal = document.getElementById('exampleModal');
-            // console.log(myModal)
-            // myModal.show();
+            $('#exampleModal').modal('show');
             
             affectDOMElement(fillLayer.id, `selected`);
             
@@ -402,9 +400,6 @@ const FillLayerHandler = ((dom, leafletBasemap, mapboxMap, leafletMinimap)=>{
                const prevClickedLayer = LayersController.returnPrevClickedLayer();
                
                if (prevClickedLayer) {
-
-                  // // SANDBOX
-                  // myModal.toggle();
 
                   console.log(prevClickedLayer.id)
                   console.log(LayersController.returnClickedLayers())
@@ -531,7 +526,7 @@ const FillLayerHandler = ((dom, leafletBasemap, mapboxMap, leafletMinimap)=>{
                // DATA OBJ. WITH THE NAV. INFO. FOR EACH PLOT
                // console.log({...FEAT_BOUNDARY_DATA});
                
-            })(layerData, basemapLayerGroup, leafletBasemap);
+            })(layerData, minimapLayerGroup, leafletMinimap);
          });      
       };
 

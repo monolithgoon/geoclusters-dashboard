@@ -92,7 +92,7 @@ block dashboard
                       span
                         img(src='https://img.icons8.com/ios/24/ffffff/vertical-settings-mixer.png')
 
-                    button#results_scroll_top_button.btn.btn-outline.btn-sm.ripplelink(data-bs-toggle='' data-bs-target='#' aria-controls='' title='Scroll To Top' aria-label='scroll to top' tabindex='0')
+                    button#results_scroll_top_button.btn.btn-outline.btn-sm.ripplelink(data-bs-toggle='modal' data-bs-target='#exampleModal' aria-controls='' title='Scroll To Top' aria-label='scroll to top' tabindex='0')
                       span
                         img(src='https://img.icons8.com/material/16/000000/chevron-up--v1.png')
 
@@ -180,26 +180,6 @@ block dashboard
                                 a.dropdown-item(href='#') Smallest
 
                     #result_item_modal.result-item-modal
-                      //- REMOVE
-                      //- .result-item-modal-header.flex-row-center-btw
-                      //-   span Block AGC
-                      //-   span 25 Ha.
-                      //- .result-item-modal-title.flex-row-center-btw
-                      //-   span#result_title KASTINA ALA MAIZE ASSOC..
-                      //-   button#result_item_modal_close_btn.btn-close(type="button" aria-label="close")
-                      //- .result-item-modal-body.flex-col-center
-                      //-   span.modal-person-avatar
-                      //-     img.rounded-circle(src='/assets/images/users/img_avatar2.png' alt='Modal Avatar')
-                      //-   span.modal-person-details.flex-col-center Abdulsalam Dansuki, President
-                      //-   span.modal-person-contact.flex-row-center-btw
-                      //-     span 08022242548
-                      //-     span mallam-dan@gmail.com
-                      //-     span Directions
-                      //- .result-item-modal-subtext
-                      //-   span  Prim. commodity: Maize, Rice . Clay soil . No irriation . Closest PMRO site 40km away . No power . Closest market 10km away . No processing capability . Funded June 17, 2019. 13.3 hectares unused.
-                      //- .result-item-modal-footer.flex-row-center-btw
-                      //-   span 200 Farmers
-                      //-   span Kastina State
 
                     .results-body
 
@@ -737,7 +717,7 @@ block dashboard
                             
                       #cluster_details_tab_pane.tab-pane.cluster-details-tab-pane.active(role='tabpanel' aria-labelledby='profile-tab')
 
-                        #parcelization_map.parcelization-map
+                        #parcelization_map
                           .map-overlay
                             a(role='button' href='https://agcfarmlands.herokuapp.com/private/parcelized-agc/?AGCBEN000005' target='_blank' rel='noopener noreferrer')
                               span
@@ -883,17 +863,19 @@ block dashboard
                                   li.page-item
                                     a.page-link(href='#') Next
 
-                        #cluster_feature_detail_map.hide
+                        //- #cluster_feature_detail_map.hide
 
             #avg_base_map
 
-            #exampleModal.modal.fade(tabindex='-1' aria-labelledby='exampleModalLabel' aria-hidden='true')
-              .modal-dialog
-                .modal-content
-                  .modal-header
-                    h5#exampleModalLabel.modal-title Modal title
-                    button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
-                  .modal-body Lorem ipsum, dolor sit amet consectetur adipisicing elit. Culpa ipsam tempore odio! Corporis, tempore officiis, similique dolore eius dolorem vel illum consectetur, vitae impedit laborum quia dignissimos in cumque temporibus!
+              #exampleModal.modal.fade(tabindex='-1' aria-labelledby='exampleModalLabel' aria-hidden='true')
+                //- #exampleModal.modal.fade.modal-dialog.modal-dialog-centered.modal-lg(tabindex='-1' aria-labelledby='exampleModalLabel' aria-hidden='true')
+                .modal-dialog
+                  .modal-content
+                    .modal-header
+                      h5#exampleModalLabel.modal-title Modal title
+                      button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
+                    .modal-body
+                      #cluster_feature_detail_map
 
             .avg-settings-sidebar-container
               #avg_settings_sidebar.avg-settings-sidebar-content
