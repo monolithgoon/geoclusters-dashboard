@@ -84,7 +84,7 @@ export const CLUSTER_PLOTS_MAP = new mapboxgl.Map({
 
 
 // ADD ZOOM & NAV. CONTROLS
-CLUSTER_PLOTS_MAP.addControl(new mapboxgl.NavigationControl());
+// CLUSTER_PLOTS_MAP.addControl(new mapboxgl.NavigationControl());
 
 
 CLUSTER_PLOTS_MAP.on(`load`, function() {

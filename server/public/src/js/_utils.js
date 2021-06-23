@@ -1,6 +1,21 @@
 `use strict`
 
 
+export const _mandatoryParam = () => {
+	throw new Error(`Parameter is required.`);
+};
+
+
+// GLOBAL TRY CATCH ERR. HANDLER
+export function _errorHandler(callback, errName) {
+	try {
+		callback();
+	} catch (tryCatchErr) {
+		console.error(`${errName}: ${tryCatchErr.message}`)
+	};
+};
+
+
 // FIXME> TEST THE OUTPUTS
 // CONCAT. STRINGS FROM ARRAY; SEPARATE BY SPACE
 export function _joinWordsArray(keywords, {inclQuotes=false, commaSeparated=false}={}) {
@@ -371,11 +386,6 @@ export function _replaceDataset(div, dataAttribute, data) {
 };
 
 
-export const _mandatoryParam = () => {
-	throw new Error(`Parameter is required.`);
-};
-
-
 export const _GeometryMath = (()=>{
 
 	return {
@@ -417,7 +427,13 @@ export const _GeometryMath = (()=>{
 
 
 export const _TurfHelpers = (()=>{
+
 	return {
+
+		buffer: (geoJSON, bufferRadius, {units}) => {
+			_errorHandler(turf.buffer(geoJSON, bufferRadius, {units}), "turfBufferErr");
+		},
+
 		midpoint: (coords1, coords2) => {
 			try {
 				return turf.midpoint(coords1, coords2)
@@ -596,7 +612,7 @@ export function _getBufferedPolygon(polygon, bufferAmt, {bufferUnits="kilometers
 	
 		if (bufferAmt) {
 	
-			bufferedPolygon = turf.buffer(polygon, bufferAmt, { unit: bufferUnits });
+			bufferedPolygon = _TurfHelpers.buffer(polygon, bufferAmt, {units: bufferUnits});
 	
 			// SOMETIMES turf.buffer RETURNS "undefined" > DEAL WITH IT
 			bufferedPolygon = bufferedPolygon ? bufferedPolygon : polygon;
@@ -621,28 +637,3 @@ export function _getBufferedPolygon(polygon, bufferAmt, {bufferUnits="kilometers
 		return polygon;
 	};
 };
-
-
-// export function _calcPolyArea(polygon, { units = `hectares` }) {
-// 	let polyArea;
-// 	if (polygon) {
-// 		polyArea = turf.area(polygon);
-// 		switch (true) {
-// 			case units === `hectares` || units === `ha.` || units === `ha`:
-// 				polyArea = polyArea / 10000;
-// 				break;
-// 			case units === `acres` || units === `ac.` || units === `ac`:
-// 				polyArea = polyArea / 4046.86;
-// 				break;
-// 			case units === `sqkm` || units === `square kilometers`:
-// 				polyArea = polyArea / 1000000;
-// 				break;
-// 			case units === `sqm` || units === `square meters`:
-// 				polyArea = polyArea;
-// 				break;
-// 			default:
-// 				break;
-// 		}
-// 		return polyArea;
-// 	};
-// };

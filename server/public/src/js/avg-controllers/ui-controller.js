@@ -43,6 +43,7 @@ export function _getDOMElements () {
    const featsListingDiv = document.getElementById(`cluster_feats_listing_body`);
    const featureDetailMap = document.getElementById(`feature_detail_map_container`);
 
+   const bufferFeatsChk = document.getElementById(`buffer_cluster_feats_chk`)
    const renderMultiFeatsChk = document.getElementById(`render_multiple_feats_chk`);
 
 
@@ -68,6 +69,7 @@ export function _getDOMElements () {
       featsListingWrapper,
       featsListingDiv,
       featureDetailMap,
+      bufferFeatsChk,
       renderMultiFeatsChk,
    };
 };
@@ -134,7 +136,8 @@ export const pollAVGSettingsValues = () => {
             zoomValue: (_getDOMElements().clusterMapZoomRange).value,
          },
 
-         renderMultiFeatsChk: (_getDOMElements().renderMultiFeatsChk).checked
+         bufferFeatsChk: (_getDOMElements().bufferFeatsChk).checked,
+         renderMultiFeatsChk: (_getDOMElements().renderMultiFeatsChk).checked,
       };
       
    } catch (pollAppSettingsErr) {
@@ -150,11 +153,8 @@ const RenderMaps = (function(clusterFeatsMap) {
 
       console.log(pollAVGSettingsValues());
 
-      const getPresentationPoly = (geoJSONPoly) => {
-         // const presentationPolygon = _getBufferedPolygon(geoJSONPoly, bufferAmt, {bufferUnits});
-         // const presentationPolygon = getPresentationPolygon(geoJSONPoly, {useBuffer});
-         // const presentationPolygon = useBuffer ? _getBufferedPolygon(geoJSONPoly, bufferAmt, {bufferUnits}) : geoJSONPoly;
-         const presentationPolygon = geoJSONPoly;
+      const getPresentationPoly = (geoJSONPoly, useBuffer, {bufferAmt, bufferUnits='kilometers'}) => {
+         const presentationPolygon = useBuffer ? _getBufferedPolygon(geoJSONPoly, bufferAmt, {bufferUnits}) : geoJSONPoly;
          return presentationPolygon;
       };
 
@@ -229,11 +229,11 @@ const RenderMaps = (function(clusterFeatsMap) {
          renderCluster: (geojson) => {
             drawFeatureColl(geojson);
          },
-         renderClusterPlots: (geojson) => {
-            drawFeatures(geojson);
+         renderClusterPlots: (geoJSON, useBuffer) => {
+            drawFeatures(geoJSON, useBuffer);
          },
-         renderClusterPlotLabel: (geojson) => {
-            drawFeatureLabels(geojson);
+         renderClusterPlotLabel: (geoJSON, useBuffer) => {
+            drawFeatureLabels(geoJSON, useBuffer);
          },
          renderBaseMap: (geojson) => {
             panBaseMap__(geojson);
@@ -440,7 +440,7 @@ function clusterTitleClickSeq(evtObj) {
       populateClusterFeatsSidebar(clusterGeoJSON);
       
       // 2.
-      RenderMaps.renderEverythingNow(clusterGeoJSON, CLUSTER_PLOTS_MAP, {useBuffer: true});
+      RenderMaps.renderEverythingNow(clusterGeoJSON, CLUSTER_PLOTS_MAP, {useBuffer: pollAVGSettingsValues().bufferFeatsChk});
       
       // 3.
       clickedResultContainerSeq(resultContainerDiv, adjacentResultDivs);

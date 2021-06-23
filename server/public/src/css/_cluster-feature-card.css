@@ -19,7 +19,7 @@
    box-shadow: 0 2px 3px 0 rgb(50 50 50 / 11%);
    cursor: pointer;
 
-   /* max-height: 58px; */
+   max-height: 60px;
 }
 
 .cluster-feature-card:first-of-type {
