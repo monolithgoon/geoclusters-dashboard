@@ -717,7 +717,7 @@ block dashboard
                             
                       #cluster_details_tab_pane.tab-pane.cluster-details-tab-pane.active(role='tabpanel' aria-labelledby='profile-tab')
 
-                        #parcelization_map
+                        #parcelization_map_container
                           .map-overlay
                             a(role='button' href='https://agcfarmlands.herokuapp.com/private/parcelized-agc/?AGCBEN000005' target='_blank' rel='noopener noreferrer')
                               span
@@ -863,19 +863,19 @@ block dashboard
                                   li.page-item
                                     a.page-link(href='#') Next
 
-                        //- #cluster_feature_detail_map.hide
+                        #feature_detail_map_container.hide
 
-            #avg_base_map
+            #avg_base_map_container
 
+              //- #exampleModal.modal.fade.modal-dialog.modal-dialog-centered.modal-lg(tabindex='-1' aria-labelledby='exampleModalLabel' aria-hidden='true')
               #exampleModal.modal.fade(tabindex='-1' aria-labelledby='exampleModalLabel' aria-hidden='true')
-                //- #exampleModal.modal.fade.modal-dialog.modal-dialog-centered.modal-lg(tabindex='-1' aria-labelledby='exampleModalLabel' aria-hidden='true')
                 .modal-dialog
                   .modal-content
                     .modal-header
-                      h5#exampleModalLabel.modal-title Modal title
+                      h5#exampleModalLabel.modal-title
                       button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
                     .modal-body
-                      #cluster_feature_detail_map
+                      #feature_detail_map_wrapper
 
             .avg-settings-sidebar-container
               #avg_settings_sidebar.avg-settings-sidebar-content

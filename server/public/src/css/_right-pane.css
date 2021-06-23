@@ -169,7 +169,7 @@ section.right-pane-container {
    overflow-y: scroll;
 }
 
-#cluster_feature_detail_map {
+#feature_detail_map_container {
    /* background-image: url('../../assets/images/noun-contour-topography.svg'); */
    /* background-color: azure; */
 }

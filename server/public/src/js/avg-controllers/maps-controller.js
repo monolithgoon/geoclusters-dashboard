@@ -1,20 +1,30 @@
 `use strict`
 import { MAPBOX_TOKEN, BING_MAPS_TOKEN } from "../maps-config.js";
 
+
 // INIT. AVG BASEMAP
-export const AVG_BASE_MAP = L.map("parcelization_map", { zoomSnap: 0.01 })
-// export const AVG_BASE_MAP = L.map("avg_base_map", { zoomSnap: 0.01 })
+export const AVG_BASE_MAP = L.map("avg_base_map_container", { zoomSnap: 0.01 })
    // .setView([15.0043, 7.4430], 7.5);
    // .setView([36.80504251142855, 10.185470319310479], 13.5);
    // .setView([36.8364914310283, 10.070729096590059], 15);
    .setView([36.8370066107919, 10.059871561852127], 14.5);
 
+
 // INIT. FEAT. DETAIL MINIMAP
-export const FEAT_DETAIL_MAP = L.map("cluster_feature_detail_map", { zoomSnap: 0.01 })
+export const FEAT_DETAIL_MAP = L.map("feature_detail_map_container", { zoomSnap: 0.01 })
    .setView([15.0043, 7.4430], 7.5);
-   // // .setView([36.80504251142855, 10.185470319310479], 13.5);
-   // // .setView([36.8364914310283, 10.070729096590059], 15);
+   // .setView([36.80504251142855, 10.185470319310479], 13.5);
+   // .setView([36.8364914310283, 10.070729096590059], 15);
    // .setView([36.8370066107919, 10.059871561852127], 14.5);
+
+
+// INIT. FEAT. DETAIL MINIMAP
+export const MODAL_FEAT_DETAIL_MAP = L.map("feature_detail_map_wrapper", { zoomSnap: 0.01 })
+   .setView([15.0043, 7.4430], 7.5);
+   // .setView([36.80504251142855, 10.185470319310479], 13.5);
+   // .setView([36.8364914310283, 10.070729096590059], 15);
+   // .setView([36.8370066107919, 10.059871561852127], 14.5);
+
 
 // BASEMAP MAPBOX TILE
 const mapboxTile =  L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
@@ -27,6 +37,7 @@ const mapboxTile =  L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}
    }
 );
 
+
 // BASEMAP BING MAPS TILE
 const bingMapsTile = L.bingLayer(BING_MAPS_TOKEN, {
    imagerySet: 'AerialWithLabels',
@@ -37,51 +48,68 @@ const bingMapsTile = L.bingLayer(BING_MAPS_TOKEN, {
    attribution: '&copy; Nduka Okpue'
 });
 
+
+// BASEMAP BING MAPS TILE
+const bingMapsTile2 = L.bingLayer(BING_MAPS_TOKEN, {
+   imagerySet: 'AerialWithLabels',
+   maxZoom: 28,
+   detectRetina: true,
+   retinaDpi: 'd2',
+   mapLayer: "TrafficFlow",
+   attribution: '&copy; Nduka Okpue'
+});
+
+
 bingMapsTile.addTo(AVG_BASE_MAP);
 // mapboxTile.addTo(AVG_BASE_MAP);
 mapboxTile.addTo(FEAT_DETAIL_MAP);
-// bingMapsTile.addTo(FEAT_DETAIL_MAP);
+bingMapsTile2.addTo(MODAL_FEAT_DETAIL_MAP);
 // .setZIndex(-99);
    
+
 // INIT. AVG PARCELIZATION / CLUSTER DETAILS MAP
 mapboxgl.accessToken = MAPBOX_TOKEN;
 export const CLUSTER_PLOTS_MAP = new mapboxgl.Map({
    attribution: 'Nduka Okpue',
-   container: 'avg_base_map',
-   // container: 'parcelization_map',
+   container: 'parcelization_map_container',
    style: 'mapbox://styles/mapbox/outdoors-v11',
    center: [7.03691902649687, 4.654776030857737],
    pitch: 50,
    bearing: 10, // bearing in degrees
    zoom: 8,
-   style: 'mapbox://styles/mapbox-map-design/ckhqrf2tz0dt119ny6azh975y',
-   pitch: 85,
-   bearing: 50,
+   // style: 'mapbox://styles/mapbox-map-design/ckhqrf2tz0dt119ny6azh975y',
+   // pitch: 85,
+   // bearing: 50,
 });
+
+
+// ADD ZOOM & NAV. CONTROLS
+CLUSTER_PLOTS_MAP.addControl(new mapboxgl.NavigationControl());
+
 
 CLUSTER_PLOTS_MAP.on(`load`, function() {
 
-   CLUSTER_PLOTS_MAP.addSource(`mapbox-dem`, {
-      'type': 'raster-dem',
-      'url': 'mapbox://mapbox.mapbox-terrain-dem-v1',
-      'tileSize': 512,
-      'maxzoom': 14,
-   });
+   // CLUSTER_PLOTS_MAP.addSource(`mapbox-dem`, {
+   //    'type': 'raster-dem',
+   //    'url': 'mapbox://mapbox.mapbox-terrain-dem-v1',
+   //    'tileSize': 512,
+   //    'maxzoom': 14,
+   // });
 
-   // FIXME > NOT WORKING
-   // ADD THE DEM SOURCE AS A TERRAIN LAYER WITH EXAGGERATED HEIGHT
-   CLUSTER_PLOTS_MAP.setTerrain({"source": "mapbox-dem", "exaggeration": 1.5});
+   // // FIXME > NOT WORKING
+   // // ADD THE DEM SOURCE AS A TERRAIN LAYER WITH EXAGGERATED HEIGHT
+   // CLUSTER_PLOTS_MAP.setTerrain({"source": "mapbox-dem", "exaggeration": 1.5});
 
-   // ADD A SKY LAYER THAT WILL SHOW WHEN THE MAP IS HIGHLY PITCHED
-   CLUSTER_PLOTS_MAP.addLayer({
-      'id': 'sky', 
-      'type': 'sky',
-      'paint': {
-         'sky-type': 'atmosphere',
-         'sky-atmosphere-sun': [ 0.0, 0.0],
-         'sky-atmosphere-sun-intensity': 15,
-      } 
-   });
+   // // ADD A SKY LAYER THAT WILL SHOW WHEN THE MAP IS HIGHLY PITCHED
+   // CLUSTER_PLOTS_MAP.addLayer({
+   //    'id': 'sky', 
+   //    'type': 'sky',
+   //    'paint': {
+   //       'sky-type': 'atmosphere',
+   //       'sky-atmosphere-sun': [ 0.0, 0.0],
+   //       'sky-atmosphere-sun-intensity': 15,
+   //    } 
+   // });
 });
 
 
@@ -90,7 +118,6 @@ export function _switchMapboxMapLayer(evtObj) {
    var layerId = evtObj.target.id;
    CLUSTER_PLOTS_MAP.setStyle(`mapbox://styles/mapbox/${layerId}`);
 };
-
 
 
 // SANDBOX > 

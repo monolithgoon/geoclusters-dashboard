@@ -213,8 +213,20 @@ button.accordion-button {
 
 
 /* MODAL */
+.modal .modal-dialog .modal-content {
+	border-radius: 0 !important;
+		width: 50vw !important;
+}
+
+.modal .modal-dialog .modal-header {
+	/* background-color: slategrey; */
+	padding: .3rem !important;
+	padding-right: 0.6rem !important;
+	border-bottom: none;
+}
+
 .modal .modal-dialog .modal-body {
+	padding: .1rem !important;
 	position: relative !important;
-	height: 70vh !important;
-	/* z-index: 99999999!important; */
+	height: 80vh !important;
 }

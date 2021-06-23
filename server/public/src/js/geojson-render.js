@@ -1,7 +1,7 @@
 `use strict`
-import { AVG_BASE_MAP, CLUSTER_PLOTS_MAP, FEAT_DETAIL_MAP } from "./avg-controllers/maps-controller.js";
+import { AVG_BASE_MAP, CLUSTER_PLOTS_MAP, MODAL_FEAT_DETAIL_MAP, FEAT_DETAIL_MAP } from "./avg-controllers/maps-controller.js";
 import { _clusterFeatPopupMarkup, _GenerateClusterFeatMarkup, _leafletMarkerMarkup } from "./avg-controllers/markup-generator.js";
-import { pollAVGSettingsValues, _getDOMElements, _PollAVGSettings } from "./avg-controllers/ui-controller.js";
+import { pollAVGSettingsValues, _getDOMElements } from "./avg-controllers/ui-controller.js";
 import { _getClusterFeatProps } from "./cluster-props-adapter.js";
 import { LAYER_COLORS } from "./mapbox-layer-colors.js";
 import { _TurfHelpers, _getBufferedPolygon, _CheckGeoJSON, _ManipulateDOM, _GeometryMath } from "./_utils.js";
@@ -197,22 +197,21 @@ const PopupsController = (function() {
 })();
 
 
-const LLayerGroupController = ((leafletBasemap, leafletMinimap)=>{
+const LLayerGroupController = ((leafletBaseMap, leafletMiniMap, leafletModalMap)=>{
    // Create a group to hold the leaflet layers and add it to the map
-   const basemapLayerGroup = L.layerGroup().addTo(leafletBasemap)
-   const minimapLayerGroup = L.layerGroup().addTo(leafletMinimap);
+   const baseMapLayerGroup = L.layerGroup().addTo(leafletBaseMap)
+   const miniMapLayerGroup = L.layerGroup().addTo(leafletMiniMap);
+   const modalMapLayerGroup = L.layerGroup().addTo(leafletModalMap);
    return {
-      getMinimapLayerGroup: () => {
-         return minimapLayerGroup;
-      },
       getLayerGroups: () => {
          return {
-            basemapLayerGroup,
-            minimapLayerGroup,
-         }
-      }
-   }
-})(AVG_BASE_MAP, FEAT_DETAIL_MAP);
+            baseMapLayerGroup,
+            miniMapLayerGroup,
+            modalMapLayerGroup,
+         };
+      },
+   };
+})(AVG_BASE_MAP, FEAT_DETAIL_MAP, MODAL_FEAT_DETAIL_MAP);
 
 
 function clearPopups() {
@@ -225,7 +224,8 @@ function clearPopups() {
 };
 
 
-export function _openMapboxPopup(map, lnglat, HTMLMarkup) {
+// REMOVE
+function _openMapboxPopup(map, lnglat, HTMLMarkup) {
    
    clearPopups();
    
@@ -267,6 +267,8 @@ export function _openMapboxFeatPopup(map, props, centerLngLat) {
       .setLngLat(centerLngLat)
       .setHTML(_clusterFeatPopupMarkup(props))
       .addTo(map);
+
+      PopupsController.savePopup(popup);
 
    // CREATE A CUSTOM EVENT LISTENER >> TRIGGERED BY: map.fire('closeAllPopups')
    map.on('closeAllPopups', () => {
@@ -320,10 +322,11 @@ function renderFeatVertices(props) {
 }
 
 
-const FillLayerHandler = ((dom, leafletBasemap, mapboxMap, leafletMinimap)=>{
+const FillLayerHandler = ((dom, leafletBaseMap, mapboxMap, leafletMiniMap, leafletModalMap)=>{
 
-   const minimapLayerGroup = LLayerGroupController.getMinimapLayerGroup();
-   const basemapLayerGroup = LLayerGroupController.getLayerGroups().basemapLayerGroup;
+   const baseMapLayerGroup = LLayerGroupController.getLayerGroups().baseMapLayerGroup;
+   const miniMapLayerGroup = LLayerGroupController.getLayerGroups().miniMapLayerGroup;
+   const modalMapLayerGroup = LLayerGroupController.getLayerGroups().modalMapLayerGroup;
 
    function affectDOMElement(elementId, activeClass) {
       const relatedElement = document.getElementById(elementId)
@@ -368,8 +371,11 @@ const FillLayerHandler = ((dom, leafletBasemap, mapboxMap, leafletMinimap)=>{
 
             const layerData = getLayerData(e);
 
-            // SANDBOX
-            $('#exampleModal').modal('show');
+            // // SANDBOX
+            // $('#exampleModal').modal('show');
+            // setInterval(() => {
+            //    leafletMiniMap.invalidateSize();
+            // }, 1000);
             
             affectDOMElement(fillLayer.id, `selected`);
             
@@ -391,11 +397,18 @@ const FillLayerHandler = ((dom, leafletBasemap, mapboxMap, leafletMinimap)=>{
             LayersController.saveLayers(clickedLayer);
             LayersController.saveClickedLayers(clickedLayer);
 
-            // OPEN / CLOSE FEAT. DETAIL MAP
-            (function openFeatureDetailMap(clickedLayerId) {
+            // SHOW FEAT. DETAIL MAP CONT.
+            (function showFeatDetailMapContainer(clickedLayerId) {
                
-               dom.featsListingWrapper.classList.add('hide');
-               dom.featureDetailMap.classList.remove('hide')
+               // REMOVE
+               // dom.featsListingWrapper.classList.add('hide');
+               // dom.featureDetailMap.classList.remove('hide');
+
+               // SANDBOX
+               $('#exampleModal').modal('show');
+               setInterval(() => {
+                  leafletModalMap.invalidateSize();
+               }, 500);
                
                const prevClickedLayer = LayersController.returnPrevClickedLayer();
                
@@ -412,10 +425,12 @@ const FillLayerHandler = ((dom, leafletBasemap, mapboxMap, leafletMinimap)=>{
                };     
             })(clickedLayer.id);
             
-            // RENDER THE CLUSTER FEATURE     
-            (function renderFeatureDetailMap(featureData, leafletLayerGroup, leafletMap) {
+            // RENDER THE CLUSTER FEATURE  
+            (function renderFeatureDetailMap(featureData, leafletMap, leafletLayerGroup) {
 
-               // if (!_PollAVGSettings.renderMultiFeatsChk) {
+               // REMOVE
+               // leafletMap.invalidateSize();
+
                if (!pollAVGSettingsValues().renderMultiFeatsChk) {
                   leafletLayerGroup.clearLayers();
                };
@@ -427,7 +442,10 @@ const FillLayerHandler = ((dom, leafletBasemap, mapboxMap, leafletMinimap)=>{
                const featGeometry = featureData.layerGeometry;
                const featBounds = L.geoJson(featGeometry).getBounds();
 
-               leafletMap.fitBounds(featBounds, {padding: [150, 50]}); // PADDING: [L-R, T-D]
+               setInterval(() => {
+                  // leafletMap.fitBounds(leafletLayerGroup.getBounds(), {padding: [150, 50]}); // PADDING: [L-R, T-D]
+                  leafletMap.fitBounds(featBounds, {padding: [50, 80]}); // PADDING: [L-R, T-D]
+               }, 1500);
 
                // ADD A MARKER TO PLOT CENTER
                L.marker(featureData.latLngCenter).addTo(leafletLayerGroup);
@@ -526,7 +544,8 @@ const FillLayerHandler = ((dom, leafletBasemap, mapboxMap, leafletMinimap)=>{
                // DATA OBJ. WITH THE NAV. INFO. FOR EACH PLOT
                // console.log({...FEAT_BOUNDARY_DATA});
                
-            })(layerData, minimapLayerGroup, leafletMinimap);
+            })(layerData, leafletModalMap, modalMapLayerGroup);
+
          });      
       };
 
@@ -566,7 +585,7 @@ const FillLayerHandler = ((dom, leafletBasemap, mapboxMap, leafletMinimap)=>{
       console.error(`fillLayerHandlerErr: ${fillLayerHandlerErr.message}`)
    };
 
-})(_getDOMElements(), AVG_BASE_MAP, CLUSTER_PLOTS_MAP, FEAT_DETAIL_MAP);
+})(_getDOMElements(), AVG_BASE_MAP, CLUSTER_PLOTS_MAP, FEAT_DETAIL_MAP, MODAL_FEAT_DETAIL_MAP);
 
 
 // SIMPLE MAPBOX GJ. RENDER FN.
@@ -677,8 +696,8 @@ function leafletPanToPoint(map, pointFeature, {zoomLevel=8}) {
 };
 
 
-export const _leafletRenderGeojson = function (leafletBasemap, geojson, {zoomLevel=8}) {
+export const _leafletRenderGeojson = function (leafletBaseMap, geojson, {zoomLevel=8}) {
    const gjCenterFeature = turf.centerOfMass(geojson);
    // RE-POSITION THE LEAFLET MAP
-   leafletPanToPoint(leafletBasemap, gjCenterFeature, {zoomLevel});
+   leafletPanToPoint(leafletBaseMap, gjCenterFeature, {zoomLevel});
 };

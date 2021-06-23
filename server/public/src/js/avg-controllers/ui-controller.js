@@ -1,6 +1,6 @@
 'use strict'
 import { _queryAPI } from "./data-controller.js";
-import { _mapboxPanToGeoJSON, _mapboxDrawFeatFeatColl, _mapboxDrawFeature, _leafletRenderGeojson, _mapboxDrawLabels, _openMapboxPopup, _openMapboxFeatPopup } from "../geojson-render.js";
+import { _mapboxPanToGeoJSON, _mapboxDrawFeatFeatColl, _mapboxDrawFeature, _leafletRenderGeojson, _mapboxDrawLabels, _openMapboxFeatPopup } from "../geojson-render.js";
 import { _joinWordsArray, _TraverseObject, _getCheckedRadio, _stringifyPropValues, _TurfHelpers, _ManipulateDOM } from "../_utils.js";
 import { _sanitizeFeatCollCoords, _CheckGeoJSON, _getBufferedPolygon } from "../_utils.js";
 import { AVG_BASE_MAP, CLUSTER_PLOTS_MAP, _switchMapboxMapLayer } from "./maps-controller.js";
@@ -41,7 +41,7 @@ export function _getDOMElements () {
 
    const featsListingWrapper = document.getElementById(`cluster_features_listing`);
    const featsListingDiv = document.getElementById(`cluster_feats_listing_body`);
-   const featureDetailMap = document.getElementById(`cluster_feature_detail_map`);
+   const featureDetailMap = document.getElementById(`feature_detail_map_container`);
 
    const renderMultiFeatsChk = document.getElementById(`render_multiple_feats_chk`);
 
@@ -114,14 +114,6 @@ function getAppSettingsInputs() {
 
 
 // GET SETTINGS VALUES
-export const _PollAVGSettings = ((domElements) => {
-   const renderMultiFeatsChk = (domElements.renderMultiFeatsChk).checked;
-   return {
-      renderMultiFeatsChk,
-   }
-})(_getDOMElements());
-
-// function pollAVGSettingsValues() {
 export const pollAVGSettingsValues = () => {
 
    try {
@@ -258,7 +250,7 @@ const RenderMaps = (function(clusterFeatsMap) {
             drawFeatureColl(geoJSON);
             drawFeatures(geoJSON, useBuffer);
             drawFeatureLabels(geoJSON, useBuffer);
-            panBaseMap__(geoJSON);
+            // panBaseMap__(geoJSON);
 
             APP_STATE.saveRenderedGeojson(geoJSON);
          },
