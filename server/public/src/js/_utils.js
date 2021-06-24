@@ -9,6 +9,7 @@ export const _mandatoryParam = () => {
 // GLOBAL TRY CATCH ERR. HANDLER
 export function _errorHandler(callback, errName) {
 	try {
+		console.log(callback)
 		callback();
 	} catch (tryCatchErr) {
 		console.error(`${errName}: ${tryCatchErr.message}`)
@@ -431,7 +432,8 @@ export const _TurfHelpers = (()=>{
 	return {
 
 		buffer: (geoJSON, bufferRadius, {units}) => {
-			_errorHandler(turf.buffer(geoJSON, bufferRadius, {units}), "turfBufferErr");
+			turf.buffer(geoJSON, bufferRadius, {units});
+			// _errorHandler(turf.buffer(geoJSON, bufferRadius, {units}), "turfBufferErr");
 		},
 
 		midpoint: (coords1, coords2) => {
@@ -608,14 +610,17 @@ export function _getBufferedPolygon(polygon, bufferAmt, {bufferUnits="kilometers
 
 	try {
 		
-		let bufferedPolygon;
+		let finalPolygon;
 	
 		if (bufferAmt) {
 	
-			bufferedPolygon = _TurfHelpers.buffer(polygon, bufferAmt, {units: bufferUnits});
+			const bufferedPolygon = _TurfHelpers.buffer(polygon, bufferAmt, {units: bufferUnits});
+			console.log(turf.area(polygon))
+			console.log(turf.area({bufferAmt}, {units}))
+			console.log(turf.area(bufferedPolygon))
 	
 			// SOMETIMES turf.buffer RETURNS "undefined" > DEAL WITH IT
-			bufferedPolygon = bufferedPolygon ? bufferedPolygon : polygon;
+			finalPolygon = bufferedPolygon ? bufferedPolygon : polygon;
 	
 			// switch (true) {
 			// 	case calcArea:
@@ -630,7 +635,7 @@ export function _getBufferedPolygon(polygon, bufferAmt, {bufferUnits="kilometers
 			bufferedPolygon = polygon;
 		};
 	
-		return bufferedPolygon;
+		return finalPolygon;
 
 	} catch (bufferPolyErr) {
 		console.error(`bufferPolyErr: ${bufferPolyErr.message}`);
