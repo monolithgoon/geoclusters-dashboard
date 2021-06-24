@@ -16,13 +16,15 @@
          grid-template-columns: 1fr 2fr;
       }
 
-      #landing_page_map {
+      #landing_page_map_cont {
          width: 100%;
          height: 100vh;
+
          /* background-image: url('../../assets/images/noun-contour-topography.svg'); */
          /* background-color: orchid; */
-         background-image: url('../../assets/mapbox-3d-map.mp4');
-         object-fit: cover;
+
+         /* background-image: url('../../assets/mapbox-3d-map.mp4'); */
+         /* object-fit: cover; */
       }
 
       video#landing_page_video {

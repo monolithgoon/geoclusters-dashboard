@@ -2,6 +2,7 @@
 import { MAPBOX_TOKEN, BING_MAPS_TOKEN } from "../maps-config.js";
 
 
+// INIT. FEAT. DETAIL MINIMAP
 // INIT. AVG BASEMAP
 export const AVG_BASE_MAP = L.map("avg_base_map_container", { zoomSnap: 0.01 })
    // .setView([15.0043, 7.4430], 7.5);
@@ -26,7 +27,7 @@ export const MODAL_FEAT_DETAIL_MAP = L.map("feature_detail_map_wrapper", { zoomS
    // .setView([36.8370066107919, 10.059871561852127], 14.5);
 
 
-// BASEMAP MAPBOX TILE
+// LEAFLET + MAPBOX BASE MAP TILE
 const mapboxTile =  L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
       attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
       maxZoom: 18,
@@ -38,30 +39,30 @@ const mapboxTile =  L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}
 );
 
 
-// BASEMAP BING MAPS TILE
+// LEAFLET + BING MAPS BASEMAP TILE
 const bingMapsTile = L.bingLayer(BING_MAPS_TOKEN, {
    imagerySet: 'AerialWithLabels',
    maxZoom: 28,
    detectRetina: true,
    retinaDpi: 'd2',
    mapLayer: "TrafficFlow",
-   attribution: '&copy; Nduka Okpue'
+   attribution: '&copy; FieldDev Group'
 });
 
 
-// BASEMAP BING MAPS TILE
+// LEAFLET + BING MAPS BASEMAP TILE 2
 const bingMapsTile2 = L.bingLayer(BING_MAPS_TOKEN, {
    imagerySet: 'AerialWithLabels',
    maxZoom: 28,
    detectRetina: true,
    retinaDpi: 'd2',
    mapLayer: "TrafficFlow",
-   attribution: '&copy; Nduka Okpue'
+   attribution: '&copy; FieldDev Group'
 });
 
 
-bingMapsTile.addTo(AVG_BASE_MAP);
 // mapboxTile.addTo(AVG_BASE_MAP);
+bingMapsTile.addTo(AVG_BASE_MAP);
 mapboxTile.addTo(FEAT_DETAIL_MAP);
 bingMapsTile2.addTo(MODAL_FEAT_DETAIL_MAP);
 // .setZIndex(-99);
@@ -70,7 +71,7 @@ bingMapsTile2.addTo(MODAL_FEAT_DETAIL_MAP);
 // INIT. AVG PARCELIZATION / CLUSTER DETAILS MAP
 mapboxgl.accessToken = MAPBOX_TOKEN;
 export const CLUSTER_PLOTS_MAP = new mapboxgl.Map({
-   attribution: 'Nduka Okpue',
+   attribution: 'FieldDev Group',
    container: 'parcelization_map_container',
    style: 'mapbox://styles/mapbox/outdoors-v11',
    center: [7.03691902649687, 4.654776030857737],
@@ -80,6 +81,19 @@ export const CLUSTER_PLOTS_MAP = new mapboxgl.Map({
    // style: 'mapbox://styles/mapbox-map-design/ckhqrf2tz0dt119ny6azh975y',
    // pitch: 85,
    // bearing: 50,
+});
+   
+
+// INIT. LANDING PAGE MAP
+mapboxgl.accessToken = `pk.eyJ1IjoibW9ub2xpdGhnb29uIiwiYSI6ImNrN3B1MnNjaDBhNTczcHFkdmJ0aHR6dWEifQ.O0mHuJ2wKNqKz3E_BIsnog`;
+export const LANDING_PAGE_MAP = new mapboxgl.Map({
+   attribution: `FieldDev Group`,
+   container: `landing_page_map_cont`,
+   style: `mapbox://styles/monolithgoon/ckqat05ss033418qmildmyau2`,
+   center: [7.03691902649687, 4.654776030857737],
+   pitch: 50,
+   bearing: 10,
+   zoom: 8,
 });
 
 

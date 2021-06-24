@@ -6,7 +6,11 @@ head
 
   title #{title}
 
-    //- LEAFLET
+  //- MAPBOX GL V2.3.0
+  script(src='https://api.mapbox.com/mapbox-gl-js/v1.10.1/mapbox-gl.js')
+  link(href='https://api.mapbox.com/mapbox-gl-js/v1.10.1/mapbox-gl.css' rel='stylesheet')
+
+  //- LEAFLET
   script(src='https://unpkg.com/leaflet@1.7.1/dist/leaflet.js' integrity='sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==' crossorigin='')
   link(rel='stylesheet' href='https://unpkg.com/leaflet@1.7.1/dist/leaflet.css' integrity='sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==' crossorigin='')
 
@@ -25,7 +29,6 @@ head
   //- MAIN STYLESHEET
   link(rel='stylesheet' href='/src/css/landing.css')
 
-
 body
 
   block landing-page
@@ -38,8 +41,8 @@ body
           div Password
           a(href="/dashboard") Sign In
       section.right-pane
-        //- #landing_page_map
-        video#landing_page_video(playsinline autoplay muted loop poster)
+        #landing_page_map_cont
+        //- video#landing_page_video(playsinline autoplay muted loop poster)
           source(src="/assets/mapbox-3d-map.mp4" type= "video/mp4")
 
   //- jQuery CDN - Slim version (=without AJAX)
@@ -54,26 +57,38 @@ body
   //- BOOTSTRAP 5
   script(src='https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js' integrity='sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf' crossorigin='anonymous')
 
+  script(type='module').
 
-  //- script(type='module').
+    `use strict`
+    import { MAPBOX_TOKEN, BING_MAPS_TOKEN } from "/src/js/maps-config.js";
 
-  //-   `use strict`
-  //-   import { MAPBOX_TOKEN, BING_MAPS_TOKEN } from "/src/js/maps-config.js";
+    (function() {
 
-  //-   (function() {
+      //- const LANDING_PAGE_MAP = L.map("landing_page_map", { zoomSnap: 0.01 })
+      //-   .setView([36.8370066107919, 10.059871561852127], 15.5);
 
-  //-     const LANDING_PAGE_MAP = L.map("landing_page_map", { zoomSnap: 0.01 })
-  //-       .setView([36.8370066107919, 10.059871561852127], 15.5);
+      //-   // BASEMAP BING MAPS TILE
+      //-   const bingMapsTile = L.bingLayer(BING_MAPS_TOKEN, {
+      //-     imagerySet: 'AerialWithLabels',
+      //-     maxZoom: 28,
+      //-     detectRetina: true,
+      //-     retinaDpi: 'd2',
+      //-     mapLayer: "TrafficFlow",
+      //-     attribution: '&copy; FieldDev Group'
+      //-   });
 
-  //-       // BASEMAP BING MAPS TILE
-  //-       const bingMapsTile = L.bingLayer(BING_MAPS_TOKEN, {
-  //-         imagerySet: 'AerialWithLabels',
-  //-         maxZoom: 28,
-  //-         detectRetina: true,
-  //-         retinaDpi: 'd2',
-  //-         mapLayer: "TrafficFlow",
-  //-         attribution: '&copy; Nduka Okpue'
-  //-       });
+      //-   bingMapsTile.addTo(LANDING_PAGE_MAP);
 
-  //-       bingMapsTile.addTo(LANDING_PAGE_MAP);
-  //-   })();
+      // INIT. LANDING PAGE MAP
+      mapboxgl.accessToken = `pk.eyJ1IjoibW9ub2xpdGhnb29uIiwiYSI6ImNrN3B1MnNjaDBhNTczcHFkdmJ0aHR6dWEifQ.O0mHuJ2wKNqKz3E_BIsnog`;
+      const LANDING_PAGE_MAP = new mapboxgl.Map({
+        attribution: `FieldDev Group`,
+        container: `landing_page_map_cont`,
+        style: `mapbox://styles/monolithgoon/ckqat05ss033418qmildmyau2`,
+        center: [7.03691902649687, 4.654776030857737],
+        pitch: 50,
+        bearing: 10,
+        zoom: 8,
+      });
+
+    })();

@@ -166,6 +166,15 @@ text-align: center;
 line-height: 15px;
 }
 
+#avg_base_map_container {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100vh;
+}
+
+#landing_page_map_cont,
 #parcelization_map_container,
 #feature_detail_map_container,
 #feature_detail_map_wrapper {
@@ -219,13 +228,13 @@ line-height: 15px;
 		background: #75cff0;
 	}
 	
-	#avg_base_map_container {
+	/* #avg_base_map_container {
 		position: absolute;
 		top: 0;
 		left: 0;
 		width: 100%;
 		height: 100vh;
-	}
+	} */
 
 	/* #feature_detail_map_wrapper {
 		width: 100%;
@@ -326,18 +335,19 @@ line-height: 15px;
 		font-size: 0.8rem;
 	};
 
-	.settings-sidebar-body .range-input-wrapper {
+	/* FIXME > NOT DOING ANYTHING */
+	/* .settings-sidebar-body .range-input-wrapper {
+		padding: 0 5px;
 		width: 100%;
-	}
+	} */
 	
 	.range-input-wrapper .range-input {
+		/* margin: 0 5px; */
 		-webkit-appearance: none;  /* Override default CSS styles */
 		appearance: none;
 		width: 100%; /* Full-width */
-		height: 8px; /* Specified height */
-		height: 2px;
-		background: lightslategray; /* Grey background */
-		background: black; /* Grey background */
+		height: 2px; /* Specified height */
+		background: black;
 		outline: none; /* Remove outline */
 		opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
 		-webkit-transition: .2s; /* 0.2 seconds transition on hover */
