@@ -41,6 +41,7 @@ body {
 .main-pane-container {
    color: black;
    display: grid;
+   height: 100vh;
    z-index: 2;
 }
 
