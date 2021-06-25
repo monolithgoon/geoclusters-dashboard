@@ -58,6 +58,7 @@ body {
 
    display: grid;
    grid-template-rows: 2fr 1fr auto;      
+   grid-template-rows: 70vh 1fr auto;      
 }
 
 .left-pane-header {
