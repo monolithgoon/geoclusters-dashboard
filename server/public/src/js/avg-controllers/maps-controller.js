@@ -8,7 +8,8 @@ export const AVG_BASE_MAP = L.map("avg_base_map_container", { zoomSnap: 0.01 })
    // .setView([15.0043, 7.4430], 7.5);
    // .setView([36.80504251142855, 10.185470319310479], 13.5);
    // .setView([36.8364914310283, 10.070729096590059], 15);
-   .setView([36.8370066107919, 10.059871561852127], 14.5);
+   // .setView([36.8370066107919, 10.059871561852127], 14.5);
+   .setView([4.654776030857737, 7.03691902649687], 14.5);
 
 
 // INIT. FEAT. DETAIL MINIMAP
@@ -83,19 +84,6 @@ export const CLUSTER_PLOTS_MAP = new mapboxgl.Map({
    // bearing: 50,
 });
    
-
-// INIT. LANDING PAGE MAP
-mapboxgl.accessToken = `pk.eyJ1IjoibW9ub2xpdGhnb29uIiwiYSI6ImNrN3B1MnNjaDBhNTczcHFkdmJ0aHR6dWEifQ.O0mHuJ2wKNqKz3E_BIsnog`;
-export const LANDING_PAGE_MAP = new mapboxgl.Map({
-   attribution: `FieldDev Group`,
-   container: `landing_page_map_cont`,
-   style: `mapbox://styles/monolithgoon/ckqat05ss033418qmildmyau2`,
-   center: [7.03691902649687, 4.654776030857737],
-   pitch: 50,
-   bearing: 10,
-   zoom: 8,
-});
-
 
 // ADD ZOOM & NAV. CONTROLS
 // CLUSTER_PLOTS_MAP.addControl(new mapboxgl.NavigationControl());

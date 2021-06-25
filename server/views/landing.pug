@@ -33,17 +33,45 @@ body
 
   block landing-page
 
-    .landing-page-container
-      section.left-pane
-        div NIRSAL Agro Geo-Cooperative Clusters Dashboard
-        div 
-          div Username 
-          div Password
-          a(href="/dashboard") Sign In
-      section.right-pane
-        #landing_page_map_cont
-        //- video#landing_page_video(playsinline autoplay muted loop poster)
-          source(src="/assets/mapbox-3d-map.mp4" type= "video/mp4")
+    .floating-pane
+      div 26 AGCS
+      div 7,100 Farmers
+
+    .main-pane-container
+
+      .left-pane-content
+        .left-pane-header
+          .left-pane-brand
+            img.brand-logo(src='./assets/icons/agronomy-two-tone.svg' alt='')
+            // <img src="./assets/logos/nirsal-logo.png" alt="">
+          .left-pane-brand-name NIRSAL
+          h1.left-pane-brand-title
+            div AGRO
+            div GEO-CLUSTERS
+            div PLATFORM
+        .left-pane-body
+          .row.mt-5
+            .col-md-6.m-auto
+              .card.card-body
+                form(action='/dashboard' method='POST')
+                  .form-group
+                    label(for='email') Email
+                    input#email.form-control(type='email' name='email' placeholder='Enter Email')
+                  .form-group
+                    label(for='password') Password
+                    input#password.form-control(type='password' name='password' placeholder='Enter Password')
+                  button.btn.btn-primary.btn-block(type='submit') Login
+        .left-pane-footer
+          p &copy; 
+            script.
+              document.write(new Date().getFullYear())
+            span  NIRSAL PLC. All Rights Reserved.
+          nav
+            a(href='#') Terms
+            a(href='#') Privacy
+            a(href='#') Security
+
+    #landing_page_map_cont
 
   //- jQuery CDN - Slim version (=without AJAX)
   script(src='https://code.jquery.com/jquery-3.3.1.slim.min.js' integrity='sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo' crossorigin='anonymous')
@@ -79,16 +107,21 @@ body
 
       //-   bingMapsTile.addTo(LANDING_PAGE_MAP);
 
-      // INIT. LANDING PAGE MAP
+      //- INIT. LANDING PAGE MAP
       mapboxgl.accessToken = `pk.eyJ1IjoibW9ub2xpdGhnb29uIiwiYSI6ImNrN3B1MnNjaDBhNTczcHFkdmJ0aHR6dWEifQ.O0mHuJ2wKNqKz3E_BIsnog`;
       const LANDING_PAGE_MAP = new mapboxgl.Map({
         attribution: `FieldDev Group`,
         container: `landing_page_map_cont`,
         style: `mapbox://styles/monolithgoon/ckqat05ss033418qmildmyau2`,
-        center: [7.03691902649687, 4.654776030857737],
-        pitch: 50,
-        bearing: 10,
-        zoom: 8,
+        center: [6.3, 7.9],
+        pitch: 59,
+        bearing: -2,
+        zoom: 5.99,
+        zoom: 6.2,
       });
+
+      //- ADD ZOOM & NAV. CONTROLS
+      LANDING_PAGE_MAP.addControl(new mapboxgl.NavigationControl());
+
 
     })();

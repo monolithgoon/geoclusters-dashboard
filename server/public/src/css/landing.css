@@ -1,37 +1,174 @@
+@import url('https://fonts.googleapis.com/css2?family=Fjalla+One&display=swap');
+
+* {
+	padding: 0;
+	margin: 0;
+}
+
+body, html {
+	margin: auto;
+	width: 100%;
+	height: 100%;
+	-webkit-box-sizing:border-box;
+	-moz-box-sizing:border-box;
+	box-sizing:border-box;
+	-webkit-font-smoothing:antialiased;
+	-moz-font-smoothing:antialiased;
+	-o-font-smoothing:antialiased;
+	text-rendering:optimizeLegibility;
+}
+
+body {	
+   /* THIS MAKES THE PAGE RESIZE WITH WINDOW */
+   display: flex;
+   overflow: hidden;
+}
+
+
+#landing_page_map_cont {
+   position: absolute;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100vh;
+   z-index: 1;
+}
+
+.floating-pane {
+   display: none;
+}
+
+.main-pane-container {
+   color: black;
+   display: grid;
+   z-index: 2;
+}
+
+.left-pane-content {
+   margin: 15px;  
+   width: 100%;
+   overflow: hidden;
+   /* background-color: #7a9a25;
+   background-color: white; */
+
+   box-shadow: 
+      0 4px 8px 0 rgba(0,0,0,0.2),
+      0 7px 20px 0 rgba(0,0,0,0.2);
+
+   display: grid;
+   grid-template-rows: 2fr 1fr auto;      
+}
+
+.left-pane-header {
+   padding-top: 20px;
+   padding-left: 20px;
+   padding-bottom: 20px;
+   color: white;
+   
+   display: grid;
+   column-gap: 5px;
+   grid-template-columns: auto 0.5fr 4fr;
+   grid-template-rows: auto 0.5fr 4fr;
+   grid-template-rows: auto 0.5fr auto;
+   grid-template-areas: 
+      "logo . ."
+      ". brand-name brand-title"
+      ". . brand-title";
+}
+
+.left-pane-brand {
+   display: flex;
+   align-items: flex-end;
+}
+
+img.brand-logo {
+   grid-area: logo;
+   width: 65px;
+   width: 55px;
+}
+
+.left-pane-brand-name {
+   grid-area: brand-name;
+   font-family: 'Fjalla One', sans-serif;
+   font-size: 18px;
+}
+
+.left-pane-header h1 {  
+   grid-area: brand-title;
+   position: relative;
+
+   display: flex;
+   flex-direction: column;
+}
+
+.left-pane-header h1 > div {  
+   font-family: 'Fjalla One', sans-serif;
+   font-size: 50px;
+   line-height: 50px; 
+   font-weight: 400;
+   letter-spacing: 0.01px;
+}
+
+.left-pane-body {
+   /* background-color: rgba(0,0,0,0.1); */
+   background-color:white;
+}
+
+@supports (-webkit-backdrop-filter: none) or (backdrop-filter: none) {
+   .floating-pane {
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
+      /* background-color: rgba(255, 255, 255, 0.2); */
+   }
+   .left-pane-header {
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
+      background-color: rgba(255, 255, 255, 0.1);
+      background-color: rgba(0,0,0,0.1);
+      background-color: rgba(122, 157, 37, 0.2);
+
+   }
+}
+
+.left-pane-footer {
+   background: white;
+   padding: 5px 20px;
+
+   display: flex;
+   justify-content: space-between;
+   text-align: center;
+}
+
+.left-pane-footer h3, 
+.left-pane-footer p, 
+.left-pane-footer a {
+   margin: 0;
+   font-size: 11px;
+   font-weight: 300;
+}
+
+.left-pane-footer nav {
+   display: flex;
+   justify-content: space-evenly;
+}
+
+.left-pane-footer nav > a {
+   padding: 0 10px;
+}
+
+
+
 /* @media screen and (min-width: 968px) { */
    @media screen and (min-width: 850px) {
-
-      body {	
-         /* THIS MAKES THE PAGE RESIZE WITH WINDOW */
-         display: flex;
-         overflow: hidden;
-      }
-
-      .landing-page-container {
-         width: 100vw;
-         height: 100vh;
-         color: black;
-
+      .floating-pane {
+         margin: 25px;
+         margin-right: 10px;
+         padding: 8px;
+         position: absolute;
+         bottom: 0;
+         right: 0;
+         z-index: 2;
+         min-height: 30vh;
          display: grid;
-         grid-template-columns: 1fr 2fr;
-      }
-
-      #landing_page_map_cont {
-         width: 100%;
-         height: 100vh;
-
-         /* background-image: url('../../assets/images/noun-contour-topography.svg'); */
-         /* background-color: orchid; */
-
-         /* background-image: url('../../assets/mapbox-3d-map.mp4'); */
-         /* object-fit: cover; */
-      }
-
-      video#landing_page_video {
-         height: 100vh;
-         object-fit: cover;
-         max-width: 100%;
-         min-height: 100%
-      }
-   
+      }      
    }
