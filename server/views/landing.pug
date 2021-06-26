@@ -7,8 +7,8 @@ head
   title #{title}
 
   //- MAPBOX GL V2.3.0
-  script(src='https://api.mapbox.com/mapbox-gl-js/v1.10.1/mapbox-gl.js')
-  link(href='https://api.mapbox.com/mapbox-gl-js/v1.10.1/mapbox-gl.css' rel='stylesheet')
+  link(href="https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.css" rel="stylesheet")
+  script(src="https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.js")
 
   //- LEAFLET
   script(src='https://unpkg.com/leaflet@1.7.1/dist/leaflet.js' integrity='sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==' crossorigin='')
@@ -55,6 +55,7 @@ body
               .form-group
                 label(for='email') Email
                 input#email.form-control(type='email' name='email' placeholder='Enter Email')
+                a(href="/dashboard") Dashboard
               //- .form-group
               //-   label(for='password') Password
               //-   input#password.form-control(type='password' name='password' placeholder='Enter Password')
@@ -114,9 +115,39 @@ body
         center: [6.3, 7.9],
         pitch: 59,
         bearing: -2,
-        zoom: 5.99,
         zoom: 6.2,
+
+        center: [10.30595, 12.65872],
+        pitch: 68,
+        bearing: -2,
+        zoom: 11.88,
       });
+
+      LANDING_PAGE_MAP.on(`load`, function() {
+
+        LANDING_PAGE_MAP.addSource(`mapbox-dem`, {
+            'type': 'raster-dem',
+            'url': 'mapbox://mapbox.mapbox-terrain-dem-v1',
+            'tileSize': 512,
+            'maxzoom': 14,
+        });
+
+        // FIXME > NOT WORKING
+        // ADD THE DEM SOURCE AS A TERRAIN LAYER WITH EXAGGERATED HEIGHT
+        LANDING_PAGE_MAP.setTerrain({"source": "mapbox-dem", "exaggeration": 1.5});
+
+        // ADD A SKY LAYER THAT WILL SHOW WHEN THE MAP IS HIGHLY PITCHED
+        LANDING_PAGE_MAP.addLayer({
+            'id': 'sky', 
+            'type': 'sky',
+            'paint': {
+              'sky-type': 'atmosphere',
+              'sky-atmosphere-sun': [ 0.0, 0.0],
+              'sky-atmosphere-sun-intensity': 15,
+            } 
+        });
+      });
+
 
       //- ADD ZOOM & NAV. CONTROLS
       LANDING_PAGE_MAP.addControl(new mapboxgl.NavigationControl());

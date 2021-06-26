@@ -89,30 +89,30 @@ export const CLUSTER_PLOTS_MAP = new mapboxgl.Map({
 // CLUSTER_PLOTS_MAP.addControl(new mapboxgl.NavigationControl());
 
 
-CLUSTER_PLOTS_MAP.on(`load`, function() {
+// CLUSTER_PLOTS_MAP.on(`load`, function() {
 
-   // CLUSTER_PLOTS_MAP.addSource(`mapbox-dem`, {
-   //    'type': 'raster-dem',
-   //    'url': 'mapbox://mapbox.mapbox-terrain-dem-v1',
-   //    'tileSize': 512,
-   //    'maxzoom': 14,
-   // });
+//    CLUSTER_PLOTS_MAP.addSource(`mapbox-dem`, {
+//       'type': 'raster-dem',
+//       'url': 'mapbox://mapbox.mapbox-terrain-dem-v1',
+//       'tileSize': 512,
+//       'maxzoom': 14,
+//    });
 
-   // // FIXME > NOT WORKING
-   // // ADD THE DEM SOURCE AS A TERRAIN LAYER WITH EXAGGERATED HEIGHT
-   // CLUSTER_PLOTS_MAP.setTerrain({"source": "mapbox-dem", "exaggeration": 1.5});
+//    // FIXME > NOT WORKING
+//    // ADD THE DEM SOURCE AS A TERRAIN LAYER WITH EXAGGERATED HEIGHT
+//    CLUSTER_PLOTS_MAP.setTerrain({"source": "mapbox-dem", "exaggeration": 1.5});
 
-   // // ADD A SKY LAYER THAT WILL SHOW WHEN THE MAP IS HIGHLY PITCHED
-   // CLUSTER_PLOTS_MAP.addLayer({
-   //    'id': 'sky', 
-   //    'type': 'sky',
-   //    'paint': {
-   //       'sky-type': 'atmosphere',
-   //       'sky-atmosphere-sun': [ 0.0, 0.0],
-   //       'sky-atmosphere-sun-intensity': 15,
-   //    } 
-   // });
-});
+//    // ADD A SKY LAYER THAT WILL SHOW WHEN THE MAP IS HIGHLY PITCHED
+//    CLUSTER_PLOTS_MAP.addLayer({
+//       'id': 'sky', 
+//       'type': 'sky',
+//       'paint': {
+//          'sky-type': 'atmosphere',
+//          'sky-atmosphere-sun': [ 0.0, 0.0],
+//          'sky-atmosphere-sun-intensity': 15,
+//       } 
+//    });
+// });
 
 
 // CALBACK FN. FOR TO SWITCH MAP STYLES

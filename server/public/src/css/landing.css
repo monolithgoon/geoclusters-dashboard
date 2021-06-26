@@ -63,9 +63,7 @@ body {
 }
 
 .left-pane-header {
-   padding-top: 20px;
-   padding-left: 20px;
-   padding-bottom: 20px;
+   padding: 20px;
    color: white;
    
    display: grid;
@@ -75,6 +73,8 @@ body {
 
    grid-template-rows: auto 0.5fr 4fr;
    grid-template-rows: auto 0.5fr auto;
+   grid-template-rows: auto auto auto;
+   grid-template-rows: repeat(3, 1fr);
    grid-template-areas: 
       "logo . ."
       ". brand-name brand-title"
@@ -99,8 +99,7 @@ body {
 
 .brand-logo img {
    grid-area: logo;
-   width: 65px;
-   width: 55px;
+   width: 50px;
 }
 
 .brand-name {
@@ -113,8 +112,8 @@ body {
    grid-area: brand-title;
    position: relative;
 
-   display: flex;
-   flex-direction: column;
+   /* display: flex;
+   flex-direction: column; */
 }
 
 .left-pane-header h1 > div {  
