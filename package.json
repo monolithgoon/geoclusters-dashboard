@@ -5,8 +5,8 @@
   "main": "express.js",
   "scripts": {
     "deploy": "git push && git push heroku master",
-    "deploy:stable": "git add -A && git commit -m `stable-commit` && git push && git push heroku master",
     "deploy:open": "git push && git push heroku master && heroku open",
+    "stable:deploy": "git add -A && git commit -m `stable-commit` && git push && git push heroku master",
     "on": "heroku maintenance:on",
     "off": "heroku maintenance:off",
     "start": "node server.js",
