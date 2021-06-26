@@ -29,7 +29,7 @@ body {
    position: absolute;
    top: 0;
    left: 0;
-   width: 100%;
+   width: 100vw;
    height: 100vh;
    z-index: 1;
 }
@@ -39,16 +39,18 @@ body {
 }
 
 .main-pane-container {
+   width: 100vw;
    color: black;
    display: grid;
+   grid-template-columns: 1fr;
    height: 100vh;
    z-index: 2;
 }
 
 .left-pane-content {
-   margin: 15px;  
-   width: 100%;
+   margin: 0;  
    overflow: hidden;
+   width: 100%;
    /* background-color: #7a9a25;
    background-color: white; */
 
@@ -57,8 +59,7 @@ body {
       0 7px 20px 0 rgba(0,0,0,0.2);
 
    display: grid;
-   grid-template-rows: 2fr 1fr auto;      
-   grid-template-rows: 70vh 1fr auto;      
+   grid-template-rows: 2fr 0.5fr auto;      
 }
 
 .left-pane-header {
@@ -70,26 +71,39 @@ body {
    display: grid;
    column-gap: 5px;
    grid-template-columns: auto 0.5fr 4fr;
+   grid-template-columns: auto 4fr;
+
    grid-template-rows: auto 0.5fr 4fr;
    grid-template-rows: auto 0.5fr auto;
    grid-template-areas: 
       "logo . ."
       ". brand-name brand-title"
       ". . brand-title";
+   grid-template-areas: 
+      "logo brand-name"
+      ". brand-title"
+      ". brand-title";
 }
 
-.left-pane-brand {
+.left-pane-header {
+   display: grid;
+   column-gap: 5px;
+   grid-template-columns: auto 1fr;
+}
+
+.brand-logo,
+.brand-name {
    display: flex;
    align-items: flex-end;
 }
 
-img.brand-logo {
+.brand-logo img {
    grid-area: logo;
    width: 65px;
    width: 55px;
 }
 
-.left-pane-brand-name {
+.brand-name {
    grid-area: brand-name;
    font-family: 'Fjalla One', sans-serif;
    font-size: 18px;
@@ -134,7 +148,7 @@ img.brand-logo {
 
 .left-pane-footer {
    background: white;
-   padding: 5px 20px;
+   padding: 5px 10px;
 
    display: flex;
    justify-content: space-between;
@@ -162,6 +176,7 @@ img.brand-logo {
 
 /* @media screen and (min-width: 968px) { */
    @media screen and (min-width: 850px) {
+      
       .floating-pane {
          margin: 25px;
          margin-right: 10px;
@@ -172,5 +187,15 @@ img.brand-logo {
          z-index: 2;
          min-height: 30vh;
          display: grid;
+      }
+
+      .main-pane-container {
+         width: 410px;
       }      
+      
+      .left-pane-content {
+         width: auto;
+         margin: 15px;  
+      }
+
    }

@@ -41,26 +41,24 @@ body
 
       .left-pane-content
         .left-pane-header
-          .left-pane-brand
-            img.brand-logo(src='./assets/icons/agronomy-two-tone.svg' alt='')
+          .brand-logo
+            img(src='./assets/icons/agronomy-two-tone.svg' alt='')
             // <img src="./assets/logos/nirsal-logo.png" alt="">
-          .left-pane-brand-name NIRSAL
-          h1.left-pane-brand-title
+          .brand-name NIRSAL
+          h1.brand-title
             div AGRO
             div GEO-CLUSTERS
             div PLATFORM
         .left-pane-body
-          .row.mt-5
-            .col-md-6.m-auto
-              .card.card-body
-                form(action='/dashboard' method='POST')
-                  .form-group
-                    label(for='email') Email
-                    input#email.form-control(type='email' name='email' placeholder='Enter Email')
-                  .form-group
-                    label(for='password') Password
-                    input#password.form-control(type='password' name='password' placeholder='Enter Password')
-                  button.btn.btn-primary.btn-block(type='submit') Login
+          .card.card-body
+            form(action='/dashboard' method='POST')
+              .form-group
+                label(for='email') Email
+                input#email.form-control(type='email' name='email' placeholder='Enter Email')
+              //- .form-group
+              //-   label(for='password') Password
+              //-   input#password.form-control(type='password' name='password' placeholder='Enter Password')
+              button.btn.btn-primary.btn-block(type='submit') Login
         .left-pane-footer
           p &copy; 
             script.
