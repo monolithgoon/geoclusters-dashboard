@@ -26,11 +26,12 @@ POST http://127.0.0.1:1010/users/signup HTTP/1.1
 content-type: application/json
 
 {
-   "user_first_name": "Justin",
-   "user_last_name": "Bieber",
-   "user_email": "jb@gmail.com",
+   "user_first_name": "Alico",
+   "user_last_name": "Danjuma",
+   "user_email": "a.danjuma@gmail.com",
    "user_password": "dooksie$%#--",
-   "user_password_confirm": "dooksie$%#--"
+   "user_password_confirm": "dooksie$%#--",
+   "user_password_changed_at": "2021-04-30"
 }
 
 ###
@@ -38,14 +39,14 @@ POST http://127.0.0.1:1010/users/login HTTP/1.1
 content-type: application/json
 
 {
-   "user_email": "jb@gmail.com",
+   "user_email": "a.danjuma@gmail.com",
    "user_password": "dooksie$%#--"
 }
 
 ###
 GET http://127.0.0.1:1010/users/ HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwZGFjMWEyNDcwNDUyMjc5MDQ2MzJjMyIsImlhdCI6MTYyNDk0OTI3NywiZXhwIjoxNjI1ODEzMjc3fQ.-Cka7fVl5eA-X0JtK_gYHGr6Y1yJGkTHo4AyUbS94Nq
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwZGIwNzgyNjU1ZDZkMzI1MDE1ZjAyYyIsImlhdCI6MTYyNDk2NzA4NiwiZXhwIjoxNjI0OTY3Mzg2fQ.vHlj7Ii4WBNIjheVJUqOSQMXB2fS7tSXorbKSwf_TjY
 
 ###
 GET http://127.0.0.1:1010/dashboard/ HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwZGFjMWEyNDcwNDUyMjc5MDQ2MzJjMyIsImlhdCI6MTYyNDk0OTE1NCwiZXhwIjoxNjI1ODEzMTU0fQ.LoL0oFvbjZn9_V0uUEQijZNErSGTq1xFTyZkqlqXEQQ
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwZDg3ZjQ1NzQ0MjczMTFmODYyY2ZlMCIsImlhdCI6MTYyNDk2MDg2MywiZXhwIjoxNjI0OTYwODY4fQ.UqL7xIW3_h4SprEFspUnAwCu_YubkcjTl8l9vomfMjw

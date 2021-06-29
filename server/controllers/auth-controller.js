@@ -46,13 +46,16 @@ exports.signup = catchAsync(async (req, res, next) => {
 
 
    // CREATE NEW USER MTD. 3 > BEST MTD.
+   console.log(req.body);
    const newUser = new USER_MODEL({
       user_first_name: req.body.user_first_name,
       user_last_name: req.body.user_last_name,
       user_email: req.body.user_email,
       user_password: req.body.user_password,
       user_password_confirm: req.body.user_password_confirm,
+      user_changed_password_at: req.body.user_changed_password_at,
    });
+   console.log(newUser);
 
 
    // IMPLEMENT JWT > PAYLOAD (=> id: newUser._id) + SECRET
@@ -74,7 +77,7 @@ exports.signup = catchAsync(async (req, res, next) => {
          });
       };
    });
-});
+}, `userSignupFn.`);
 
 
 // login CONTROLLER
@@ -88,14 +91,14 @@ exports.login = catchAsync(async (req, res, next) => {
 
       // 1. CHECK IF EMAIL && PASSWORD EXIST IN req.body
       if(!user_email || !user_password) {
-         return next(new ServerError(`Please provide an email and password..`, 401, `loginErr`));
+         return next(new ServerError(`Please provide an email and password..`, 401, `userLogin`));
       };
 
       // 2. CHECK IF THE USER EXISTS && THEIR PASSWORD IS CORRECT
       const dbUser = await USER_MODEL.findOne({ user_email }).select(`+user_password`); // the 'user_password' field is de-selected by default in USER_MODEL; this is how to re-select it
 
       if (!dbUser || !(await dbUser.checkPassword(user_password, dbUser.user_password))) {
-         return next(new ServerError(`Incorrect email or password`, 401, `loginErr`));
+         return next(new ServerError(`Invalid email or password`, 401, `userLogin`));
       };
 
       // 3. IF EVERYTHING IS OK, SIGN THE JWT && SEND BACK TO CLIENT
@@ -105,7 +108,7 @@ exports.login = catchAsync(async (req, res, next) => {
          status: `success`,
          jwtToken,
       });
-});
+}, `userLoginFn.`);
 
 
 // PROTECT ROUTES CONTROLLER FN.
@@ -120,16 +123,26 @@ exports.protectRoute = catchAsync(async(req, res, next) => {
    
    // check if the token exists
    if (!headerToken) {
-      return next(new ServerError(`Unauthorized. You must be logged in to access this resource.`, 401, `protectRouteErr`));
+      return next(new ServerError(`Unauthorized. You must be logged in to access this resource.`, 401, `protectRouteFn.`));
    };
 
    // 2. Verify the token's signature
    const decodedToken = await promisify(jwt.verify)(headerToken, appConfig.jwtSecret);
    console.log(decodedToken)
 
-   // 3. Check if the the user trying to access the route exists
+   // 3. Verify if the the user trying to access the route still exists
+   const freshUser = await USER_MODEL.findById(decodedToken.id);
+   if (!freshUser) { return next(new ServerError(`The user that owns this token no longer exists`, 401, `protectRouteFn.`))}
 
-   // 4. Check if the user changed their password after the token was issed
+   // 4. Check if the user changed their password after the token was issued
+   if (freshUser.checkPasswordChanged(decodedToken.iat)) {
+      return next(new ServerError(`User recently changed their password. Pleases login again`), 401, `protectRouteFn.`);
+   };
 
+   // 5. save the user on the req. obj for future use
+   req.user = freshUser;
+
+   // 6. grant access to protected route
    next();
-}, "protectRoute");
+
+}, "protectRouteFn.");

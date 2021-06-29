@@ -44,6 +44,11 @@ const userSchema = new mongoose.Schema({
          message: `The password confirmation does not match the original`,
       },
    },
+
+   user_changed_password_at: {
+      type: Date,
+      required: false,
+   }
 });
 
 
@@ -68,6 +73,19 @@ userSchema.pre('save', async function(next) {
 userSchema.methods.checkPassword = async function(candidatePassword, dbUserPassword) {
    // this.passord => not available because de-selected by default.
    return await bcrypt.compare(candidatePassword, dbUserPassword);
+};
+
+
+userSchema.methods.checkPasswordChanged = async function(JWTTimestamp) {
+
+   if (this.user_changed_password_at) {
+      const changedTimestamp = +(this.user_changed_password_at.getTime() / 1000);
+      console.log(this.user_changed_password_at, JWTTimestamp);
+      return JWTTimestamp < changedTimestamp;
+   };
+   
+   // user hasn't changed their password
+   return false;
 };
 
 
