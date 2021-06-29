@@ -30,9 +30,10 @@ const userSchema = new mongoose.Schema({
       type: String,
       required: [true, `The user must have a password`],
       minLength: 10,
+      select: false,
    },
 
-   password_confirm: {
+   user_password_confirm: {
       type: String,
       required: [true, `The user must confirm their password`],
       validate: {
@@ -40,10 +41,10 @@ const userSchema = new mongoose.Schema({
          validator: function(el) {
             return el === this.user_password; // the 'this' keyword refers to the current document..
          },
-         message: `The password confirmation does not match`,
-      }
-   }
-})
+         message: `The password confirmation does not match the original`,
+      },
+   },
+});
 
 
 // THIS PRE-SAVE MIDDDLEWARE RUNS BETWEEN GETTING THE DATA && SAVING IT TO THE DB
@@ -57,13 +58,20 @@ userSchema.pre('save', async function(next) {
    this.user_password = await bcrypt.hash(this.user_password, 12);
 
    // DO NOT PERSIST PASS. CONFIRM TO DB
-   this.password_confirm = undefined;
+   this.user_password_confirm = undefined;
 
    next();
 });
 
 
-const USER_MODEL = mongoose.model('users', userSchema)
+// INSTANCE MTD. => AVAIL. ON ALL DOCS. IN COLL.
+userSchema.methods.checkPassword = async function(candidatePassword, dbUserPassword) {
+   // this.passord => not available because de-selected by default.
+   return await bcrypt.compare(candidatePassword, dbUserPassword);
+};
 
 
-module.exports = USER_MODEL
+const USER_MODEL = mongoose.model('users', userSchema);
+
+
+module.exports = USER_MODEL;

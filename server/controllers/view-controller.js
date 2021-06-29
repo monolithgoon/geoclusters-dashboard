@@ -1,7 +1,7 @@
-const fs = require('fs');
-const path = require('path');
+`use strict`
 const chalk = require('../utils/chalk-messages.js');
 const axios = require("axios");
+
 
 // REMOVE > DEPRECATED
 // async function returnLegacyCluster(agc_id) {
@@ -38,39 +38,32 @@ const axios = require("axios");
 // REMOVE > DEPRECATED
 // exports.getAPIData = async (req, res, next) => {
 //    console.log(chalk.success(`called [ getAPIData ] controller fn.`))
-//    res.locals.returnedClusters = await returnLegacyCluster();
-//    // console.log(chalk.console(res.locals.returnedClusters));
+//    req.app.locals.returnedClusters = await returnLegacyCluster();
+//    // console.log(chalk.console(req.app.locals.returnedClusters));
 //    next();
 // }
 
 
 exports.renderAVGDashboard = async (req, res, next) => {
 
-   // console.log(chalk.console(res.locals.returnedClusters));
+   // console.log(chalk.console(req.app.locals.geoClusters));
 
    console.log(chalk.success(`SUCCESSFULLY CALLED 'renderAVGDashboard' VIEW CONTROLLER FN. `));
 
    try {
-
-      const fileData = fs.readFileSync(path.resolve(`${__approotdir}/localdata/parcelized-clusters.geojson`), {encoding: 'utf8'})
-      const fsClusters = JSON.parse(fileData);
-
-      // SANDBOX
-      console.log(fsClusters);
       
-      // RENDER THE agv-dashboard.pug TEMPLATE
       res.status(200).render('dashboard', {
          title: "AVG Dashboard - SSR Alpha",
          user: "FieldDev Group",
          // FIXME > THIS DATA SHOULD PASS THRU. THE CLUSTER PROPS ADAPTER!!!
-         geoClustersData: fsClusters.data.parcelized_agcs,
+         geoClusters: req.app.locals.parcelizedClusters,
+         legacyClusters: req.app.locals.legacyClusters,
       });
 
       next();
 
    } catch (renderAGVErr) {
-
-      console.log(chalk.fail(`renderAGVErr: ${renderAGVErr.message}`));
+      console.error(chalk.fail(`renderAGVErr: ${renderAGVErr.message}`));
    };
 };
 

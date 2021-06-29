@@ -543,12 +543,12 @@ export const _CheckGeoJSON = (()=>{
 		},
 
 		// CHECK IF featColl. has feats. with coords. that can be rendered
-		hasInvalidFeatsCoords: function(featureCollection = mandatoryParam()) {
+		hasInvalidFeatsCoords: function(featureCollection = _mandatoryParam()) {
 			try {
 				turf.centerOfMass(featureCollection);
 				return null;
 			} catch (validFeatCoordsErr) {
-				console.log(`%c validFeatCoordsErr: The feat. coll. has feats. with invalid coords. [turf-error: ${validFeatCoordsErr.message} ]`, `color: red; background: lightgrey;`)
+				console.error(`%c validFeatCoordsErr: The feat. coll. has feats. with invalid coords. [turf-error: ${validFeatCoordsErr.message} ]`, `color: red; background: lightgrey;`)
 				return featureCollection;
 			};
 		},
@@ -599,7 +599,7 @@ export function _repairFeatsCoords (featureCollection) {
 
 
 // LOOP THRU EACH FEAT. AND CONVERT STRING COORDS. TO INTEGERS
-export function _sanitizeFeatCollCoords(featureCollection = mandatoryParam()) {
+export function _sanitizeFeatCollCoords(featureCollection = _mandatoryParam()) {
 	let modFeatureCollection = _repairFeatsCoords(_CheckGeoJSON.hasInvalidFeatsCoords(_CheckGeoJSON.isValidFeatColl(featureCollection)))
 	return modFeatureCollection ? modFeatureCollection : featureCollection;
 };

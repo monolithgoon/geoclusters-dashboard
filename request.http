@@ -1,0 +1,51 @@
+POST http://127.0.0.1:1010/users/signup HTTP/1.1
+content-type: application/json
+
+{
+   "user_first_name": "Nosa",
+   "user_last_name": "Osagiede",
+   "user_email": "n.osagiede@nirsal.com",
+   "user_password": "monkeyP@wz112",
+   "user_password_confirm": "monkeyP@wz112"
+}
+
+###
+POST http://127.0.0.1:1010/users/signup HTTP/1.1
+content-type: application/json
+
+{
+   "user_first_name": "Abdullahi",
+   "user_last_name": "Abubakar",
+   "user_email": "a.abubakar@nirsal.com",
+   "user_password": "mi$$fits@d&nSa",
+   "user_password_confirm": "mi$$fits@d&nSa"
+}
+
+###
+POST http://127.0.0.1:1010/users/signup HTTP/1.1
+content-type: application/json
+
+{
+   "user_first_name": "Justin",
+   "user_last_name": "Bieber",
+   "user_email": "jb@gmail.com",
+   "user_password": "dooksie$%#--",
+   "user_password_confirm": "dooksie$%#--"
+}
+
+###
+POST http://127.0.0.1:1010/users/login HTTP/1.1
+content-type: application/json
+
+{
+   "user_email": "jb@gmail.com",
+   "user_password": "dooksie$%#--"
+}
+
+###
+GET http://127.0.0.1:1010/users/ HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwZGFjMWEyNDcwNDUyMjc5MDQ2MzJjMyIsImlhdCI6MTYyNDk0OTI3NywiZXhwIjoxNjI1ODEzMjc3fQ.-Cka7fVl5eA-X0JtK_gYHGr6Y1yJGkTHo4AyUbS94Nq
+
+###
+GET http://127.0.0.1:1010/dashboard/ HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwZGFjMWEyNDcwNDUyMjc5MDQ2MzJjMyIsImlhdCI6MTYyNDk0OTE1NCwiZXhwIjoxNjI1ODEzMTU0fQ.LoL0oFvbjZn9_V0uUEQijZNErSGTq1xFTyZkqlqXEQQ

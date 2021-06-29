@@ -24,6 +24,7 @@ https://www.sitepoint.com/es6-default-parameters/
 
 
 https://studio.mapbox.com/styles/monolithgoon/ckqat05ss033418qmildmyau2/edit/#5.98/7.677/8.114/0/41
+https://studio.mapbox.com/styles/monolithgoon/ckqat05ss033418qmildmyau2/edit/#10.88/10.306/12.6587/0/68
 https://github.com/mapbox/geojsonhint
 https://geojson.io/#map=14/10.1299/12.5018
 https://studio.mapbox.com/tilesets/

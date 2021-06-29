@@ -1,5 +1,5 @@
 `use strict`;
-import { _CheckGeoJSON, _mandatoryParam, _capitalizePropValues, _TraverseObject} from "./_utils.js";
+import { _CheckGeoJSON, _mandatoryParam, _TraverseObject} from "./_utils.js";
 
 
 // REMOVE > DEPRC.

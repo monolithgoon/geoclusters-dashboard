@@ -189,7 +189,7 @@ block dashboard
                           input#select_all_results_chk(type='checkbox' aria-label='select all results checkbox')
 
                         //- // FIXME > CREATE INTERFACE TO HANDLE DIFF. FIELDS
-                        //- each geoCluster in geoClustersData
+                        //- each geoCluster in geoClusters
                         //-   .result-item.flex-col-start
                         //-     small.result-item-pill
                         //-       span= `${geoCluster.properties.geo_cluster_details.delineated_area.toFixed(0)} HA.`
@@ -216,7 +216,7 @@ block dashboard
                         //-       span= `${geoCluster.properties.geo_cluster_details.primary_crop.toUpperCase()}`
                         //-   .h-divider-grey-50
 
-                        each geoCluster, clusterIdx in geoClustersData
+                        each geoCluster, clusterIdx in geoClusters
                           .result-item.flex-col-start(data-geoclusterdatastream=`${JSON.stringify(geoCluster)}`)
                             .result-item-header.flex-row-start
                               .result-item-titles.flex-col-start.flex-1

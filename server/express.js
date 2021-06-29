@@ -7,7 +7,8 @@ const morgan = require("morgan");
 const bodyParser = require("body-parser"); // get the contents OF request.body
 const compression = require("compression"); // server response compression
 const chalk = require('./utils/chalk-messages.js');
-// const globalErrorHandler = require("./controllers/error-controller.js");
+const ServerError = require('./utils/app-error.js');
+const globalErrorHandler = require("./controllers/error-controller.js");
 
 // APPEND THE APP BASE DIR. TO THE GLOBAL OBJ.
 global.__approotdir = __dirname;
@@ -43,22 +44,32 @@ if (process.env.NODE_ENV === "development") {
 // CUSTOM M-WARE > ADD A CUSTOM PROPERTY ('requestTime) TO THE REQUEST OBJ.
 EXPRESS_SERVER.use((request, response, next) => {
 	request.requestTime = new Date().toISOString();
+	console.log(request.headers)
 	next();
 });
 
 // SERVER RESPONSE COMPRESSION MIDDLEWARE FOR ALL TEXT SENT TO CLIENTS
 EXPRESS_SERVER.use(compression());
 
-// GLOBAL ERROR HANDLING M.WARE
-// EXPRESS_SERVER.use(globalErrorHandler);
-
 //
 EXPRESS_SERVER.use(express.urlencoded({ extended: true }));
 
 // Load the API routes
 const viewRouter = require("./routes/view-routes.js");
+const userRouter = require("./routes/user-routes.js");
+
+// REMOVE > SEEMS TO BE BLOCKING ALL ROUTES
+// // HANDLE ALL INVALID ROUTES
+// EXPRESS_SERVER.all(`*`, (req, res, next) => {
+// 	next(new ServerError(`Can't find ${req.originalUrl} on this server`, 404));
+// });
 
 // MOUNT THE ROUTES
 EXPRESS_SERVER.use("/", viewRouter);
+EXPRESS_SERVER.use("/users/", userRouter);
+
+
+// GLOBAL ERROR HANDLING M.WARE
+EXPRESS_SERVER.use(globalErrorHandler);
 
 module.exports = EXPRESS_SERVER;

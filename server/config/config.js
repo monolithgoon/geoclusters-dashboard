@@ -26,6 +26,7 @@ module.exports = {
 
 	jwtSecret: process.env.JWT_SECRET,
 	jwtAlgorithm: process.env.JWT_ALGO,
+	jwtExpiresIn: process.env.JWT_EXPIRES_IN,
 
 	emails: {
 		apiKey: process.env.MAILGUN_API_KEY,

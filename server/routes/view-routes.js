@@ -1,9 +1,14 @@
-const express = require ("express");
-const expressRouter = express.Router();
-const viewsController = require('../controllers/view-controller.js')
+`use strict`
+const express = require("express");
+const router = express.Router();
+const viewsController = require("../controllers/view-controller.js");
+const dataController = require("../controllers/data-controller.js");
+const authController = require("../controllers/auth-controller.js");
 
-expressRouter.get('/', viewsController.renderLandingPage);
-expressRouter.get('/landing', viewsController.renderLandingPage);
-expressRouter.get('/dashboard', viewsController.renderAVGDashboard);
+router.get("/", viewsController.renderLandingPage);
+router.get("/landing", viewsController.renderLandingPage);
 
-module.exports = expressRouter;
+router.route("/dashboard")
+      .get(authController.protectRoute, dataController.getClustersData, viewsController.renderAVGDashboard)
+
+module.exports = router;

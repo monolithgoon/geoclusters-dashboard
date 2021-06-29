@@ -47,19 +47,26 @@ body
           .brand-name NIRSAL
           h1.brand-title
             div AGRO
-            div GEO-CLUSTERS
+            div(style=`display: flex; align-items: flex-start;`)
+              span GEO-CLUSTERS
+              //- span(style=`font-family: 'Roboto', sans-serif; font-size: 13px;`) &reg
             div PLATFORM
         .left-pane-body
           .card.card-body
+            //- div NIRSAL AGC® Platform
+            div Sign In to Your Account
             form(action='/dashboard' method='POST')
               .form-group
-                label(for='email') Email
+                label(for='email') Email Address
                 input#email.form-control(type='email' name='email' placeholder='Enter Email')
-                a(href="/dashboard") Dashboard
-              //- .form-group
-              //-   label(for='password') Password
-              //-   input#password.form-control(type='password' name='password' placeholder='Enter Password')
-              button.btn.btn-primary.btn-block(type='submit') Login
+                //- a(href="/dashboard") Dashboard
+              .form-group
+                label(for='password') Password
+                input#password.form-control(type='password' name='password' placeholder='Enter Password')
+                a(href="#") Forgot Password?
+              button.btn.btn-primary.btn-block.btn-sm(type='submit') Submit
+              div Don't have an account? 
+                a(href="#") Request for access.
         .left-pane-footer
           p &copy; 
             script.
@@ -117,10 +124,12 @@ body
         bearing: -2,
         zoom: 6.2,
 
-        center: [10.30595, 12.65872],
-        pitch: 68,
-        bearing: -2,
+        center: [11.65872, 10.30595],
+        center: [12.63872, 10.30595],
+        pitch: 70,
+        bearing: 65,
         zoom: 11.88,
+        zoom: 12.4,
       });
 
       LANDING_PAGE_MAP.on(`load`, function() {
@@ -134,7 +143,7 @@ body
 
         // FIXME > NOT WORKING
         // ADD THE DEM SOURCE AS A TERRAIN LAYER WITH EXAGGERATED HEIGHT
-        LANDING_PAGE_MAP.setTerrain({"source": "mapbox-dem", "exaggeration": 15});
+        LANDING_PAGE_MAP.setTerrain({"source": "mapbox-dem", "exaggeration": 5});
 
         // ADD A SKY LAYER THAT WILL SHOW WHEN THE MAP IS HIGHLY PITCHED
         LANDING_PAGE_MAP.addLayer({

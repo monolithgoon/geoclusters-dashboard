@@ -10,8 +10,11 @@
     "on": "heroku maintenance:on",
     "off": "heroku maintenance:off",
     "start": "node server.js",
-    "dev": "cd server && nodemon server.js",
-    "start:prod": "NODE_ENV=production nodemon server.js"
+    "start:prod": "NODE_ENV=production && cd server && nodemon server.js",
+    "dev": "cd server && nodemon server.js --ignore /localdata"
+  },
+  "nodemonConfig": {
+    "ignore": ["/localdata/*.json"]
   },
   "author": "Nduka Okpue",
   "license": "ISC",
@@ -27,7 +30,9 @@
     "dotenv": "^8.6.0",
     "express": "^4.17.1",
     "express-session": "^1.17.2",
+    "geojson-validation": "^1.0.2",
     "jsonwebtoken": "^8.5.1",
+    "lodash.startcase": "^4.4.0",
     "mongoose": "^5.9.19",
     "morgan": "^1.10.0",
     "passport": "^0.4.1",

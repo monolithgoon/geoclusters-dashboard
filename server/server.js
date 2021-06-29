@@ -1,15 +1,15 @@
 const appConfig = require("./config/config.js");
-const EXPRESS_SERVER = require("./express.js");
-const DB_CONNECT = require("./mongoose.js");
-const LOCALIZE_DATA = require(`./jobs/localize-data.js`) 
+const expressServer = require("./express.js");
+const dbConnect = require("./mongoose.js");
+const cacheData = require(`./jobs/cache-api-data.js`) 
 const logger = require("./logger.js");
 const chalk = require("./utils/chalk-messages.js");
 
 async function startServer() {
 	
-	await DB_CONNECT();
+	await dbConnect();
 
-	EXPRESS_SERVER.listen(appConfig.port, () => {
+	expressServer.listen(appConfig.port, () => {
 		logger.info(
 			chalk.running(
 				`🛡️ EXPRESS server listening on port: ${appConfig.port} 🛡️`
@@ -20,7 +20,7 @@ async function startServer() {
 		process.exit(1);
 	});
 
-	// await LOCALIZE_DATA();
+	// await cacheData();
 }
 
 startServer();

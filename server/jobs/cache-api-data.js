@@ -1,7 +1,12 @@
+`use strict`
 const fs = require('fs');
 const path = require('path');
 const chalk = require('../utils/chalk-messages.js');
 const axios = require("axios");
+const gjv = require('geojson-validation');
+const { _GetClusterProps, _getClusterFeatProps } = require('../interfaces/cluster-props-adapter.js');
+const catchAsync = require('../utils/catch-async.js');
+
 
 // REPORT SAVED FILE STATS.
 function reportFileStats(file) {
@@ -11,10 +16,11 @@ function reportFileStats(file) {
    console.log(chalk.success(`File saved was ${fileMBSize.toFixed(2)} MB`))
 }
 
+
 // SAVE RETURNED DB. DATA TO DISK
 function saveData(data, collectionName) {
    console.log(chalk.working(`SAVING DB. COLLECTION [ ${collectionName} ] TO LOCAL STORAGE ..`))
-   const filePath = path.resolve(`${__approotdir}/localdata/${collectionName}.geojson`)
+   const filePath = path.resolve(`${__approotdir}/localdata/${collectionName}.json`)
    fs.writeFile(filePath, data, (saveDataErr) => {
       if (saveDataErr) {
          throw new Error(chalk.highlight(`Failed to save DB. data to disk.. ${saveDataErr.message}`))
@@ -22,6 +28,7 @@ function saveData(data, collectionName) {
       reportFileStats(filePath);
    });
 };
+
 
 async function returnAllParcelizedClusters() {
 
@@ -54,12 +61,12 @@ async function returnAllParcelizedClusters() {
       requestTimeStr = requestTimeStr.replace(/T/g, "-T");
 
       return clustersData;
-	}
 
-	catch (axiosError) {
+	} catch (axiosError) {
 		console.error(chalk.fail(axiosError.message));
 	};
 };
+
 
 async function returnAllLegacyClusters() {
 
@@ -99,45 +106,58 @@ async function returnAllLegacyClusters() {
 	};
 };
 
-async function localizeData() {
 
-   console.log(chalk.working(`Dowloading DB. collections to local-storage...`))
+// TODO > VALIDATE GeoJSON
+function validateGeoJSON(geoJSON) {
+   if (!gjv.valid(geoJSON)) {
+      console.log(chalk.warningStrong('Invalid GeoJSON'));
+   };
+
+   // const trace = gjv.isFeatureCollection(geoJSON, true);
+   // console.log(chalk.console(trace))
+};
+
+
+async function normalizeProps(geoClusterArray) {
+   const stdGeoClusters = [];
+   if (geoClusterArray) {
+      for (const clusterGeoJSON of geoClusterArray) {
+         const clusterProps = _GetClusterProps(clusterGeoJSON);
+         clusterGeoJSON.properties = clusterProps;
+         for (const clusterFeature of clusterGeoJSON.features) {
+            const clusterFeatProps = _getClusterFeatProps(clusterFeature);
+            clusterFeature.properties = clusterFeatProps;
+         };
+         // console.log(chalk.console((Object.values(clusterGeoJSON))));
+         stdGeoClusters.push(clusterGeoJSON);
+      };
+   };
+   return stdGeoClusters;
+};
+
+
+async function cacheData() {
+
+   console.log(chalk.working(`Dowloading DB. collections to local-storage...`));
 
    try {
       
       const parcelizedClustersData = await returnAllParcelizedClusters();
-      // console.log(parcelizedClustersData.data.parcelized_agcs);
+      const legacyClustersData = await returnAllLegacyClusters();
+
+      // NORMALIZE ALL THE PROPS.
+      // // if (parcelizedClustersData && legacyClustersData) {
+      //    const parcelizedClusters = await normalizeProps(parcelizedClustersData.data.parcelized_agcs);
+      //    const legacyClusters = await normalizeProps(legacyClustersData.legacy_agcs);
+      // // };
       
-      const legacyClusterData = await returnAllLegacyClusters();
-      // const clusterProps = legacyClusterData.properties;
-      // const clusterDetails = clusterProps.geo_cluster_details
-      
-      // const returnedClusters = {
-      //    dateCreated: clusterProps.db_insert_timestamp,
-      //    geoclusterId: clusterProps.geo_cluster_id,
-      //    geoclusterName: clusterProps.geo_cluster_name,
-      //    geoclusterLGA: clusterDetails.lga[0],
-      //    geoclusterWard: clusterDetails.ward[0],
-      //    geoclusterPresident: {
-      //       firstName: clusterProps.geo_cluster_governance_structure.president.first_name,
-      //       lastName: clusterProps.geo_cluster_governance_structure.president.last_name,
-      //    },
-      //    geoclusterCommodity: null,
-      //    numFeatures: clusterProps.geo_cluster_total_features,
-      //    measuredArea: clusterProps.delineated_area,
-      //    allocatedArea: clusterDetails.total_allocations_area,
-      //    unusedArea: clusterDetails.delineated_area - this.allocatedArea,
-      //    centerCoords: null,
-      //    metadata: clusterProps.file_parse_metadata
-      // }
-      // console.log(returnedClusters);
-      
-      saveData(JSON.stringify(parcelizedClustersData), `parcelized-clusters`)
-      saveData(JSON.stringify(legacyClusterData), `legacy-clusters`)
+      saveData(JSON.stringify(legacyClustersData), `legacy-clusters`);
+      saveData(JSON.stringify(parcelizedClustersData), `parcelized-clusters`);
 
    } catch (localizeDataErr) {
-      throw new Error(chalk.fail(`localizeDataErr: ${localizeDataErr.message}`))
-   }
-}
+      console.error(chalk.fail(`localizeDataErr: ${localizeDataErr.message}`));
+   };
+};
 
-module.exports = localizeData;
+
+module.exports = cacheData;
