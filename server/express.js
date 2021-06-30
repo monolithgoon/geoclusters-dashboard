@@ -66,7 +66,7 @@ const userRouter = require("./routes/user-routes.js");
 
 // MOUNT THE ROUTES
 EXPRESS_SERVER.use("/", viewRouter);
-EXPRESS_SERVER.use("/users/", userRouter);
+EXPRESS_SERVER.use("/api/v1/users/", userRouter);
 
 
 // GLOBAL ERROR HANDLING M.WARE

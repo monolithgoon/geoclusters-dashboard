@@ -157,3 +157,25 @@ exports.restrictTo = (...roles) => {
       next();
    };
 };
+
+
+exports.forgotPassword = catchAsync(async(req, res, next) => {
+
+   // 1. Get user based on the POSTed email
+   const dbUser = await USER_MODEL.findOne({user_email: req.body.user_email});
+
+   if(!dbUser) {
+      return next(new ServerError(`There is no user with that email address [ ${req.body.user_email} ].`, 404, `forgotPasswordFn`));
+   };
+
+   // 2. Generate the random reset token
+   const resetToken = user.createPasswordResetToken();
+
+   // 2b. save the reset token & expiry date on the USER_MODEL doc.
+   await USER_MODEL.save({validateBeforeSave: false});
+
+   // 3.Send it to the user's email address
+
+   next();
+   
+}, `forgotPasswordFn`)

@@ -1,4 +1,5 @@
-// MODEL FOR > USERNAME, EMAIL, PHOTO, PASSWORD & PASSWORD CONFIRM
+`use strict`
+const crypto = require('crypto');
 const mongoose = require("mongoose");
 const validator = require("validator")
 const bcrypt = require('bcryptjs');
@@ -56,6 +57,10 @@ const userSchema = new mongoose.Schema({
       type: Date,
       required: false,
    },
+
+   user_password_reset_token: String,
+
+   user_password_reset_expires: Date,
 });
 
 
@@ -94,6 +99,24 @@ userSchema.methods.checkPasswordChanged = function(JWTCreatedTimestamp) {
    // user hasn't changed their password
    return false;
 };
+
+
+userSchema.methods.createPasswordResetToken = function() {
+   // does not need to be as cryptographically strong as the jwt token
+   
+   // init the token
+   const resetToken = crypto.randomBytes(32).toString('hex');
+   console.log({resetToken}, this.user_password_reset_token)
+   
+   // encrypt the token => WARNING: this action does not save the data to the model
+   this.user_password_reset_token = crypto.createHash('sha256').update(resetToken).digest('hex');
+
+   // specify token expiry => WARNING: this action does not save the data to the model
+   this.user_password_reset_expires = Date.now() + 10 * 60 * 1000; // 10 mins.
+
+   // return plain text token; to be sent by email
+   return resetToken;
+}
 
 
 const USER_MODEL = mongoose.model('users', userSchema);
