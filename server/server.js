@@ -5,6 +5,7 @@ const cacheData = require(`./jobs/cache-api-data.js`)
 const logger = require("./logger.js");
 const chalk = require("./utils/chalk-messages.js");
 
+
 async function startServer() {
 	
 	await dbConnect();
@@ -21,6 +22,7 @@ async function startServer() {
 	});
 
 	// await cacheData();
-}
+};
+
 
 startServer();

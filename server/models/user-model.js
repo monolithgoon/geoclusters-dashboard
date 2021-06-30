@@ -16,6 +16,13 @@ const userSchema = new mongoose.Schema({
       required: [true, `The user's last name is required`]
    },
 
+   user_role: {
+      type: String,
+      enum: [`user`, `manager`, `admin`],
+      required: [true, `The user's role must be specified`],
+      default: `user`,
+   },
+
    user_email: {
       type: String,
       required: [true, `The user's email is required`],
@@ -45,10 +52,10 @@ const userSchema = new mongoose.Schema({
       },
    },
 
-   user_changed_password_at: {
+   user_password_changed_at: {
       type: Date,
       required: false,
-   }
+   },
 });
 
 
@@ -76,12 +83,12 @@ userSchema.methods.checkPassword = async function(candidatePassword, dbUserPassw
 };
 
 
-userSchema.methods.checkPasswordChanged = async function(JWTTimestamp) {
+userSchema.methods.checkPasswordChanged = function(JWTCreatedTimestamp) {
 
-   if (this.user_changed_password_at) {
-      const changedTimestamp = +(this.user_changed_password_at.getTime() / 1000);
-      console.log(this.user_changed_password_at, JWTTimestamp);
-      return JWTTimestamp < changedTimestamp;
+   if (this.user_password_changed_at) {
+      const changedTimestamp = +(this.user_password_changed_at.getTime() / 1000);
+      console.log(this.user_password_changed_at, JWTCreatedTimestamp);
+      return JWTCreatedTimestamp < changedTimestamp;
    };
    
    // user hasn't changed their password
