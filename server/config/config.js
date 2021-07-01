@@ -16,7 +16,7 @@ if (process.env.NODE_ENV === `development`) {
 	};
 };
 
-module.exports = {
+module.exports = Object.freeze({
 	
 	nodeEnv: process.env_NODE_ENV,
 
@@ -27,18 +27,26 @@ module.exports = {
 	jwtSecret: process.env.JWT_SECRET,
 	jwtAlgorithm: process.env.JWT_ALGO,
 	jwtExpiresIn: process.env.JWT_EXPIRES_IN,
+	jwtCookieExpiresIn:process.env.JWT_COOKIE_EXPIRES_IN,
+
+	// emails: {
+	// 	apiKey: process.env.MAILGUN_API_KEY,
+	// 	apiUsername: process.env.MAILGUN_USERNAME,
+	// 	domain: process.env.MAINGUN_DOMAIN,
+	// },
 
 	emails: {
-		apiKey: process.env.MAILGUN_API_KEY,
-		apiUsername: process.env.MAILGUN_USERNAME,
-		domain: process.env.MAINGUN_DOMAIN,
+		mailHost: process.env.MAIL_HOST,
+		mailPort: process.env.MAIL_PORT,
+		mailUser: process.env.MAIL_USERNAME,
+		mailPass: process.env.MAIL_PASSWORD,
 	},
 
-	cloudinary: {
+	cloud: {
 		cloudinaryURL: process.env.CLOUDINARY_URL,
 	},
 
 	logs: {
 		level: process.env.LOG_LEVEL || "silly",
 	},
-};
+});

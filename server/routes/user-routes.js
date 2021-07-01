@@ -6,14 +6,17 @@ const authController = require('../controllers/auth-controller.js')
 
 
 // USER AUTHENTICATION FUNCTIONS
-// router.post('/signup', authController.restrictTo(`admin`), authController.signup)
 router.post('/signup', authController.signup)
 router.post('/login', authController.login)
-router.route('/forgotPassword').post(authController.forgotPassword)
-// router.post('/resetPassword', authController.resetPassword)
 
 
-// USER ADMINISTRATION FUNCTIONS
+// USER MGMT. FUNCTIONS
+router.post('/forgotPassword', authController.forgotPassword)
+router.patch('/resetPassword/:token', authController.resetPassword);
+router.patch('/updateMyPassword', authController.protectRoute, authController.updatePassword);
+
+
+// ADMIN FUNCTIONS
 router
    .route('/admin')
       .get(authController.protectRoute, authController.restrictTo(`admin`), userController.getAllUsers)
@@ -23,7 +26,7 @@ router
    .route('admin/user/:id')
    .get(authController.protectRoute, authController.restrictTo(`admin`), userController.getUser)
    .patch(authController.protectRoute, authController.restrictTo(`admin`), userController.updateUser)
-   .delete(authController.protectRoute, authController.restrictTo(`admin`), userController.deleteUser)
+   .delete(authController.protectRoute, authController.restrictTo(`admin`), userController.deleteUser);
 
 
 module.exports = router;

@@ -42,15 +42,40 @@ content-type: application/json
 
 {
    "user_email": "ndukao@hotmail.com",
-   "user_password": "dooksie$%#--"
+   "user_password": "jungleFEVER"
+}
+
+###
+POST http://127.0.0.1:1010/api/v1/users/forgotPassword HTTP/1.1
+content-type: application/json
+
+{
+   "user_email": "ndukao@hotmail.com"
+}
+
+###
+PATCH http://127.0.0.1:1010/api/v1/users/resetPassword/07e489a795aa72fb1a6fac15334f14532fc633b11808bf06ce66d2dab2381538 HTTP/1.1
+content-type: application/json
+
+{
+   "user_password": "jungleFEVER",
+   "user_password_confirm": "jungleFEVER"
+}
+###
+
+PATCH http://127.0.0.1:1010/api/v1/users/updateMyPassword/ HTTP/1.1
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwZGJkMGM4YjIyN2VmMjlhYzVjMjVkOCIsImlhdCI6MTYyNTA2MTAzOSwiZXhwIjoxNjI1MDk3MDM5fQ.jbQl0T2btlA8YLxWWuY2jiz1oyDfVqWbcVYQ8zmCRQE
+
+{
+   "user_password": "jungleFEVER",
+   "user_password_confirm": "jungleFEVER",
+   "new_password": "fullCoconutW@ter"
 }
 
 ###
 GET http://127.0.0.1:1010/api/v1/users/admin/ HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwZGJkMGM4YjIyN2VmMjlhYzVjMjVkOCIsImlhdCI6MTYyNTAyMzQxMiwiZXhwIjoxNjI1MDU5NDEyfQ.MPtbM2-NpCnFj4Zwlvh8P-tD9SU7YylRk-Xh0ohCeD0
-
-###
-POST http://127.0.0.1:1010/api/v1/users/forgotPassword HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwZGJkMGM4YjIyN2VmMjlhYzVjMjVkOCIsImlhdCI6MTYyNTA4MDgxMCwiZXhwIjoxNjI1MTE2ODEwfQ.043RkNthsHfxHg2h1TSCBGUwK-BVwgMi4jOyrcUKGrk
 
 ###
 GET http://127.0.0.1:1010/dashboard/ HTTP/1.1

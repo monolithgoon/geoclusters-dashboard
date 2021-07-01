@@ -1,5 +1,5 @@
 `use strict`
-import { MAPBOX_TOKEN, BING_MAPS_TOKEN } from "../maps-config.js";
+import { MAPBOX_TOKEN, BING_MAPS_TOKEN } from "../config/maps-config.js";
 
 
 // INIT. FEAT. DETAIL MINIMAP

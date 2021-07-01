@@ -81,9 +81,24 @@ userSchema.pre('save', async function(next) {
 });
 
 
+// SET THE user_password_changed_at PROPERTY
+userSchema.pre('save', async function(next) {
+
+   if(!(this.isModified('user_password') || this.isNew)) return next();
+   
+   // sometimes saving the user to the db is slower than issuing the JWT
+   // thus, the pass_changed_at is sometimes persisted AFTER JWT is created
+   // this will prevent user from loggin in
+   // SOLUTION: set the changed_at prop. 2 seconds in the past..
+   this.user_password_changed_at = Date.now() - 2000;
+
+   next();
+});
+
+
 // INSTANCE MTD. => AVAIL. ON ALL DOCS. IN COLL.
-userSchema.methods.checkPassword = async function(candidatePassword, dbUserPassword) {
-   // this.passord => not available because de-selected by default.
+userSchema.methods.comparePasswords = async function(candidatePassword, dbUserPassword) {
+   // this.passord => not available because de-selected by default; so it must be passed as a param.
    return await bcrypt.compare(candidatePassword, dbUserPassword);
 };
 
@@ -105,17 +120,17 @@ userSchema.methods.createPasswordResetToken = function() {
    // does not need to be as cryptographically strong as the jwt token
    
    // init the token
-   const resetToken = crypto.randomBytes(32).toString('hex');
-   console.log({resetToken}, this.user_password_reset_token)
+   const unEncryptedResetToken = crypto.randomBytes(32).toString('hex');
+   console.log({unEncryptedResetToken}, this.user_password_reset_token)
    
    // encrypt the token => WARNING: this action does not save the data to the model
-   this.user_password_reset_token = crypto.createHash('sha256').update(resetToken).digest('hex');
+   this.user_password_reset_token = crypto.createHash('sha256').update(unEncryptedResetToken).digest('hex');
 
    // specify token expiry => WARNING: this action does not save the data to the model
-   this.user_password_reset_expires = Date.now() + 10 * 60 * 1000; // 10 mins.
+   this.user_password_reset_expires = Date.now() + 30 * 60 * 1000; // 30 mins.
 
    // return plain text token; to be sent by email
-   return resetToken;
+   return unEncryptedResetToken;
 }
 
 

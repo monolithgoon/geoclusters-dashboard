@@ -52,17 +52,18 @@ body
               //- span(style=`font-family: 'Roboto', sans-serif; font-size: 13px;`) &reg
             div PLATFORM
         .left-pane-body
+
           .card.card-body
             //- div NIRSAL AGC® Platform
             div Sign In to Your Account
             form(action='/dashboard' method='POST')
               .form-group
                 label(for='email') Email Address
-                input#email.form-control(type='email' name='email' placeholder='Enter Email')
+                input#email.form-control(type='email' name='email' placeholder='Enter Email', required)
                 //- a(href="/dashboard") Dashboard
               .form-group
                 label(for='password') Password
-                input#password.form-control(type='password' name='password' placeholder='Enter Password')
+                input#password.form-control(type='password' name='password' placeholder='Enter Password', required, minlength='8')
                 a(href="#") Forgot Password?
               button.btn.btn-primary.btn-block.btn-sm(type='submit') Submit
               div Don't have an account? 

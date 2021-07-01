@@ -61,8 +61,9 @@ const sendErrorDev = (err, req, res) => {
 
 	// 2. Send error message
 	return res.status(err.statusCode).render("404", {
-		title: "Something went wrong...",
-		msg: err.message,
+		err_status_code: err.statusCode,
+		err_title: "Something went wrong...",
+		err_msg: err.message,
 	});
 };
 
@@ -89,8 +90,9 @@ const sendErrorProd = (err, req, res) => {
 	if (err.isOperational) {
 		console.log(err);
 		return res.status(err.statusCode).render("404", {
-			title: "Something went wrong!",
-			msg: err.message,
+			err_status_code: err.statusCode,
+			err_title: "Something went wrong!",
+			err_msg: err.message,
 		});
 	}
 	// 1) Log error
@@ -98,8 +100,9 @@ const sendErrorProd = (err, req, res) => {
 
 	// 2) Send error message
 	return res.status(err.statusCode).render("404", {
-		title: "Something went wrong...",
-		msg: "Please try again later.",
+		err_status_code: err.statusCode,
+		err_title: "Something went wrong...",
+		err_msg: "Please try again later.",
 	});
 };
 

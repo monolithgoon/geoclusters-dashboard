@@ -14,7 +14,9 @@
     "dev": "cd server && nodemon server.js --ignore /localdata"
   },
   "nodemonConfig": {
-    "ignore": ["/localdata/*.json"]
+    "ignore": [
+      "/localdata/*.json"
+    ]
   },
   "author": "Nduka Okpue",
   "license": "ISC",
@@ -35,6 +37,7 @@
     "lodash.startcase": "^4.4.0",
     "mongoose": "^5.9.19",
     "morgan": "^1.10.0",
+    "nodemailer": "^6.6.2",
     "passport": "^0.4.1",
     "passport-local": "^1.0.0",
     "pug": "^3.0.0",

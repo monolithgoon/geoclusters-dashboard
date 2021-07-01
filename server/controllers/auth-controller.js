@@ -1,15 +1,46 @@
 `use strict`
 const { promisify } = require('util');
+const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
-const appConfig = require('../config/config.js');
+const APP_CONFIG = require('../config/config.js');
 const USER_MODEL = require('../models/user-model.js');
 const catchAsync = require('../utils/catch-async.js');
 const ServerError = require('../utils/app-error.js');
+const sendEmail = require('../services/email.js');
 
 
-const signJWTToken = payloadId => {
-   return jwt.sign({id: payloadId}, appConfig.jwtSecret, {
-      expiresIn: appConfig.jwtExpiresIn,
+const signJWT = payloadId => {
+   return jwt.sign({id: payloadId}, APP_CONFIG.jwtSecret, {
+      expiresIn: APP_CONFIG.jwtExpiresIn,
+   });
+};
+
+
+const createSendToken = (currentUser, statusCode, response) => {
+
+   // IMPLEMENT JWT => PAYLOAD (=> id: newUser._id) + SECRET
+   const jWebToken = signJWT(currentUser._id);
+   const cookieOptions = {
+      expires: new Date(Date.now() * APP_CONFIG.jwtExpiresIn * 24 * 60 * 60 * 1000), // convert from days to milliseconds
+      httpOnly: true, // cookie cannot be accessed or modified by the browser
+   };
+
+   // SET COOKIE 'secure' OPTION to 'true' ONLY IN PROD. MODE
+   if (process.env.NODE_ENV === `production`) cookieOptions.secure = true;
+
+   // ATTACH A COOKIE TO THE RES. OBJ.
+   response.cookie(`jwtcookie`, jWebToken, cookieOptions)
+
+   // HIDE THE USER. PASSWORD IN THE RES.
+   currentUser.user_password = undefined;
+
+   // SEND TO CLIENT
+   response.status(statusCode).json({
+      status: 'success',
+      jWebToken,
+      data: { 
+         user: currentUser,
+      },
    });
 };
 
@@ -31,14 +62,14 @@ exports.signup = catchAsync(async (req, res, next) => {
    
 
    // // IMPLEMENT JWT > PAYLOAD + SECRET
-   // const jwtToken = jwt.sign( {id: newUser._id}, process.env.JWT_SECRET, {
+   // const jWebToken = jwt.sign( {id: newUser._id}, process.env.JWT_SECRET, {
    //    expiresIn: process.env.JWT_EXPIRES_IN
    // });
    
    
    // res.status(201).json({
    //    status: 'success',
-   //    jwtToken,
+   //    jWebToken,
    //    data: { 
    //       user: newUser
    //    }
@@ -52,31 +83,17 @@ exports.signup = catchAsync(async (req, res, next) => {
       user_role: req.body.user_role,
       user_email: req.body.user_email,
       user_password: req.body.user_password,
-      user_password_confirm: req.body.user_password_confirm,
-      user_password_changed_at: req.body.user_password_changed_at,
    });
-   console.log(newUser);
 
-
-   // IMPLEMENT JWT > PAYLOAD (=> id: newUser._id) + SECRET
-   const jwtToken = signJWTToken(newUser._id);
-   console.log(jwtToken)
-
-
-   // model.save SEEMS TO BE BETTER PRACTICE THAN model.create
+   // model.save SEEMS TO BE BETTER PRACTICE THAN model.create bcos. the pre.save m-ware is forced to run
    await newUser.save((mongooseSaveErr, savedUser) => {
       if (mongooseSaveErr) {
          next(new ServerError(`newUserSaveErr: ${mongooseSaveErr}`, 400, `signupErr`));
       } else {
-         res.status(201).json({
-            status: 'success',
-            jwtToken,
-            data: { 
-               user: newUser,
-            },
-         });
+         createSendToken(newUser, 201, res);
       };
    });
+   
 }, `userSignupFn.`);
 
 
@@ -97,17 +114,12 @@ exports.login = catchAsync(async (req, res, next) => {
       // 2. CHECK IF THE USER EXISTS && THEIR PASSWORD IS CORRECT
       const dbUser = await USER_MODEL.findOne({ user_email }).select(`+user_password`); // the 'user_password' field is de-selected by default in USER_MODEL; this is how to re-select it
 
-      if (!dbUser || !(await dbUser.checkPassword(user_password, dbUser.user_password))) {
+      if (!dbUser || !(await dbUser.comparePasswords(user_password, dbUser.user_password))) {
          return next(new ServerError(`Invalid email or password`, 401, `userLogin`));
       };
 
       // 3. IF EVERYTHING IS OK, SIGN THE JWT && SEND BACK TO CLIENT
-      const jwtToken = signJWTToken(dbUser._id);
-
-      res.status(200).json({
-         status: `success`,
-         jwtToken,
-      });
+      createSendToken(dbUser, 200, res);
 }, `userLoginFn.`);
 
 
@@ -123,11 +135,11 @@ exports.protectRoute = catchAsync(async(req, res, next) => {
    
    // check if the token exists
    if (!headerToken) {
-      return next(new ServerError(`Unauthorized. You must be logged in to access this resource.`, 401, `protectRouteFn.`));
+      return next(new ServerError(`Unauthorized. You must be signed in to access this resource.`, 401, `protectRouteFn.`));
    };
 
    // 2. Verify the token's signature
-   const decodedToken = await promisify(jwt.verify)(headerToken, appConfig.jwtSecret);
+   const decodedToken = await promisify(jwt.verify)(headerToken, APP_CONFIG.jwtSecret);
    // console.log({decodedToken})
 
    // 3. Verify if the the user trying to access the route still exists
@@ -169,13 +181,95 @@ exports.forgotPassword = catchAsync(async(req, res, next) => {
    };
 
    // 2. Generate the random reset token
-   const resetToken = user.createPasswordResetToken();
+   const passwordResetToken = dbUser.createPasswordResetToken();
 
    // 2b. save the reset token & expiry date on the USER_MODEL doc.
-   await USER_MODEL.save({validateBeforeSave: false});
+   await dbUser.save({validateBeforeSave: false});
 
    // 3.Send it to the user's email address
+   const passwordResetURL = `${req.protocol}://${req.get('host')}/api/v1/users/resetPassword/${passwordResetToken}`;
+   const emailText = `Submit a PATCH request with your new user_password and user_password_confirm to: ${passwordResetURL}\nIf you didn't forget your password, please ignore this email.`;
 
-   next();
+   // HANDLE ERR. THAT MIGHT OCCUR IN SENDING EMAIL
+   try {
+      
+      await sendEmail({
+         emailAddr: req.body.user_email,
+         emailSubject: `Your password reset token. Valid for 30 min. only.`,
+         emailText,
+      });
+      
+      res.status(200).json({
+         status: `success`,
+         message: `A password reset URL was just sent to email address [ ${req.body.user_email} ]`,
+      });
+      
+   } catch (sendEmailErr) {
+
+      dbUser.password_reset_token = undefined;
+      dbUser.password_reset_expires = undefined;
+      await dbUser.save({validateBeforeSave: false});
+
+		console.error((`sendEmailErr: ${sendEmailErr.message}`));
+
+      return next(new ServerError(`There was an error sendng the password reset email. Check your internet connection. Try again later. ${sendEmailErr.message}`, 500, `forgotPasswordTryCatch`))
+   };
    
-}, `forgotPasswordFn`)
+}, `forgotPasswordFn`);
+
+
+exports.resetPassword = catchAsync(async(req, res, next) => {
+
+   // 1. Get the user based on the token
+
+      // 1a. Encrypt/hash the token (send via email) and compare with token in DB
+      const hashedToken = crypto.createHash('sha256').update(req.params.token).digest('hex');
+
+      // 1b. Query the db, and find the matching user
+      const dbUser = await USER_MODEL.findOne({
+         user_password_reset_token: hashedToken, 
+         user_password_reset_expires: { $gt:Date.now() }
+      });
+
+   // 2. If the token has not expired, and the user exists, set the new password
+   if (!dbUser) { return next(new ServerError(`The token is invalid or has expired`, 400, `resetPasswordFn`))}
+   console.log(req.body.user_password, req.body.user_password_confirm)
+   dbUser.user_password = req.body.user_password;
+   dbUser.user_password_confirm = req.body.user_password_confirm;
+   dbUser.user_password_reset_token = undefined;
+   dbUser.user_password_reset_expires = undefined;
+   await dbUser.save();
+   
+   // 3. Update the 'user_password_changed_at' property for the user
+   
+   // 4. Log the user in, and send the JWT to the client
+   // EVERYTHING IS OK, SIGN THE JWT && SEND BACK TO CLIENT
+   createSendToken(dbUser, 200, res);
+   
+	next();
+
+}, `resetPasswordFn`);
+
+
+exports.updatePassword = catchAsync(async(req, res, next) => {
+
+   // 1. Query the db, and find the matching user
+   const currentUser = await USER_MODEL.findById(req.user.id).select('+user_password');
+
+   // 2. Check that the POSTed current password is correct
+   if (!currentUser.comparePasswords(req.body.new_password, currentUser.user_password)) {
+      return next(new ServerError(`The password provided is incorrect.`, 401));
+   };
+
+   // 3. If so, update the password
+   currentUser.user_password = req.body.user_password;
+   currentUser.user_password_confirm = req.body.user_password_confirm;
+   
+   // 3b. save the user
+   // currentUser.findByIdAndUpdate will NOT work as intended ..
+   await currentUser.save();
+
+   // 4. Log the user back in with the password; send JWT 
+   createSendToken(currentUser, 200, res);
+
+}, `updatePasswordFn`);

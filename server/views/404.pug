@@ -1,9 +1,18 @@
-extends index
+extends index.pug
 
 block 404
-   main.main
-      .error
-         .error__title
-            h2.heading-secondary.heading-secondary--error Uh oh! Something went wrong!   
-            h2.error__emoji 😢 🤯
-         .error__msg= msg
+
+   .main-container
+   
+      .error-page-wrapper
+
+         section.top-section
+            h1= `${err_status_code}. Blocked.`
+            p You do not have permission to view this resource.
+
+         .page-graphic
+            img(src="/assets/images/noun-dark-contour.svg" alt="")
+
+         section.bottom-section
+            h1= err_msg 
+               a(href="/landing")  SIGN IN.
