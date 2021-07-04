@@ -1,6 +1,6 @@
 `use strict`;
 const turf = require('@turf/turf');
-const startCase = require('lodash.startcase');
+const _startcase = require('lodash.startcase');
 
 
 const _mandatoryParam = () => {
@@ -9,9 +9,10 @@ const _mandatoryParam = () => {
 
 
 // TRAVERSE AN OBJECT USING AN ARRAY OF OBJ. PROPS.
+let finalValue;
 const TraverseObject = (() => {
 
-	let finalValue;
+	// let finalValue;
 
 	return {
 
@@ -33,7 +34,8 @@ const TraverseObject = (() => {
             // console.log({finalValue});
             
             // IMPORTANT > RETURN THIS TO INDICATE THAT THIS EVALUATED TO VALUE OR UNDEF.
-            return finalValue;
+				return finalValue;
+            // return finalValue;
             
 			} catch (evaluateValueErr) {
             // console.log(`%c evaluateValueErr: ${evaluateValueErr.message}`,"background-color: orange; color: black;");
@@ -41,9 +43,12 @@ const TraverseObject = (() => {
 			};
 		},
 
-		getFinalValue: function() {
-                  
+		getFinalValue: function() {                  
 			return finalValue;
+		},
+
+		resetFinalValue: function() {
+			finalValue = undefined;
 		},
 	};
 })();
@@ -120,6 +125,7 @@ const CheckGeoJSON = (()=>{
 
 // PIPELINE FN.
 function evaluateObjProps (baseProp, {defaultReturn}, ...otherProps) {
+	TraverseObject.resetFinalValue();
 	TraverseObject.evaluateValue(baseProp, ...otherProps);
 	if (
 		TraverseObject.getFinalValue() && 
@@ -157,8 +163,10 @@ exports._GetClusterProps = (clusterFeatureCollection = _mandatoryParam()) => {
 			: TraverseObject.evaluateValue(props, "agc_extended_name")
 			? TraverseObject.getFinalValue()
 			: null;
+			
+			clusterName = _startcase(clusterName);
+
 		// TODO
-		clusterName = startCase(clusterName);
 		// capitalze the word 'agc'
 		// clusterName = _removeUnderscores(clusterName);
 		// clusterName = _includeHyphens(clusterNam);
@@ -171,21 +179,13 @@ exports._GetClusterProps = (clusterFeatureCollection = _mandatoryParam()) => {
 									evaluateObjProps(props, {}, 'db_insert_timestamp') || 
 									null;
 
-		const clusterArea = TraverseObject.evaluateValue(
-			props,
-			"geo_cluster_details",
-			"delineated_area"
-		)
+		const clusterArea = TraverseObject.evaluateValue(props, "geo_cluster_details", "delineated_area")
 			? TraverseObject.getFinalValue()
 			: TraverseObject.evaluateValue(props, "agc_area")
 			? TraverseObject.getFinalValue()
 			: null;
 
-		const clusterUsedArea = TraverseObject.evaluateValue(
-			props,
-			"geo_cluster_details",
-			"total_allocations_area"
-		)
+		const clusterUsedArea = TraverseObject.evaluateValue(props, "geo_cluster_details", "total_allocations_area")
 			? TraverseObject.getFinalValue()
 			: TraverseObject.evaluateValue(props, "total_allocation")
 			? TraverseObject.getFinalValue()
@@ -211,15 +211,12 @@ exports._GetClusterProps = (clusterFeatureCollection = _mandatoryParam()) => {
 			? TraverseObject.getFinalValue()
 			: null;
 
-		const clusterRenderHash = TraverseObject.evaluateValue(props, "preview_map_url_hash")
-			? TraverseObject.getFinalValue()
-			: null;
-
-		const subdivideMetadata = TraverseObject.evaluateValue(props, "parcelization_metadata")
-			? TraverseObject.getFinalValue()
-			: null;
-
-		const primaryCommodity = evaluateObjProps(props, {}, 'geo_cluster_details', 'primary_crop');
+		const clusterRenderHash = evaluateObjProps(props, {}, 'preview_map_url_hash');
+		
+		const subdivideMetadata = evaluateObjProps(props, {}, 'parcelization_metadata');
+		
+		let primaryCommodity = evaluateObjProps(props, {}, 'geo_cluster_details', 'primary_crop');
+			primaryCommodity = _startcase(primaryCommodity);
 
 		let clusterGovAdmin1 = Object.freeze({
 			adminTitle1: evaluateObjProps(props, {}, 'geo_cluster_governance_structure', 'president', 'first_name'),
@@ -259,8 +256,8 @@ exports._GetClusterProps = (clusterFeatureCollection = _mandatoryParam()) => {
 			// hasProcessing,		
 		};
 
-	} catch (getClusterProps) {
-		console.error(`getClusterProps: ${getClusterProps.message}`);
+	} catch (getClusterPropsErr) {
+		console.error(`getClusterPropsErr: ${getClusterPropsErr.message}`);
 	};
 };
 
@@ -280,31 +277,27 @@ exports._getClusterFeatProps = (clusterFeature = _mandatoryParam(), {featIdx}={}
 		const featureIndex = featIdx + 1;		
 
 		const featureAdmin = Object.freeze({
-			admin1: {
+			admin1: Object.freeze({
 				id: evaluateObjProps(props, {}, "plot_owner_bvn") || evaluateObjProps(props, {}, "owner_id"), // REMOVE
-				titles: {
-					title1: evaluateObjProps(props, {}, 'owner_name'),
-					title2: "",
-					title3: "",
-				},
+				titles: Object.freeze({
+					title1: 
+						evaluateObjProps(props, {}, 'owner_name') || 
+						evaluateObjProps(props, {}, "plot_owner_first_name"),
+					title2: evaluateObjProps(props, {}, "plot_owner_middle_name"),
+					title3: evaluateObjProps(props, {}, "plot_owner_last_name"),
+				}),
 				photoBase64: "",
 				photoURL: evaluateObjProps(props, {defaultReturn: "/assets/icons/icons8-person-48.png"}, "owner_photo_url")
-			},
-		})
-		const featureAdmin1 = Object.freeze({
-			adminTitle1: evaluateObjProps(props, {}, 'owner_name'),
-			// TODO > PROPERLY DEFINE FEATURE ADMIN. MODEL
-			// adminTitle1: evaluateObjProps(props, {}, 'owner_name') || evaluateObjProps(props, {}, 'feature_owner_name'),
-			// adminTitle2: evaluateObjProps(props, {}, 'geo_cluster_governance_structure', 'vice_president', 'middle_name'),
-			// adminTitle3: evaluateObjProps(props, {}, 'geo_cluster_governance_structure', 'vice_president', 'last_name'),
+			}),
 		});
 
-		const featureArea = evaluateObjProps(props, {}, 'chunk_size');
+		const featureArea = 
+			evaluateObjProps(props, {}, 'chunk_size') || 
+			evaluateObjProps(props, {}, "plot_owner_allocation_size");
 		
 		return {
 			featureID,
 		   featureIndex,
-			featureAdmin1,
 		   featureArea,
 		   // featCenterFeat,
 		   // featCenterLat,

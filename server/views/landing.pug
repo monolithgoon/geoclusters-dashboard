@@ -1,101 +1,63 @@
+extends base
 
-doctype html
-head
-  meta(charset='UTF-8')
-  meta(name='viewport' content='width=device-width, initial-scale=1.0')
+block append landing-page-head-scripts
+  script(src="https://unpkg.com/axios/dist/axios.min.js")
 
-  title #{title}
+block landing-page
 
-  //- MAPBOX GL V2.3.0
-  link(href="https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.css" rel="stylesheet")
-  script(src="https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.js")
+  .floating-pane
+    div 26 AGCS
+    div 7,100 Farmers
 
-  //- LEAFLET
-  script(src='https://unpkg.com/leaflet@1.7.1/dist/leaflet.js' integrity='sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==' crossorigin='')
-  link(rel='stylesheet' href='https://unpkg.com/leaflet@1.7.1/dist/leaflet.css' integrity='sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==' crossorigin='')
+  .welcome-pane-container
 
-  //- LEAFLET BING MAPS
-  script(src='/src/plugins/LeafletBingLayer/bing.js')
+    .welcome-pane-content
 
-  //- FONT AWESOME
-  link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA==" crossorigin="anonymous")
+      .welcome-pane-header
+        .brand-logo
+          img(src='./assets/icons/agronomy-two-tone.svg' alt='')
+          // <img src="./assets/logos/nirsal-logo.png" alt="">
+        .brand-name NIRSAL
+        h1.brand-title
+          div AGRO
+          div(style=`display: flex; align-items: flex-start;`)
+            span GEO-CLUSTERS
+          div PLATFORM
 
-  //- FONTISTO
-  link(rel='stylesheet' href='https://cdn.jsdelivr.net/npm/fontisto@v3.0.4/css/fontisto/fontisto.min.css')
+      .welcome-pane-body
+        .card.card-body
+          //- div NIRSAL AGC® Platform
+          div Sign In to Your Account
+          form.form.form--login(action='/dashboard' method='GET')
+            .form-group
+              label(for='login_email') Email Address
+              input#login_email.form-control(type='email' name='email' placeholder='Enter Email', required)
+            .form-group
+              label(for='login_password') Password
+              input#login_password.form-control(type='password' name='password' placeholder='Enter Password', required, minlength='8')
+              a(href="#") Forgot Password?
+            button.btn.btn-primary.btn-block.btn-sm(type='submit') Submit
+            div Don't have an account? 
+              a(href="#") Request for access.
 
-  //- BOOTSTRAP 5
-  link(href='https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css' rel='stylesheet' integrity='sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6' crossorigin='anonymous')
+      .welcome-pane-footer
+        .login-alert-wrapper
+        p &copy; 
+          script.
+            document.write(new Date().getFullYear())
+          span  NIRSAL PLC. All Rights Reserved.
+        nav
+          a(href='#') Terms
+          a(href='#') Privacy
+          a(href='#') Security
 
-  //- MAIN STYLESHEET
-  link(rel='stylesheet' href='/src/css/landing.css')
+  #landing_page_map_cont
 
-body
-
-  block landing-page
-
-    .floating-pane
-      div 26 AGCS
-      div 7,100 Farmers
-
-    .main-pane-container
-
-      .left-pane-content
-        .left-pane-header
-          .brand-logo
-            img(src='./assets/icons/agronomy-two-tone.svg' alt='')
-            // <img src="./assets/logos/nirsal-logo.png" alt="">
-          .brand-name NIRSAL
-          h1.brand-title
-            div AGRO
-            div(style=`display: flex; align-items: flex-start;`)
-              span GEO-CLUSTERS
-              //- span(style=`font-family: 'Roboto', sans-serif; font-size: 13px;`) &reg
-            div PLATFORM
-        .left-pane-body
-
-          .card.card-body
-            //- div NIRSAL AGC® Platform
-            div Sign In to Your Account
-            form(action='/dashboard' method='POST')
-              .form-group
-                label(for='email') Email Address
-                input#email.form-control(type='email' name='email' placeholder='Enter Email', required)
-                //- a(href="/dashboard") Dashboard
-              .form-group
-                label(for='password') Password
-                input#password.form-control(type='password' name='password' placeholder='Enter Password', required, minlength='8')
-                a(href="#") Forgot Password?
-              button.btn.btn-primary.btn-block.btn-sm(type='submit') Submit
-              div Don't have an account? 
-                a(href="#") Request for access.
-        .left-pane-footer
-          p &copy; 
-            script.
-              document.write(new Date().getFullYear())
-            span  NIRSAL PLC. All Rights Reserved.
-          nav
-            a(href='#') Terms
-            a(href='#') Privacy
-            a(href='#') Security
-
-    #landing_page_map_cont
-
-  //- jQuery CDN - Slim version (=without AJAX)
-  script(src='https://code.jquery.com/jquery-3.3.1.slim.min.js' integrity='sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo' crossorigin='anonymous')
-
-  //- Popper.JS FOR BOOTSTRAP
-  script(src='https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js' integrity='sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ' crossorigin='anonymous')
-
-  //- BOOTSTRAP 4
-  script(src='https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js' integrity='sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm' crossorigin='anonymous')
-
-  //- BOOTSTRAP 5
-  script(src='https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js' integrity='sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf' crossorigin='anonymous')
-
+  //- 
   script(type='module').
 
     `use strict`
-    import { MAPBOX_TOKEN, BING_MAPS_TOKEN } from "/src/js/maps-config.js";
+    import { MAPBOX_TOKEN, BING_MAPS_TOKEN } from "/src/js/config/maps-config.js";
 
     (function() {
 
@@ -136,10 +98,10 @@ body
       LANDING_PAGE_MAP.on(`load`, function() {
 
         LANDING_PAGE_MAP.addSource(`mapbox-dem`, {
-            'type': 'raster-dem',
-            'url': 'mapbox://mapbox.mapbox-terrain-dem-v1',
-            'tileSize': 512,
-            'maxzoom': 14,
+          'type': 'raster-dem',
+          'url': 'mapbox://mapbox.mapbox-terrain-dem-v1',
+          'tileSize': 512,
+          'maxzoom': 14,
         });
 
         // FIXME > NOT WORKING
@@ -148,19 +110,17 @@ body
 
         // ADD A SKY LAYER THAT WILL SHOW WHEN THE MAP IS HIGHLY PITCHED
         LANDING_PAGE_MAP.addLayer({
-            'id': 'sky', 
-            'type': 'sky',
-            'paint': {
-              'sky-type': 'atmosphere',
-              'sky-atmosphere-sun': [ 0.0, 0.0],
-              'sky-atmosphere-sun-intensity': 15,
-            } 
+          'id': 'sky', 
+          'type': 'sky',
+          'paint': {
+            'sky-type': 'atmosphere',
+            'sky-atmosphere-sun': [ 0.0, 0.0],
+            'sky-atmosphere-sun-intensity': 15,
+          } 
         });
       });
 
 
       //- ADD ZOOM & NAV. CONTROLS
       LANDING_PAGE_MAP.addControl(new mapboxgl.NavigationControl());
-
-
     })();

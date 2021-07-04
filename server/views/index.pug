@@ -25,24 +25,16 @@ head
    //- UI KIT
    link(rel='stylesheet' href='https://cdn.jsdelivr.net/npm/uikit@3.6.21/dist/css/uikit.min.css')
 
-   //- SEMANTIC UI
-   //- link(rel='stylesheet' type='text/css' href='semantic/dist/semantic.min.css')
-
    //- MAIN STYLESHEET
    link(rel='stylesheet' href='/src/css/index.css')
 
-
-   //- { MAP } SCRIPTS FROM agc-dashboard.pug WILL APPEND HERE
-   block dashboard-head-map-scripts
+   block dashboard-head-scripts
 
 body
 
    block dashboard
 
    block 404
-
-   //- //- jQuery CDN - Slim version (=without AJAX)
-   //- script(src='https://code.jquery.com/jquery-3.3.1.slim.min.js' integrity='sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo' crossorigin='anonymous')
 
    //- Popper.JS FOR BOOTSTRAP
    script(src='https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js' integrity='sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ' crossorigin='anonymous')
@@ -56,9 +48,6 @@ body
    //- UIKit JS
    script(src='https://cdn.jsdelivr.net/npm/uikit@3.6.21/dist/js/uikit.min.js')
    script(src='https://cdn.jsdelivr.net/npm/uikit@3.6.21/dist/js/uikit-icons.min.js')
-
-   //- SEMANTIC UI
-   //- script(src='https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js')
 
    //- MAIN SCRIPTS
    script(src='/src/plugins/custom/material-design-ripple.js')

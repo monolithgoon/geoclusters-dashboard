@@ -129,12 +129,13 @@ export const _GenerateClusterFeatMarkup = ((classList) => {
       const initContainerDiv = function() {
          return _createCard(classList);
       };
-   
+
+      
       const populateMarkup = function(props) {
          const HTMLMarkup = `
             <div class="card-content-wrapper">
                <div class="card-media-wrapper">
-                  <div class="plot-owner-avatar">
+                  <div class="feat-admin-avatar">
                      <img
                         src="./assets/icons/icons8-person-48.png"
                         alt="Plot Owner Avatar"/>
@@ -155,11 +156,11 @@ export const _GenerateClusterFeatMarkup = ((classList) => {
                   </div>
                   <div class="card-text-bottom">
                      <div class="flex-row-center">
-                        <span>FID</span><span>${(props.featureAdmin.admin1.id).slice(6)}</span>
+                        <span>FID</span><span>${`${(props.featureAdmin.admin1.id)}`.slice(0)}</span>
                      </div>
                      <div class="flex-row-center">
                         <span class="flex-row-center">VASTID</span>
-                        <span class="flex-row-center">${props.featureID}</span>
+                        <span id="feat_card__feat_id" class="flex-row-center">${`${props.featureID}`.slice(0)}</span>
                      </div>
                   </div>
                </div>

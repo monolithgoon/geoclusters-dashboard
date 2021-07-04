@@ -3,14 +3,14 @@
    margin-bottom: 0;
    margin-right: 0;
    cursor: pointer;
-
+   
    margin-right: 0;
    margin-left: 0;
+
 }
 
 .cluster-feature-card {
    margin-bottom: var(--card-margin-outside);
-   /* background-color: #eef3fa; */
    background-color: white;
    border: 1px solid rgba(25, 25, 26, 0.3);
    border-radius: 10px;
@@ -18,8 +18,8 @@
    border-bottom-right-radius: 0;
    box-shadow: 0 2px 3px 0 rgb(50 50 50 / 11%);
    cursor: pointer;
-
-   max-height: 60px;
+   
+   width: 100%;
 }
 
 .cluster-feature-card:first-of-type {
@@ -35,10 +35,14 @@
 
 .cluster-feature-card:hover {
    border: 1px solid orange;
+   border: 1px solid slateblue;
+   background-color: #eef3fa;
+
 }
 
 .cluster-feature-card.selected {
    border: 2px solid orange;
+   background-color: rgba(255, 248, 220, 0.8);
 }
 
 .cluster-feature-card .card-content-wrapper {
@@ -55,7 +59,7 @@
    grid-template-rows: repeat(2, auto);
 }
 
-.card-media-wrapper .plot-owner-avatar {
+.card-media-wrapper .feat-admin-avatar {
    display: flex;
    flex-direction: column;
    align-items: center;
@@ -63,14 +67,14 @@
    position: relative;
 }
 
-.plot-owner-avatar img:hover {
+.feat-admin-avatar img:hover {
    /* TODO */
    /* content: "";
    background-color: pink; */
    opacity: 0.7;
 }
 
-.plot-owner-avatar > img {
+.feat-admin-avatar > img {
    border-radius: 50%;
    width: 45px;
    height: 45px;
@@ -124,6 +128,8 @@
    color: white;
    font-family: 'Fira Sans', sans-serif;
    font-size: 10.5px;
+
+
 }
 
 .card-pills > span:hover {
@@ -159,6 +165,17 @@
 
 .card-text-bottom > div > span {
    padding: 1px 3px 0 3px;
+
+   max-width: 90px;
+   white-space: nowrap;
+   overflow: hidden;
+   text-overflow: ellipsis;
+}
+
+#feat_card__feat_id {
+   max-width: 120px;
+   display: flex;
+   justify-content: flex-start;   
 }
 
 .card-text-bottom > div > span:first-child {

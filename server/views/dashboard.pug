@@ -1,7 +1,7 @@
 extends index
 
 //- APPEND THESE MAP SCRIPTS TO THE HEAD OF index.pug
-block append dashboard-head-map-scripts
+block append dashboard-head-scripts
 
   //- MAPBOX GL V2.3.0
   script(src='https://api.mapbox.com/mapbox-gl-js/v1.10.1/mapbox-gl.js')
@@ -188,41 +188,60 @@ block dashboard
                           label(for='select_all_results') Select All
                           input#select_all_results_chk(type='checkbox' aria-label='select all results checkbox')
 
-                        //- // FIXME > CREATE INTERFACE TO HANDLE DIFF. FIELDS
-                        //- each geoCluster in geoClusters
-                        //-   .result-item.flex-col-start
-                        //-     small.result-item-pill
-                        //-       span= `${geoCluster.properties.geo_cluster_details.delineated_area.toFixed(0)} HA.`
-                        //-       span= `${geoCluster.features.length} FARMERS`
-                        //-     a.result-item-titles(href='#')= geoCluster.properties.geo_cluster_name
-                        //-     small.item-subtitle
-                        //-       a(href='#')= geoCluster.properties.geo_cluster_details.lga[0]
+                        //- each geoCluster, clusterIdx in geoClusters
+                        //-   .result-item.flex-col-start(data-geoclusterdatastream=`${JSON.stringify(geoCluster)}`)
+                        //-     .result-item-header.flex-row-start
+                        //-       .result-item-titles.flex-col-start.flex-1
+                        //-         a.result-item-title(href='#' title=`Geo Cluster Name`)= geoCluster.properties.agc_extended_name
+                        //-         //- small.result-item-subtitle
+                        //-         //-   a(href='#')= (geoCluster.properties.agc_location)
+                        //-       .result-item-controls.flex-row-center-end
+                        //-         .btn-group
+                        //-           button#dropdownMenuClickableInside.btn.btn-outline.btn-sm.dropdown-toggle(type='button' data-bs-toggle='dropdown' data-bs-auto-close='outside' aria-expanded='false') ...
+                        //-           ul.dropdown-menu(aria-labelledby='dropdownMenuClickableInside')
+                        //-             li
+                        //-               a.dropdown-item(href='#') Copy Map Preview Link
+                        //-             li
+                        //-               a.dropdown-item(href='#') Copy Coordinates
+                        //-             li
+                        //-               a.dropdown-item(href='#') Open Cluster Map
+                        //-             li
+                        //-               a.dropdown-item(href='#') Share Cluster
+                        //-         input.form-check-input.result-item-checkbox(id=`select_result_item_chk_${clusterIdx}` type='checkbox' value=`resultItemCheckbox${clusterIdx}` aria-label='select result checkbox')
+                        //-     //- .result-item-footer
+                        //-     //-   span
+                        //-     //-     //- img(src="https://img.icons8.com/small/14/000000/place-marker.png")
+                        //-     //-     img(src="https://img.icons8.com/small/16/000000/point-objects.png")
+                        //-     //-   span
+                        //-     //-     a(href="#")= `${JSON.stringify(geoCluster.properties.agc_center_coords[0].geometry.coordinates[0].toFixed(6))}°N 6.214541°E`
+                        //-     //-   span
+                        //-     //-     //- img(src="https://img.icons8.com/material-two-tone/13/small/spinach.png")
+                        //-     //-     //- img(src="https://img.icons8.com/plumpy/16/000000/sprout.png")
+                        //-     //-     //- img(src="https://img.icons8.com/plumpy/16/000000/plant.png")
+                        //-     //-     //- img(src="https://img.icons8.com/material-two-tone/15/000000/natural-food.png")
+                        //-     //-     img(src="https://img.icons8.com/windows/16/000000/natural-food.png")
+                        //-     //-   span= `${geoCluster.properties.unused_land_area.toFixed(1)} ha. UNUSED`
+                        //-     //-   span
+                        //-     //-   span
+                        //-     //-   span
                         //-     .result-item-body.flex-col-start
-                        //-       span
-                        //-         a(href='#')= `President ° ${geoCluster.properties.geo_cluster_governance_structure.president.first_name} ${geoCluster.properties.geo_cluster_governance_structure.president.last_name || ``}`
-                        //-       span
-                        //-         a(href='#') Cluster VP Vivian Okonji Adaeze
-                        //-       div
-                        //-         span= `Allocated: ${geoCluster.properties.geo_cluster_details.total_allocations_area.toFixed(1)} ha.`
-                        //-         br
-                        //-     .result-item-hidden
-                        //-       span
-                        //-         img(src="https://img.icons8.com/small/16/000000/point-objects.png")
-                        //-       span
-                        //-         //- a(href="#")= `${JSON.stringify(geoCluster.properties.agc_center_coords[0].geometry.coordinates[0].toFixed(9))}°`
-                        //-         a(href="#") 6.5225556°N 5.321599°E
-                        //-       span
-                        //-         img(src="https://img.icons8.com/windows/12/000000/home-button.png")
-                        //-       span= `${geoCluster.properties.geo_cluster_details.primary_crop.toUpperCase()}`
-                        //-   .h-divider-grey-50
+                        //-       small.result-item-subtitle
+                        //-         a(href='#')= (geoCluster.properties.agc_location)
+                        //-       .result-item-pill
+                        //-         span= `${geoCluster.features.length} Farmers`
+                        //-         span=`•`
+                        //-         span= `${geoCluster.properties.agc_area.toFixed(0)} Hectares`
+                        //-         span=`•`
+                        //-         span Rice
+                        //-         //- span= `${geoCluster.properties.agc_area.toFixed(0)} Rice`
+                        //-       //- a.admin1-name(href='#') President • Abubara Ibrahim Ismaila
+                        //-   .h-divider-grey-100
 
                         each geoCluster, clusterIdx in geoClusters
                           .result-item.flex-col-start(data-geoclusterdatastream=`${JSON.stringify(geoCluster)}`)
                             .result-item-header.flex-row-start
                               .result-item-titles.flex-col-start.flex-1
-                                a.result-item-title(href='#' title=`Geo Cluster Name`)= geoCluster.properties.agc_extended_name
-                                //- small.result-item-subtitle
-                                //-   a(href='#')= (geoCluster.properties.agc_location)
+                                a.result-item-title(href='#' title=`Geo Cluster Name`)= geoCluster.properties.clusterName
                               .result-item-controls.flex-row-center-end
                                 .btn-group
                                   button#dropdownMenuClickableInside.btn.btn-outline.btn-sm.dropdown-toggle(type='button' data-bs-toggle='dropdown' data-bs-auto-close='outside' aria-expanded='false') ...
@@ -236,33 +255,16 @@ block dashboard
                                     li
                                       a.dropdown-item(href='#') Share Cluster
                                 input.form-check-input.result-item-checkbox(id=`select_result_item_chk_${clusterIdx}` type='checkbox' value=`resultItemCheckbox${clusterIdx}` aria-label='select result checkbox')
-                            //- .result-item-footer
-                            //-   span
-                            //-     //- img(src="https://img.icons8.com/small/14/000000/place-marker.png")
-                            //-     img(src="https://img.icons8.com/small/16/000000/point-objects.png")
-                            //-   span
-                            //-     a(href="#")= `${JSON.stringify(geoCluster.properties.agc_center_coords[0].geometry.coordinates[0].toFixed(6))}°N 6.214541°E`
-                            //-   span
-                            //-     //- img(src="https://img.icons8.com/material-two-tone/13/small/spinach.png")
-                            //-     //- img(src="https://img.icons8.com/plumpy/16/000000/sprout.png")
-                            //-     //- img(src="https://img.icons8.com/plumpy/16/000000/plant.png")
-                            //-     //- img(src="https://img.icons8.com/material-two-tone/15/000000/natural-food.png")
-                            //-     img(src="https://img.icons8.com/windows/16/000000/natural-food.png")
-                            //-   span= `${geoCluster.properties.unused_land_area.toFixed(1)} ha. UNUSED`
-                            //-   span
-                            //-   span
-                            //-   span
                             .result-item-body.flex-col-start
                               small.result-item-subtitle
-                                a(href='#')= (geoCluster.properties.agc_location)
+                                //- a(href='#')= (geoCluster.properties.agc_location)
+                                a(href='#') Placeholder Cluster Location
                               .result-item-pill
-                                span= `${geoCluster.features.length} Farmers`
+                                span= `${geoCluster.properties.clusterFeatsNum} Farmers`
                                 span=`•`
-                                span= `${geoCluster.properties.agc_area.toFixed(0)} Hectares`
+                                span= `${geoCluster.properties.clusterArea.toFixed(0)} Hectares`
                                 span=`•`
-                                span Rice
-                                //- span= `${geoCluster.properties.agc_area.toFixed(0)} Rice`
-                              //- a.admin1-name(href='#') President • Abubara Ibrahim Ismaila
+                                span= `${geoCluster.properties.primaryCommodity ? geoCluster.properties.primaryCommodity : "Rice"}`
                           .h-divider-grey-100
 
                     .pane-footer.flex-row-center-btw.pad-lr-5px
@@ -781,7 +783,7 @@ block dashboard
                             card.cluster-feature-card.orange-border-1px.rounded-left-borders-10px
                               .card-content-wrapper
                                 .card-media-wrapper
-                                  .plot-owner-avatar
+                                  .feat-admin-avatar
                                     img.orange-border-1px(src='/assets/images/plot-owners/AGCABI000712.jpg' alt='Feature Admin Avatar')
                                     span.notification-badge.orange-badge.small-badge
                                 .card-text-wrapper
@@ -802,7 +804,7 @@ block dashboard
                             card.cluster-feature-card
                               .card-content-wrapper
                                 .card-media-wrapper
-                                  .plot-owner-avatar
+                                  .feat-admin-avatar
                                     img(src='/assets/images/plot-owners/AGCABU000585.jpg' alt='Feature Admin Avatar')
                                 .card-text-wrapper
                                   .card-text-top
@@ -822,7 +824,7 @@ block dashboard
                             card.cluster-feature-card
                               .card-content-wrapper
                                 .card-media-wrapper
-                                  .plot-owner-avatar
+                                  .feat-admin-avatar
                                     img(src='/assets/images/plot-owners/AGCNIG000851.jpg' alt='Feature Admin Avatar')
                                 .card-text-wrapper
                                   .card-text-top

@@ -5,6 +5,7 @@ const express = require("express");
 const EXPRESS_SERVER = express();
 const morgan = require("morgan");
 const bodyParser = require("body-parser"); // get the contents OF request.body
+const cookieParser = require('cookie-parser');
 const compression = require("compression"); // server response compression
 const chalk = require('./utils/chalk-messages.js');
 const ServerError = require('./utils/app-error.js');
@@ -28,8 +29,11 @@ EXPRESS_SERVER.set("views", path.join(__dirname, "views"));
 // 3RD PARTY M-WARE > SERVE STATIC FILES
 EXPRESS_SERVER.use(express.static(path.join(__dirname, "public")));
 
-// middleware that transforms the raw string of req.body into json
-EXPRESS_SERVER.use(bodyParser.json({ limit: "16mb" }));
+// middleware that parses JSON data from the request body into req.body
+EXPRESS_SERVER.use(bodyParser.json({ limit: "100kb" }));
+
+// get the cookies sent in the request
+EXPRESS_SERVER.use(cookieParser());
 
 // 3RD PARTY M-WARE > REQ. LOGGING IN DEV. OR PROD. MODE
 if (process.env.NODE_ENV === "development") {
@@ -44,7 +48,11 @@ if (process.env.NODE_ENV === "development") {
 // CUSTOM M-WARE > ADD A CUSTOM PROPERTY ('requestTime) TO THE REQUEST OBJ.
 EXPRESS_SERVER.use((request, response, next) => {
 	request.requestTime = new Date().toISOString();
-	console.log(request.headers)
+
+	// console.log(request.headers);
+
+	console.log(chalk.console2(JSON.stringify(request.cookies)));
+
 	next();
 });
 

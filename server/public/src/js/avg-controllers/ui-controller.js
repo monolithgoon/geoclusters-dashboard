@@ -530,9 +530,10 @@ async function populateClusterFeatsSidebar(clusterFeatColl) {
 
       if (clusterFeatColl) {
 
+         // REMOVE
          // 1.
          // SANITIZE COORDS.
-         clusterFeatColl = _sanitizeFeatCollCoords(clusterFeatColl);
+         // clusterFeatColl = _sanitizeFeatCollCoords(clusterFeatColl);
 
          // get the features
          const clusterFeatures = clusterFeatColl.features;
@@ -546,12 +547,8 @@ async function populateClusterFeatsSidebar(clusterFeatColl) {
 
             let clusterFeature = clusterFeatures[idx];
             
-            // _CheckGeoJSON.isValidFeat(clusterFeature+1); // TODO <
-
-            // FIXME > _stringifyPropValues NOT WORKING
-            // console.log(_stringifyPropValues(_getClusterFeatProps(idx, clusterFeature)));
-            // const clusterFeatCard = await _GenerateClusterFeatMarkup.getClusterFeatDiv(_stringifyPropValues(_getClusterFeatProps(idx, clusterFeature)));
-            const clusterFeatCard = await _GenerateClusterFeatMarkup.getClusterFeatDiv(_getClusterFeatProps(clusterFeature, {featIdx:idx}));
+            // const clusterFeatCard = await _GenerateClusterFeatMarkup.getClusterFeatDiv(_getClusterFeatProps(clusterFeature, {featIdx:idx}));
+            const clusterFeatCard = await _GenerateClusterFeatMarkup.getClusterFeatDiv(clusterFeature.properties);
 
             // SANDBOX
             // ASSIGN A UNIQE ID TO THE CARD DIV
@@ -623,9 +620,10 @@ function populateResultsSidebar(dbCollection) {
 
             let clusterGeoJSON = dbCollection[idx];
 
+            // REMOVE
             // 1.
             // CONVERT STRING COORDS. IN ANY FEAT. TO INTEGER COORDS.
-            clusterGeoJSON = _sanitizeFeatCollCoords(clusterGeoJSON);
+            // clusterGeoJSON = _sanitizeFeatCollCoords(clusterGeoJSON);
    
             // 2.
             const clusterResultDiv = _GenerateClusterMarkup.getClusterResultDiv(clusterGeoJSON);

@@ -46,7 +46,7 @@ const axios = require("axios");
 
 exports.renderAVGDashboard = async (req, res, next) => {
 
-   // console.log(chalk.console(req.app.locals.geoClusters));
+   // console.log(chalk.console(JSON.stringify(req.app.locals.geoClusters[0])));
 
    console.log(chalk.success(`SUCCESSFULLY CALLED 'renderAVGDashboard' VIEW CONTROLLER FN. `));
 
@@ -55,9 +55,7 @@ exports.renderAVGDashboard = async (req, res, next) => {
       res.status(200).render('dashboard', {
          title: "AVG Dashboard - SSR Alpha",
          user: "FieldDev Group",
-         // FIXME > THIS DATA SHOULD PASS THRU. THE CLUSTER PROPS ADAPTER!!!
-         geoClusters: req.app.locals.parcelizedClusters,
-         legacyClusters: req.app.locals.legacyClusters,
+         geoClusters: req.app.locals.returnedClusters,
       });
 
       next();
@@ -69,8 +67,9 @@ exports.renderAVGDashboard = async (req, res, next) => {
 
 
 exports.renderLandingPage = async (req, res, next) => {
+   console.log(chalk.success(`SUCCESSFULLY CALLED 'renderLandingPage' VIEW CONTROLLER FN. `));
    res.status(200).render('landing', {
       title: "AGC Platform - SSR V1.0",
       user: "FieldDev Group"
    })
-}
+};

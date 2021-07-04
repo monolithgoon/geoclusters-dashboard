@@ -6,6 +6,7 @@ const axios = require("axios");
 const gjv = require('geojson-validation');
 const { _GetClusterProps, _getClusterFeatProps } = require('../interfaces/cluster-props-adapter.js');
 const catchAsync = require('../utils/catch-async.js');
+const { _sanitizeFeatCollCoords } = require('../utils/helpers.js');
 
 
 // REPORT SAVED FILE STATS.
@@ -30,79 +31,39 @@ function saveData(data, collectionName) {
 };
 
 
-async function returnAllParcelizedClusters() {
+async function getDBCollection(url, apiAccessToken) {
+
+   console.log(chalk.console2(`AXIOS getting data from [ ${url} ]`))
 
 	try {
       
       const axiosRequest = axios({
          method: 'get',
-         // url: `http://127.0.0.1:9090/api/v1/parcelized-agcs/?fields=properties,features.properties,`,
-         // url: `http://127.0.0.1:9090/api/v1/parcelized-agcs/`,
-         url: `https://geoclusters.herokuapp.com/api/v1/parcelized-agcs/`,
+         url: url,
          crossDomain: true,
          responseType: 'application/json',
          headers: {
             'Accept': '*/*',
             'Content-Type': 'application/json',
-            // 'Authorization': ''
+            // 'Authorization': apiAccessToken
          },
          data: {
 
          }
       });
 
-      // GET RESPONSE FROM API CALL
       const apiResponse = await axiosRequest;
-      const clustersData = apiResponse.data;
+      const collectionData = apiResponse.data;
 
       // CREATE A TIME STAMP STRING TO APPEND TO THE FILE NAME
       let requestTimeStr = new Date( Date.parse(apiResponse.data.requested_at)).toISOString();
       requestTimeStr = requestTimeStr.replace(/:/g, ".");
       requestTimeStr = requestTimeStr.replace(/T/g, "-T");
 
-      return clustersData;
+      return collectionData;
 
 	} catch (axiosError) {
-		console.error(chalk.fail(axiosError.message));
-	};
-};
-
-
-async function returnAllLegacyClusters() {
-
-	try {
-      
-      const axiosRequest = axios({
-         method: 'get',
-         // url: `http://127.0.0.1:9090/api/v2/legacy-agcs/`,
-         // url: `http://127.0.0.1:9090/api/v2/legacy-agcs/?fields=properties.geo_cluster_id,properties.geo_cluster_name,properties.geo_cluster_details,features.properties,`,
-         url: `https://geoclusters.herokuapp.com/api/v2/legacy-agcs/`,
-         crossDomain: true,
-         responseType: 'application/json',
-         headers: {
-            'Accept': '*/*',
-            'Content-Type': 'application/json',
-            // 'Authorization': ''
-         },
-         data: {
-
-         }
-      });
-
-      // GET RESPONSE FROM API CALL
-      const apiResponse = await axiosRequest;
-      const clustersData = apiResponse.data;
-
-      // CREATE A TIME STAMP STRING TO APPEND TO THE FILE NAME
-      let requestTimeStr = new Date( Date.parse(apiResponse.data.requested_at)).toISOString();
-      requestTimeStr = requestTimeStr.replace(/:/g, ".");
-      requestTimeStr = requestTimeStr.replace(/T/g, "-T");
-      
-      return clustersData;
-	}
-
-	catch (axiosError) {
-		console.error(chalk.fail(axiosError.message));
+		console.error(chalk.fail(`axiosError: ${axiosError.message}`));
 	};
 };
 
@@ -118,21 +79,48 @@ function validateGeoJSON(geoJSON) {
 };
 
 
-async function normalizeProps(geoClusterArray) {
-   const stdGeoClusters = [];
-   if (geoClusterArray) {
-      for (const clusterGeoJSON of geoClusterArray) {
-         const clusterProps = _GetClusterProps(clusterGeoJSON);
-         clusterGeoJSON.properties = clusterProps;
-         for (const clusterFeature of clusterGeoJSON.features) {
-            const clusterFeatProps = _getClusterFeatProps(clusterFeature);
-            clusterFeature.properties = clusterFeatProps;
+async function returnNormalized(geoClusterArray) {
+
+   try {
+
+      const normalizedClusters = [];
+
+      if (geoClusterArray) {
+         for (let clusterGeoJSON of geoClusterArray) {
+            clusterGeoJSON = _sanitizeFeatCollCoords(clusterGeoJSON);
+            const clusterProps = _GetClusterProps(clusterGeoJSON);
+            clusterGeoJSON.properties = clusterProps;
+            for (let idx = 0; idx < clusterGeoJSON.features.length; idx++) {
+               const clusterFeature = clusterGeoJSON.features[idx];
+               const clusterFeatProps = _getClusterFeatProps(clusterFeature, {featIdx: idx});
+               clusterFeature.properties = clusterFeatProps;
+            };
+            // console.log(chalk.console((Object.values(clusterGeoJSON))));
+            normalizedClusters.push(clusterGeoJSON);
          };
-         // console.log(chalk.console((Object.values(clusterGeoJSON))));
-         stdGeoClusters.push(clusterGeoJSON);
       };
+      return normalizedClusters;
+      
+   } catch (normalizePropsErr) {
+      console.error(chalk.fail(`normalizePropsErr: ${normalizePropsErr}`))
    };
-   return stdGeoClusters;
+};
+
+
+async function getData() {
+
+   const data = [];
+   const resourceURLs = [
+      `https://geoclusters.herokuapp.com/api/v1/parcelized-agcs/`, 
+      `https://geoclusters.herokuapp.com/api/v2/legacy-agcs/`,
+   ];
+
+   for (const resourceURL of resourceURLs) {
+      const collectionData = await getDBCollection(resourceURL);
+      if (collectionData) data.push(collectionData)
+   };
+
+   return data;
 };
 
 
@@ -142,20 +130,19 @@ async function cacheData() {
 
    try {
       
-      const parcelizedClustersData = await returnAllParcelizedClusters();
-      const legacyClustersData = await returnAllLegacyClusters();
+      const geoClustersData = await getData();
 
-      // NORMALIZE ALL THE PROPS.
-      // // if (parcelizedClustersData && legacyClustersData) {
-      //    const parcelizedClusters = await normalizeProps(parcelizedClustersData.data.parcelized_agcs);
-      //    const legacyClusters = await normalizeProps(legacyClustersData.legacy_agcs);
-      // // };
-      
-      saveData(JSON.stringify(legacyClustersData), `legacy-clusters`);
-      saveData(JSON.stringify(parcelizedClustersData), `parcelized-clusters`);
+      console.log(geoClustersData);
 
-   } catch (localizeDataErr) {
-      console.error(chalk.fail(`localizeDataErr: ${localizeDataErr.message}`));
+      for (const geoCluster of geoClustersData) {
+         if (geoCluster && geoCluster.data) {
+            const geoClusterJSON = await returnNormalized(geoCluster.data.collection_data);
+            saveData(JSON.stringify(geoClusterJSON), geoCluster.data.collection_name);
+         };
+      };
+
+   } catch (cacheDataErr) {
+      console.error(chalk.fail(`cacheDataErr: ${cacheDataErr.message}`));
    };
 };
 

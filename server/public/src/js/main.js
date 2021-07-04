@@ -1,5 +1,4 @@
 `use strict`;
-// import {  } from "./avg-controllers/maps-controller.js";
 import { DOMLoadEvents, AddEventListeners } from "./avg-controllers/ui-controller.js";
 import { _clientSideRouter } from "./routers/router.js";
 

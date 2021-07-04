@@ -167,6 +167,10 @@ section.right-pane-container {
    padding-top: 0;
    background-color: #f8f9fa;
    overflow-y: scroll;
+
+   display: flex;
+   flex-direction: column;
+   align-items: flex-start;
 }
 
 #feature_detail_map_container {
