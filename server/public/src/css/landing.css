@@ -1,7 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Fjalla+One&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Quicksand&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300&display=swap');
 
 #landing_page_map_cont {
    position: absolute;
@@ -20,7 +19,6 @@
    width: 100vw;
    color: black;
    font-family: 'Quicksand', sans-serif;
-   font-family: 'Source Sans Pro', sans-serif;
    font-family: 'IBM Plex Sans', sans-serif;
    letter-spacing: -0.5px;
    letter-spacing: -0.2px;
@@ -44,7 +42,7 @@
 }
 
 .welcome-pane-header {
-   padding: 20px;
+   padding: 1.2rem;
    color: white;
    
    display: grid;
@@ -111,9 +109,71 @@
 }
 
 .card {
-   margin: 15px;
+   margin: 1.2rem;
    line-height: 1.5;
-   font-size: .8rem;
+   font-size: 0.8rem;
+   border: none !important;
+}
+
+.card.card-body {
+   padding: 0 !important;
+}
+
+.card.card-body .card--title {
+   font-size: 1rem;
+   font-weight: bold;
+}
+
+input, button,
+.btn.btn-group-sm>.btn, 
+.btn-sm {
+   border: none;
+   border-radius: none !important;
+}
+
+button {
+   padding: .25rem .5rem;
+   background-color: #0d6efd;
+   color: white;
+}
+
+/* form.form.form--login {
+   display: flex;
+   flex-direction: column;
+} */
+
+.form-group {
+   margin: .2rem 0rem;
+}
+
+.form--input {
+   padding: .3rem .5rem;
+   display: block;
+   font-family: inherit;
+   font-size: 0.8rem;
+   color: inherit;
+   border: none;
+   width: 100%;
+   background-color: #f2f2f2;
+   border-top: 1px solid transparent;
+   border-bottom: 1px solid lightgrey;
+   -webkit-transition: all 0.3s;
+   transition: all 0.3s;
+   -webkit-box-sizing: border-box;
+   box-sizing: border-box;
+}
+
+.form--input:focus {
+   outline: none !important;
+   border-bottom: 1px solid #55c57a;
+}
+
+.form--input:focus:invalid {
+   border-bottom: 1px solid #ff7730;
+}
+
+.form--input::-webkit-input-placeholder {
+   color: #bbb;
 }
 
 @supports (-webkit-backdrop-filter: none) or (backdrop-filter: none) {
@@ -167,6 +227,11 @@
    margin: 0;
    font-size: 11px;
    font-weight: 300;
+}
+
+.welcome-pane-footer a {
+   text-decoration: none;
+   color: #0d6efd;
 }
 
 .welcome-pane-footer nav {

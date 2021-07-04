@@ -27,18 +27,20 @@ block landing-page
       .welcome-pane-body
         .card.card-body
           //- div NIRSAL AGC® Platform
-          div Sign In to Your Account
+          div.card--title Sign In to Your Account
+          div Don't have an account? 
+            a(href="#") Request for access.
           form.form.form--login(action='/dashboard' method='GET')
             .form-group
-              label(for='login_email') Email Address
-              input#login_email.form-control(type='email' name='email' placeholder='Enter Email', required)
+              //- label(for='login_email') Email Address
+              input#login_email.form--input(type='email' name='email' placeholder='Enter Email Address', required)
             .form-group
               label(for='login_password') Password
-              input#login_password.form-control(type='password' name='password' placeholder='Enter Password', required, minlength='8')
+              input#login_password.form--input(type='password' name='password' placeholder='Enter Password', required, minlength='8')
               a(href="#") Forgot Password?
-            button.btn.btn-primary.btn-block.btn-sm(type='submit') Submit
-            div Don't have an account? 
-              a(href="#") Request for access.
+            //- button.btn.btn-primary.btn-block.btn-sm(type='submit') Submit
+            .button-wrapper
+              button(type='submit') Next
 
       .welcome-pane-footer
         .login-alert-wrapper
