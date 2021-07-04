@@ -27,8 +27,8 @@ if (loginForm) {
 
 		e.preventDefault();
 
-		const email = document.getElementById("login_email").value;
-		const password = document.getElementById("login_password").value;
+		const email = document.getElementById("login_email_input").value;
+		const password = document.getElementById("login_password_input").value;
 
 		login(email, password);
 	});

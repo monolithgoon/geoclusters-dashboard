@@ -28,19 +28,21 @@ block landing-page
         .card.card-body
           //- div NIRSAL AGC® Platform
           div.card--title Sign In to Your Account
-          div Don't have an account? 
+          div#account_question Don't have an account? 
             a(href="#") Request for access.
+          a#password_question(href="#") Forgot Your Password?
           form.form.form--login(action='/dashboard' method='GET')
-            .form-group
-              //- label(for='login_email') Email Address
-              input#login_email.form--input(type='email' name='email' placeholder='Enter Email Address', required)
-            .form-group
-              label(for='login_password') Password
-              input#login_password.form--input(type='password' name='password' placeholder='Enter Password', required, minlength='8')
-              a(href="#") Forgot Password?
+            #email_form_group.form-group
+              //- label(for='login_email_input') Email Address
+              input#login_email_input.form--input(type='email' name='email' placeholder='Enter Email Address', required)
+            #password_form_group.form-group
+              //- label(for='login_password_input') Password
+              input#login_password_input.form--input(type='password' name='password' placeholder='Enter Password', required, minlength='8')
             //- button.btn.btn-primary.btn-block.btn-sm(type='submit') Submit
-            .button-wrapper
-              button(type='submit') Next
+            .login-action-wrapper.flex-row-center-start
+              button#login_next_btn(type='' disabled=true) Next
+              button#login_back_btn(type='') Back
+              button#login_submit_btn(type='submit' disabled=true) Submit
 
       .welcome-pane-footer
         .login-alert-wrapper
@@ -106,7 +108,6 @@ block landing-page
           'maxzoom': 14,
         });
 
-        // FIXME > NOT WORKING
         // ADD THE DEM SOURCE AS A TERRAIN LAYER WITH EXAGGERATED HEIGHT
         LANDING_PAGE_MAP.setTerrain({"source": "mapbox-dem", "exaggeration": 5});
 
@@ -125,4 +126,62 @@ block landing-page
 
       //- ADD ZOOM & NAV. CONTROLS
       LANDING_PAGE_MAP.addControl(new mapboxgl.NavigationControl());
+
+      const loginEmailInput = document.getElementById("login_email_input");
+      const loginPasswordInput = document.getElementById("login_password_input");
+      const loginNextBtn = document.getElementById("login_next_btn");
+      const loginBackBtn = document.getElementById("login_back_btn");
+      const loginSubmitBtn = document.getElementById("login_submit_btn");
+
+      if (loginEmailInput) {
+        loginEmailInput.addEventListener('keyup', e => {
+          const isValid = loginEmailInput.checkValidity();
+          if (isValid) {
+            loginNextBtn.disabled = false;
+          } else {
+            loginNextBtn.disabled = true;
+          };
+        });
+      };
+
+      if (loginPasswordInput) {
+        loginPasswordInput.addEventListener('keyup', e => {
+          const isValid = loginPasswordInput.checkValidity();
+          if (isValid) {
+            loginSubmitBtn.disabled = false;
+          } else {
+            loginSubmitBtn.disabled = true;
+          };
+        });
+      };
+
+      //- LOGIN BTNS. BEH.
+      loginNextBtn.addEventListener('click', e => {
+
+        e.preventDefault();           
+        
+        document.getElementById("account_question").style.display = 'none';
+        document.getElementById("password_question").style.display = 'block';
+        document.getElementById("email_form_group").style.display = 'none';
+        e.target.style.display = "none";
+        document.getElementById("password_form_group").style.display = 'block';
+        document.getElementById("login_back_btn").style.display = 'block';
+        document.getElementById("login_submit_btn").style.display = 'block';
+      });
+
+      loginBackBtn.addEventListener('click', e => {
+
+        e.preventDefault();
+
+        document.getElementById("account_question").style.display = 'block';
+        document.getElementById("password_question").style.display = 'none';
+        document.getElementById("email_form_group").style.display = 'block';
+        e.target.style.display = "none";
+        document.getElementById("password_form_group").style.display = 'none';
+        
+        loginNextBtn.disabled = false;
+        loginNextBtn.style.display = 'block';
+
+        loginSubmitBtn.style.display = 'none';
+      })
     })();
