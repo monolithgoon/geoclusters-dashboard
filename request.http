@@ -6,8 +6,8 @@ content-type: application/json
    "user_last_name": "Osagiede",
       "user_role": "admin",
    "user_email": "n.osagiede@nirsal.com",
-   "user_password": "monkeyP@wz112",
-   "user_password_confirm": "monkeyP@wz112"
+   "user_password": "monkeyL@ws",
+   "user_password_confirm": "monkeyL@ws"
 }
 
 ###
@@ -19,8 +19,8 @@ content-type: application/json
    "user_last_name": "Abubakar",
    "user_role": "admin",
    "user_email": "a.abubakar@nirsal.com",
-   "user_password": "mi$$fits@d&nSa",
-   "user_password_confirm": "mi$$fits@d&nSa"
+   "user_password": "$ummerRide",
+   "user_password_confirm": "$ummerRide"
 }
 
 ###
@@ -31,7 +31,7 @@ content-type: application/json
    "user_first_name": "Public",
    "user_last_name": "User",
    "user_role": "user",
-   "user_email": "user@public.com",
+   "user_email": "ndukao@hotmail.com",
    "user_password": "dooksie$%#--",
    "user_password_confirm": "dooksie$%#--"
 }
@@ -42,7 +42,7 @@ content-type: application/json
 
 {
    "user_email": "ndukao@hotmail.com",
-   "user_password": "jungleFEVER"
+   "user_password": "fishsticks"
 }
 
 ###
@@ -54,23 +54,23 @@ content-type: application/json
 }
 
 ###
-PATCH http://127.0.0.1:1010/api/v1/users/resetPassword/07e489a795aa72fb1a6fac15334f14532fc633b11808bf06ce66d2dab2381538 HTTP/1.1
+PATCH http://127.0.0.1:1010/api/v1/users/resetPassword/9f0718c7eaecce850cca99f20e52fb0df09b51153ac0dfa4259ae907031e6902 HTTP/1.1
 content-type: application/json
 
 {
    "user_password": "jungleFEVER",
    "user_password_confirm": "jungleFEVER"
 }
-###
 
+###
 PATCH http://127.0.0.1:1010/api/v1/users/updateMyPassword/ HTTP/1.1
 content-type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwZGJkMGM4YjIyN2VmMjlhYzVjMjVkOCIsImlhdCI6MTYyNTA2MTAzOSwiZXhwIjoxNjI1MDk3MDM5fQ.jbQl0T2btlA8YLxWWuY2jiz1oyDfVqWbcVYQ8zmCRQE
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwZGJkMGM4YjIyN2VmMjlhYzVjMjVkOCIsImlhdCI6MTYyNTQ0Mzk1MCwiZXhwIjoxNjI1NDc5OTUwfQ.fELsw30h2hUxfC6qSd9lJ5fAEcR0tw-b6jX6ANYIto8
 
 {
-   "user_password": "jungleFEVER",
-   "user_password_confirm": "jungleFEVER",
-   "new_password": "fullCoconutW@ter"
+   "current_password": "longdick",
+   "user_password": "fishsticks",
+   "user_password_confirm": "fishsticks"
 }
 
 ###

@@ -34,15 +34,19 @@ block landing-page
           form.form.form--login(action='/dashboard' method='GET')
             #email_form_group.form-group
               //- label(for='login_email_input') Email Address
-              input#login_email_input.form--input(type='email' name='email' placeholder='Enter Email Address', required)
+              input#login_email_input.form--input(type='email' name='email' placeholder='Enter Email Address', required, autofocus)
             #password_form_group.form-group
               //- label(for='login_password_input') Password
-              input#login_password_input.form--input(type='password' name='password' placeholder='Enter Password', required, minlength='8')
-            //- button.btn.btn-primary.btn-block.btn-sm(type='submit') Submit
+              input#login_password_input.form--input(type='password' name='password' placeholder='Enter Password', required, minlength='8' autofocus)
             .login-action-wrapper.flex-row-center-start
               button#login_next_btn(type='' disabled=true) Next
               button#login_back_btn(type='') Back
-              button#login_submit_btn(type='submit' disabled=true) Submit
+              button#login_submit_btn(type='submit' disabled=true)
+                //- button#login_submit_btn.btn.btn-primary.btn-block.btn-sm(type='submit') Submit
+                  span#login_submit_btn_txt Submit
+                  span.app-activity-indicator
+                span#login_submit_btn_txt Submit
+                span.app-activity-indicator
 
       .welcome-pane-footer
         .login-alert-wrapper
@@ -64,6 +68,30 @@ block landing-page
     import { MAPBOX_TOKEN, BING_MAPS_TOKEN } from "/src/js/config/maps-config.js";
 
     (function() {
+
+      //- Get the documentElement (<html>) to display the page in fullscreen
+      var elem = document.documentElement;
+
+      //- View in fullscreen
+      function openFullscreen() {
+        if (elem.requestFullscreen) {
+          elem.requestFullscreen()
+            .then(function() {
+              // element has entered fullscreen mode successfully
+              console.log('in fs')
+            })
+            .catch(function(error) {
+              // element could not enter fullscreen mode
+            });
+        } else if (elem.webkitRequestFullscreen) { /* Safari */
+          elem.webkitRequestFullscreen();
+        } else if (elem.msRequestFullscreen) { /* IE11 */
+          elem.msRequestFullscreen();
+        };
+      };
+
+      openFullscreen();
+
 
       //- const LANDING_PAGE_MAP = L.map("landing_page_map", { zoomSnap: 0.01 })
       //-   .setView([36.8370066107919, 10.059871561852127], 15.5);
@@ -132,6 +160,9 @@ block landing-page
       const loginNextBtn = document.getElementById("login_next_btn");
       const loginBackBtn = document.getElementById("login_back_btn");
       const loginSubmitBtn = document.getElementById("login_submit_btn");
+      const loginSubmitBtnTxt = document.getElementById("login_submit_btn_txt");
+
+      const appActivityInd = document.querySelector(`.app-activity-indicator`);
 
       if (loginEmailInput) {
         loginEmailInput.addEventListener('keyup', e => {
@@ -183,5 +214,14 @@ block landing-page
         loginNextBtn.style.display = 'block';
 
         loginSubmitBtn.style.display = 'none';
-      })
+      });
+
+      if(loginSubmitBtn) {
+
+        loginSubmitBtn.addEventListener('click', e => {
+
+          loginSubmitBtnTxt.innerText = ``;
+          appActivityInd.classList.add(`spinner-border`, `text-secondary`, `spinner-border-sm`);
+        });
+      };
     })();

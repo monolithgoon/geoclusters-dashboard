@@ -55,7 +55,7 @@ header.header-wrapper {
 }
 
 #topbar_user_drop > span:last-of-type {
-   background-color: aliceblue;
+   /* background-color: aliceblue; */
 }
 
 #topbar_user_drop .account-user-avatar > img {

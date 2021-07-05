@@ -257,8 +257,8 @@ block dashboard
                                 input.form-check-input.result-item-checkbox(id=`select_result_item_chk_${clusterIdx}` type='checkbox' value=`resultItemCheckbox${clusterIdx}` aria-label='select result checkbox')
                             .result-item-body.flex-col-start
                               small.result-item-subtitle
-                                //- a(href='#')= (geoCluster.properties.agc_location)
-                                a(href='#') Placeholder Cluster Location
+                                a(href='#')= (geoCluster.properties.clusterLocation)
+                                //- a(href='#') Placeholder Cluster Location
                               .result-item-pill
                                 span= `${geoCluster.properties.clusterFeatsNum} Farmers`
                                 span=`•`
@@ -602,7 +602,7 @@ block dashboard
                               span.account-user-avatar
                                 img.rounded-circle(src='/assets/images/users/img_avatar1.png' alt='user-image' style='width: 30px; height: 30px')
                               span
-                                span.account-user-name Nosa O.
+                                span.account-user-name ...
                                 span.account-position Field ICT
                             ul.dropdown-menu(aria-labelledby='topbar_user_drop')
                               li
@@ -748,80 +748,80 @@ block dashboard
 
                           .cluster-features-listing-header
                             .user-action-container.flex-row-center-btw.pad-round-5px
-                              .btn-group
+                              .btn-group.flex-1
                                 button.btn.btn-outline.btn-sm.stacked(type='button' title='Download' aria-label='Download' aria-haspopup='true' tabindex='0')
                                   span
                                     img(src='https://img.icons8.com/small/16/000000/download.png')
-                                  span download
+                                  //- span download
                                 button.btn.btn-outline.btn-sm.stacked(type='button' title='Print' aria-label='Print' aria-haspopup='true' tabindex='0')
                                   span
                                     img(src='https://img.icons8.com/small/16/000000/print.png')
-                                  span Print
+                                  //- span Print
                                 button.btn.btn-outline.btn-sm.stacked(type='button' title='Share' aria-label='Email' aria-haspopup='true' tabindex='0')
                                   span
                                     img(src='https://img.icons8.com/small/16/000000/send-mass-email.png')
-                                  span Email
-                              .btn-group.page-view-config-container.flex-row-center-end(role='group' aria-label='button group with nested dropdown' tabindex='0')
-                                .btn-group(tabindex='0')
-                                  button.btn.btn-primary.btn-sm.dropdown-toggle(type='button' data-bs-toggle='dropdown' title='Sort Options' aria-expanded='false' aria-haspopup='true') Sort
-                                  ul.dropdown-menu
-                                    li
-                                      a.dropdown-item(href='#') A-Z
-                                    li
-                                      a.dropdown-item(href='#') Z-A
-                                .btn-group(tabindex='0')
-                                  button.btn.btn-primary.btn-sm.dropdown-toggle(type='button' data-bs-toggle='dropdown' title='View Options' aria-expanded='false' aria-haspopup='true') View Mode
-                                  ul.dropdown-menu
-                                    li
-                                      a.dropdown-item(href='#') List
-                                    li
-                                      a.dropdown-item(href='#') Cards
-                                    li
+                                  //- span Email
+                              //- .btn-group.page-view-config-container.flex-row-center-end(role='group' aria-label='button group with nested dropdown' tabindex='0')
+                              //-   .btn-group(tabindex='0')
+                              //-     button.btn.btn-primary.btn-sm.dropdown-toggle(type='button' data-bs-toggle='dropdown' title='Sort Options' aria-expanded='false' aria-haspopup='true') Sort
+                              //-     ul.dropdown-menu
+                              //-       li
+                              //-         a.dropdown-item(href='#') A-Z
+                              //-       li
+                              //-         a.dropdown-item(href='#') Z-A
+                              //-   .btn-group(tabindex='0')
+                              //-     button.btn.btn-primary.btn-sm.dropdown-toggle(type='button' data-bs-toggle='dropdown' title='View Options' aria-expanded='false' aria-haspopup='true') View Mode
+                              //-     ul.dropdown-menu
+                              //-       li
+                              //-         a.dropdown-item(href='#') List
+                              //-       li
+                              //-         a.dropdown-item(href='#') Cards
+                              //-       li
                                       a.dropdown-item(href='#') Thumbnails
                                       
                           #cluster_feats_listing_body.cluster-features-listing-body.grid-1col
-                            card.cluster-feature-card.orange-border-1px.rounded-left-borders-10px
-                              .card-content-wrapper
-                                .card-media-wrapper
-                                  .feat-admin-avatar
-                                    img.orange-border-1px(src='/assets/images/plot-owners/AGCABI000712.jpg' alt='Feature Admin Avatar')
-                                    span.notification-badge.orange-badge.small-badge
-                                .card-text-wrapper
-                                  .card-text-top
-                                    .main-card-text
-                                      span.flex-center.justify-start Friday Rajak Suleman
-                                      span 4.40435&deg;E 12.034462&deg;N
-                                    .card-pills
-                                      span.flex-row-center Plot 19
-                                      span.flex-row-center 56.9 ha.
-                                  .card-text-bottom
-                                    div.flex-row-center
-                                      span FID
-                                      span AGCBEN000630
-                                    div.flex-row-center
-                                      span.flex-row-center VASTID
-                                      span.flex-row-center AGCBEN000_20QW
-                            card.cluster-feature-card
-                              .card-content-wrapper
-                                .card-media-wrapper
-                                  .feat-admin-avatar
-                                    img(src='/assets/images/plot-owners/AGCABU000585.jpg' alt='Feature Admin Avatar')
-                                .card-text-wrapper
-                                  .card-text-top
-                                    .main-card-text
-                                      span Bello Jubril Kasim
-                                      span 4.40435&deg;E 12.034462&deg;N
-                                    .card-pills
-                                      span.flex-row-center Plot 20
-                                      span.flex-row-center 56.9 ha.
-                                  .card-text-bottom
-                                    div.flex-row-center
-                                      span FID
-                                      span AGCBEN000630
-                                    div.flex-row-center
-                                      span.flex-row-center VASTID
-                                      span.flex-row-center AGCBEN000_20QW
-                            card.cluster-feature-card
+                            //- card.cluster-feature-card.orange-border-1px.rounded-left-borders-10px
+                            //-   .card-content-wrapper
+                            //-     .card-media-wrapper
+                            //-       .feat-admin-avatar
+                            //-         img.orange-border-1px(src='/assets/images/plot-owners/AGCABI000712.jpg' alt='Feature Admin Avatar')
+                            //-         span.notification-badge.orange-badge.small-badge
+                            //-     .card-text-wrapper
+                            //-       .card-text-top
+                            //-         .main-card-text
+                            //-           span.flex-center.justify-start Friday Rajak Suleman
+                            //-           span 4.40435&deg;E 12.034462&deg;N
+                            //-         .card-pills
+                            //-           span.flex-row-center Plot 19
+                            //-           span.flex-row-center 56.9 ha.
+                            //-       .card-text-bottom
+                            //-         div.flex-row-center
+                            //-           span FID
+                            //-           span AGCBEN000630
+                            //-         div.flex-row-center
+                            //-           span.flex-row-center VASTID
+                            //-           span.flex-row-center AGCBEN000_20QW
+                            //- card.cluster-feature-card
+                            //-   .card-content-wrapper
+                            //-     .card-media-wrapper
+                            //-       .feat-admin-avatar
+                            //-         img(src='/assets/images/plot-owners/AGCABU000585.jpg' alt='Feature Admin Avatar')
+                            //-     .card-text-wrapper
+                            //-       .card-text-top
+                            //-         .main-card-text
+                            //-           span Bello Jubril Kasim
+                            //-           span 4.40435&deg;E 12.034462&deg;N
+                            //-         .card-pills
+                            //-           span.flex-row-center Plot 20
+                            //-           span.flex-row-center 56.9 ha.
+                            //-       .card-text-bottom
+                            //-         div.flex-row-center
+                            //-           span FID
+                            //-           span AGCBEN000630
+                            //-         div.flex-row-center
+                            //-           span.flex-row-center VASTID
+                            //-           span.flex-row-center AGCBEN000_20QW
+                            //- card.cluster-feature-card
                               .card-content-wrapper
                                 .card-media-wrapper
                                   .feat-admin-avatar

@@ -13,5 +13,5 @@ export const showAlert = (type, message) => {
         </div>
     `;
     document.querySelector('.login-alert-wrapper').insertAdjacentHTML('afterbegin', markup);
-    window.setTimeout(hideAlert, 5000);
+    window.setTimeout(hideAlert, 8000);
 };

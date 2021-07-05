@@ -25,7 +25,7 @@
    display: grid;
    grid-template-columns: 1fr;
    height: 100vh;
-   z-index: 2;
+   z-index: 99;
 }
 
 .welcome-pane-content {
@@ -178,8 +178,8 @@ input, button,
    color: #333;
 }
 
-button {
-   margin-right: 1rem;
+.card-body button {
+   margin-right: .8rem;
    padding: .25rem .5rem;
    border: 1px solid #0d6efd;
    background-color: #0d6efd;
@@ -239,13 +239,18 @@ button {
 
 .login-alert-wrapper {
    position: absolute;
-   top: 0; left: 0;
-   z-index: 1099;
+   top: 0; left: 0; bottom: 0;
+   z-index: 2;
    width: 100%;
 }
 
 .login-alert {
    color: white;
+   font-size: 0.8rem;
+   height: 100%;
+   display: flex;
+   align-items: center;
+   justify-content: center;
 }
 
 .login-alert.login-alert--error {

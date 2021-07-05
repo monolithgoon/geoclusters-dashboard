@@ -199,17 +199,22 @@ exports._GetClusterProps = (clusterFeatureCollection = _mandatoryParam()) => {
 			? TraverseObject.getFinalValue()
 			: null;
 
-		const clusterAdminLvl1 = TraverseObject.evaluateValue(props, "geo_cluster_details", "country")
+		let clusterAdminLvl1 = TraverseObject.evaluateValue(props, "geo_cluster_details", "country")
 			? TraverseObject.getFinalValue()
 			: null;
+			clusterAdminLvl1 = _startcase(clusterAdminLvl1)
 
-		const clusterAdminLvl2 = TraverseObject.evaluateValue(props, "geo_cluster_details", "lga")
+		let clusterAdminLvl2 = TraverseObject.evaluateValue(props, "geo_cluster_details", "lga")
 			? TraverseObject.getFinalValue()
 			: null;
+			clusterAdminLvl2 = _startcase(clusterAdminLvl2)
 
-		const clusterAdminLvl3 = TraverseObject.evaluateValue(props, "geo_cluster_details", "ward")
+		let clusterAdminLvl3 = TraverseObject.evaluateValue(props, "geo_cluster_details", "ward")
 			? TraverseObject.getFinalValue()
 			: null;
+			clusterAdminLvl3 = _startcase(clusterAdminLvl3);
+
+		const clusterLocation = `${evaluateObjProps(props, {}, 'agc_location') || `${clusterAdminLvl3} ${clusterAdminLvl2} ${clusterAdminLvl1}`}`;
 
 		const clusterRenderHash = evaluateObjProps(props, {}, 'preview_map_url_hash');
 		
@@ -242,6 +247,7 @@ exports._GetClusterProps = (clusterFeatureCollection = _mandatoryParam()) => {
 			clusterAdminLvl1,
 			clusterAdminLvl2,
 			clusterAdminLvl3,
+			clusterLocation,
 			clusterRenderHash,
          subdivideMetadata,
          primaryCommodity,

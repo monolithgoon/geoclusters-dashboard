@@ -83,6 +83,7 @@ exports.signup = catchAsync(async (req, res, next) => {
       user_role: req.body.user_role,
       user_email: req.body.user_email,
       user_password: req.body.user_password,
+      user_password_confirm: req.body.user_password_confirm,
    });
 
    // model.save SEEMS TO BE BETTER PRACTICE THAN model.create bcos. the pre.save m-ware is forced to run
@@ -257,7 +258,7 @@ exports.updatePassword = catchAsync(async(req, res, next) => {
    const currentUser = await USER_MODEL.findById(req.user.id).select('+user_password');
 
    // 2. Check that the POSTed current password is correct
-   if (!currentUser.comparePasswords(req.body.new_password, currentUser.user_password)) {
+   if (!currentUser.comparePasswords(req.body.current_password, currentUser.user_password)) {
       return next(new ServerError(`The password provided is incorrect.`, 401));
    };
 

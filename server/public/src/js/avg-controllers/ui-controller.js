@@ -250,7 +250,7 @@ const RenderMaps = (function(clusterFeatsMap) {
             drawFeatureColl(geoJSON);
             drawFeatures(geoJSON, useBuffer);
             drawFeatureLabels(geoJSON, useBuffer);
-            // panBaseMap__(geoJSON);
+            panBaseMap__(geoJSON);
 
             APP_STATE.saveRenderedGeojson(geoJSON);
          },

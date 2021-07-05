@@ -23,14 +23,28 @@ if (mapBox) {
 // DELEGATION
 if (loginForm) {
 
-	loginForm.addEventListener("submit", (e) => {
+	loginForm.addEventListener("submit", async (e) => {
 
 		e.preventDefault();
 
 		const email = document.getElementById("login_email_input").value;
 		const password = document.getElementById("login_password_input").value;
 
-		login(email, password);
+		const loginSubmitBtn = document.getElementById(`login_submit_btn`);
+		const loginSubmitBtnTxt = document.getElementById(`login_submit_btn_txt`);		
+		const appActivityInd = document.querySelector(`.app-activity-indicator`);
+		
+		loginSubmitBtn.disabled = true;
+
+		if (!(await login(email, password))) {
+			loginSubmitBtn.disabled = false;
+			loginSubmitBtnTxt.innerText = `Submit`;
+			appActivityInd.classList.remove(`spinner-border`, `text-secondary`, `spinner-border-sm`);
+		} else {
+			loginSubmitBtn.disabled = true;
+			loginSubmitBtnTxt.innerText = `Please Wait`;
+			appActivityInd.classList.remove(`spinner-border`, `text-secondary`, `spinner-border-sm`);
+		}
 	});
 };
 

@@ -14,14 +14,17 @@ export const login = async (email, password) => {
 		
 		if (res && res.data.status === "success") {
 
-			showAlert("success", "Logged in successfully!");
+			showAlert("success", "Logged In");
 			window.setTimeout(() => {
 				location.assign("/dashboard");
 			}, 1500);
 		};
 
+		return true;
+
 	} catch (loginErr) {
 		showAlert("error", loginErr.response.data.message);
+		return false;
 	};
 };
 
