@@ -1,11 +1,12 @@
 import { showAlert } from "./alerts.js";
 
 export const login = async (email, password) => {
+	console.log(email, password)
 	try {
 		const res = await axios({
 			method: "POST",
-			// url: "/api/v1/users/login",
-			url: "https://avgmap.herokuapp.com/api/v1/users/login",
+			url: "/api/v1/users/login",
+			// url: "https://avgmap.herokuapp.com/api/v1/users/login",
 			data: {
 				user_email: email,
 				user_password: password,
