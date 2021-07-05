@@ -5,7 +5,6 @@ export const login = async (email, password) => {
 		const res = await axios({
 			method: "POST",
 			url: "/api/v1/users/login",
-			// url: "http://127.0.0.1:1010/api/v1/users/login",
 			data: {
 				user_email: email,
 				user_password: password,
@@ -17,7 +16,6 @@ export const login = async (email, password) => {
 			showAlert("success", "Logged In");
 			window.setTimeout(() => {
 				location.assign("/dashboard");
-				// location.assign("https://avg-dashboard.herokuapp.com/dashboard");
 			}, 1500);
 		};
 
@@ -28,6 +26,15 @@ export const login = async (email, password) => {
 		return false;
 	};
 };
+
+// Auto full screen
+// logout user
+// upload legacy agcs
+// manage users
+// clusters rendered on base map
+// agc filter functionality
+// AGC insights summary
+// Fully functional app settings
 
 export const logout = async () => {
 	try {
