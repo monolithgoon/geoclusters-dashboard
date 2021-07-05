@@ -119,7 +119,6 @@ exports.login = catchAsync(async (req, res, next) => {
          return next(new ServerError(`Invalid email or password`, 401, `userLoginFn`));
       };
 
-      console.log(`YOU ARE HERE NIGGER ************************`)
       // 3. IF EVERYTHING IS OK, SIGN THE JWT && SEND BACK TO CLIENT
       createSendToken(dbUser, 200, res);
 }, `userLoginFn.`);
