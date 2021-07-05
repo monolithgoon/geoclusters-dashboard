@@ -27,14 +27,6 @@ export const login = async (email, password) => {
 	};
 };
 
-// Auto full screen
-// logout user
-// upload legacy agcs
-// manage users
-// clusters rendered on base map
-// agc filter functionality
-// AGC insights summary
-// Fully functional app settings
 
 export const logout = async () => {
 	try {

@@ -25,9 +25,11 @@ const createSendToken = (currentUser, statusCode, response) => {
       httpOnly: true, // cookie cannot be accessed or modified by the browser
    };
 
-   // SET COOKIE 'secure' OPTION to 'true' ONLY IN PROD. MODE
+   // SET COOKIE 'secure' OPTION to 'true' ONLY IN PROD. MODE FOR https
+   console.log(process.env.NODE_ENV)
    if (process.env.NODE_ENV === `production`) cookieOptions.secure = true;
 
+   console.log(response.cookie)
    // ATTACH A COOKIE TO THE RES. OBJ.
    response.cookie(`jwtcookie`, jWebToken, cookieOptions)
 
@@ -109,14 +111,14 @@ exports.login = catchAsync(async (req, res, next) => {
 
       // 1. CHECK IF EMAIL && PASSWORD EXIST IN req.body
       if(!user_email || !user_password) {
-         return next(new ServerError(`Please provide an email and password..`, 401, `userLogin`));
+         return next(new ServerError(`Please provide an email and password..`, 401, `userLoginFn`));
       };
 
       // 2. CHECK IF THE USER EXISTS && THEIR PASSWORD IS CORRECT
       const dbUser = await USER_MODEL.findOne({ user_email }).select(`+user_password`); // the 'user_password' field is de-selected by default in USER_MODEL; this is how to re-select it
 
       if (!dbUser || !(await dbUser.comparePasswords(user_password, dbUser.user_password))) {
-         return next(new ServerError(`Invalid email or password`, 401, `userLogin`));
+         return next(new ServerError(`Invalid email or password`, 401, `userLoginFn`));
       };
 
       // 3. IF EVERYTHING IS OK, SIGN THE JWT && SEND BACK TO CLIENT

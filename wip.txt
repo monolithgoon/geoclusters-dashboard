@@ -30,3 +30,13 @@ https://geojson.io/#map=14/10.1299/12.5018
 https://studio.mapbox.com/tilesets/
 https://docs.mapbox.com/help/getting-started/map-design/
 https://www.tophap.com/map/N4IgtiBcoMZQ2gWgIwCZUDoDMAGLBWATn3WUIHZd8AaLcjADjoYfIcNYBYdKBdakAC8oyThnw5JU6VNQCADlBwCARktUB7BEjSYsyBqhKpkk5MnwA2WvSY8sWBp1Q5TD-jvQZULQo9QOfiScNoycEpxolsjkroScvLwAvgJgAC5QIDAaADYaAE4gAgDWmagABACCACZgAJb5AIY55QAi+eUAxOUAQqjkyNTlAKJgAKb5AJ4AbnU5OWNDAMKV5fGWOAxFIADOitDgGtVjma1jaY1z23XVmZyOhDicluTbAGb5GmAAMnU7GZA3s0dmMUiAFlAgTkQUkgA
+
+
+// Auto full screen
+// logout user
+// upload legacy agcs
+// manage users
+// clusters rendered on base map
+// agc filter functionality
+// AGC insights summary
+// Fully functional app settings
