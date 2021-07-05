@@ -32,8 +32,8 @@ content-type: application/json
    "user_last_name": "User",
    "user_role": "user",
    "user_email": "ndukao@hotmail.com",
-   "user_password": "dooksie$%#--",
-   "user_password_confirm": "dooksie$%#--"
+   "user_password": "dooksielee",
+   "user_password_confirm": "dooksielee"
 }
 
 ###
