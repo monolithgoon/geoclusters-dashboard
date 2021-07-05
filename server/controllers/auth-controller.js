@@ -26,10 +26,8 @@ const createSendToken = (currentUser, statusCode, response) => {
    };
 
    // SET COOKIE 'secure' OPTION to 'true' ONLY IN PROD. MODE FOR https
-   console.log(process.env.NODE_ENV)
    if (process.env.NODE_ENV === `production`) cookieOptions.secure = true;
 
-   console.log(response.cookie)
    // ATTACH A COOKIE TO THE RES. OBJ.
    response.cookie(`jwtcookie`, jWebToken, cookieOptions)
 
