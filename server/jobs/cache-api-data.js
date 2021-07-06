@@ -5,7 +5,6 @@ const chalk = require('../utils/chalk-messages.js');
 const axios = require("axios");
 const gjv = require('geojson-validation');
 const { _GetClusterProps, _getClusterFeatProps } = require('../interfaces/cluster-props-adapter.js');
-const catchAsync = require('../utils/catch-async.js');
 const { _sanitizeFeatCollCoords } = require('../utils/helpers.js');
 
 

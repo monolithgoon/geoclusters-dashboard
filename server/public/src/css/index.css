@@ -116,7 +116,8 @@ body, html {
 }
 
 a {
-	color: inherit !important;
+	/* color: inherit !important; */
+	color: black;
 	cursor: pointer !important;
    /* text-decoration: none !important; */
 }

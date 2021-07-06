@@ -8,8 +8,11 @@ const authController = require("../controllers/auth-controller.js");
 router.get("/", viewsController.renderLandingPage);
 router.get("/landing", viewsController.renderLandingPage);
 
+// affixes the currently logged-in user to res.locals
+router.use(authController.isLoggedIn);
+
 router.route("/dashboard")
-      .get(dataController.getClustersData, viewsController.renderAVGDashboard)
-      // .get(dataController.getClustersData, authController.protectRoute, authController.restrictTo(`manager`, `admin`), viewsController.renderAVGDashboard)
+      // .get(dataController.getClustersData, viewsController.renderAVGDashboard)
+      .get(dataController.getClustersData, authController.protectRoute, authController.restrictTo(`manager`, `admin`), viewsController.renderAVGDashboard)
       
 module.exports = router;

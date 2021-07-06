@@ -1,11 +1,12 @@
 import { showAlert } from "./alerts.js";
 
+
 export const login = async (email, password) => {
+
 	try {
 		const res = await axios({
 			method: "POST",
 			url: "/api/v1/users/login",
-			// url: "https://avgmap.herokuapp.com/api/v1/users/login",
 			data: {
 				user_email: email,
 				user_password: password,
@@ -20,10 +21,16 @@ export const login = async (email, password) => {
 			}, 1500);
 		};
 
+		console.log(res)
+
 		return true;
 
 	} catch (loginErr) {
-		showAlert("error", loginErr.response.data.message);
+		if (loginErr.response && loginErr.response.data) {
+			showAlert("error", loginErr.response.data.message);
+		} else {
+			showAlert("error", `Check Internet Connection & Refresh Page`);
+		};
 		return false;
 	};
 };

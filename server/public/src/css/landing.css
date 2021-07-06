@@ -254,7 +254,7 @@ input, button,
 }
 
 .login-alert.login-alert--error {
-   background-color: #ff8a65;
+   background-color: #e74c3c;
 }
 
 .login-alert.login-alert--success {
@@ -269,11 +269,6 @@ input, button,
    font-weight: 300;
 }
 
-.welcome-pane-footer a {
-   text-decoration: none;
-   color: #0d6efd;
-}
-
 .welcome-pane-footer nav {
    display: flex;
    justify-content: space-evenly;
@@ -281,6 +276,8 @@ input, button,
 
 .welcome-pane-footer nav > a {
    padding: 0 10px;
+   text-decoration: none;
+   color: #0d6efd;
 }
 
 

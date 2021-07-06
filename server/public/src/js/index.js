@@ -37,14 +37,19 @@ if (loginForm) {
 		loginSubmitBtn.disabled = true;
 
 		if (!(await login(email, password))) {
-			loginSubmitBtn.disabled = false;
+			loginSubmitBtn.style.backgroundColor = `#0d6efd`;
+			loginSubmitBtn.style.color = `#fff`;
+			loginSubmitBtn.style.border = `1px solid #0d6efd`;
 			loginSubmitBtnTxt.innerText = `Submit`;
-			appActivityInd.classList.remove(`spinner-border`, `text-secondary`, `spinner-border-sm`);
+			appActivityInd.classList.remove(`spinner-border`, `text-dark`, `spinner-border-sm`);
 		} else {
 			loginSubmitBtn.disabled = true;
+			loginSubmitBtn.style.backgroundColor = `lightgrey`;
+			loginSubmitBtn.style.color = `#333`;
+			loginSubmitBtn.style.border = `1px solid lightgrey`;
 			loginSubmitBtnTxt.innerText = `Please Wait`;
-			appActivityInd.classList.remove(`spinner-border`, `text-secondary`, `spinner-border-sm`);
-		}
+			appActivityInd.classList.remove(`spinner-border`, `text-dark`, `spinner-border-sm`);
+		};
 	});
 };
 

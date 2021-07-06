@@ -51,7 +51,7 @@ EXPRESS_SERVER.use((request, response, next) => {
 
 	// console.log(request.headers);
 
-	console.log(chalk.console2(JSON.stringify(request.cookies)));
+	// console.log(JSON.stringify(request.cookies));
 
 	next();
 });

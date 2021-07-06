@@ -17,6 +17,10 @@
    place-items: center;
 }
 
+.error-page-wrapper a {
+   color: #0d6efd;
+}
+
 .error-page-wrapper h1 {
    margin:0;
    padding: 20px 30px;

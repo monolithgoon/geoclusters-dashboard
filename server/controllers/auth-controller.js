@@ -130,9 +130,12 @@ exports.protectRoute = catchAsync(async(req, res, next) => {
 
    let headerToken;
 
-   // 1. Try to get the JWT token from the req. header 
+   // 1. Try to get the JWT token from the req. header OR 
+      // from the cookie attached in "createSendToken" fn.
    if (req.headers.authorization && req.headers.authorization.startsWith(`Bearer`)) {
       headerToken = req.headers.authorization.split(' ')[1];
+   } else if (req.cookies.jwtcookie) {
+      headerToken = req.cookies.jwtcookie;
    };
    
    // check if the token exists
@@ -146,7 +149,7 @@ exports.protectRoute = catchAsync(async(req, res, next) => {
 
    // 3. Verify if the the user trying to access the route still exists
    const currentUser = await USER_MODEL.findById(decodedToken.id);
-   if (!currentUser) { return next(new ServerError(`The user that owns this token no longer exists`, 401, `protectRouteFn.`))}
+   if (!currentUser) { return next(new ServerError(`The user that owns those login credentials no longer exists.`, 401, `protectRouteFn.`))}
 
    // 4. Throw err if user changed their password after the token was issued
    if (currentUser.checkPasswordChanged(decodedToken.iat)) {
@@ -162,11 +165,50 @@ exports.protectRoute = catchAsync(async(req, res, next) => {
 }, "protectRouteFn.");
 
 
+// Only for rendered pages; there will be no errors!
+exports.isLoggedIn = async (req, res, next) => {
+   
+   // the AUTH. token will come from cookies, and not from auth. header
+   if (req.cookies.jwtcookie) {
+
+       try {
+          
+         // 1) Verify token (if someone manipulated it, or if it has expired)
+         const decodedToken = await promisify(jwt.verify)(
+            req.cookies.jwtcookie,
+            APP_CONFIG.jwtSecret
+         );
+
+         // 2) Check if user still exists
+         const currentUser = await USER_MODEL.findById(decodedToken.id);
+
+         if (!currentUser) {
+            return next();
+         };
+         
+         // 3) Check if user changed password after the token was issued
+         // if (currentUser.changedPasswordAfter(decodedToken.iat)) {
+         //    return next();
+         // };
+
+         // If exe. gets to this point, there is a logged in user
+         console.log(res.locals.loggedInUser)
+         res.locals.loggedInUser = currentUser; // each pug template has access to res.locals
+         return next();
+
+      } catch (err) {
+         return next();
+      };
+   }
+   next();
+};
+
+
 exports.restrictTo = (...roles) => {
    return (req, res, next) => {
       // roles is an array of roles => ['user', 'admin', 'manager']
       if (!(roles.includes(req.user.user_role))) {
-         return next(new ServerError(`You do not have permission to perfom this action. Contact the admin.`, 403, `restrictToFn`));
+         return next(new ServerError(`Your role restricts you from performing this action. Contact the Admin.`, 403, `restrictToFn`));
       };
       next();
    };

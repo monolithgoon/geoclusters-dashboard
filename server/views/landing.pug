@@ -16,12 +16,12 @@ block landing-page
       .welcome-pane-header
         .brand-logo
           img(src='./assets/icons/agronomy-two-tone.svg' alt='')
-          // <img src="./assets/logos/nirsal-logo.png" alt="">
         .brand-name NIRSAL
         h1.brand-title
+          div ACTIVE
           div AGRO
           div(style=`display: flex; align-items: flex-start;`)
-            span GEO-CLUSTERS
+            span GEO-COOP
           div PLATFORM
 
       .welcome-pane-body
@@ -37,7 +37,7 @@ block landing-page
               input#login_email_input.form--input(type='email' name='email' placeholder='Enter Email Address', required, autofocus)
             #password_form_group.form-group
               //- label(for='login_password_input') Password
-              input#login_password_input.form--input(type='password' name='password' placeholder='Enter Password', required, minlength='8' autofocus)
+              input#login_password_input.form--input(type='password' name='password' placeholder='Enter Password', required, minlength='8', autofocus)
             .login-action-wrapper.flex-row-center-start
               button#login_next_btn(type='' disabled=true) Next
               button#login_back_btn(type='') Back
@@ -187,41 +187,49 @@ block landing-page
       };
 
       //- LOGIN BTNS. BEH.
-      loginNextBtn.addEventListener('click', e => {
+      if (loginNextBtn) {
 
-        e.preventDefault();           
-        
-        document.getElementById("account_question").style.display = 'none';
-        document.getElementById("password_question").style.display = 'block';
-        document.getElementById("email_form_group").style.display = 'none';
-        e.target.style.display = "none";
-        document.getElementById("password_form_group").style.display = 'block';
-        document.getElementById("login_back_btn").style.display = 'block';
-        document.getElementById("login_submit_btn").style.display = 'block';
-      });
+        loginNextBtn.addEventListener('click', e => {
 
-      loginBackBtn.addEventListener('click', e => {
+          e.preventDefault();           
+          
+          document.getElementById("account_question").style.display = 'none';
+          document.getElementById("password_question").style.display = 'block';
+          document.getElementById("email_form_group").style.display = 'none';
+          e.target.style.display = "none";
+          document.getElementById("password_form_group").style.display = 'block';
+          document.getElementById("login_back_btn").style.display = 'block';
+          document.getElementById("login_submit_btn").style.display = 'block';
+        });
+      };
 
-        e.preventDefault();
+      if (loginBackBtn) {
 
-        document.getElementById("account_question").style.display = 'block';
-        document.getElementById("password_question").style.display = 'none';
-        document.getElementById("email_form_group").style.display = 'block';
-        e.target.style.display = "none";
-        document.getElementById("password_form_group").style.display = 'none';
-        
-        loginNextBtn.disabled = false;
-        loginNextBtn.style.display = 'block';
+        loginBackBtn.addEventListener('click', e => {
 
-        loginSubmitBtn.style.display = 'none';
-      });
+          e.preventDefault();
+
+          document.getElementById("account_question").style.display = 'block';
+          document.getElementById("password_question").style.display = 'none';
+          document.getElementById("email_form_group").style.display = 'block';
+          e.target.style.display = "none";
+          document.getElementById("password_form_group").style.display = 'none';
+          
+          loginNextBtn.disabled = false;
+          loginNextBtn.style.display = 'block';
+
+          loginSubmitBtn.style.display = 'none';
+        });
+      };
 
       if(loginSubmitBtn) {
 
         loginSubmitBtn.addEventListener('click', e => {
-
+          
           loginSubmitBtnTxt.innerText = ``;
-          appActivityInd.classList.add(`spinner-border`, `text-secondary`, `spinner-border-sm`);
+          loginSubmitBtn.style.backgroundColor = `transparent`;
+          loginSubmitBtn.style.border = `none`;
+          appActivityInd.classList.add(`spinner-border`, `text-dark`, `spinner-border-sm`);
         });
       };
     })();

@@ -82,9 +82,10 @@ userSchema.pre('save', async function(next) {
 
 
 // SET THE user_password_changed_at PROPERTY
-userSchema.pre('save', async function(next) {
+userSchema.pre('save', function(next) {
 
-   if(!(this.isModified('user_password') || this.isNew)) return next();
+   // If password was not modified, or if the document is new, just return next()
+   if (!(this.isModified('user_password')) || this.isNew) return next();
    
    // sometimes saving the user to the db is slower than issuing the JWT
    // thus, the pass_changed_at is sometimes persisted AFTER JWT is created
@@ -107,7 +108,7 @@ userSchema.methods.checkPasswordChanged = function(JWTCreatedTimestamp) {
 
    if (this.user_password_changed_at) {
       const changedTimestamp = +(this.user_password_changed_at.getTime() / 1000);
-      console.log(this.user_password_changed_at, JWTCreatedTimestamp);
+      console.log(`USER_MODEL.user_changed_password_at:`, this.user_password_changed_at, JWTCreatedTimestamp);
       return JWTCreatedTimestamp < changedTimestamp;
    };
    
