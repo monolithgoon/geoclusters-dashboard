@@ -174,10 +174,7 @@ exports.isLoggedIn = async (req, res, next) => {
        try {
           
          // 1) Verify token (if someone manipulated it, or if it has expired)
-         const decodedToken = await promisify(jwt.verify)(
-            req.cookies.jwtcookie,
-            APP_CONFIG.jwtSecret
-         );
+         const decodedToken = await promisify(jwt.verify)(req.cookies.jwtcookie, APP_CONFIG.jwtSecret);
 
          // 2) Check if user still exists
          const currentUser = await USER_MODEL.findById(decodedToken.id);
@@ -186,13 +183,13 @@ exports.isLoggedIn = async (req, res, next) => {
             return next();
          };
          
+         // FIXME
          // 3) Check if user changed password after the token was issued
          // if (currentUser.changedPasswordAfter(decodedToken.iat)) {
          //    return next();
          // };
 
          // If exe. gets to this point, there is a logged in user
-         console.log(res.locals.loggedInUser)
          res.locals.loggedInUser = currentUser; // each pug template has access to res.locals
          return next();
 
@@ -208,7 +205,7 @@ exports.restrictTo = (...roles) => {
    return (req, res, next) => {
       // roles is an array of roles => ['user', 'admin', 'manager']
       if (!(roles.includes(req.user.user_role))) {
-         return next(new ServerError(`Your role restricts you from performing this action. Contact the Admin.`, 403, `restrictToFn`));
+         return next(new ServerError(`Your assigned role restricts you from performing this action. Contact the Admin.`, 403, `restrictToFn`));
       };
       next();
    };

@@ -12,7 +12,6 @@ router.get("/landing", viewsController.renderLandingPage);
 router.use(authController.isLoggedIn);
 
 router.route("/dashboard")
-      // .get(dataController.getClustersData, viewsController.renderAVGDashboard)
       .get(dataController.getClustersData, authController.protectRoute, authController.restrictTo(`manager`, `admin`), viewsController.renderAVGDashboard)
       
 module.exports = router;

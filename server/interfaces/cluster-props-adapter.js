@@ -183,17 +183,17 @@ exports._GetClusterProps = (clusterFeatureCollection = _mandatoryParam()) => {
 			? TraverseObject.getFinalValue()
 			: TraverseObject.evaluateValue(props, "agc_area")
 			? TraverseObject.getFinalValue()
-			: null;
+			: 0;
 
 		const clusterUsedArea = TraverseObject.evaluateValue(props, "geo_cluster_details", "total_allocations_area")
 			? TraverseObject.getFinalValue()
 			: TraverseObject.evaluateValue(props, "total_allocation")
 			? TraverseObject.getFinalValue()
-			: null;
+			: 0;
 
 		const clusterUnusedArea = TraverseObject.evaluateValue(props, 'unused_land_area')
 			? TraverseObject.getFinalValue()
-			: null;
+			: 0;
 			
 		const clusterCenterFeat = TraverseObject.evaluateValue(props, 'agc_center_coords')
 			? TraverseObject.getFinalValue()

@@ -577,7 +577,7 @@ block dashboard
                     a.navbar-brand.ripplelink(href='#')
                       span.business-logo
                         img.rounded-circle(src=`/assets/images/nirsal-agc-2.png`)
-                      span Active Virtual Graphic Map
+                      span Active Visual Geo-coop Map
 
                   nav.navbar.navbar-expand-lg.sticky-top
 
@@ -602,9 +602,9 @@ block dashboard
                               a#topbar_user_drop.dropdown-toggle.ripplelink(href='#' role='button' data-bs-toggle='dropdown' aria-expanded='false')
                                 span.account-user-avatar
                                     img.rounded-circle(src='/assets/images/users/img_avatar1.png' alt=`Photo of ${loggedInUser.user_first_name}` style='width: 30px; height: 30px')
-                                    span
-                                      span.account-user-name= `${loggedInUser.user_first_name} ${loggedInUser.user_last_name}`
-                                      span.account-position - Field ICT
+                                span
+                                  span.account-user-name= `${loggedInUser.user_first_name} ${loggedInUser.user_last_name}`
+                                  //- span.account-position - Field ICT
                               ul.dropdown-menu(aria-labelledby='topbar_user_drop')
                                 li
                                   a.dropdown-item(href='javascript:void(0);')
@@ -731,19 +731,19 @@ block dashboard
                           .wrapper.flex-1
                             div.pad-tb5p
                               span FARMERS
-                              span 50
+                              span#cluster_feats_num 50
                             span.v-divider-grey
                             div.pad-tb5p
                               span CLUSTER AREA
-                              span 50.3 ha.
+                              span#cluster_area 50.3 ha.
                             span.v-divider-grey
                             div.pad-tb5p
                               span ALLOCATIONS
-                              span 49.8 ha.
+                              span#cluster_used_area 49.8 ha.
                             span.v-divider-grey
                             div.pad-tb5p
                               span UNUSED LAND
-                              span 1.8 ha.
+                              span#cluster_unused_area 1.8 ha.
 
                         #cluster_features_listing.cluster-features-listing
 

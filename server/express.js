@@ -49,7 +49,7 @@ if (process.env.NODE_ENV === "development") {
 EXPRESS_SERVER.use((request, response, next) => {
 	request.requestTime = new Date().toISOString();
 
-	// console.log(request.headers);
+	console.log(request.headers);
 
 	// console.log(JSON.stringify(request.cookies));
 

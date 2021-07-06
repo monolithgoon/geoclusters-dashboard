@@ -39,6 +39,10 @@ export function _getDOMElements () {
    const resultItemDivs = document.querySelectorAll(`.result-item`);
    const resultTitleDivs = document.querySelectorAll(`.result-item-title`);
 
+   const clusterFeatsNumEl = document.getElementById(`cluster_feats_num`);
+   const clusterAreaEl = document.getElementById(`cluster_area`);
+   const clusterUsedAreaEl = document.getElementById(`cluster_used_area`);
+   const clusterUnusedAreaEl = document.getElementById(`cluster_unused_area`);
    const featsListingWrapper = document.getElementById(`cluster_features_listing`);
    const featsListingDiv = document.getElementById(`cluster_feats_listing_body`);
    const featureDetailMap = document.getElementById(`feature_detail_map_container`);
@@ -66,6 +70,10 @@ export function _getDOMElements () {
       resultsListWrapper,      
       resultItemDivs,
       resultTitleDivs,
+      clusterFeatsNumEl,
+      clusterAreaEl,
+      clusterUsedAreaEl,
+      clusterUnusedAreaEl,
       featsListingWrapper,
       featsListingDiv,
       featureDetailMap,
@@ -523,6 +531,13 @@ function featCardClickSeq(clusterFeatures) {
 // })(CLUSTER_PLOTS_MAP);
 
 
+function renderClusterSummary(props, dom) {
+   dom.clusterFeatsNumEl.innerText = props.clusterFeatsNum;
+   dom.clusterAreaEl.innerText = `${+(props.clusterArea).toFixed(1)} ha.`;
+   dom.clusterUsedAreaEl.innerText = `${+(props.clusterUsedArea).toFixed(1)} ha.`;
+   dom.clusterUnusedAreaEl.innerText = `${+(props.clusterUnusedArea).toFixed(1)} ha.`;
+};
+
 
 async function populateClusterFeatsSidebar(clusterFeatColl) {
    
@@ -535,12 +550,14 @@ async function populateClusterFeatsSidebar(clusterFeatColl) {
          // SANITIZE COORDS.
          // clusterFeatColl = _sanitizeFeatCollCoords(clusterFeatColl);
 
+         renderClusterSummary(clusterFeatColl.properties, _getDOMElements());
+
          // get the features
          const clusterFeatures = clusterFeatColl.features;
 
          // remove prev. rendered feats.
-         const listingWrapper = _getDOMElements().featsListingDiv
-         listingWrapper.innerHTML = ``
+         const listingWrapper = _getDOMElements().featsListingDiv;
+         listingWrapper.innerHTML = ``;
          
          // 2.
          for (let idx = 0; idx < clusterFeatures.length; idx++) {
