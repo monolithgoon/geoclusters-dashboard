@@ -8,6 +8,32 @@ mandatoryParam = () => {
 };
 
 
+// function replaceAll(baseStr, subStr, replace) {
+// 	return baseStr.replace(new RegExp(subStr, `g`), replace);
+// };
+// function escapeRegExp(string) {
+// 	return string.replace()
+// }
+exports._capitalizeWords = (baseStr, ...subStrings) => {
+	try {
+		if (typeof baseStr === "string") {
+			for (const subStr of subStrings) {
+				console.log(subStr)
+				if (typeof subStr === "string") {
+					const regex = new RegExp(subStr, `g`);
+					baseStr = baseStr.replace(regex, subStr.toUpperCase());
+					// baseStr = baseStr.replace(/subStr/g, subStr.toUpperCase());
+					console.log(baseStr)
+				};
+			};
+		};
+		return baseStr;
+	} catch (capWordsErr) {
+		console.error(`capWordsErr: ${capWordsErr.message}`);
+	};
+};
+
+
 // fix the coords in each feat. and return the featColl.
 repairFeatsCoords = (featureCollection) => {
 

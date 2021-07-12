@@ -117,7 +117,7 @@ exports.login = catchAsync(async (req, res, next) => {
       const dbUser = await USER_MODEL.findOne({ user_email }).select(`+user_password`); // the 'user_password' field is de-selected by default in USER_MODEL; this is how to re-select it
 
       if (!dbUser || !(await dbUser.comparePasswords(user_password, dbUser.user_password))) {
-         return next(new ServerError(`Invalid email or password`, 401, `userLoginFn`));
+         return next(new ServerError(`Incorrect email or password`, 401, `userLoginFn`));
       };
 
       // 3. IF EVERYTHING IS OK, SIGN THE JWT && SEND BACK TO CLIENT
@@ -149,7 +149,7 @@ exports.protectRoute = catchAsync(async(req, res, next) => {
 
    // 3. Verify if the the user trying to access the route still exists
    const currentUser = await USER_MODEL.findById(decodedToken.id);
-   if (!currentUser) { return next(new ServerError(`The user that owns those login credentials no longer exists.`, 401, `protectRouteFn.`))}
+   if (!currentUser) { return next(new ServerError(`The user that owns those login credentials no longer exists.`, 401, `protectRouteFn.`))};
 
    // 4. Throw err if user changed their password after the token was issued
    if (currentUser.checkPasswordChanged(decodedToken.iat)) {

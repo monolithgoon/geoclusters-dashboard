@@ -335,8 +335,10 @@ const FillLayerHandler = ((dom, leafletBaseMap, mapboxMap, leafletMiniMap, leafl
 
    // EXTRACT GEOJSON DATA FROM A MAPBOX LAYER EVENT
    function getLayerData(layer) {
-      const layerGeoJSON = layer.features[0]
+      const layerGeoJSON = layer.features[0];
       const layerProps = _getClusterFeatProps(layerGeoJSON);
+      const rops = (layerGeoJSON.properties);
+      console.log(rops)
       const lngLatCenter = layer.lngLat;
       const layerGeometry = layer.features[0].geometry;
       const layerCoords = layerGeometry.coordinates[0];
@@ -345,7 +347,7 @@ const FillLayerHandler = ((dom, leafletBaseMap, mapboxMap, leafletMiniMap, leafl
       const latLngCenter = [turfCenter[1], turfCenter[0]] // CONVERT TO LAT. LNG FORMAT
 
       return {
-         layerGeoJSON, 
+         layerGeoJSON,
          layerProps,
          lngLatCenter,
          layerGeometry,
@@ -354,7 +356,7 @@ const FillLayerHandler = ((dom, leafletBaseMap, mapboxMap, leafletMiniMap, leafl
       };
    };
 
-   // BUILD A GLOBAL DATA OBJ. WITH THE NAV. INFO. FOR EACH PLOT
+   // BUILD A DATA OBJ. TO HOLD THE NAV. INFO. FOR EACH PLOT
    const FEAT_BOUNDARY_DATA = {
       feature_index: 0,
       start_coords: 0,
