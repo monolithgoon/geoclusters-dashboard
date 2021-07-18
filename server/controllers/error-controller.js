@@ -1,3 +1,6 @@
+`use strict`
+
+
 // GLOBAL ERR. HANDLER MIDDLEWARE > DERIVES PROPS. FROM ServerError CLASS
 const ServerError = require("../utils/app-error.js");
 const chalk = require("../utils/chalk-messages.js");
@@ -42,10 +45,11 @@ const handleJWTError = () => new ServerError("Invalid token. Please login.", 401
 
 
 const handleJWTExpiredError = () =>
-	new ServerError("Your login session has expired! Please login again.", 401);
+	new ServerError("Session expired. Please login again.", 401);
 
 
 const sendErrorDev = (err, req, res) => {
+
 	if (req.originalUrl.startsWith("/api")) {
 		return res.status(err.statusCode).json({
 			status: err.status,
@@ -56,27 +60,29 @@ const sendErrorDev = (err, req, res) => {
 	};
 
 	// 1. Log error
-	// console.error("ERROR 🥺", err.name);
 	console.error(chalk.fail(`ERROR 🥺🥺🥺`, `[ ${err.caller} ]`, err.message));
 
-	// 2. Send error message
+	// 3. Send error message
 	return res.status(err.statusCode).render("404", {
 		err_status_code: err.statusCode,
 		err_title: "Something went wrong...",
-		err_msg: err.message,
+		err_msg: `[ ${err.message} ]`,
 	});
 };
 
 
 const sendErrorProd = (err, req, res) => {
+
 	if (req.originalUrl.startsWith("/api")) {
+
 		// Operational, trusted error: send message to client
 		if (err.isOperational) {
 			return res.status(err.statusCode).json({
 				status: err.status,
 				message: err.message,
 			});
-		}
+		};
+
 		// 1) Log error
 		console.error("ERROR 🥺", err);
 
@@ -85,16 +91,18 @@ const sendErrorProd = (err, req, res) => {
 			status: "error",
 			message: "Something went wrong!",
 		});
-	}
+	};
 
 	if (err.isOperational) {
+
 		console.log(err);
 		return res.status(err.statusCode).render("404", {
 			err_status_code: err.statusCode,
 			err_title: "Something went wrong!",
 			err_msg: err.message,
 		});
-	}
+	};
+
 	// 1) Log error
 	console.error("ERROR 🥺", err);
 

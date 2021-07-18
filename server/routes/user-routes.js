@@ -18,12 +18,12 @@ router.patch('/updateMyPassword', authController.protectRoute, authController.up
 
 // ADMIN FUNCTIONS
 router
-   .route('/admin')
+   .route('/admin/')
       .get(authController.protectRoute, authController.restrictTo(`admin`), userController.getAllUsers)
       .post(authController.protectRoute, authController.restrictTo(`admin`), userController.createUser);
 
 router
-   .route('admin/user/:id')
+   .route('/admin/user/:id')
    .get(authController.protectRoute, authController.restrictTo(`admin`), userController.getUser)
    .patch(authController.protectRoute, authController.restrictTo(`admin`), userController.updateUser)
    .delete(authController.protectRoute, authController.restrictTo(`admin`), userController.deleteUser);

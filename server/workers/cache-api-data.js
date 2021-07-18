@@ -32,13 +32,16 @@ function saveData(data, collectionName) {
 
 async function getDBCollection(url, apiAccessToken) {
 
-   console.log(chalk.console2(`AXIOS getting data from [ ${url} ]`))
+   console.log(chalk.console2(`AXIOS getting data from [ ${url} ]`));
 
+   // const baseURL = process.env.NODE_ENV === `development` ? `http://127.0.0.1:9090/` : `https://geoclusters.herokuapp.com`;
+   
 	try {
       
       const axiosRequest = axios({
-         method: 'get',
-         url: url,
+         method: 'GET',
+         url,
+         // baseURL,
          crossDomain: true,
          responseType: 'application/json',
          headers: {
@@ -46,9 +49,8 @@ async function getDBCollection(url, apiAccessToken) {
             'Content-Type': 'application/json',
             // 'Authorization': apiAccessToken
          },
-         data: {
-
-         }
+         data: {},
+         // timeout: 30000,
       });
 
       const apiResponse = await axiosRequest;

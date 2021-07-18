@@ -17,10 +17,6 @@
    place-items: center;
 }
 
-.error-page-wrapper a {
-   color: #0d6efd;
-}
-
 .error-page-wrapper h1 {
    margin:0;
    padding: 20px 30px;
@@ -46,9 +42,16 @@
    line-height: 50px;
 }
 
+.page-graphic img {
+   width: 100%;
+   background: white;
+}
+
 .bottom-section {
    padding-top: 20px;
    padding-bottom: 20px;
+   
+   grid-template-columns: auto .1fr;
 }
 
 .bottom-section h1 {
@@ -56,11 +59,6 @@
    padding-bottom: 15px;
    font-size: 18px;
    line-height: 20px;
-}
-
-.page-graphic img {
-   width: 100%;
-   background: white;
 }
 
 /* ----------- Non-Retina Screens ----------- */

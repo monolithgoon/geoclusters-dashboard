@@ -29,7 +29,7 @@ block landing-page
           //- div NIRSAL AGC® Platform
           div.card--title Sign In to Your Account
           div#account_question Don't have an account? 
-            a(href="#") Request for access.
+            a(href="#") Request access.
           a#password_question(href="#") Forgot Your Password?
           form.form.form--login(action='/dashboard' method='GET')
             #email_form_group.form-group
@@ -61,7 +61,6 @@ block landing-page
 
   #landing_page_map_cont
 
-  //- 
   script(type='module').
 
     `use strict`
@@ -91,7 +90,6 @@ block landing-page
       };
 
       openFullscreen();
-
 
       //- const LANDING_PAGE_MAP = L.map("landing_page_map", { zoomSnap: 0.01 })
       //-   .setView([36.8370066107919, 10.059871561852127], 15.5);
