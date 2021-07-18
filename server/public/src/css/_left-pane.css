@@ -199,13 +199,14 @@ section.left-pane-container a:hover {
 }
 
 .result-item-pill {
-   padding: 3px 0;
+   /* padding: 3px 0; */
    margin: 3px 0;
    margin-top: 6px;
    width: 100%;
-
+   
+   /* padding: 3px 5px;
    border: 1px solid lightgrey;
-   border-radius: 10px;
+   border-radius: 7px; */
 }
 
 .result-item-pill > span {
