@@ -221,8 +221,8 @@ section.left-pane-container a:hover {
    /* background-color: whitesmoke; */
    /* background-color: #dcdde1; */
 
-   /* letter-spacing: 0.09px;
-   letter-spacing: -0.1px; */
+   letter-spacing: 0.09px;
+   letter-spacing: -0.2px;
 }
 
 .result-item-header {
