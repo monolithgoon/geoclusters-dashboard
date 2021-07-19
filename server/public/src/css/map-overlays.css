@@ -73,7 +73,6 @@
 
 .cluster-map-close-btn {
    -webkit-font-smoothing: antialiased;
-   text-size-adjust: 100%;
    box-sizing: inherit;
    margin: 0;
    border: 0;
@@ -84,7 +83,6 @@
    width: 25px;
    text-align: left;
    appearance: none;
-   user-select: none;
    cursor: pointer;
    border-radius: 9999px!important;
    position: absolute!important;
@@ -111,14 +109,12 @@
    width: auto;
    min-width: 260px;
 
-   text-size-adjust: 100%;
    box-sizing: inherit;
    color: white;
    background-color: var(--map-overlay-deep-blue) ;
    font-family: "Roboto", sans-serif;
    text-align: center;
 
-   user-select: none;
    z-index: 999;
 }
 
@@ -140,9 +136,9 @@
    grid-template-columns: 1fr 1.5fr;
 
    border-radius: 3px;
-   box-shadow: 0px 0px 0px 1px rgba(255,255,255,1);
    -webkit-box-shadow: 0px 0px 0px 1px rgba(255,255,255,1);
    -moz-box-shadow: 0px 0px 0px 1px rgba(255,255,255,1);
+   box-shadow: 0px 0px 0px 1px rgba(255,255,255,1);
 
 }
 
@@ -262,8 +258,8 @@
          z-index: 1000;      
 
          animation-name: slide-down;
-         animation: slide-down 0.1s ease;
          -webkit-animation: slide-down 0.1s ease;
+         animation: slide-down 0.1s ease;
       }
 
       @keyframes slide-down {
