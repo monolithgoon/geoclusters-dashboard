@@ -7,7 +7,7 @@
    left: 0;
    width: 100vw;
    height: 100vh;
-   z-index: 1;
+   z-index: -1;
 }
 
 .floating-pane {
@@ -16,15 +16,14 @@
 
 .welcome-pane-container {
    width: 100vw;
+   height: 100vh;
    color: black;
-   font-family: 'Quicksand', sans-serif;
    font-family: 'IBM Plex Sans', sans-serif;
    letter-spacing: -0.5px;
    letter-spacing: -0.2px;
    display: grid;
    grid-template-columns: 1fr;
-   height: 100vh;
-   z-index: 99;
+   z-index: 1;
 }
 
 .welcome-pane-content {
@@ -289,7 +288,7 @@ input, button,
          position: absolute;
          bottom: 0;
          right: 0;
-         z-index: 2;
+         z-index: 1;
          min-height: 30vh;
          display: grid;
       }
