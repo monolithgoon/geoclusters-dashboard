@@ -1,5 +1,6 @@
 const chalk = require('../utils/chalk-messages.js');
 const USER_MODEL = require('../models/user-model.js');
+const factory = require('./handler-factory');
 
 
 exports.getAllUsers = async (req, res, next) => {
@@ -30,13 +31,15 @@ exports.getAllUsers = async (req, res, next) => {
 
 
 exports.createUser = async (req, res) => {
-
+   res.status(500).json({
+      status: 'error',
+      message: 'This route not defined yet! Please use /signup instead'
+  });
 };
 
 
-exports.getUser = async (req, res) => {
-
-};
+exports.getUser = factory.getOne(USER_MODEL);
+exports.getAllUsers = factory.getAll(USER_MODEL);
 
 
 exports.updateUser = async (req, res) => {
