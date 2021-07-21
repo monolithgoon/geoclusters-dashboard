@@ -40,13 +40,5 @@ exports.createUser = async (req, res) => {
 
 exports.getUser = factory.getOne(USER_MODEL);
 exports.getAllUsers = factory.getAll(USER_MODEL);
-
-
-exports.updateUser = async (req, res) => {
-
-};
-
-
-exports.deleteUser = async (req, res) => {
-
-};
+exports.updateUser = factory.updateOne(USER_MODEL);
+exports.deleteUser = factory.deleteOne(USER_MODEL);

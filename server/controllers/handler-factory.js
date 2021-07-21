@@ -21,6 +21,7 @@ exports.getAll = (Model) =>
 		// Send response
 		res.status(200).json({
 			status: "success",
+			requested_at: req.requestTime,
 			results: doc.length,
 			data: {
 				data: doc,
@@ -41,6 +42,7 @@ exports.getOne = (Model, popOptions) =>
 
 		res.status(200).json({
 			status: "success",
+			requested_at: req.requestTime,
 			data: {
 				data: doc,
 			},
@@ -58,6 +60,7 @@ exports.deleteOne = (Model) =>
 
 		res.status(204).json({
 			status: "success",
+			requested_at: req.requestTime,
 			data: null,
 		});
 	});
@@ -76,6 +79,7 @@ exports.updateOne = (Model) =>
 
 		res.status(200).json({
 			status: "success",
+			requested_at: req.requestTime,
 			data: {
 				data: doc,
 			},
@@ -89,6 +93,7 @@ exports.createOne = (Model) =>
 
 		res.status(201).json({
 			status: "success",
+			requested_at: req.requestTime,
 			data: {
 				data: doc,
 			},
