@@ -10,7 +10,7 @@ const sendEmail = require('../services/email.js');
 
 
 const signJWT = payloadId => {
-   // TODO > check for .ENV VARS.
+   // TODO > check for .env VARS.
    return jwt.sign({id: payloadId}, APP_CONFIG.jwtSecret, {
       expiresIn: APP_CONFIG.jwtExpiresIn,
    });
