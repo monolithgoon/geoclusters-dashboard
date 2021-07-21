@@ -3,6 +3,8 @@ const path = require("path");
 const express = require("express");
 const EXPRESS_SERVER = express();
 // const helmet = require('helmet');
+const mongoSanitize = require('express-mongo-sanitize');
+const xss = require('xss-clean');
 const morgan = require("morgan");
 const rateLimit = require('express-rate-limit');
 const bodyParser = require("body-parser"); // get the contents OF request.body
@@ -56,10 +58,15 @@ EXPRESS_SERVER.use(express.static(path.join(__dirname, "public")));
 EXPRESS_SERVER.use(bodyParser.json({ limit: "100kb" }));
 
 
-// DATA SANITIZATION AGAINST NoSQL Q-INJECTION
+// DATA SANITIZATION AGAINST MALICIOUS NoSQL QUERY-INJECTION
+// removes '$' from req.body, req.params and/or req. query string
+// prevents this attack => "email": {"$gt": ""}
+EXPRESS_SERVER.use(mongoSanitize());
 
 
 // DATA SANITIZATION AGAINST XSS
+// filters out HTML tags & prevents malicious HTML from executing JS 
+EXPRESS_SERVER.use(xss());
 
 
 // 5. get the cookies sent in the request

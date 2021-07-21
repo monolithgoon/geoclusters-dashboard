@@ -244,9 +244,6 @@ section.left-pane-container a:hover {
    font-size: 11.5px;
    color: #333;
    
-   /* background-color: whitesmoke; */
-   /* background-color: #dcdde1; */
-
    letter-spacing: 0.09px;
    letter-spacing: -0.2px;
 }
@@ -255,28 +252,7 @@ section.left-pane-container a:hover {
    font-family: 'Roboto', sans-serif;
    font-size: 10px;
    letter-spacing: -0.2px;
-}
-
-.result-item-footer {
-   width: 100%;
-   display: flex;
-   flex-direction: row;
-   justify-content: space-between;
-   align-items: flex-end;
-}
-
-.result-item-footer > span {
-   padding-right: 2px;
-   font-size: 10px;
-   /* font-weight: 400;
-   color: #333; */
-   /* color: rgba(136, 136, 136, 0.877); */
-   font-weight: 400;
-}
-
-.result-item-footer > span:hover {
-   color: rgba(136, 136, 136, 0.877);
-   color: #252e31;
+   color: #333;
 }
 
 .result-item > *,
