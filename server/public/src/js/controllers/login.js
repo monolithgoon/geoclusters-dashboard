@@ -17,7 +17,7 @@ export const login = async (email, password) => {
 
 			showAlert("success", "Logged In");
 			window.setTimeout(() => {
-				location.assign("/dashboard");
+				location.assign("/dashboard/");
 			}, 1500);
 		};
 
