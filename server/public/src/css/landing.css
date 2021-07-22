@@ -65,7 +65,7 @@
 .welcome-pane-header {
    display: grid;
    column-gap: 5px;
-   grid-template-columns: auto 1fr;
+   grid-template-columns: auto auto;
 }
 
 .brand-logo,
@@ -74,15 +74,24 @@
    align-items: flex-end;
 }
 
+.brand-logo {
+   justify-content: center;
+   justify-content: flex-end;
+}
+
 .brand-logo img {
    grid-area: logo;
    width: 50px;
+   width: 65px;
 }
 
 .brand-name {
    grid-area: brand-name;
    font-family: 'Fjalla One', sans-serif;
    font-size: 18px;
+   font-size: 28px;
+   line-height: 1.3;
+   justify-content: flex-start;
 }
 
 .welcome-pane-header h1 {  
@@ -275,7 +284,6 @@ input, button,
    padding: 0 10px;
    text-decoration: none;
 }
-
 
 
 /* @media screen and (min-width: 968px) { */
