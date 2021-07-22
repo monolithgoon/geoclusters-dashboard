@@ -5,7 +5,9 @@ const APIFeatures = require("./../utils/api-features");
 
 
 exports.getAll = (Model) =>
+
 	catchAsync(async (req, res, next) => {
+
 		// Allow for nested GET reviews on tour
 		let filter = {};
 		if (req.params.tourId) filter = { tour: req.params.tourId };
@@ -16,7 +18,7 @@ exports.getAll = (Model) =>
 			.limitFields()
 			.paginate();
 
-		const doc = await features.query;
+		const doc = await features.dbQuery;
 
 		// Send response
 		res.status(200).json({
@@ -27,7 +29,7 @@ exports.getAll = (Model) =>
 				data: doc,
 			},
 		});
-	});
+	}, "getAll factory fn.");
 
 
 exports.getOne = (Model, popOptions) =>
@@ -47,7 +49,7 @@ exports.getOne = (Model, popOptions) =>
 				data: doc,
 			},
 		});
-	});
+	}, "getOne factory fn.");
 
 
 exports.deleteOne = (Model) =>
@@ -63,7 +65,7 @@ exports.deleteOne = (Model) =>
 			requested_at: req.requestTime,
 			data: null,
 		});
-	});
+	}, "deleteOne factory fn.");
 
 
 exports.updateOne = (Model) =>
@@ -84,7 +86,7 @@ exports.updateOne = (Model) =>
 				data: doc,
 			},
 		});
-	});
+	}, "updateOne factory fn.");
 
 
 exports.createOne = (Model) =>
@@ -98,4 +100,4 @@ exports.createOne = (Model) =>
 				data: doc,
 			},
 		});
-	});
+	}, "createOne factory fn.");

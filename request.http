@@ -50,13 +50,13 @@ content-type: application/json
 }
 
 ###
-# POST http://127.0.0.1:1010/api/v1/users/login HTTP/1.1
-POST https://avgmap.herokuapp.com/api/v1/users/login HTTP/1.1
+POST http://127.0.0.1:1010/api/v1/users/login HTTP/1.1
+# POST https://avgmap.herokuapp.com/api/v1/users/login HTTP/1.1
 content-type: application/json
 
 {
    "user_email": "ndukao@hotmail.com",
-   "user_password": "dooksielee"
+   "user_password": "fastrunner"
 }
 
 ###
@@ -88,8 +88,8 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwZGJkMGM4Y
 }
 
 ###
-GET http://127.0.0.1:1010/api/v1/users/admin/ HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwZGJkMGM4YjIyN2VmMjlhYzVjMjVkOCIsImlhdCI6MTYyNTA4MDgxMCwiZXhwIjoxNjI1MTE2ODEwfQ.043RkNthsHfxHg2h1TSCBGUwK-BVwgMi4jOyrcUKGrk
+GET http://127.0.0.1:1010/api/v1/users/ HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwZTZkMWFjOWFjMjNhMzdjMGI4NTU0MyIsImlhdCI6MTYyNjk1MTQ0MCwiZXhwIjoxNjI2OTU3NDQwfQ.s6RNfAeeE_riPb-n9OvcvDurh4NPlfIjVGYgHSvDw4c
 
 ###
 GET http://127.0.0.1:1010/dashboard/ HTTP/1.1
