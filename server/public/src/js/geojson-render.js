@@ -1,5 +1,5 @@
 `use strict`
-import { AVG_BASE_MAP, CLUSTER_PLOTS_MAP, MODAL_FEAT_DETAIL_MAP, FEAT_DETAIL_MAP } from "./avg-controllers/maps-controller.js";
+import { AVG_BASE_MAP, CLUSTER_PLOTS_MAP, FEAT_DETAIL_MAP } from "./config/maps-config.js";
 import { _clusterFeatPopupMarkup, _GenerateClusterFeatMarkup, _leafletMarkerMarkup } from "./avg-controllers/markup-generator.js";
 import { pollAVGSettingsValues, _getDOMElements } from "./avg-controllers/ui-controller.js";
 import { _getClusterFeatProps } from "./cluster-props-adapter.js";
@@ -197,21 +197,19 @@ const PopupsController = (function() {
 })();
 
 
-const LLayerGroupController = ((leafletBaseMap, leafletMiniMap, leafletModalMap)=>{
+const LLayerGroupController = ((leafletBaseMap, leafletModalMap)=>{
    // Create a group to hold the leaflet layers and add it to the map
    const baseMapLayerGroup = L.layerGroup().addTo(leafletBaseMap)
-   const miniMapLayerGroup = L.layerGroup().addTo(leafletMiniMap);
    const modalMapLayerGroup = L.layerGroup().addTo(leafletModalMap);
    return {
       getLayerGroups: () => {
          return {
             baseMapLayerGroup,
-            miniMapLayerGroup,
             modalMapLayerGroup,
          };
       },
    };
-})(AVG_BASE_MAP, FEAT_DETAIL_MAP, MODAL_FEAT_DETAIL_MAP);
+})(AVG_BASE_MAP, FEAT_DETAIL_MAP);
 
 
 function clearPopups() {
@@ -322,10 +320,9 @@ function renderFeatVertices(props) {
 }
 
 
-const FillLayerHandler = ((dom, leafletBaseMap, mapboxMap, leafletMiniMap, leafletModalMap)=>{
+const FillLayerHandler = ((dom, leafletBaseMap, mapboxMap, leafletModalMap)=>{
 
    const baseMapLayerGroup = LLayerGroupController.getLayerGroups().baseMapLayerGroup;
-   const miniMapLayerGroup = LLayerGroupController.getLayerGroups().miniMapLayerGroup;
    const modalMapLayerGroup = LLayerGroupController.getLayerGroups().modalMapLayerGroup;
 
    function affectDOMElement(elementId, activeClass) {
@@ -587,7 +584,7 @@ const FillLayerHandler = ((dom, leafletBaseMap, mapboxMap, leafletMiniMap, leafl
       console.error(`fillLayerHandlerErr: ${fillLayerHandlerErr.message}`)
    };
 
-})(_getDOMElements(), AVG_BASE_MAP, CLUSTER_PLOTS_MAP, FEAT_DETAIL_MAP, MODAL_FEAT_DETAIL_MAP);
+})(_getDOMElements(), AVG_BASE_MAP, CLUSTER_PLOTS_MAP, FEAT_DETAIL_MAP);
 
 
 // SIMPLE MAPBOX GJ. RENDER FN.

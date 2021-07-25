@@ -1,3 +1,4 @@
+`use strict`
 // import { displayMap } from "./mapbox";
 import { login, logout } from "./controllers/login.js";
 // import { updateSettings } from "./updateSettings";

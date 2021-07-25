@@ -1,16 +1,17 @@
 'use strict'
 import { _queryAPI } from "./data-controller.js";
 import { _mapboxPanToGeoJSON, _mapboxDrawFeatFeatColl, _mapboxDrawFeature, _leafletRenderGeojson, _mapboxDrawLabels, _openMapboxFeatPopup } from "../geojson-render.js";
-import { _joinWordsArray, _TraverseObject, _getCheckedRadio, _stringifyPropValues, _TurfHelpers, _ManipulateDOM } from "../_utils.js";
+import { _TraverseObject, _getCheckedRadio, _stringifyPropValues, _TurfHelpers, _ManipulateDOM } from "../_utils.js";
 import { _sanitizeFeatCollCoords, _CheckGeoJSON, _getBufferedPolygon } from "../_utils.js";
-import { AVG_BASE_MAP, CLUSTER_PLOTS_MAP, _switchMapboxMapLayer } from "./maps-controller.js";
+import { AVG_BASE_MAP, CLUSTER_PLOTS_MAP } from "../config/maps-config.js";
+import { _switchMapboxMapLayer } from "./maps-controller.js";
 import { APP_STATE } from "./state-controller.js";
 import { _getClusterFeatProps, _GetClusterProps } from "../cluster-props-adapter.js";
 import { _GenerateClusterFeatMarkup, _GenerateClusterMarkup, _GenClusterModalMarkup } from "./markup-generator.js";
 import { _clientSideRouter, _navigateTo } from "../routers/router.js";
 
 
-export function _getDOMElements () {
+export function _getDOMElements() {
 
    const appSidebar = document.getElementById(`v_pills_tab`);
    const sidebarExpandBtn = document.getElementById(`app_sidebar_expand_button`);
@@ -32,7 +33,6 @@ export function _getDOMElements () {
    const resultsCountDiv = document.getElementById('results_count');
    const resultsStatus = document.getElementById('results_status');
 
-   const listingControlWrapper = document.getElementById(`listing_control_wrapper`); 
    const resultModalDiv = document.getElementById(`result_item_modal`);
    const resultModalCloseBtn = document.getElementById(`result_item_modal_close_btn`);
    const resultsListWrapper = document.getElementById(`results_list_wrapper`);
@@ -47,9 +47,8 @@ export function _getDOMElements () {
    const featsListingDiv = document.getElementById(`cluster_feats_listing_body`);
    const featureDetailMap = document.getElementById(`feature_detail_map_container`);
 
-   const bufferFeatsChk = document.getElementById(`buffer_cluster_feats_chk`)
-   const renderMultiFeatsChk = document.getElementById(`render_multiple_feats_chk`);
-
+   const bufferFeatsChkBx = document.getElementById(`buffer_cluster_feats_chk`)
+   const renderMultiFeatsChkBx = document.getElementById(`render_multiple_feats_chk`);
 
 
    return {
@@ -77,8 +76,8 @@ export function _getDOMElements () {
       featsListingWrapper,
       featsListingDiv,
       featureDetailMap,
-      bufferFeatsChk,
-      renderMultiFeatsChk,
+      bufferFeatsChkBx,
+      renderMultiFeatsChkBx,
    };
 };
 
@@ -144,8 +143,8 @@ export const pollAVGSettingsValues = () => {
             zoomValue: (_getDOMElements().clusterMapZoomRange).value,
          },
 
-         bufferFeatsChk: (_getDOMElements().bufferFeatsChk).checked,
-         renderMultiFeatsChk: (_getDOMElements().renderMultiFeatsChk).checked,
+         bufferFeatsChk: (_getDOMElements().bufferFeatsChkBx).checked,
+         renderMultiFeatsChk: (_getDOMElements().renderMultiFeatsChkBx).checked,
       };
       
    } catch (pollAppSettingsErr) {
@@ -154,8 +153,8 @@ export const pollAVGSettingsValues = () => {
 };
 
 
-// SEQ. THAT HAPPENS TO RENDER GEOJSON ON BOTH MAPS
-const RenderMaps = (function(clusterFeatsMap) {
+// // RENDER GEOJSON ON BOTH MAPS
+const _RenderMaps = (function(avgBaseMap, clusterFeatsMap) {
 
    try {
 
@@ -214,7 +213,7 @@ const RenderMaps = (function(clusterFeatsMap) {
       };
       
       const panBaseMap__ = (geojson) => {
-         _leafletRenderGeojson(AVG_BASE_MAP, geojson, {zoomLevel: APP_STATE.CONFIG_DEFAULTS.LEAFLET_ADMIN_LEVEL_3_ZOOM});
+         _leafletRenderGeojson(avgBaseMap, geojson, {zoomLevel: APP_STATE.CONFIG_DEFAULTS.LEAFLET_ADMIN_LEVEL_3_ZOOM});
       };
 
       const createMapboxPopup = (map, props, centerLngLat) => {
@@ -224,7 +223,6 @@ const RenderMaps = (function(clusterFeatsMap) {
    
       return {
          // TODO > CHANGE "geojson" TO "featureCollection"
-         // TODO > USE DEP. INJ. TO PASS THE MAPBOX MAP
          renderFeatPopup: (map, props, centerLngLat) => {
             createMapboxPopup(map, props, centerLngLat);
          },         
@@ -267,7 +265,7 @@ const RenderMaps = (function(clusterFeatsMap) {
    } catch (renderMapsErr) {
       console.error(`renderMapsErr: ${renderMapsErr.message}`)
    };   
-})(CLUSTER_PLOTS_MAP, _getDOMElements());
+})(AVG_BASE_MAP, CLUSTER_PLOTS_MAP, _getDOMElements());
 
 
 // RESULT TITLE MAIN PARENT SEQ.
@@ -448,7 +446,7 @@ function clusterTitleClickSeq(evtObj) {
       populateClusterFeatsSidebar(clusterGeoJSON);
       
       // 2.
-      RenderMaps.renderEverythingNow(clusterGeoJSON, CLUSTER_PLOTS_MAP, {useBuffer: pollAVGSettingsValues().bufferFeatsChk});
+      _RenderMaps.renderEverythingNow(clusterGeoJSON, CLUSTER_PLOTS_MAP, {useBuffer: pollAVGSettingsValues().bufferFeatsChk});
       
       // 3.
       clickedResultContainerSeq(resultContainerDiv, adjacentResultDivs);
@@ -492,8 +490,8 @@ function featCardClickSeq(clusterFeatures) {
 
          // this => clusterFeatCard
          if (this.currentTarget.id === _CheckGeoJSON.getId(clusterFeatures[i])) {
-            RenderMaps.panClusterPlotsFeatMap(CLUSTER_PLOTS_MAP, clusterFeatures[i]);
-            RenderMaps.renderFeatPopup(CLUSTER_PLOTS_MAP, _getClusterFeatProps(clusterFeatures[i], i), _TurfHelpers.getLngLat(clusterFeatures[i]));
+            _RenderMaps.panClusterPlotsFeatMap(CLUSTER_PLOTS_MAP, clusterFeatures[i]);
+            _RenderMaps.renderFeatPopup(CLUSTER_PLOTS_MAP, _getClusterFeatProps(clusterFeatures[i], i), _TurfHelpers.getLngLat(clusterFeatures[i]));
          };
       };
 
@@ -515,8 +513,8 @@ function featCardClickSeq(clusterFeatures) {
       
 //                // this => clusterFeatCard
 //                if (this.currentTarget.id === _CheckGeoJSON.getId(clusterFeatures[i])) {
-//                   RenderMaps.panClusterPlotsFeatMap(mapboxMap, clusterFeatures[i]);
-//                   RenderMaps.renderFeatPopup(mapboxMap, _TurfHelpers.getLngLat(clusterFeatures[i]));
+//                   _RenderMaps.panClusterPlotsFeatMap(mapboxMap, clusterFeatures[i]);
+//                   _RenderMaps.renderFeatPopup(mapboxMap, _TurfHelpers.getLngLat(clusterFeatures[i]));
 //                };
 //             };
       
@@ -660,24 +658,24 @@ function populateResultsSidebar(dbCollection) {
 };
 
 
-function DOMLoadEvents() {
-   
+// FIXME > DON'T USE JQUERY
+// SETTINGS SIDEBAR TOGGLE
+$(document).ready(function () {
+   $("#avg_settings_sidebar_toggle_btn").on("click", function () {
+      $("#avg_settings_sidebar").toggleClass("active");
+   });
+   $("#settings_sidebar_close_btn").on("click", function () {
+      $("#avg_settings_sidebar").toggleClass("active");
+   });
+});
+
+
+// DOM ELEM. EVT. LIST'NRS.
+function ActivateEventListeners() {
+
    try {
 
       window.addEventListener(`DOMContentLoaded`, async (windowObj) => {
-
-         // SANDBOX
-         document.body.addEventListener('click', e => {
-            if (e.target.matches("[data-bs-target]")) {
-               console.log('client side routed')
-               e.preventDefault();
-               _navigateTo(e.target.href);
-            }
-         })
-
-         // SANDBOX
-         // init. the client side router
-         _clientSideRouter();
 
          // save the UI default settings
          APP_STATE.saveDefaultSettings(pollAVGSettingsValues());
@@ -692,42 +690,18 @@ function DOMLoadEvents() {
          resultTitleClickHandler(_getDOMElements().resultTitleDivs);
       });
 
-
-   } catch (DOMEventsErr) {
-      console.error(`DOMEventsErr: ${DOMEventsErr}`);
-   };
-};
-
-
-// FIXME > DON'T USE JQUERY
-// SETTINGS SIDEBAR TOGGLE
-$(document).ready(function () {
-   $("#avg_settings_sidebar_toggle_btn").on("click", function () {
-      $("#avg_settings_sidebar").toggleClass("active");
-   });
-   $("#settings_sidebar_close_btn").on("click", function () {
-      $("#avg_settings_sidebar").toggleClass("active");
-   });
-});
-
-
-// DOM ELEM. EVT. LIST'NRS.
-function AddEventListeners() {
-
-   try {
-
       // SANDBOX
       // SETTINGS CHANGE EVENT SEQ.
       getAreaUnitsRadios().forEach(radio => {
          radio.addEventListener(`change`, async (e) => {
-            RenderMaps.renderClusterPlotLabel(APP_STATE.retreiveLastRenderedGJ());
+            _RenderMaps.renderClusterPlotLabel(APP_STATE.retreiveLastRenderedGJ());
          });
       });
 
       // CHANGE CLUSTER PLOTS MAP STYLE
       _getDOMElements().plotsMapStyleRadios.forEach(radio => {
-         radio.addEventListener(`change`, _switchMapboxMapLayer)
-      })
+         radio.addEventListener(`change`, _switchMapboxMapLayer);
+      });
 
       // RESULT ITEM TITLE CLICK HAND.
       resultTitleClickHandler(_getDOMElements().resultTitleDivs);
@@ -773,4 +747,4 @@ function AddEventListeners() {
 };
 
 
-export {DOMLoadEvents, AddEventListeners};
+export {ActivateEventListeners};

@@ -64,8 +64,7 @@ block landing-page
 
   script(type='module').
 
-    `use strict`
-    import { MAPBOX_TOKEN, BING_MAPS_TOKEN } from "/src/js/config/maps-config.js";
+    //- import { MAPBOX_TOKEN } from "/src/js/config/maps-config.js";
 
     (function() {
 
@@ -91,21 +90,6 @@ block landing-page
       };
 
       openFullscreen();
-
-      //- const LANDING_PAGE_MAP = L.map("landing_page_map", { zoomSnap: 0.01 })
-      //-   .setView([36.8370066107919, 10.059871561852127], 15.5);
-
-      //-   // BASEMAP BING MAPS TILE
-      //-   const bingMapsTile = L.bingLayer(BING_MAPS_TOKEN, {
-      //-     imagerySet: 'AerialWithLabels',
-      //-     maxZoom: 28,
-      //-     detectRetina: true,
-      //-     retinaDpi: 'd2',
-      //-     mapLayer: "TrafficFlow",
-      //-     attribution: '&copy; FieldDev Group'
-      //-   });
-
-      //-   bingMapsTile.addTo(LANDING_PAGE_MAP);
 
       //- INIT. LANDING PAGE MAP
       mapboxgl.accessToken = `pk.eyJ1IjoibW9ub2xpdGhnb29uIiwiYSI6ImNrN3B1MnNjaDBhNTczcHFkdmJ0aHR6dWEifQ.O0mHuJ2wKNqKz3E_BIsnog`;

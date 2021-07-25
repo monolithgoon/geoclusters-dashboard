@@ -172,8 +172,3 @@ section.right-pane-container {
    flex-direction: column;
    align-items: flex-start;
 }
-
-#feature_detail_map_container {
-   /* background-image: url('../../assets/images/noun-contour-topography.svg'); */
-   /* background-color: azure; */
-}

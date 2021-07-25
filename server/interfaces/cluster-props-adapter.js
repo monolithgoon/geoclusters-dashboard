@@ -169,7 +169,7 @@ exports._GetClusterProps = (clusterFeatureCollection = _mandatoryParam()) => {
 
 		const clusterFeatsNum = clusterFeatureCollection.features.length;
       
-		const clusterCreated = evaluateObjProps(props, {}, 'cluster_created_timestamp') || 
+		const clusterCreatedDate = evaluateObjProps(props, {}, 'cluster_created_timestamp') || 
 									evaluateObjProps(props, {}, 'db_insert_timestamp') || 
 									null;
 
@@ -237,7 +237,7 @@ exports._GetClusterProps = (clusterFeatureCollection = _mandatoryParam()) => {
 		return {
 			clusterID,
 			clusterName,
-			clusterCreated,
+			clusterCreatedDate,
 			clusterFeatsNum,
 			clusterArea,
 			clusterUsedArea,
