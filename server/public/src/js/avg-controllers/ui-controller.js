@@ -1,10 +1,8 @@
 'use strict'
 import { _queryAPI } from "./data-controller.js";
-import { _mapboxPanToGeoJSON, _mapboxDrawFeatFeatColl, _mapboxDrawFeature, _leafletRenderGeojson, _mapboxDrawLabels, _openMapboxFeatPopup } from "../geojson-render.js";
 import { _TraverseObject, _getCheckedRadio, _stringifyPropValues, _TurfHelpers, _ManipulateDOM } from "../_utils.js";
 import { _sanitizeFeatCollCoords, _CheckGeoJSON, _getBufferedPolygon } from "../_utils.js";
-import { AVG_BASE_MAP, CLUSTER_PLOTS_MAP } from "../config/maps-config.js";
-import { _switchMapboxMapLayer } from "./maps-controller.js";
+import { _RenderMaps, _switchMapboxMapLayer } from "./maps-controller.js";
 import { APP_STATE } from "./state-controller.js";
 import { _getClusterFeatProps, _GetClusterProps } from "../cluster-props-adapter.js";
 import { _GenerateClusterFeatMarkup, _GenerateClusterMarkup, _GenClusterModalMarkup } from "./markup-generator.js";
@@ -151,121 +149,6 @@ export const pollAVGSettingsValues = () => {
       console.error(`pollAppSettingsErr: ${pollAppSettingsErr.message}`)
    };
 };
-
-
-// // RENDER GEOJSON ON BOTH MAPS
-const _RenderMaps = (function(avgBaseMap, clusterFeatsMap) {
-
-   try {
-
-      console.log(pollAVGSettingsValues());
-
-      const getPresentationPoly = (geoJSONPoly, useBuffer, {bufferAmt, bufferUnits='kilometers'}) => {
-         const presentationPolygon = useBuffer ? _getBufferedPolygon(geoJSONPoly, bufferAmt, {bufferUnits}) : geoJSONPoly;
-         return presentationPolygon;
-      };
-
-      // pan map to entire cluster
-      const panToClusterGeoJSON = (geoJSON) => {
-         const gjCenterCoords = turf.coordAll(turf.centerOfMass(geoJSON))[0];
-         const gjBounds = turf.bbox(geoJSON);
-         _mapboxPanToGeoJSON(clusterFeatsMap, gjCenterCoords, gjBounds, {zoom:16, pitch:0, bearing:0, boundsPadding:0});
-      };
-      
-      // pan to a single cluster feat.
-      const panToClusterFeat = (map, geoJSONFeat) => {
-
-         try {
-            
-            console.log(geoJSONFeat);
-                        
-            const gjCenterCoords = turf.coordAll(turf.centerOfMass(geoJSONFeat))[0];
-            const gjBounds = turf.bbox(geoJSONFeat);
-            // FIXME > ZOOM VALUE OVER-RIDDEN BY BOUNDS
-            _mapboxPanToGeoJSON(map, gjCenterCoords, gjBounds, {zoom:pollAVGSettingsValues().clusterMap.zoomValue, pitch:0, bearing:0, boundsPadding:0});
-            
-         } catch (panClusterMapErr) {
-            console.error(`panClusterMapErr: ${panClusterMapErr.message}`);
-         };
-      };
-
-      const drawFeatureColl = (geojson) => {
-         _mapboxDrawFeatFeatColl({mapboxMap: clusterFeatsMap, featOrFeatColl: geojson});
-      };
-
-      const drawFeatures = (geojson, useBuffer) => {
-         const bufferAmt = APP_STATE.CONFIG_DEFAULTS.RENDERED_PLOT_BUFFER;
-         const bufferUnits = pollAVGSettingsValues().distanceUnits;
-         geojson.features.forEach((clusterPlot, idx) => {
-            clusterPlot = getPresentationPoly(clusterPlot, useBuffer, {bufferAmt, bufferUnits});
-            _mapboxDrawFeature(clusterFeatsMap, clusterPlot, idx);
-         });
-      };
-
-      const drawFeatureLabels = (geojson, useBuffer) => {
-         const bufferAmt = APP_STATE.CONFIG_DEFAULTS.RENDERED_PLOT_BUFFER;
-         const bufferUnits = pollAVGSettingsValues().distanceUnits;
-         const areaUnits = pollAVGSettingsValues().areaUnits;
-         geojson.features.forEach((clusterPlot, idx) => {
-            clusterPlot = getPresentationPoly(clusterPlot, useBuffer, {bufferAmt, bufferUnits});
-            _mapboxDrawLabels(clusterFeatsMap, clusterPlot, idx, {areaUnits});
-         });
-      };
-      
-      const panBaseMap__ = (geojson) => {
-         _leafletRenderGeojson(avgBaseMap, geojson, {zoomLevel: APP_STATE.CONFIG_DEFAULTS.LEAFLET_ADMIN_LEVEL_3_ZOOM});
-      };
-
-      const createMapboxPopup = (map, props, centerLngLat) => {
-         // _openMapboxPopup(map, props, centerLngLat);
-         _openMapboxFeatPopup(map, props, centerLngLat);
-      };
-   
-      return {
-         // TODO > CHANGE "geojson" TO "featureCollection"
-         renderFeatPopup: (map, props, centerLngLat) => {
-            createMapboxPopup(map, props, centerLngLat);
-         },         
-         panClusterPlotsMap: (geojson) => {
-            panToClusterGeoJSON(geojson);
-         },
-         panClusterPlotsFeatMap: (map, geoJSONFeat) => {
-            panToClusterFeat(map, geoJSONFeat);
-         },
-         renderCluster: (geojson) => {
-            drawFeatureColl(geojson);
-         },
-         renderClusterPlots: (geoJSON, useBuffer) => {
-            drawFeatures(geoJSON, useBuffer);
-         },
-         renderClusterPlotLabel: (geoJSON, useBuffer) => {
-            drawFeatureLabels(geoJSON, useBuffer);
-         },
-         renderBaseMap: (geojson) => {
-            panBaseMap__(geojson);
-         },
-         renderEverythingNow: (geoJSON, mapboxMap, {useBuffer=false}) => {
-            
-            const previousRenderedGJ = APP_STATE.retreiveLastRenderedGJ();
-            console.log({previousRenderedGJ});
-
-            // fire custom fn.
-            mapboxMap.fire('closeAllPopups');
-            
-            panToClusterGeoJSON(geoJSON);
-            drawFeatureColl(geoJSON);
-            drawFeatures(geoJSON, useBuffer);
-            drawFeatureLabels(geoJSON, useBuffer);
-            panBaseMap__(geoJSON);
-
-            APP_STATE.saveRenderedGeojson(geoJSON);
-         },
-      };
-
-   } catch (renderMapsErr) {
-      console.error(`renderMapsErr: ${renderMapsErr.message}`)
-   };   
-})(AVG_BASE_MAP, CLUSTER_PLOTS_MAP, _getDOMElements());
 
 
 // RESULT TITLE MAIN PARENT SEQ.
@@ -426,6 +309,11 @@ function clusterTitleClickSeq(evtObj) {
 
    evtObj.preventDefault();
 
+   // REMOVE
+   const previousRenderedGJ = APP_STATE.retreiveLastRenderedGJ();
+   console.log({previousRenderedGJ});
+   console.log(pollAVGSettingsValues());
+
    // get the main parent container
    const resultContainerDiv = _ManipulateDOM.getParentElement(evtObj.target, {parentLevel: 3});
 
@@ -446,7 +334,18 @@ function clusterTitleClickSeq(evtObj) {
       populateClusterFeatsSidebar(clusterGeoJSON);
       
       // 2.
-      _RenderMaps.renderEverythingNow(clusterGeoJSON, CLUSTER_PLOTS_MAP, {useBuffer: pollAVGSettingsValues().bufferFeatsChk});
+      _RenderMaps.renderEverythingNow(clusterGeoJSON, 
+         {
+            baseMapZoomLvl: APP_STATE.CONFIG_DEFAULTS.LEAFLET_ADMIN_LEVEL_3_ZOOM,
+            useBuffer: pollAVGSettingsValues().bufferFeatsChk, 
+            bufferUnits: pollAVGSettingsValues().distanceUnits,
+            bufferAmt: APP_STATE.CONFIG_DEFAULTS.RENDERED_PLOT_BUFFER,
+            areaUnits: pollAVGSettingsValues().areaUnits
+         }
+      );
+
+      // 2b. 
+      APP_STATE.saveRenderedGeojson(clusterGeoJSON);
       
       // 3.
       clickedResultContainerSeq(resultContainerDiv, adjacentResultDivs);
@@ -490,8 +389,8 @@ function featCardClickSeq(clusterFeatures) {
 
          // this => clusterFeatCard
          if (this.currentTarget.id === _CheckGeoJSON.getId(clusterFeatures[i])) {
-            _RenderMaps.panClusterPlotsFeatMap(CLUSTER_PLOTS_MAP, clusterFeatures[i]);
-            _RenderMaps.renderFeatPopup(CLUSTER_PLOTS_MAP, _getClusterFeatProps(clusterFeatures[i], i), _TurfHelpers.getLngLat(clusterFeatures[i]));
+            _RenderMaps.panClusterPlotsFeatMap(clusterFeatures[i], {zoomLevel: pollAVGSettingsValues().clusterMap.zoomValue});
+            _RenderMaps.renderFeatPopup(_getClusterFeatProps(clusterFeatures[i], i), _TurfHelpers.getLngLat(clusterFeatures[i]));
          };
       };
 
@@ -513,7 +412,7 @@ function featCardClickSeq(clusterFeatures) {
       
 //                // this => clusterFeatCard
 //                if (this.currentTarget.id === _CheckGeoJSON.getId(clusterFeatures[i])) {
-//                   _RenderMaps.panClusterPlotsFeatMap(mapboxMap, clusterFeatures[i]);
+//                      _RenderMaps.panClusterPlotsFeatMap(clusterFeatures[i], {zoomLevel: pollAVGSettingsValues().clusterMap.zoomValue});
 //                   _RenderMaps.renderFeatPopup(mapboxMap, _TurfHelpers.getLngLat(clusterFeatures[i]));
 //                };
 //             };
@@ -694,7 +593,16 @@ function ActivateEventListeners() {
       // SETTINGS CHANGE EVENT SEQ.
       getAreaUnitsRadios().forEach(radio => {
          radio.addEventListener(`change`, async (e) => {
-            _RenderMaps.renderClusterPlotLabel(APP_STATE.retreiveLastRenderedGJ());
+            if (APP_STATE.retreiveLastRenderedGJ()) {
+               _RenderMaps.renderClusterPlotLabel(APP_STATE.retreiveLastRenderedGJ(), 
+                  {
+                     useBuffer: pollAVGSettingsValues().bufferFeatsChk,
+                     bufferUnits: pollAVGSettingsValues().distanceUnits,
+                     bufferAmt: APP_STATE.CONFIG_DEFAULTS.RENDERED_PLOT_BUFFER,
+                     areaUnits: pollAVGSettingsValues().areaUnits
+                  }
+               );
+            };
          });
       });
 
