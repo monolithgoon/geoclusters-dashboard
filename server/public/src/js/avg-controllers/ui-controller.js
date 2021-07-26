@@ -41,9 +41,7 @@ export function _getDOMElements() {
    const clusterAreaEl = document.getElementById(`cluster_area`);
    const clusterUsedAreaEl = document.getElementById(`cluster_used_area`);
    const clusterUnusedAreaEl = document.getElementById(`cluster_unused_area`);
-   const featsListingWrapper = document.getElementById(`cluster_features_listing`);
    const featsListingDiv = document.getElementById(`cluster_feats_listing_body`);
-   const featureDetailMap = document.getElementById(`feature_detail_map_container`);
 
    const bufferFeatsChkBx = document.getElementById(`buffer_cluster_feats_chk`)
    const renderMultiFeatsChkBx = document.getElementById(`render_multiple_feats_chk`);
@@ -71,9 +69,7 @@ export function _getDOMElements() {
       clusterAreaEl,
       clusterUsedAreaEl,
       clusterUnusedAreaEl,
-      featsListingWrapper,
       featsListingDiv,
-      featureDetailMap,
       bufferFeatsChkBx,
       renderMultiFeatsChkBx,
    };
@@ -589,7 +585,6 @@ function ActivateEventListeners() {
          resultTitleClickHandler(_getDOMElements().resultTitleDivs);
       });
 
-      // SANDBOX
       // SETTINGS CHANGE EVENT SEQ.
       getAreaUnitsRadios().forEach(radio => {
          radio.addEventListener(`change`, async (e) => {

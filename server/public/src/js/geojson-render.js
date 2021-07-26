@@ -320,7 +320,7 @@ function renderFeatVertices(props) {
 }
 
 
-const FillLayerHandler = ((dom, leafletBaseMap, mapboxMap, leafletModalMap)=>{
+const FillLayerHandler = ((leafletModalMap)=>{
 
    const baseMapLayerGroup = LLayerGroupController.getLayerGroups().baseMapLayerGroup;
    const modalMapLayerGroup = LLayerGroupController.getLayerGroups().modalMapLayerGroup;
@@ -399,10 +399,6 @@ const FillLayerHandler = ((dom, leafletBaseMap, mapboxMap, leafletModalMap)=>{
             // SHOW FEAT. DETAIL MAP CONT.
             (function showFeatDetailMapContainer(clickedLayerId) {
                
-               // REMOVE
-               // dom.featsListingWrapper.classList.add('hide');
-               // dom.featureDetailMap.classList.remove('hide');
-
                // SANDBOX
                $('#exampleModal').modal('show');
                setInterval(() => {
@@ -417,8 +413,6 @@ const FillLayerHandler = ((dom, leafletBaseMap, mapboxMap, leafletModalMap)=>{
                   console.log(LayersController.returnClickedLayers())
    
                   if (clickedLayerId === prevClickedLayer.id) {
-                     dom.featsListingWrapper.classList.toggle('hide');
-                     dom.featureDetailMap.classList.toggle('hide')
                      sanitizeMapboxLayers({map, renderedLayers: LayersController.returnClickedLayers()});
                   };
                };     
@@ -584,7 +578,7 @@ const FillLayerHandler = ((dom, leafletBaseMap, mapboxMap, leafletModalMap)=>{
       console.error(`fillLayerHandlerErr: ${fillLayerHandlerErr.message}`)
    };
 
-})(_getDOMElements(), AVG_BASE_MAP, CLUSTER_PLOTS_MAP, FEAT_DETAIL_MAP);
+})(FEAT_DETAIL_MAP);
 
 
 // SIMPLE MAPBOX GJ. RENDER FN.
