@@ -81,7 +81,12 @@ export const _ManipulateDOM = (() => {
 			if (element && element.nodeType === 1 ) {
 				element.classList.remove(styleClass);
 			};
-		},	
+		},
+
+		affectDOMElement: (elementId, activeClass) => {
+			const relatedElement = document.getElementById(elementId)
+			_ManipulateDOM.addRemoveClass(relatedElement, activeClass);
+		},
 
 		appendList: (listWrapper, element) => {
 			try {
@@ -248,7 +253,7 @@ export const _ManipulateDOM = (() => {
 				block: `start`,
 				inline: `nearest`,
 			});	
-		}
+		},
 	}
 })();
 
