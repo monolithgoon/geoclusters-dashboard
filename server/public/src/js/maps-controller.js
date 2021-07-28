@@ -20,40 +20,47 @@ function getMapboxLayers(geoJSON, {featureIndex, layerId, color, thickness, fill
 
    // this layerId has a correspondig featCard with an identical id
    layerId = layerId ? layerId : _CheckGeoJSON.getId(geoJSON);
-   
-   const fillLayer = {
-      // id: `gjFillLayer_${featureIndex}`,
-      id: layerId,
-      type: "fill",
-      source: {
-         type: "geojson",
-         data: geoJSON,
-      },
-      paint: {
-         "fill-color": `${color || layerColor}`,
-         "fill-opacity": fillOpacity || 0.2,
-      },
-   }
-   
-   const outlineLayer = {
-   
-      id: `gjOutlineLayer_${layerId}`,
-      type: "line",
-      source: {
-         type: "geojson",
-         data: geoJSON,
-      },
-      paint: {
-			"line-color": `${color || layerColor}`,
-			"line-opacity": 1,
-			"line-width": thickness || 1,
-      },
+
+   if (layerId) {
+
+      const fillLayer = {
+         // id: `gjFillLayer_${featureIndex}`,
+         id: layerId,
+         type: "fill",
+         source: {
+            type: "geojson",
+            data: geoJSON,
+         },
+         paint: {
+            "fill-color": `${color || layerColor}`,
+            "fill-opacity": fillOpacity || 0.2,
+         },
+      }
+      
+      const outlineLayer = {
+      
+         id: `gjOutlineLayer_${layerId}`,
+         type: "line",
+         source: {
+            type: "geojson",
+            data: geoJSON,
+         },
+         paint: {
+            "line-color": `${color || layerColor}`,
+            "line-opacity": 1,
+            "line-width": thickness || 1,
+         },
+      };
+      
+      return {
+         fillLayer,
+         outlineLayer,
+      };
+
+   } else {
+      return null;
    };
    
-   return {
-      fillLayer,
-      outlineLayer,
-   };
 };
 
 
@@ -288,6 +295,62 @@ function mapboxPanToGeoJSON(map, centerCoords, bounds, {zoom=16, pitch=0, bearin
 };
 
 
+// SIMPLE MAPBOX GJ. RENDER FN.
+const mapboxDrawFeatFeatColl = function ({mapboxMap, featOrFeatColl}) {
+
+   try {
+
+      // RENDER ONLY FEATS. OR FEAT. COLLS.
+      if (mapboxMap && _CheckGeoJSON.isValidFeatOrColl(featOrFeatColl)) {
+   
+         // CALC. SOME METADATA
+         const gjUniqueID = featOrFeatColl._id;
+         const gjCenterCoords = turf.coordAll(turf.centerOfMass(featOrFeatColl))[0];
+         
+   
+         // INIT. MAPBOX LAYERS
+         const gjOutlineLayer = getMapboxLayers(featOrFeatColl, {featureIndex: gjUniqueID, color: "#009432", thickness: 1, fillOpacity: null}).outlineLayer
+         const gjFillLayer = getMapboxLayers(featOrFeatColl, {featureIndex: gjUniqueID, color: 'white', thickness: null, fillOpacity: 0.25}).fillLayer
+         
+   
+         // INIT. MAPBOX MARKER
+         const mapboxMarker = new mapboxgl.Marker().setLngLat(gjCenterCoords);
+   
+         
+         // CLEAR PREVIOUSLY RENDERED LAYERS
+         sanitizeMapboxLayers({map: mapboxMap, renderedLayers: LayersController.returnSavedLayers()});
+         removeMapboxMarkers(MarkersController.returnSavedMarkers());
+      
+            
+         // // PAN MAP TO GEOJSON'S CENTER
+
+         // console.log(gjOutlineLayer)
+         // console.log(gjFillLayer)
+      
+         
+         // ADD LAYERS TO MAPBOX MAP
+         addMapboxLayer(mapboxMap, gjOutlineLayer);
+         addMapboxLayer(mapboxMap, gjFillLayer);
+         mapboxMarker.addTo(mapboxMap);
+         
+         
+         // SAVE THE LAYERS & MARKERS
+         LayersController.saveLayers(gjOutlineLayer);
+         LayersController.saveLayers(gjFillLayer);
+         MarkersController.saveMarker(mapboxMarker);
+
+         console.log(LayersController.returnSavedLayers());
+
+      } else {
+         throw new Error(`This function requires a GeoJSON Feature or FeatureCollection`)
+      }
+      
+   } catch (mapboxGJRenderErr) {
+      console.error(`mapboxGJRenderErr: ${mapboxGJRenderErr.message}`)
+   }
+};
+
+
 // PLOT/CHUNK RENDER FUNCTION
 function mapboxDrawFeature(mapboxMap, polygon, featureIdx) {
 
@@ -297,16 +360,22 @@ function mapboxDrawFeature(mapboxMap, polygon, featureIdx) {
       let polygonOutlineLayer = getMapboxLayers(polygon, {featureIndex: featureIdx, color: null, thickness: 2, fillOpacity: 0.1}).outlineLayer;
       let polygonFillLayer = getMapboxLayers(polygon, {featureIndex: featureIdx, color: null, thickness: 2, fillOpacity: 0.1}).fillLayer;
       
-      // ADD THE LAYERS TO THE MAPBOX MAP
-      addMapboxLayer(mapboxMap, polygonOutlineLayer);
-      addMapboxLayer(mapboxMap, polygonFillLayer);
-      
-      // ADD INTERACTION TO THE FILL LAYER
-      FillLayerHandler.interaction(mapboxMap, polygonFillLayer);
-      
-      // SAVE THE LAYERS
-      LayersController.saveLayers(polygonOutlineLayer);
-      LayersController.saveLayers(polygonFillLayer);
+      if (polygonOutlineLayer && polygonFillLayer) {
+
+         // ADD THE LAYERS TO THE MAPBOX MAP
+         addMapboxLayer(mapboxMap, polygonOutlineLayer);
+         addMapboxLayer(mapboxMap, polygonFillLayer);
+         
+         // ADD INTERACTION TO THE FILL LAYER
+         FillLayerHandler.interaction(mapboxMap, polygonFillLayer);
+            
+         // SAVE THE LAYERS
+         LayersController.saveLayers(polygonOutlineLayer);
+         LayersController.saveLayers(polygonFillLayer);
+
+      } else {
+         throw new Error(`Could not get Mapbox fill &/or outline layers for ${polygon}`)
+      };
       
    } catch (mapboxDrawFeatErr) {
       console.error(`mapboxDrawFeatErr: ${mapboxDrawFeatErr.message}`)
@@ -362,18 +431,19 @@ function openMapboxFeatPopup(map, props, centerLngLat) {
 };
 
 
+const getPresentationPoly = (geoJSONPoly, {useBuffer, bufferAmt, bufferUnits='kilometers'}) => {
+   const presentationPolygon = useBuffer ? _getBufferedPolygon(geoJSONPoly, bufferAmt, {bufferUnits}) : geoJSONPoly;
+   return presentationPolygon;
+};
+
+
 // RENDER GEOJSON ON DISPLAYED MAPS
 export const _RenderMaps = (function(avgBaseMap, clusterFeatsMap) {
 
    try {
 
-      const getPresentationPoly = (geoJSONPoly, {useBuffer, bufferAmt, bufferUnits='kilometers'}) => {
-         const presentationPolygon = useBuffer ? _getBufferedPolygon(geoJSONPoly, bufferAmt, {bufferUnits}) : geoJSONPoly;
-         return presentationPolygon;
-      };
-
       // pan map to entire cluster
-      const panToClusterGeoJSON = (geoJSON) => {
+      const panToClusterFeats = (geoJSON) => {
          const gjCenterCoords = turf.coordAll(turf.centerOfMass(geoJSON))[0];
          const gjBounds = turf.bbox(geoJSON);
          mapboxPanToGeoJSON(clusterFeatsMap, gjCenterCoords, gjBounds, {zoom:16, pitch:0, bearing:0, boundsPadding:0});
@@ -428,7 +498,7 @@ export const _RenderMaps = (function(avgBaseMap, clusterFeatsMap) {
             createMapboxPopup(props, centerLngLat);
          },         
          panClusterPlotsMap: (geojson) => {
-            panToClusterGeoJSON(geojson);
+            panToClusterFeats(geojson);
          },
          panClusterPlotsFeatMap: (geoJSONFeat, {zoomLevel}) => {
             panToClusterFeat(geoJSONFeat, {zoomLevel});
@@ -450,7 +520,7 @@ export const _RenderMaps = (function(avgBaseMap, clusterFeatsMap) {
             // fire custom fn.
             clusterFeatsMap.fire('closeAllPopups');
             
-            panToClusterGeoJSON(geoJSON);
+            panToClusterFeats(geoJSON);
             drawFeatureColl(geoJSON);
             drawFeatures(geoJSON, {useBuffer, bufferAmt, bufferUnits});
             drawFeatureLabels(geoJSON, {useBuffer, bufferUnits, bufferAmt, areaUnits});
@@ -506,7 +576,7 @@ function createHTMLMarker(props, latLngPosition, styleClass, {draggable=true}) {
 // TODO
 function renderFeatVertices(props) {
 
-}
+};
 
 
 const FillLayerHandler = ((leafletModalMap)=>{
@@ -539,7 +609,7 @@ const FillLayerHandler = ((leafletModalMap)=>{
             
             _ManipulateDOM.affectDOMElement(fillLayer.id, `selected`);
             
-            _openMapboxFeatPopup(map, layerData.layerProps, layerData.lngLatCenter);
+            openMapboxFeatPopup(map, layerData.layerProps, layerData.lngLatCenter);
 
             // get a new mapbox layer
             const clickedLayerId = `clickedLayer_${fillLayer.id}`;
@@ -740,59 +810,6 @@ const FillLayerHandler = ((leafletModalMap)=>{
    };
 
 })(FEAT_DETAIL_MAP);
-
-
-// SIMPLE MAPBOX GJ. RENDER FN.
-const mapboxDrawFeatFeatColl = function ({mapboxMap, featOrFeatColl}) {
-
-   try {
-
-      // RENDER ONLY FEATS. OR FEAT. COLLS.
-      if (mapboxMap && _CheckGeoJSON.isValidFeatOrColl(featOrFeatColl)) {
-   
-         // CALC. SOME METADATA
-         const gjUniqueID = featOrFeatColl._id;
-         const gjCenterCoords = turf.coordAll(turf.centerOfMass(featOrFeatColl))[0];
-         
-   
-         // INIT. MAPBOX LAYERS
-         const gjOutlineLayer = getMapboxLayers(featOrFeatColl, {featureIndex: gjUniqueID, color: "#009432", thickness: 1, fillOpacity: null}).outlineLayer
-         const gjFillLayer = getMapboxLayers(featOrFeatColl, {featureIndex: gjUniqueID, color: 'white', thickness: null, fillOpacity: 0.25}).fillLayer
-         
-   
-         // INIT. MAPBOX MARKER
-         const mapboxMarker = new mapboxgl.Marker().setLngLat(gjCenterCoords);
-   
-         
-         // CLEAR PREVIOUSLY RENDERED LAYERS
-         sanitizeMapboxLayers({map: mapboxMap, renderedLayers: LayersController.returnSavedLayers()});
-         removeMapboxMarkers(MarkersController.returnSavedMarkers());
-      
-            
-         // // PAN MAP TO GEOJSON'S CENTER
-      
-         
-         // ADD LAYERS TO MAPBOX MAP
-         addMapboxLayer(mapboxMap, gjOutlineLayer);
-         addMapboxLayer(mapboxMap, gjFillLayer);
-         mapboxMarker.addTo(mapboxMap);
-         
-         
-         // SAVE THE LAYERS & MARKERS
-         LayersController.saveLayers(gjOutlineLayer);
-         LayersController.saveLayers(gjFillLayer);
-         MarkersController.saveMarker(mapboxMarker);
-
-         // console.log(LayersController.returnSavedLayers());
-
-      } else {
-         throw new Error(`This function requires a GeoJSON Feature or FeatureCollection`)
-      }
-      
-   } catch (mapboxGJRenderErr) {
-      console.error(`mapboxGJRenderErr: ${mapboxGJRenderErr.message}`)
-   }
-};
 
 
 function leafletPanToPoint(map, pointFeature, {zoomLevel=8}) {

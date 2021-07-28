@@ -6,11 +6,13 @@ export const APP_STATE = (function() {
    // GLOBAL VARS.
    const CONFIG_DEFAULTS = Object.freeze({
       
+      // RENDERED_PLOT_BUFFER: -0.005,
       RENDERED_PLOT_BUFFER: -0.005,
       
       // TODO > MOVE THESE TO SETTINGS INPUTS
       PLOTS_MAP: {
-         ZOOM: 15,
+         // ZOOM: 15,
+         ZOOM: 12,
          PITCH: 50,
          BEARING: 10,
          STROKE_THICKNESS: 2,

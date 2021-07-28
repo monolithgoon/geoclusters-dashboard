@@ -432,13 +432,40 @@ export const _GeometryMath = (()=>{
 })();
 
 
+// TODO
+const catchError = function(fn, errDescr=null) {
+	return function() {
+		try {
+			console.log(fn)
+			return fn.apply(this, arguments);
+		} catch(err) {
+			console.error(`${errDescr}: ${err.message}`)
+		};
+	};
+};
+
+
 export const _TurfHelpers = (()=>{
 
 	return {
 
-		buffer: (geoJSON, bufferRadius, {units}) => {
-			turf.buffer(geoJSON, bufferRadius, {units});
-			// _errorHandler(turf.buffer(geoJSON, bufferRadius, {units}), "turfBufferErr");
+		getType: (geoJSON) => {
+			try {
+				return turf.getType(geoJSON);
+			} catch (getTypeErr) {
+				console.error(`getTypeErr: ${getTypeErr.message}`);
+			};
+		},
+
+		buffer: (geoJSON, bufferRadius, {units='kilometers'}) => {
+
+			// return catchError(turf.buffer(geoJSON, bufferRadius, {units}), "turfBufferErr");
+
+			try {
+				return turf.buffer(geoJSON, bufferRadius, {units});
+			} catch (turfBufferErr) {
+				console.error(`turfBufferErr: ${turfBufferErr.message}`)
+			};			
 		},
 
 		midpoint: (coords1, coords2) => {
@@ -473,7 +500,7 @@ export const _TurfHelpers = (()=>{
 			};
 		},
 
-		calcPolyArea: (polygon, {units = `hectares`}) => {
+		calcPolyArea: (polygon, {units = `hectares`}={}) => {
 			let polyArea;
 			try {
 				if (polygon) {
@@ -491,6 +518,8 @@ export const _TurfHelpers = (()=>{
 						case units === `sqm` || units === `square meters`:
 							polyArea = polyArea;
 							break;
+						case !units:
+							polyArea = polyArea;
 						default:
 							break;
 					}
@@ -611,7 +640,55 @@ export function _sanitizeFeatCollCoords(featureCollection = _mandatoryParam()) {
 
 
 // HACK > REMOVES THE "TAILS"  FROM THE CHUNKS
+
+// SANDBOX > 
+// SOMETIMES, BUFFERING A POLYGON DEFORMS IT
+// turf.buffer SOMETIMES MUTILATES A MULTIPOLYGON CHUNK; DEAL WITH THAT
+// THIS REVERTS THE BUFFER TO THE ORG. POLY IF ANY DEFORMATION WOULD HAPPEN
 export function _getBufferedPolygon(polygon, bufferAmt, {bufferUnits="kilometers"}) {
+
+	console.log(_TurfHelpers.getType(polygon))
+
+   if (_TurfHelpers.getType(polygon) === "Polygon") {
+      
+      let bufferedPolygon = _TurfHelpers.buffer(polygon, bufferAmt, {units: bufferUnits});
+
+		// console.log(_TurfHelpers.calcPolyArea(polygon))
+		// console.log({bufferAmt}, {bufferUnits})
+		// console.log({bufferedPolygon})
+		// if (bufferedPolygon) console.log(_TurfHelpers.calcPolyArea(bufferedPolygon))
+		
+      // SOMETIMES turf.buffer RETURNES "undefined"
+      if (bufferedPolygon && _TurfHelpers.getType(bufferedPolygon) === "Polygon") {
+
+			// turf.buffer removes feature.geometry._id ...
+			bufferedPolygon.geometry["_id"] = polygon.geometry._id;
+   
+         if (_TurfHelpers.calcPolyArea(polygon) < 0.5) { return polygon; }
+         else if (_TurfHelpers.getType(polygon) !== _TurfHelpers.getType(bufferedPolygon)) {
+            return polygon;
+         } 
+         else if (bufferAmt > 0 && _TurfHelpers.calcPolyArea(bufferedPolygon) < _TurfHelpers.calcPolyArea(polygon)) { 
+            return polygon;
+         }
+         else if (bufferAmt < 0 && _TurfHelpers.calcPolyArea(bufferedPolygon) > _TurfHelpers.calcPolyArea(polygon)) { 
+            return polygon; 
+         } else {
+            // console.error(`rita ora 6`)
+            // console.error(_TurfHelpers.calcPolyArea(bufferedPolygon))
+            return bufferedPolygon
+         };
+   
+      } else {
+         return polygon;
+      };
+
+   } else {
+      return polygon;
+   };
+};
+
+export function _getBufferedPolygon2(polygon, bufferAmt, {bufferUnits="kilometers"}) {
 
 	try {
 		
@@ -621,13 +698,14 @@ export function _getBufferedPolygon(polygon, bufferAmt, {bufferUnits="kilometers
 	
 			const bufferedPolygon = _TurfHelpers.buffer(polygon, bufferAmt, {units: bufferUnits});
 			console.log(turf.area(polygon))
-			console.log(turf.area({bufferAmt}, {units}))
+			console.log({bufferAmt}, {bufferUnits})
+			console.log({bufferedPolygon})
 			console.log(turf.area(bufferedPolygon))
 	
 			// SOMETIMES turf.buffer RETURNS "undefined" > DEAL WITH IT
 			finalPolygon = bufferedPolygon ? bufferedPolygon : polygon;
 	
-			// switch (true) {
+			// switch (true) {		
 			// 	case calcArea:
 					
 			// 		break;

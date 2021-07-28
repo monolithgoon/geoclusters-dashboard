@@ -320,7 +320,7 @@ line-height: 15px;
 		width: 100%;
 	} */
 	
-	.range-input-wrapper .range-input {
+	.range-input-wrapper > .range-input {
 		/* margin: 0 5px; */
 		-webkit-appearance: none;  /* Override default CSS styles */
 		appearance: none;
