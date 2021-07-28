@@ -2,7 +2,7 @@
 import { _queryAPI } from "./data-controller.js";
 import { _TraverseObject, _getCheckedRadio, _stringifyPropValues, _TurfHelpers, _ManipulateDOM } from "../_utils.js";
 import { _sanitizeFeatCollCoords, _CheckGeoJSON, _getBufferedPolygon } from "../_utils.js";
-import { _RenderMaps, _switchMapboxMapLayer } from "../maps-controller.js";
+import { _RenderMaps, _switchMapboxMapLayer } from "../controllers/maps-controller.js";
 import { APP_STATE } from "./state-controller.js";
 import { _getClusterFeatProps, _GetClusterProps } from "../cluster-props-adapter.js";
 import { _GenerateClusterFeatMarkup, _GenerateClusterMarkup, _GenClusterModalMarkup } from "./markup-generator.js";

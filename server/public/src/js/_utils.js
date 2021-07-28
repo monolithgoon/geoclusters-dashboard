@@ -640,8 +640,6 @@ export function _sanitizeFeatCollCoords(featureCollection = _mandatoryParam()) {
 
 
 // HACK > REMOVES THE "TAILS"  FROM THE CHUNKS
-
-// SANDBOX > 
 // SOMETIMES, BUFFERING A POLYGON DEFORMS IT
 // turf.buffer SOMETIMES MUTILATES A MULTIPOLYGON CHUNK; DEAL WITH THAT
 // THIS REVERTS THE BUFFER TO THE ORG. POLY IF ANY DEFORMATION WOULD HAPPEN
@@ -653,6 +651,7 @@ export function _getBufferedPolygon(polygon, bufferAmt, {bufferUnits="kilometers
       
       let bufferedPolygon = _TurfHelpers.buffer(polygon, bufferAmt, {units: bufferUnits});
 
+		// REMOVE
 		// console.log(_TurfHelpers.calcPolyArea(polygon))
 		// console.log({bufferAmt}, {bufferUnits})
 		// console.log({bufferedPolygon})

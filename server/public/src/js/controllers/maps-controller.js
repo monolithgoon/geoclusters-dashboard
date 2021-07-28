@@ -1,10 +1,10 @@
 `use strict`
-import { AVG_BASE_MAP, CLUSTER_PLOTS_MAP, FEAT_DETAIL_MAP } from "./config/maps-config.js";
-import { _clusterFeatPopupMarkup, _GenerateClusterFeatMarkup, _leafletMarkerMarkup } from "./avg-controllers/markup-generator.js";
-import { pollAVGSettingsValues, _getDOMElements } from "./avg-controllers/ui-controller.js";
-import { _getClusterFeatProps } from "./cluster-props-adapter.js";
-import { LAYER_COLORS } from "./mapbox-layer-colors.js";
-import { _TurfHelpers, _getBufferedPolygon, _CheckGeoJSON, _ManipulateDOM, _GeometryMath } from "./_utils.js";
+import { AVG_BASE_MAP, CLUSTER_PLOTS_MAP, FEAT_DETAIL_MAP } from "../config/maps-config.js";
+import { _clusterFeatPopupMarkup, _GenerateClusterFeatMarkup, _leafletMarkerMarkup } from "../avg-controllers/markup-generator.js";
+import { pollAVGSettingsValues, _getDOMElements } from "../avg-controllers/ui-controller.js";
+import { _getClusterFeatProps } from "../cluster-props-adapter.js";
+import { LAYER_COLORS } from "../mapbox-layer-colors.js";
+import { _TurfHelpers, _getBufferedPolygon, _CheckGeoJSON, _ManipulateDOM, _GeometryMath } from "../_utils.js";
 
 
 const getLayerColor = (index) => {
@@ -524,6 +524,7 @@ export const _RenderMaps = (function(avgBaseMap, clusterFeatsMap) {
             drawFeatureColl(geoJSON);
             drawFeatures(geoJSON, {useBuffer, bufferAmt, bufferUnits});
             drawFeatureLabels(geoJSON, {useBuffer, bufferUnits, bufferAmt, areaUnits});
+            
             panBaseMap__(geoJSON, {baseMapZoomLvl});
          },
       };
