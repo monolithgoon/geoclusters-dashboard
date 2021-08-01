@@ -38,8 +38,7 @@ export const APP_STATE = (function() {
                                     features.properties.plot_owner_first_name,
                                     features.properties.plot_owner_last_name,
                                     features.properties.plot_owner_gender`,
-      CLUSTER_CARD_DATA_ATTR_NAME: `geoclusterdatastream`,
-      CLUSTER_FEAT_CARD_DATA_ATTR_NAME: `clusterfeatdatastream`,
+      CLUSTER_RESULT_DATA_ATTR_NAME: `geoclusterdatastream`,
 
    });
 

@@ -1,5 +1,5 @@
-import { _GetClusterProps, _getClusterFeatProps } from "../cluster-props-adapter.js";
-import { _createCard, _createDiv, _joinWordsArray } from "../_utils.js";
+import { _GetClusterProps, _getClusterFeatProps } from "../interfaces/cluster-props-adapter.js";
+import { _createCard, _createDiv, _joinWordsArray } from "../utils/helpers.js";
 
 
 export const _GenerateClusterMarkup = ((classList) => {

@@ -1,12 +1,13 @@
 'use strict'
 import { _queryAPI } from "./data-controller.js";
-import { _TraverseObject, _getCheckedRadio, _stringifyPropValues, _TurfHelpers, _ManipulateDOM } from "../_utils.js";
-import { _sanitizeFeatCollCoords, _CheckGeoJSON, _getBufferedPolygon } from "../_utils.js";
+import { _TraverseObject, _getCheckedRadio, _stringifyPropValues, _TurfHelpers, _ManipulateDOM } from "../utils/helpers.js";
+import { _sanitizeFeatCollCoords, _CheckGeoJSON, _getBufferedPolygon } from "../utils/helpers.js";
 import { _RenderMaps, _switchMapboxMapLayer } from "../controllers/maps-controller.js";
 import { APP_STATE } from "./state-controller.js";
-import { _getClusterFeatProps, _GetClusterProps } from "../cluster-props-adapter.js";
+import { _getClusterFeatProps, _GetClusterProps } from "../interfaces/cluster-props-adapter.js";
 import { _GenerateClusterFeatMarkup, _GenerateClusterMarkup, _GenClusterModalMarkup } from "./markup-generator.js";
 import { _clientSideRouter, _navigateTo } from "../routers/router.js";
+import { DOM_ELEMENTS } from "../utils/dom-elements.js";
 
 
 export function _getDOMElements() {
@@ -244,7 +245,7 @@ const ShowActivity = (()=>{
 
 
 // CALC. TIME TO EXE. A FN. && DISPLAY INDICATOR
-const MonitorExecution = (function() {
+const MonitorExecution = (function(dom) {
 
 	let returnedData, executionMs;
 
@@ -252,7 +253,7 @@ const MonitorExecution = (function() {
 
 		execute: async function(callback) {
 						
-			ShowActivity.activityStart(_getDOMElements().appActivityIndWrapper, _getDOMElements().appActivityInd);
+			ShowActivity.activityStart(dom.appActivityIndWrapper, dom.appActivityInd);
 	
          console.log(`%c This funciton [${callback}] is executing ..`, `background-color: lightgrey; color: blue;`);
 
@@ -264,7 +265,7 @@ const MonitorExecution = (function() {
 
 			executionMs = exeEnd - exeStart;
 
-			ShowActivity.activityEnd(_getDOMElements().appActivityIndWrapper, _getDOMElements().appActivityInd);
+			ShowActivity.activityEnd(dom.appActivityIndWrapper, dom.appActivityInd);
 		},
 
 		getExecutionTime: function() {
@@ -276,7 +277,7 @@ const MonitorExecution = (function() {
 			return returnedData;
 		},
 	};
-})();
+})(DOM_ELEMENTS());
 
 
 // open modal for clicked result
@@ -539,7 +540,7 @@ function populateResultsSidebar(dbCollection) {
             const clusterResultDiv = _GenerateClusterMarkup.getClusterResultDiv(clusterGeoJSON);
 
             // 2a.
-            _ManipulateDOM.populateDataset(clusterResultDiv, APP_STATE.CONFIG_DEFAULTS.CLUSTER_CARD_DATA_ATTR_NAME, JSON.stringify(clusterGeoJSON));
+            _ManipulateDOM.populateDataset(clusterResultDiv, APP_STATE.CONFIG_DEFAULTS.CLUSTER_RESULT_DATA_ATTR_NAME, JSON.stringify(clusterGeoJSON));
             
             // append result item div to sidebar
             _ManipulateDOM.appendList(_getDOMElements().resultsListWrapper, clusterResultDiv)
@@ -565,8 +566,64 @@ $(document).ready(function () {
 });
 
 
+const InputsHandlers = ((dom) => {
+         
+   return {
+
+      areaUnits: (radios) => {
+         radios.forEach(radio => {
+            radio.addEventListener(`change`, async (e) => {
+               if (APP_STATE.retreiveLastRenderedGJ()) {
+                  _RenderMaps.renderClusterPlotLabel(APP_STATE.retreiveLastRenderedGJ(), 
+                     {
+                        useBuffer: pollAVGSettingsValues().bufferFeatsChk,
+                        bufferUnits: pollAVGSettingsValues().distanceUnits,
+                        bufferAmt: APP_STATE.CONFIG_DEFAULTS.RENDERED_PLOT_BUFFER,
+                        areaUnits: pollAVGSettingsValues().areaUnits
+                     }
+                  );
+               };
+            });
+         });
+      },
+
+      plotsMapStyle: () => {
+         dom.plotsMapStyleRadios.forEach(radio => {
+            radio.addEventListener(`change`, _switchMapboxMapLayer);
+         });   
+      },
+
+      // TODO > 
+      filterCheckboxes: (checkboxes) => {
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener(`change`, async (e)=>{
+               const checkboxLabelTxt = e.target.labels[0].innerText; 
+               if (e.target.checked) {
+                  console.log(`%c ${checkboxLabelTxt} checked`, `color: white; background-color:blue;`);
+               } else {
+                  console.log(`%c ${checkboxLabelTxt} un-checked`, `color: white; background-color:green;`);
+               };
+               // filterResults(checkboxLabelTxt);
+               // renderFilterPill(checkboxLabelTxt);
+            });
+         });
+      },
+
+      masterFilterCheckboxes: (masterCheckboxes) => {
+         masterCheckboxes.forEach(masterCheckbox => {
+            const inputGroupWrapper = _ManipulateDOM.getParentElement(masterCheckbox, {parentLevel: 4})
+            const slaveCheckboxes = _ManipulateDOM.getSubordinates(inputGroupWrapper, masterCheckbox, ".form-check-input")
+            masterSlaveControl(masterCheckbox, slaveCheckboxes);
+         });
+      },
+
+   }
+   
+})(DOM_ELEMENTS());
+
+
 // DOM ELEM. EVT. LIST'NRS.
-function ActivateEventListeners() {
+function _activateEventListeners() {
 
    try {
 
@@ -583,28 +640,39 @@ function ActivateEventListeners() {
    
          // ADD CLICK HAND. AFTER DIVS HAVE BEEN MADE
          resultTitleClickHandler(_getDOMElements().resultTitleDivs);
+
+         // SANDBOX > SAVE DATA FROM BACKEND
+         const geoClusters = JSON.parse(_ManipulateDOM.getDataset(DOM_ELEMENTS().geoClustersDatasetDiv));
+
+         APP_STATE.saveDBCollection(`geo-clusters`, [...geoClusters]);
+
+         _RenderMaps.renderBaseMap(APP_STATE.returnDBCollection(`geo-clusters`));
+
       });
+
 
       // SETTINGS CHANGE EVENT SEQ.
-      getAreaUnitsRadios().forEach(radio => {
-         radio.addEventListener(`change`, async (e) => {
-            if (APP_STATE.retreiveLastRenderedGJ()) {
-               _RenderMaps.renderClusterPlotLabel(APP_STATE.retreiveLastRenderedGJ(), 
-                  {
-                     useBuffer: pollAVGSettingsValues().bufferFeatsChk,
-                     bufferUnits: pollAVGSettingsValues().distanceUnits,
-                     bufferAmt: APP_STATE.CONFIG_DEFAULTS.RENDERED_PLOT_BUFFER,
-                     areaUnits: pollAVGSettingsValues().areaUnits
-                  }
-               );
-            };
-         });
-      });
+      InputsHandlers.areaUnits(getAreaUnitsRadios());
+      // getAreaUnitsRadios().forEach(radio => {
+      //    radio.addEventListener(`change`, async (e) => {
+      //       if (APP_STATE.retreiveLastRenderedGJ()) {
+      //          _RenderMaps.renderClusterPlotLabel(APP_STATE.retreiveLastRenderedGJ(), 
+      //             {
+      //                useBuffer: pollAVGSettingsValues().bufferFeatsChk,
+      //                bufferUnits: pollAVGSettingsValues().distanceUnits,
+      //                bufferAmt: APP_STATE.CONFIG_DEFAULTS.RENDERED_PLOT_BUFFER,
+      //                areaUnits: pollAVGSettingsValues().areaUnits
+      //             }
+      //          );
+      //       };
+      //    });
+      // });
 
       // CHANGE CLUSTER PLOTS MAP STYLE
-      _getDOMElements().plotsMapStyleRadios.forEach(radio => {
-         radio.addEventListener(`change`, _switchMapboxMapLayer);
-      });
+      InputsHandlers.plotsMapStyle();
+      // _getDOMElements().plotsMapStyleRadios.forEach(radio => {
+      //    radio.addEventListener(`change`, _switchMapboxMapLayer);
+      // });
 
       // RESULT ITEM TITLE CLICK HAND.
       resultTitleClickHandler(_getDOMElements().resultTitleDivs);
@@ -615,29 +683,30 @@ function ActivateEventListeners() {
       masterSlaveControl(selectAllResultsChk, slaveResultCheckboxes);
 
       // TODO
-      // RESULT ITEM CHECKBOX EVENT SEQ.
+      // RESULT ITEM CHECKBOX MAP+FILTER EVENT SEQ.
 
-      // TODO
       // FILTER CHECKBOX EVENT SEQ.
-      getFilterCheckboxes().filterCheckboxes.forEach(filterCheckbox => {
-         filterCheckbox.addEventListener(`change`, async (e)=>{
-            const checkboxLabelTxt = e.target.labels[0].innerText; 
-            if (e.target.checked) {
-               console.log(`%c ${checkboxLabelTxt} checked`, `color: white; background-color:blue;`);
-            } else {
-               console.log(`%c ${checkboxLabelTxt} un-checked`, `color: white; background-color:green;`);
-            };
-            // filterResults(checkboxLabelTxt);
-            // renderFilterPill(checkboxLabelTxt);
-         });
-      });
+      InputsHandlers.filterCheckboxes(getFilterCheckboxes().filterCheckboxes);
+      // getFilterCheckboxes().filterCheckboxes.forEach(filterCheckbox => {
+      //    filterCheckbox.addEventListener(`change`, async (e)=>{
+      //       const checkboxLabelTxt = e.target.labels[0].innerText; 
+      //       if (e.target.checked) {
+      //          console.log(`%c ${checkboxLabelTxt} checked`, `color: white; background-color:blue;`);
+      //       } else {
+      //          console.log(`%c ${checkboxLabelTxt} un-checked`, `color: white; background-color:green;`);
+      //       };
+      //       // filterResults(checkboxLabelTxt);
+      //       // renderFilterPill(checkboxLabelTxt);
+      //    });
+      // });
    
-      // FILTER CHECKBOX BEH.
-      getFilterCheckboxes().filterCheckboxMasters.forEach(masterCheckbox => {
-         const inputGroupWrapper = _ManipulateDOM.getParentElement(masterCheckbox, {parentLevel: 4})
-         const slaveCheckboxes = _ManipulateDOM.getSubordinates(inputGroupWrapper, masterCheckbox, ".form-check-input")
-         masterSlaveControl(masterCheckbox, slaveCheckboxes);
-      });
+      // MASTER FILTER CHECKBOX BEH.
+      InputsHandlers.masterFilterCheckboxes(getFilterCheckboxes().filterCheckboxMasters);
+      // getFilterCheckboxes().filterCheckboxMasters.forEach(masterCheckbox => {
+      //    const inputGroupWrapper = _ManipulateDOM.getParentElement(masterCheckbox, {parentLevel: 4})
+      //    const slaveCheckboxes = _ManipulateDOM.getSubordinates(inputGroupWrapper, masterCheckbox, ".form-check-input")
+      //    masterSlaveControl(masterCheckbox, slaveCheckboxes);
+      // });
 
       // EXPAND APP SIDEBAR
       _getDOMElements().sidebarExpandBtn.addEventListener(`click`, ()=>{
@@ -650,4 +719,4 @@ function ActivateEventListeners() {
 };
 
 
-export {ActivateEventListeners};
+export { _activateEventListeners };

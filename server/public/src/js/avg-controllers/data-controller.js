@@ -1,3 +1,4 @@
+`use strict`
 export async function _queryAPI(fetch, apiHost, apiCollectionPath, {queryString=``}) {
 
 	console.log(`%c ${this.currentTarget} is getting latest data from API`, `background-color: lightgrey; color: blue;`);

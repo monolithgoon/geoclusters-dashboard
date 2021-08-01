@@ -237,6 +237,8 @@ block dashboard
                         //-       //- a.admin1-name(href='#') President • Abubara Ibrahim Ismaila
                         //-   .h-divider-grey-100
 
+                        span#geo_clusters_dataset_div(data-geoclusters = `${JSON.stringify(geoClusters)}`)
+
                         each geoCluster, clusterIdx in geoClusters
                           .result-item.flex-col-start(data-geoclusterdatastream=`${JSON.stringify(geoCluster)}`)
                             .result-item-header.flex-row-start

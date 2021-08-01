@@ -1,10 +1,11 @@
 `use strict`;
-import { ActivateEventListeners } from "./avg-controllers/ui-controller.js";
+import { _activateEventListeners } from "./avg-controllers/ui-controller.js";
 import { _clientSideRouter } from "./routers/router.js";
 
 
-async function initApp () {
-   ActivateEventListeners();
+async function initApp() {
+
+   _activateEventListeners();
 };
 
 
