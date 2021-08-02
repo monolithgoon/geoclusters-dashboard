@@ -642,7 +642,7 @@ function _activateEventListeners() {
          
          APP_STATE.saveDBCollection(`geo-clusters`, [...geoClusters]); 
 
-         _RenderMaps.renderClusters(geoClusters);
+         await _RenderMaps.renderClusters(geoClusters);
       });
 
 

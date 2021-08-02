@@ -433,7 +433,7 @@ export const _GeometryMath = (()=>{
 
 
 // TODO
-const catchError = function(fn, errDescr=null) {
+const catchError2 = function(fn, errDescr=null) {
 	return function() {
 		try {
 			console.log(fn)
@@ -441,6 +441,17 @@ const catchError = function(fn, errDescr=null) {
 		} catch(err) {
 			console.error(`${errDescr}: ${err.message}`)
 		};
+	};
+};
+
+
+const handleError = (err) => {
+	console.error(err.message);
+};
+
+const catchError = (fn, errorHandler) => {
+	return function() {
+		fn().catch(errorHandler)
 	};
 };
 
@@ -457,7 +468,7 @@ export const _TurfHelpers = (()=>{
 			};
 		},
 
-		buffer: (geoJSON, bufferRadius, {units='kilometers'}) => {
+		buffer: catchError(async (geoJSON, bufferRadius, {units='kilometers'}) => {
 
 			// return catchError(turf.buffer(geoJSON, bufferRadius, {units}), "turfBufferErr");
 
@@ -466,13 +477,21 @@ export const _TurfHelpers = (()=>{
 			} catch (turfBufferErr) {
 				console.error(`turfBufferErr: ${turfBufferErr.message}`)
 			};			
-		},
+		}, handleError),
 
 		midpoint: (coords1, coords2) => {
 			try {
 				return turf.midpoint(coords1, coords2)
 			} catch (turfMidpointErr) {
 				console.error(`turfMidpointErr: ${turfMidpointErr.message}`)
+			};
+		},
+
+		centerOfMass: (featGeometry) => {
+			try {
+				return turf.centerOfMass(featGeometry);
+			} catch (comErr) {
+				console.error(`comErr: ${comErr.message}`)
 			};
 		},
 

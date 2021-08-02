@@ -11,7 +11,7 @@ export const AVG_BASE_MAP = L.map("avg_base_map_container", { zoomSnap: 0.01 })
    // .setView([36.8370066107919, 10.059871561852127], 14.5);
 
    // .setView([4.654776030857737, 7.03691902649687], 14.5);
-   .setView([4.4699247854766355, 7.217137278865754], 6.4);
+   .setView([9.4699247854766355, 7.217137278865754], 6.4);
 
 
 // INIT. FEAT. DETAIL MINIMAP

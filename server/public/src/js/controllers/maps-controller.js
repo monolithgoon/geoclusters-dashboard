@@ -140,6 +140,16 @@ function removeMapboxMarkers (markersArray) {
 };
 
 
+function getFeatCenter(featGeometry) {
+   const lngLat = _TurfHelpers.centerOfMass(featGeometry).geometry.coordinates; // LNG-LAT FORMAT
+   const latLng = [lngLat[1], lngLat[0]] // CONVERT TO LAT. LNG FORMAT
+   return {
+      lngLat,
+      latLng,
+   };
+};
+
+
 // EXTRACT GEOJSON DATA FROM A MAPBOX LAYER EVENT
 function getMapboxLayerData(layer) {
    const layerGeoJSON = layer.features[0];
@@ -150,8 +160,9 @@ function getMapboxLayerData(layer) {
    const layerGeometry = layer.features[0].geometry;
    const layerCoords = layerGeometry.coordinates[0];
 
-   const turfCenter = turf.centerOfMass(layerGeometry).geometry.coordinates; // LNG. LAT. FORMAT
-   const latLngCenter = [turfCenter[1], turfCenter[0]] // CONVERT TO LAT. LNG FORMAT
+   // const turfCenter = turf.centerOfMass(layerGeometry).geometry.coordinates; // LNG. LAT. FORMAT
+   // const latLngCenter = [turfCenter[1], turfCenter[0]] // CONVERT TO LAT. LNG FORMAT
+   const latLngCenter = getFeatCenter(layerGeometry).latLng;
 
    return {
       layerGeoJSON,
@@ -513,13 +524,13 @@ export const _RenderMaps = (function(avgBaseMap, clusterFeatsMap) {
          renderClusterPlotLabel: (geoJSON, {useBuffer=false, bufferUnits, bufferAmt, areaUnits}) => {
             drawFeatureLabels(geoJSON, {useBuffer, bufferUnits, bufferAmt, areaUnits});
          },
-         renderClusters: (featureCollections) => {
+         renderClusters: async (featureCollections) => {
             if (featureCollections.length > 0) {
                featureCollections.forEach(featColl=>{
                   if (featColl.features.length > 0) {
-                     featColl.features.forEach(feature => {
-                        LeafletMaps.renderFeature(feature, {map: avgBaseMap});
-                        // LeafletMaps.renderFeatColl(avgBaseMap, featColl);
+                     featColl.features.forEach(async (feature) => {
+                        await LeafletMaps.renderFeature(feature, {map: avgBaseMap});
+                        // await LeafletMaps.renderFeatureMarker(feature, {map: avgBaseMap});
                      });
                   };
                });
@@ -531,7 +542,7 @@ export const _RenderMaps = (function(avgBaseMap, clusterFeatsMap) {
             clusterFeatsMap.fire('closeAllPopups');
             
             panToClusterFeats(geoJSON);
-            drawFeatureColl(geoJSON);
+            // drawFeatureColl(geoJSON);
             drawFeatures(geoJSON, {useBuffer, bufferAmt, bufferUnits});
             drawFeatureLabels(geoJSON, {useBuffer, bufferUnits, bufferAmt, areaUnits});
             
@@ -556,7 +567,7 @@ const LeafletMaps = ((baseMap)=>{
          const featProps = feature.properties;
          const featGeometry = feature.geometry;
          const featCoords = feature.geometry.coordinates;
-         const featCenter = feature.latLngCenter;
+         const featCenter = getFeatCenter(featGeometry).latLng;
          return {
             featProps,
             featGeometry,
@@ -598,17 +609,18 @@ const LeafletMaps = ((baseMap)=>{
          });
          return polygonFill;
       },
-      renderFeature: (feature, {map=baseMap}) => {
+      renderFeature: async (feature, {map=baseMap}) => {
 
-         const {featProps, featGeometry, featCoords, featCenter } = LeafletMaps.getFeatureData(feature);
+         const { featGeometry, featCoords } = LeafletMaps.getFeatureData(feature);
          
          LeafletMaps.getFeatPolyOutline(featGeometry).addTo(baseMapLayerGroup);
          LeafletMaps.getFeatPolyFill(featCoords).addTo(baseMapLayerGroup);
-         
-         // L.marker(featureData.latLngCenter).addTo(baseMapLayerGroup);
-
       },
-      renderFeatColl: (map=baseMap, featColl) => {
+      renderFeatureMarker: async (feature, {map=baseMap}) => {
+         const { featCenter } = LeafletMaps.getFeatureData(feature);
+         L.marker(featCenter).addTo(baseMapLayerGroup);
+      },
+      renderFeatColl: (featColl, {map=baseMap}) => {
 
       },
    }
@@ -617,7 +629,7 @@ const LeafletMaps = ((baseMap)=>{
 
 function getLeafletPolyOutline(geometry, {lineColor="white", lineWeight=4, lineOpacity=1}={}) {
    const polygonOutline = L.geoJSON(geometry, {
-      "color": lineColor, 
+      "color": lineColor,
       "weight": lineWeight,
       "opacity": lineOpacity,
    });

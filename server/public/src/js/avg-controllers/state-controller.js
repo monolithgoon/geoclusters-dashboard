@@ -7,7 +7,7 @@ export const APP_STATE = (function() {
    const CONFIG_DEFAULTS = Object.freeze({
       
       // RENDERED_PLOT_BUFFER: -0.005,
-      RENDERED_PLOT_BUFFER: -0.005,
+      RENDERED_PLOT_BUFFER: -0.0065,
       
       // TODO > MOVE THESE TO SETTINGS INPUTS
       PLOTS_MAP: {
