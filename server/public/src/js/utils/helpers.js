@@ -432,18 +432,18 @@ export const _GeometryMath = (()=>{
 })();
 
 
-// TODO
+// FIXME
 const catchError2 = function(fn, errDescr=null) {
 	return function() {
 		try {
-			console.log(fn)
+			// console.log(fn)
 			return fn.apply(this, arguments);
+			// fn.apply(this, arguments);
 		} catch(err) {
 			console.error(`${errDescr}: ${err.message}`)
 		};
 	};
 };
-
 
 const handleError = (err) => {
 	console.error(err.message);
@@ -468,16 +468,30 @@ export const _TurfHelpers = (()=>{
 			};
 		},
 
-		buffer: catchError(async (geoJSON, bufferRadius, {units='kilometers'}) => {
+		// buffer: catchError(async (geoJSON, bufferRadius, {units='kilometers'}) => {
 
-			// return catchError(turf.buffer(geoJSON, bufferRadius, {units}), "turfBufferErr");
+		// 	// return catchError(turf.buffer(geoJSON, bufferRadius, {units}), "turfBufferErr");
+
+		// 	return turf.buffer(geoJSON, bufferRadius, {units});
+
+		// 	// try {
+		// 	// 	return turf.buffer(geoJSON, bufferRadius, {units});
+		// 	// } catch (turfBufferErr) {
+		// 	// 	console.error(`turfBufferErr: ${turfBufferErr.message}`)
+		// 	// };
+				
+		// }, handleError),
+
+		buffer: (geoJSON, bufferRadius, {units='kilometers'}) => {
+
+			// return catchError2(turf.buffer(geoJSON, bufferRadius, {units}), "turfBufferErr");
 
 			try {
 				return turf.buffer(geoJSON, bufferRadius, {units});
 			} catch (turfBufferErr) {
 				console.error(`turfBufferErr: ${turfBufferErr.message}`)
-			};			
-		}, handleError),
+			};
+		},
 
 		midpoint: (coords1, coords2) => {
 			try {
@@ -673,7 +687,7 @@ export function _getBufferedPolygon(polygon, bufferAmt, {bufferUnits="kilometers
 		// REMOVE
 		// console.log(_TurfHelpers.calcPolyArea(polygon))
 		// console.log({bufferAmt}, {bufferUnits})
-		// console.log({bufferedPolygon})
+		console.log({bufferedPolygon})
 		// if (bufferedPolygon) console.log(_TurfHelpers.calcPolyArea(bufferedPolygon))
 		
       // SOMETIMES turf.buffer RETURNES "undefined"
