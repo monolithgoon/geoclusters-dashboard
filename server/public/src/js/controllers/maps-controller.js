@@ -408,7 +408,7 @@ function mapboxDrawLabels(mapboxMap, polygon, featureIdx, {areaUnits=`hectares`}
 const leafletRenderGeojson = function (leafletBaseMap, geojson, {zoomLevel=8}) {
    const gjCenterFeature = turf.centerOfMass(geojson);
    // RE-POSITION THE LEAFLET MAP
-   leafletPanToPoint(leafletBaseMap, gjCenterFeature, {zoomLevel});
+   LeafletMaps.panToPoint(leafletBaseMap, gjCenterFeature, {zoomLevel})
 };
 
 
@@ -484,9 +484,10 @@ export const _RenderMaps = (function(avgBaseMap, clusterFeatsMap) {
          });
       };
       
-      const panBaseMap__ = (geojson, {baseMapZoomLvl}) => {
-         leafletRenderGeojson(avgBaseMap, geojson, {baseMapZoomLvl});
-      };
+      // REMOVE
+      // const panBaseMap__ = (geojson, {baseMapZoomLvl}) => {
+      //    leafletRenderGeojson(avgBaseMap, geojson, {baseMapZoomLvl});
+      // };
 
       const createMapboxPopup = (props, centerLngLat) => {
          openMapboxFeatPopup(clusterFeatsMap, props, centerLngLat);
@@ -512,8 +513,17 @@ export const _RenderMaps = (function(avgBaseMap, clusterFeatsMap) {
          renderClusterPlotLabel: (geoJSON, {useBuffer=false, bufferUnits, bufferAmt, areaUnits}) => {
             drawFeatureLabels(geoJSON, {useBuffer, bufferUnits, bufferAmt, areaUnits});
          },
-         renderBaseMap: (geojson, {baseMapZoomLvl}) => {
-            panBaseMap__(geojson, {baseMapZoomLvl});
+         renderClusters: (featureCollections) => {
+            if (featureCollections.length > 0) {
+               featureCollections.forEach(featColl=>{
+                  if (featColl.features.length > 0) {
+                     featColl.features.forEach(feature => {
+                        LeafletMaps.renderFeature(feature, {map: avgBaseMap});
+                        // LeafletMaps.renderFeatColl(avgBaseMap, featColl);
+                     });
+                  };
+               });
+            };
          },
          renderEverythingNow: (geoJSON, {baseMapZoomLvl=0, useBuffer=false, bufferUnits, bufferAmt, areaUnits}) => {
             
@@ -525,7 +535,9 @@ export const _RenderMaps = (function(avgBaseMap, clusterFeatsMap) {
             drawFeatures(geoJSON, {useBuffer, bufferAmt, bufferUnits});
             drawFeatureLabels(geoJSON, {useBuffer, bufferUnits, bufferAmt, areaUnits});
             
-            panBaseMap__(geoJSON, {baseMapZoomLvl});
+            // panBaseMap__(geoJSON, {baseMapZoomLvl});
+            console.log(geoJSON)
+            LeafletMaps.panFeatCenter(geoJSON, {zoomLevel: baseMapZoomLvl});
          },
       };
 
@@ -533,6 +545,74 @@ export const _RenderMaps = (function(avgBaseMap, clusterFeatsMap) {
       console.error(`renderMapsErr: ${renderMapsErr.message}`)
    };   
 })(AVG_BASE_MAP, CLUSTER_PLOTS_MAP);
+
+
+const LeafletMaps = ((baseMap)=>{
+
+   const baseMapLayerGroup = LLayerGroupController.getLayerGroups().baseMapLayerGroup;
+
+   return {
+      getFeatureData: (feature) => {
+         const featProps = feature.properties;
+         const featGeometry = feature.geometry;
+         const featCoords = feature.geometry.coordinates;
+         const featCenter = feature.latLngCenter;
+         return {
+            featProps,
+            featGeometry,
+            featCoords,
+            featCenter,
+         };
+      },
+      panToPoint: (gjPointFeat, {map=baseMap, zoomLevel}) => {
+         const leafletGJLayer = L.geoJson();
+         leafletGJLayer.addData(gjPointFeat);
+         map.flyTo(leafletGJLayer.getBounds().getCenter(), zoomLevel);      
+      },
+      panFeatCenter: (gjFeature, {map=baseMap, zoomLevel}) => {
+         const featCenter = turf.centerOfMass(gjFeature);
+         LeafletMaps.panToPoint(featCenter, {map, zoomLevel});
+      },
+      addPointMarker: (gjPointFeat, {map=baseMap, zoomLevel}) => {
+
+      },
+      getFeatPolyOutline: (featGeometry, {lineColor="white", lineWeight=4, lineOpacity=1}={}) => {
+         const polygonOutline = L.geoJSON(featGeometry, {
+            "color": lineColor, 
+            "weight": lineWeight,
+            "opacity": lineOpacity,
+         });
+         return polygonOutline;      
+      },
+      getFeatPolyFill: (featCoords, {fillColor="green", fillOpacity=0.5}={}) => {
+         // FIXME > THE COORD. SYSTEM HERE IS OFF..
+         const polygonFill = L.polygon([...featCoords], {
+            style: {
+               fillColor: fillColor,
+               fillOpacity: fillOpacity,
+               color: "white",
+               weight: 3,
+               dashArray: '3',
+               opacity: 3,
+            }
+         });
+         return polygonFill;
+      },
+      renderFeature: (feature, {map=baseMap}) => {
+
+         const {featProps, featGeometry, featCoords, featCenter } = LeafletMaps.getFeatureData(feature);
+         
+         LeafletMaps.getFeatPolyOutline(featGeometry).addTo(baseMapLayerGroup);
+         LeafletMaps.getFeatPolyFill(featCoords).addTo(baseMapLayerGroup);
+         
+         // L.marker(featureData.latLngCenter).addTo(baseMapLayerGroup);
+
+      },
+      renderFeatColl: (map=baseMap, featColl) => {
+
+      },
+   }
+})(AVG_BASE_MAP);
 
 
 function getLeafletPolyOutline(geometry, {lineColor="white", lineWeight=4, lineOpacity=1}={}) {
@@ -811,13 +891,6 @@ const FillLayerHandler = ((leafletModalMap)=>{
    };
 
 })(FEAT_DETAIL_MAP);
-
-
-function leafletPanToPoint(map, pointFeature, {zoomLevel=8}) {
-   const leafletGJLayer = L.geoJson();
-   leafletGJLayer.addData(pointFeature);
-   map.flyTo(leafletGJLayer.getBounds().getCenter(), zoomLevel);
-};
 
 
 // SANDBOX > 

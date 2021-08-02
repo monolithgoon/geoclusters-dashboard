@@ -17,7 +17,6 @@ export function DOM_ELEMENTS() {
    const areaUnitsRadios = document.querySelectorAll(`.map-area-units-radio`);
    const clusterMapZoomRange = document.getElementById("cluster_map_zoom");
    
-   
    const resultsCountDiv = document.getElementById('results_count');
    const resultsStatus = document.getElementById('results_status');
 
@@ -27,6 +26,11 @@ export function DOM_ELEMENTS() {
    const geoClustersDatasetDiv = document.getElementById(`geo_clusters_dataset_div`);
    const resultItemDivs = document.querySelectorAll(`.result-item`);
    const resultTitleDivs = document.querySelectorAll(`.result-item-title`);
+   const masterResultCheckbox = document.getElementById(`select_all_results_chk`);
+   const resultItemCheckboxes = document.querySelectorAll(`.result-item-checkbox[type=checkbox]`);
+
+   const clusterFilterCheckboxes = document.querySelectorAll(`.results-filter-checkbox[type=checkbox]`);
+   const clusterFilterCheckboxMasters = document.querySelectorAll(`.results-filter-checkbox.master-checkbox[type=checkbox]`)
 
    const clusterFeatsNumEl = document.getElementById(`cluster_feats_num`);
    const clusterAreaEl = document.getElementById(`cluster_area`);
@@ -49,14 +53,22 @@ export function DOM_ELEMENTS() {
       distanceUnitsRadios,
       areaUnitsRadios,
       clusterMapZoomRange,
+
       resultsCountDiv,
       resultsStatus,
+
       resultModalDiv,
       resultModalCloseBtn,
       resultsListWrapper,
       geoClustersDatasetDiv,
       resultItemDivs,
       resultTitleDivs,
+      masterResultCheckbox,
+      resultItemCheckboxes,
+
+      clusterFilterCheckboxes,
+      clusterFilterCheckboxMasters,
+
       clusterFeatsNumEl,
       clusterAreaEl,
       clusterUsedAreaEl,

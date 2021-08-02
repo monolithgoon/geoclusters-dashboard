@@ -89,16 +89,6 @@ function getFilterCheckboxes() {
 };
 
 
-function getResultCheckboxes() {
-   const masterResultCheckbox = document.getElementById(`select_all_results_chk`);
-   const resultItemCheckboxes = document.querySelectorAll(`.result-item-checkbox[type=checkbox]`);
-   return {
-      masterResultCheckbox,
-      resultItemCheckboxes,
-   }
-};
-
-
 function getAreaUnitsRadios() {
    const areaUnitsRadios = document.querySelectorAll(`.map-area-units-radio`);
    return areaUnitsRadios;
@@ -609,6 +599,12 @@ const InputsHandlers = ((dom) => {
          });
       },
 
+      clusterResultsCheckboxes: () => {
+         const slaveResultCheckboxes = dom.resultItemCheckboxes;
+         const selectAllResultsChk = dom.masterResultCheckbox
+         masterSlaveControl(selectAllResultsChk, slaveResultCheckboxes);
+      },
+
       masterFilterCheckboxes: (masterCheckboxes) => {
          masterCheckboxes.forEach(masterCheckbox => {
             const inputGroupWrapper = _ManipulateDOM.getParentElement(masterCheckbox, {parentLevel: 4})
@@ -618,7 +614,7 @@ const InputsHandlers = ((dom) => {
       },
 
    }
-   
+
 })(DOM_ELEMENTS());
 
 
@@ -643,70 +639,33 @@ function _activateEventListeners() {
 
          // SANDBOX > SAVE DATA FROM BACKEND
          const geoClusters = JSON.parse(_ManipulateDOM.getDataset(DOM_ELEMENTS().geoClustersDatasetDiv));
+         
+         APP_STATE.saveDBCollection(`geo-clusters`, [...geoClusters]); 
 
-         APP_STATE.saveDBCollection(`geo-clusters`, [...geoClusters]);
-
-         _RenderMaps.renderBaseMap(APP_STATE.returnDBCollection(`geo-clusters`));
-
+         _RenderMaps.renderClusters(geoClusters);
       });
 
 
       // SETTINGS CHANGE EVENT SEQ.
       InputsHandlers.areaUnits(getAreaUnitsRadios());
-      // getAreaUnitsRadios().forEach(radio => {
-      //    radio.addEventListener(`change`, async (e) => {
-      //       if (APP_STATE.retreiveLastRenderedGJ()) {
-      //          _RenderMaps.renderClusterPlotLabel(APP_STATE.retreiveLastRenderedGJ(), 
-      //             {
-      //                useBuffer: pollAVGSettingsValues().bufferFeatsChk,
-      //                bufferUnits: pollAVGSettingsValues().distanceUnits,
-      //                bufferAmt: APP_STATE.CONFIG_DEFAULTS.RENDERED_PLOT_BUFFER,
-      //                areaUnits: pollAVGSettingsValues().areaUnits
-      //             }
-      //          );
-      //       };
-      //    });
-      // });
 
       // CHANGE CLUSTER PLOTS MAP STYLE
       InputsHandlers.plotsMapStyle();
-      // _getDOMElements().plotsMapStyleRadios.forEach(radio => {
-      //    radio.addEventListener(`change`, _switchMapboxMapLayer);
-      // });
 
       // RESULT ITEM TITLE CLICK HAND.
       resultTitleClickHandler(_getDOMElements().resultTitleDivs);
       
       // RESULT ITEM CHECKBOX BEH.
-      const slaveResultCheckboxes = getResultCheckboxes().resultItemCheckboxes;
-      const selectAllResultsChk = getResultCheckboxes().masterResultCheckbox
-      masterSlaveControl(selectAllResultsChk, slaveResultCheckboxes);
+      InputsHandlers.clusterResultsCheckboxes();
 
       // TODO
       // RESULT ITEM CHECKBOX MAP+FILTER EVENT SEQ.
 
       // FILTER CHECKBOX EVENT SEQ.
       InputsHandlers.filterCheckboxes(getFilterCheckboxes().filterCheckboxes);
-      // getFilterCheckboxes().filterCheckboxes.forEach(filterCheckbox => {
-      //    filterCheckbox.addEventListener(`change`, async (e)=>{
-      //       const checkboxLabelTxt = e.target.labels[0].innerText; 
-      //       if (e.target.checked) {
-      //          console.log(`%c ${checkboxLabelTxt} checked`, `color: white; background-color:blue;`);
-      //       } else {
-      //          console.log(`%c ${checkboxLabelTxt} un-checked`, `color: white; background-color:green;`);
-      //       };
-      //       // filterResults(checkboxLabelTxt);
-      //       // renderFilterPill(checkboxLabelTxt);
-      //    });
-      // });
    
       // MASTER FILTER CHECKBOX BEH.
       InputsHandlers.masterFilterCheckboxes(getFilterCheckboxes().filterCheckboxMasters);
-      // getFilterCheckboxes().filterCheckboxMasters.forEach(masterCheckbox => {
-      //    const inputGroupWrapper = _ManipulateDOM.getParentElement(masterCheckbox, {parentLevel: 4})
-      //    const slaveCheckboxes = _ManipulateDOM.getSubordinates(inputGroupWrapper, masterCheckbox, ".form-check-input")
-      //    masterSlaveControl(masterCheckbox, slaveCheckboxes);
-      // });
 
       // EXPAND APP SIDEBAR
       _getDOMElements().sidebarExpandBtn.addEventListener(`click`, ()=>{
