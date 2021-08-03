@@ -438,7 +438,6 @@ const catchError2 = function(fn, errDescr=null) {
 		try {
 			// console.log(fn)
 			return fn.apply(this, arguments);
-			// fn.apply(this, arguments);
 		} catch(err) {
 			console.error(`${errDescr}: ${err.message}`)
 		};
@@ -687,7 +686,7 @@ export function _getBufferedPolygon(polygon, bufferAmt, {bufferUnits="kilometers
 		// REMOVE
 		// console.log(_TurfHelpers.calcPolyArea(polygon))
 		// console.log({bufferAmt}, {bufferUnits})
-		console.log({bufferedPolygon})
+		// console.log({bufferedPolygon})
 		// if (bufferedPolygon) console.log(_TurfHelpers.calcPolyArea(bufferedPolygon))
 		
       // SOMETIMES turf.buffer RETURNES "undefined"

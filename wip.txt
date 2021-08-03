@@ -1,7 +1,5 @@
 https://www.codementor.io/@dariogarciamoya/understanding-this-in-javascript-with-arrow-functions-gcpjwfyuc
 
-https://swapi.dev/documentation#schema
-
 https://stackoverflow.com/jobs/apply/521893?reset=False&ra=2P1EJwdKlCXa&oqs=a%3D2P1EJwdKlCXa%26so_medium%3DInternal%26so_source%3DSimilarJobsBottom
 
 https://stackoverflow.com/questions/2350495/how-do-i-perform-the-sql-join-equivalent-in-mongodb/33511166#33511166	
@@ -23,8 +21,6 @@ https://www.npmjs.com/package/geojson-validation
 https://www.sitepoint.com/es6-default-parameters/
 
 
-https://studio.mapbox.com/styles/monolithgoon/ckqat05ss033418qmildmyau2/edit/#5.98/7.677/8.114/0/41
-https://studio.mapbox.com/styles/monolithgoon/ckqat05ss033418qmildmyau2/edit/#10.88/10.306/12.6587/0/68
 https://github.com/mapbox/geojsonhint
 https://geojson.io/#map=14/10.1299/12.5018
 https://studio.mapbox.com/tilesets/
@@ -33,6 +29,19 @@ https://www.tophap.com/map/N4IgtiBcoMZQ2gWgIwCZUDoDMAGLBWATn3WUIHZd8AaLcjADjoYfI
 
 https://stackoverflow.com/questions/2239405/hateoas-absolute-or-relative-urls
 https://stackoverflow.com/questions/30981727/link-to-another-resource-in-a-rest-api-by-its-id-or-by-its-url
+
+
+https://stackoverflow.com/questions/11742067/is-there-a-way-to-add-try-catch-to-every-function-in-javascript
+
+
+https://stackoverflow.com/questions/43015854/large-dataset-of-markers-or-dots-in-leaflet
+https://matall.in/posts/deep-insights-visualizing-1m-flight-routes/
+https://blog.mapbox.com/visualizing-3-billion-tweets-f6fc2aea03b0
+https://blog.mapbox.com/clustering-millions-of-points-on-a-map-with-supercluster-272046ec5c97
+https://gis.stackexchange.com/questions/206684/visualizing-large-datasets-of-polygons-with-leaflet
+
+https://gis.stackexchange.com/questions/34589/visualizing-large-datasets-with-leaflet/36836#36836
+https://github.com/vue-leaflet/Vue2Leaflet/issues/473
 
 
 // Auto full screen

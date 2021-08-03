@@ -4,7 +4,7 @@ export const BING_MAPS_TOKEN = `ArOrASno0BM9N0a3FfAOKXbzNfZA8BdB5Y7OFqbDIcbhkTiD
 
 
 // INIT. AVG BASEMAP
-export const AVG_BASE_MAP = L.map("avg_base_map_container", { zoomSnap: 0.01 })
+export const AVG_BASE_MAP = L.map("avg_base_map_container", { zoomSnap: 0.01, preferCanvas: true })
    // .setView([15.0043, 7.4430], 7.5);
    // .setView([36.80504251142855, 10.185470319310479], 13.5);
    // .setView([36.8364914310283, 10.070729096590059], 15);
@@ -15,7 +15,7 @@ export const AVG_BASE_MAP = L.map("avg_base_map_container", { zoomSnap: 0.01 })
 
 
 // INIT. FEAT. DETAIL MINIMAP
-export const FEAT_DETAIL_MAP = L.map("feature_detail_map_container", { zoomSnap: 0.01 })
+export const FEAT_DETAIL_MAP = L.map("feature_detail_map_container", { zoomSnap: 0.01, preferCanvas: true })
    .setView([15.0043, 7.4430], 7.5);
    // .setView([36.80504251142855, 10.185470319310479], 13.5);
    // .setView([36.8364914310283, 10.070729096590059], 15);
