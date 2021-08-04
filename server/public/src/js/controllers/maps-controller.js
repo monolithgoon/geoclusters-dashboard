@@ -4,7 +4,7 @@ import { _clusterFeatPopupMarkup, _GenerateClusterFeatMarkup, _leafletMarkerMark
 import { pollAVGSettingsValues, _getDOMElements } from "../avg-controllers/ui-controller.js";
 import { _getClusterFeatProps } from "../interfaces/cluster-props-adapter.js";
 import { LAYER_COLORS } from "../utils/mapbox-layer-colors.js";
-import { _TurfHelpers, _getBufferedPolygon, _CheckGeoJSON, _ManipulateDOM, _GeometryMath } from "../utils/helpers.js";
+import { _TurfHelpers, _getBufferedPolygon, _CheckGeoJSON, _ManipulateDOM, _GeometryMath, _getUsableGeometry } from "../utils/helpers.js";
 
 
 const getLayerColor = (index) => {
@@ -524,13 +524,24 @@ export const _RenderMaps = (function(avgBaseMap, clusterFeatsMap) {
          renderClusterPlotLabel: (geoJSON, {useBuffer=false, bufferUnits, bufferAmt, areaUnits}) => {
             drawFeatureLabels(geoJSON, {useBuffer, bufferUnits, bufferAmt, areaUnits});
          },
-         renderClusters: async (featureCollections) => {
+         renderClusters: async (featureCollections, {useBuffer, bufferAmt, bufferUnits, zoomLevel}={}) => {
+            switch (zoomLevel) {
+               case 8.5:
+                  
+                  break;
+               case 12:
+                  
+                  break;
+            
+               default:
+                  break;
+            }
             if (featureCollections.length > 0) {
                featureCollections.forEach(featColl=>{
                   if (featColl.features.length > 0) {
                      featColl.features.forEach(async (feature) => {
-                        await LeafletMaps.renderFeature(feature, {map: avgBaseMap});
-                        // await LeafletMaps.renderFeatureMarker(feature, {map: avgBaseMap});
+                        await LeafletMaps.renderFeature(feature, {map: avgBaseMap, useBuffer, bufferAmt, bufferUnits});
+                        await LeafletMaps.renderFeatureMarker(feature, {map: avgBaseMap});
                      });
                   };
                });
@@ -563,18 +574,6 @@ const LeafletMaps = ((baseMap)=>{
    const baseMapLayerGroup = LLayerGroupController.getLayerGroups().baseMapLayerGroup;
 
    return {
-      getFeatureData: (feature) => {
-         const featProps = feature.properties;
-         const featGeometry = feature.geometry;
-         const featCoords = feature.geometry.coordinates;
-         const featCenter = getFeatCenter(featGeometry).latLng;
-         return {
-            featProps,
-            featGeometry,
-            featCoords,
-            featCenter,
-         };
-      },
       panToPoint: (gjPointFeat, {map=baseMap, zoomLevel}) => {
          const leafletGJLayer = L.geoJson();
          leafletGJLayer.addData(gjPointFeat);
@@ -587,13 +586,13 @@ const LeafletMaps = ((baseMap)=>{
       addPointMarker: (gjPointFeat, {map=baseMap, zoomLevel}) => {
 
       },
-      getFeatPolyOutline: (featGeometry, {lineColor="white", lineWeight=4, lineOpacity=1}={}) => {
+      getFeatPolyOutline: (featGeometry, {lineColor="white", lineWeight=3, lineOpacity=1}={}) => {
          const polygonOutline = L.geoJSON(featGeometry, {
             "color": lineColor, 
             "weight": lineWeight,
             "opacity": lineOpacity,
          });
-         return polygonOutline;      
+         return polygonOutline;
       },
       getFeatPolyFill: (featCoords, {fillColor="green", fillOpacity=0.5}={}) => {
          // FIXME > THE COORD. SYSTEM HERE IS OFF..
@@ -609,16 +608,74 @@ const LeafletMaps = ((baseMap)=>{
          });
          return polygonFill;
       },
-      renderFeature: async (feature, {map=baseMap}) => {
+      getFeatureData: (feature) => {
 
-         const { featGeometry, featCoords } = LeafletMaps.getFeatureData(feature);
+         let featProps, featGeometry, featCoords, featCenter;
+
+         const refinedFeat = _getUsableGeometry(feature).refinedGeoJSON;
+
+         featGeometry = refinedFeat.geometry;
+         featCoords = refinedFeat.geometry.coordinates;
+         featCenter = getFeatCenter(featGeometry).latLng;
+         featProps = feature.properties;
          
-         LeafletMaps.getFeatPolyOutline(featGeometry).addTo(baseMapLayerGroup);
-         LeafletMaps.getFeatPolyFill(featCoords).addTo(baseMapLayerGroup);
+         return {
+            featProps,
+            featGeometry,
+            featCoords,
+            featCenter,
+         };
+      },
+      renderFeature: async (feature, {map=baseMap, useBuffer, bufferAmt, bufferUnits}) => {
+
+         switch (_TurfHelpers.getType(feature)) {
+
+            case "Point":
+                  console.log("Fuck You Rita Nwaokolo");
+               break;
+         
+            default:
+
+               feature = getPresentationPoly(feature, {useBuffer, bufferAmt, bufferUnits});
+
+               const { featGeometry, featCoords } = LeafletMaps.getFeatureData(feature);
+               LeafletMaps.getFeatPolyOutline(featGeometry).addTo(baseMapLayerGroup);
+               LeafletMaps.getFeatPolyFill(featCoords).addTo(baseMapLayerGroup);
+
+               break;
+         };
       },
       renderFeatureMarker: async (feature, {map=baseMap}) => {
+
          const { featCenter } = LeafletMaps.getFeatureData(feature);
-         L.marker(featCenter).addTo(baseMapLayerGroup);
+
+         // L.marker(featCenter).addTo(baseMapLayerGroup);
+
+         //Use canvas mode to render marker
+         var ciLayer = L.canvasIconLayer({}).addTo(map);
+
+         var icon = L.icon({
+            // iconUrl: 'https://ejuke.github.io/Leaflet.Canvas-Markers/examples/img/pothole.png',
+            iconUrl: '/assets/icons/location.svg',
+            iconSize: [20, 18],
+            iconAnchor: [10, 9]
+         });
+
+         var marker = L.marker(featCenter, { icon: icon })
+            .bindPopup("AGC")
+
+         ciLayer.addLayer(marker);
+
+      //    L.canvasMarker(featCenter, {
+      //       radius: 20,
+      //       img: {
+      //          url: '/assets/icons/location.svg',    //image link
+      //          size: [30, 30],     //image size ( default [40, 40] )
+      //          // rotate: 10,         //image base rotate ( default 0 )
+      //          offset: { x: 0, y: 0 }, //image offset ( default { x: 0, y: 0 } )
+      //       },
+      //   }).addTo(map);
+
       },
       renderFeatColl: (featColl, {map=baseMap}) => {
 

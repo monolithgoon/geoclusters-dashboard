@@ -524,6 +524,14 @@ export const _TurfHelpers = (()=>{
 			};
 		},
 
+		unkinkPolygon: (gjPolygon) => {
+			try {
+				return turf.unkinkPolygon(gjPolygon);
+			} catch (unkinkPolyErr) {
+				console.error(`unkinkPolyErr: ${unkinkPolyErr.message}`)
+			};
+		},
+
 		getLngLat: (geoJSONFeature) => {
 			try {
 				return _TurfHelpers.centerOfMass(geoJSONFeature).geometry.coordinates;
@@ -633,6 +641,122 @@ export const _CheckGeoJSON = (()=>{
 })();
 
 
+function getGeomCollPolyFeats(geojson) {
+
+		const geomCollPolyFeatures = [];
+		
+		geojson.geometry.geometries.forEach((geom) => {
+
+			// EXTRACT THE POLYGONS
+			if (_TurfHelpers.getType(geom) === "Polygon") {
+				
+				const geomFeature = turf.feature(geom);
+
+				geomCollPolyFeatures.push(geomFeature);
+
+				polygonFeats = geomCollPolyFeatures;
+
+			} else {
+
+				// NO POLYGONS IN THE GEOM. COLL.
+				polygonFeats = null
+			};
+		});
+
+	return polygonFeats;
+};
+
+// SIMPLIFY MULTIPOLYGON & GEOMETRY COLL. GEOMETRIES > 
+// EXTRACT POLYGONS FROM MultiPolygons & GeometryCollections
+// SELECT THE DOMINANT POLYGON OR ATTEMPT TO MERGE THEM
+export function _getUsableGeometry(geoJSON) {
+
+	let polygonFeats,
+		refinedGeoJSON,
+		discardedMultipolyParts = [];
+
+	switch (_TurfHelpers.getType(geoJSON)) {
+
+		case "Polygon":
+			// DO NOTHING IF ALREADY POLYGON
+			refinedGeoJSON = geoJSON,
+			discardedMultipolyParts = null;
+			break;
+
+		case "MultiPolygon":
+			polygonFeats = _TurfHelpers.unkinkPolygon(geoJSON).features; // HACKY WAY OF CONVERTING TO FEAT. COLL.
+			break;	
+	
+		case "GeometryCollection":
+			polygonFeats = getGeomCollPolyFeats(geoJSON);
+			break;	
+	
+		default:
+			break;
+	}
+
+	if (polygonFeats) {
+      
+      // ONLY 1 POLYGON WAS FOUND IN THE GEOJSON
+      if (polygonFeats.length === 1 ) {
+         
+         refinedGeoJSON = polygonFeats[0];
+         
+      } else {
+
+         // console.warn(`[ Selecting a dominant polygon .. ]`)
+         
+         // LOOP THRU THE FEATURES & CHOOSE THE DOINANT FEAT.
+         for (let feature of polygonFeats) {
+
+            const featureAreaRatio = _TurfHelpers.calcPolyArea(feature) / _TurfHelpers.calcPolyArea(geoJSON);
+
+            // console.log({featureAreaRatio});
+
+            if (featureAreaRatio >= 0.60) {
+
+               // CHOOSE THE DOINANT FEAT.
+               refinedGeoJSON = feature;
+               
+            } else if (featureAreaRatio >= 0.40 && featureAreaRatio < 0.60) {
+               // THE FEATURES ARE PROB. SIMILAR IN SIZE > LOOP THRU & TRY TO MERGE THEM
+               
+               // PERFORM A SIMPLE UNION, THEN COLLECT ALL THE PARTS THAT DON'T UNITE
+               // console.error(polygonFeats)
+               refinedGeoJSON = turf.union(...polygonFeats);
+               if (_TurfHelpers.getType(refinedGeoJSON) !== "Polygon") {
+                  console.error(`FAILED REFINING GEOJSON`);
+                  discardedMultipolyParts.push(...polygonFeats)
+               } else {
+                  return refinedGeoJSON;
+               };
+               
+            } else if (featureAreaRatio >= 0.005 && featureAreaRatio < 0.40) {
+
+               // TRACK SMALL, BUT NOT INSIGNIFICANT FEATURES
+
+               // ADD CUSTOM PROPERTIES
+               feature.properties['chunk_size'] = _TurfHelpers.calcPolyArea(feature);
+
+               discardedMultipolyParts.push(feature)
+
+            } else if (featureAreaRatio > 0 && featureAreaRatio < 0.005) {
+               // TODO > IGNORE THESE TINY PARTICLES?? 
+               // discardedMultipolyParts.push(feature)
+            }
+         }
+      }
+
+   } else {
+      // console.warn(`No complex geometries to simplify ..`)
+   }
+
+   return {
+      refinedGeoJSON,
+      discardedMultipolyParts
+   };
+};
+
 // fix the coords in each feat. and return the featColl.
 export function _repairFeatsCoords (featureCollection) {
 
@@ -677,13 +801,12 @@ export function _sanitizeFeatCollCoords(featureCollection = _mandatoryParam()) {
 // THIS REVERTS THE BUFFER TO THE ORG. POLY IF ANY DEFORMATION WOULD HAPPEN
 export function _getBufferedPolygon(polygon, bufferAmt, {bufferUnits="kilometers"}) {
 
-	console.log(_TurfHelpers.getType(polygon))
+	// console.log(_TurfHelpers.getType(polygon))
 
    if (_TurfHelpers.getType(polygon) === "Polygon") {
       
       let bufferedPolygon = _TurfHelpers.buffer(polygon, bufferAmt, {units: bufferUnits});
 
-		// REMOVE
 		// console.log(_TurfHelpers.calcPolyArea(polygon))
 		// console.log({bufferAmt}, {bufferUnits})
 		// console.log({bufferedPolygon})
@@ -718,6 +841,7 @@ export function _getBufferedPolygon(polygon, bufferAmt, {bufferUnits="kilometers
       return polygon;
    };
 };
+
 
 export function _getBufferedPolygon2(polygon, bufferAmt, {bufferUnits="kilometers"}) {
 

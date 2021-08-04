@@ -642,7 +642,11 @@ function _activateEventListeners() {
          
          APP_STATE.saveDBCollection(`geo-clusters`, [...geoClusters]); 
 
-         await _RenderMaps.renderClusters(geoClusters);
+         await _RenderMaps.renderClusters(geoClusters, { 
+            useBuffer: pollAVGSettingsValues().bufferFeatsChk ,
+            bufferAmt: APP_STATE.CONFIG_DEFAULTS.RENDERED_PLOT_BUFFER,
+            bufferUnits: pollAVGSettingsValues().distanceUnits,
+         });
       });
 
 
