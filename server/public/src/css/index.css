@@ -172,6 +172,7 @@ line-height: 15px;
 	left: 0;
 	width: 100%;
 	height: 100vh;
+	outline: none;
 }
 
 #landing_page_map_cont,

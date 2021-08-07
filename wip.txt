@@ -15,9 +15,6 @@ https://gist.github.com/joepie91/c0069ab0e0da40cc7b54b8c2203befe1
 https://stackoverflow.com/questions/4148499/how-to-style-a-checkbox-using-css
 
 https://stackoverflow.com/questions/48699820/how-do-i-hide-api-key-in-create-react-app
-
-https://www.npmjs.com/package/geojson-validation
-
 https://www.sitepoint.com/es6-default-parameters/
 
 
@@ -27,10 +24,9 @@ https://studio.mapbox.com/tilesets/
 https://docs.mapbox.com/help/getting-started/map-design/
 https://www.tophap.com/map/N4IgtiBcoMZQ2gWgIwCZUDoDMAGLBWATn3WUIHZd8AaLcjADjoYfIcNYBYdKBdakAC8oyThnw5JU6VNQCADlBwCARktUB7BEjSYsyBqhKpkk5MnwA2WvSY8sWBp1Q5TD-jvQZULQo9QOfiScNoycEpxolsjkroScvLwAvgJgAC5QIDAaADYaAE4gAgDWmagABACCACZgAJb5AIY55QAi+eUAxOUAQqjkyNTlAKJgAKb5AJ4AbnU5OWNDAMKV5fGWOAxFIADOitDgGtVjma1jaY1z23XVmZyOhDicluTbAGb5GmAAMnU7GZA3s0dmMUiAFlAgTkQUkgA
 
+
 https://stackoverflow.com/questions/2239405/hateoas-absolute-or-relative-urls
 https://stackoverflow.com/questions/30981727/link-to-another-resource-in-a-rest-api-by-its-id-or-by-its-url
-
-
 https://stackoverflow.com/questions/11742067/is-there-a-way-to-add-try-catch-to-every-function-in-javascript
 
 
@@ -42,6 +38,9 @@ https://gis.stackexchange.com/questions/206684/visualizing-large-datasets-of-pol
 
 https://gis.stackexchange.com/questions/34589/visualizing-large-datasets-with-leaflet/36836#36836
 https://github.com/vue-leaflet/Vue2Leaflet/issues/473
+
+
+https://github.com/manubb/Leaflet.PixiOverlay
 
 
 // Auto full screen

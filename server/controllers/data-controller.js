@@ -25,6 +25,7 @@ function combineObjArrays(...baseArrays) {
 
 exports.getClustersData = catchAsync(async(req, res, next) => {
    
+   // REMOVE
    // const parcelizedClustersJSON = fs.readFileSync(path.resolve(`${__approotdir}/localdata/parcelized-clusters.json`), {encoding: 'utf8'})
    // const legacyClustersJSON = fs.readFileSync(path.resolve(`${__approotdir}/localdata/legacy-clusters.json`), {encoding: 'utf8'})
 
@@ -41,6 +42,7 @@ exports.getClustersData = catchAsync(async(req, res, next) => {
       legacyClusters = JSON.parse(legacyClustersJSON);
    };
 
+   // REMOVE
    // const parcelizedClusters = JSON.parse(parcelizedClustersJSON);
    // const legacyClusters = JSON.parse(legacyClustersJSON);
       

@@ -249,7 +249,8 @@ const MapboxPopupsController = (function() {
 
 
 // const ClusterMarkerGroupHandler = (()=>{
-   function getMarkerClusterGroup({centerDist, markerDist, zoomLimit, maxClusterRadius}) {
+   // const markerClusters = [];
+   function createMarkerClusterGroup({centerDist, markerDist, zoomLimit, maxClusterRadius}) {
       const clusterGroup = L.markerClusterGroup({
          spiderfyShapePositions: function(count, centerPt) {
             var distanceFromCenter = centerDist,
@@ -277,7 +278,7 @@ const MapboxPopupsController = (function() {
    };
 //    return {
 //       initMarkerClusterGroup: ({centerDist, markerDist, zoomLimit, maxClusterRadius}) => {
-//          getMarkerClusterGroup
+//          createMarkerClusterGroup
 //       },
 //    };
 // })();
@@ -288,7 +289,7 @@ const LLayerGroupController = ((leafletBaseMap, leafletModalMap)=>{
    // Create groups to hold the leaflet layers and add it to the map
    const baseMapLayerGroup = L.layerGroup().addTo(leafletBaseMap);
    const modalMapLayerGroup = L.layerGroup().addTo(leafletModalMap);
-   const baseMapMarkerClusterGroup = getMarkerClusterGroup({
+   const baseMapMarkerClusterGroup = createMarkerClusterGroup({
       centerDist: 35,
       markerDist: 45,
       zoomLimit: 13,
@@ -480,29 +481,48 @@ const getPresentationPoly = (geoJSONPoly, {useBuffer, bufferAmt, bufferUnits='ki
 
 const LeafletMaps = ((baseMap)=>{
 
-   // const featMarkers = [];
+   const markerGroups = [];
+
    const baseMapLayerGroup = LLayerGroupController.getLayerGroups().baseMapLayerGroup;
-   const baseMapMarkerClusterGroup = LLayerGroupController.getLayerGroups().baseMapMarkerClusterGroup;
+   const baseMapMarkerClusters = LLayerGroupController.getLayerGroups().baseMapMarkerClusterGroup;
 
-   const createFeatMarker = (gjFeature) => {
+   const createFeatMarker = (gjFeature, {useBuffer, bufferAmt, bufferUnits}={}) => {
 
-      const { featProps } = LeafletMaps.getFeatureData(gjFeature);
-      const featCenterLatLng = [featProps.featCenterLat, featProps.featCenterLng];
+      let featMarker;
+      
+      if (!useBuffer) {
 
-      const marker = L.marker(featCenterLatLng);
+         const { featProps } = LeafletMaps.getFeatureData(gjFeature);
+   
+         const featCenterLatLng = [featProps.featCenterLat, featProps.featCenterLng];
+   
+         featMarker = L.marker(featCenterLatLng);
+   
+         // baseMapMarkerClusters.addLayer(featMarker);
 
-      // featMarkers.push(marker);
-      baseMapMarkerClusterGroup.addLayer(marker);
+      } else {
+         // TODO
+      };
 
-      return marker;
+      return featMarker;
    };
 
+   // REMOVE
    var pixiLoader = new PIXI.loaders.Loader();
    pixiLoader
       .add('marker', '/assets/icons/location.svg')
       // .add('focusCircle', '/assets/icons/placeholder.png')
 
    return {
+      getMapZoom: (map=baseMap) => {
+         return map.getZoom();
+      },
+      initMarker: (gjFeature, {useBuffer, bufferAmt, bufferUnits}) => {
+         return createFeatMarker(gjFeature, {useBuffer, bufferAmt, bufferUnits});
+      },
+      saveMarkerGroup: (markers) => {
+         markerGroups.push(markers)
+      },
       panToPoint: (gjPointFeat, {map=baseMap, zoomLevel}) => {
          const leafletGJLayer = L.geoJson();
          leafletGJLayer.addData(gjPointFeat);
@@ -798,12 +818,34 @@ const LeafletMaps = ((baseMap)=>{
             pixiOverlay.addTo(map);
          });
       },
-      renderMarkerCluster: async ({map=baseMap}) => {
+      renderMarkerCluster: async (markers, {map=baseMap}) => {
 
-         map.addLayer(baseMapMarkerClusterGroup);
+         const markerCluster = createMarkerClusterGroup({
+            centerDist: 35,
+            markerDist: 45,
+            zoomLimit: 13,
+            maxClusterRadius: 10
+         });
+
+         for (let idx = 0; idx < markers.length; idx++) {
+            markerCluster.addLayer(markers[idx]); 
+         };
+         
+         map.addLayer(markerCluster);
       },
       renderFeatColl: (featColl, {map=baseMap}) => {
 
+      },
+      createHTMLMarker: (props, latLngPosition, styleClass, {draggable=true}) => {
+         const HTMLMarker = L.marker(latLngPosition, {
+            draggable: draggable,
+            icon: L.divIcon({
+               className: `${styleClass}`,
+               html: _leafletMarkerMarkup(props),
+            }),
+            zIndexOffset: 100
+         });
+         return HTMLMarker;
       },
    }
 })(AVG_BASE_MAP);
@@ -885,43 +927,42 @@ export const _RenderMaps = (function(avgBaseMap, clusterFeatsMap) {
          renderClusterPlotLabel: (geoJSON, {useBuffer=false, bufferUnits, bufferAmt, areaUnits}) => {
             drawFeatureLabels(geoJSON, {useBuffer, bufferUnits, bufferAmt, areaUnits});
          },
-         renderClusters: async (featureCollections, {useBuffer, bufferAmt, bufferUnits, zoomLevel}={}) => {
-            switch (zoomLevel) {
-               case 8.5:
-                  
+         renderClusters: async (featureCollections, {useBuffer, bufferAmt, bufferUnits}={}) => {
+
+            const zoomLevel = LeafletMaps.getMapZoom();
+            console.log(zoomLevel)
+            
+            switch (true) {
+
+               case zoomLevel < 8.5:
+                  useBuffer = false;
                   break;
-               case 12:
+
+               case zoomLevel < 12:
                   
                   break;
             
                default:
                   break;
-            }
+            };
             
             // const allFeatures = [];
             if (featureCollections.length > 0) {
                for (let idx = 0; idx < featureCollections.length; idx++) {
                   const featColl = featureCollections[idx];
+                  const featCollMarkers = [];
                   for (let idy = 0; idy < featColl.features.length; idy++) {
                      const feature = featColl.features[idy];
                      await LeafletMaps.renderFeature(feature, {map: avgBaseMap, useBuffer, bufferAmt, bufferUnits});
-                     await LeafletMaps.renderMarkerCluster({map: avgBaseMap});
                      // allFeatures.push(feature);
                      // LeafletMaps.renderFeaturesMarkers(allFeatures, {map: avgBaseMap});
+                     const featMarker = LeafletMaps.initMarker(feature, {useBuffer, bufferAmt, bufferUnits});
+                     featCollMarkers.push(featMarker);
                   };
+                  LeafletMaps.saveMarkerGroup(featCollMarkers);
+                  await LeafletMaps.renderMarkerCluster(featCollMarkers, {map: avgBaseMap})
                };
             };
-
-            // if (featureCollections.length > 0) {
-            //    featureCollections.forEach(featColl=>{
-            //       if (featColl.features.length > 0) {
-            //          featColl.features.forEach(async (feature) => {
-            //             await LeafletMaps.renderFeature(feature, {map: avgBaseMap, useBuffer, bufferAmt, bufferUnits});
-            //             await LeafletMaps.renderFeatureMarker(feature, {map: avgBaseMap});
-            //          });
-            //       };
-            //    });
-            // };
          },
          renderEverythingNow: (geoJSON, {baseMapZoomLvl=0, useBuffer=false, bufferUnits, bufferAmt, areaUnits}) => {
             
@@ -943,32 +984,6 @@ export const _RenderMaps = (function(avgBaseMap, clusterFeatsMap) {
       console.error(`renderMapsErr: ${renderMapsErr.message}`)
    };   
 })(AVG_BASE_MAP, CLUSTER_PLOTS_MAP);
-
-
-function getLeafletPolyOutline(geometry, {lineColor="white", lineWeight=4, lineOpacity=1}={}) {
-   const polygonOutline = L.geoJSON(geometry, {
-      "color": lineColor,
-      "weight": lineWeight,
-      "opacity": lineOpacity,
-   });
-   return polygonOutline;
-};
-
-
-function getLeafletPolyFill(coords, {fillColor="green", fillOpacity=0.5}={}) {
-   // FIXME > THE COORD. SYSTEM HERE IS OFF..
-   const polygonFill = L.polygon([...coords], {
-      style: {
-         fillColor: fillColor,
-         fillOpacity: fillOpacity,
-         color: "white",
-         weight: 3,
-         dashArray: '3',
-         opacity: 3,
-      }
-   });
-   return polygonFill;
-};
 
 
 function createHTMLMarker(props, latLngPosition, styleClass, {draggable=true}) {
@@ -1086,13 +1101,13 @@ const FillLayerHandler = ((leafletModalMap)=>{
                L.marker(featureData.latLngCenter).addTo(leafletLayerGroup);
 
                // RENDER A LEAFLET POLYGON
-               getLeafletPolyOutline(featGeometry).addTo(leafletLayerGroup);
+               LeafletMaps.getFeatPolyOutline(featGeometry).addTo(leafletLayerGroup);
 
                // FILL THE POLYGON
-               getLeafletPolyFill(featCoords).addTo(leafletLayerGroup);
+               LeafletMaps.getFeatPolyOutline(featCoords).addTo(leafletLayerGroup);
 
                // DISPLAY PLOT METADATA AT CENTER OF FEATURE
-               createHTMLMarker(featProps, featCenter, 'plot-metadata-label', {draggable:true}).addTo(leafletLayerGroup);
+               LeafletMaps.createHTMLMarker(featProps, featCenter, 'plot-metadata-label', {draggable:true}).addTo(leafletLayerGroup);
       
                // TODO
                // renderFeatVertices()

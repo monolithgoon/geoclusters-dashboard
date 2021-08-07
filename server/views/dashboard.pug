@@ -22,9 +22,6 @@ block append dashboard-head-scripts
   //- link(rel='stylesheet' href='/src/plugins/LeafletControlCustom/Leaflet.Control.Custom.css')
 
   // LEAFLET MARKER CLUSTERS
-  //- link(rel='stylesheet' href='https://unpkg.com/leaflet.markercluster@1.3.0/dist/MarkerCluster.css')
-  //- link(rel='stylesheet' href='https://unpkg.com/leaflet.markercluster@1.3.0/dist/MarkerCluster.Default.css')
-  //- script(src='https://unpkg.com/leaflet.markercluster@1.3.0/dist/leaflet.markercluster.js')
   link(rel="stylesheet" href="/src/plugins/Leaflet.MarkerCluster/MarkerCluster.css")
   link(rel="stylesheet" href="/src/plugins/Leaflet.MarkerCluster/MarkerCluster.Default.css")
   script(src="/src/plugins/Leaflet.MarkerCluster/leaflet.markercluster-src.js")
@@ -956,7 +953,7 @@ block dashboard
                     legend Cluster Features Map Settings
                     .form-check.form-switch
                       label.form-check-label(for='buffer_cluster_feats_chk') Cluster Plots Buffer
-                      input#buffer_cluster_feats_chk.form-check-input(type='checkbox' checked=false aria-disabled='false')
+                      input#buffer_cluster_feats_chk.form-check-input(type='checkbox' checked=true aria-disabled='false')
                     .form-check.form-switch
                       label.form-check-label(for='render_multiple_feats_chk') Render Multiple Cluster Plots
                       input#render_multiple_feats_chk.form-check-input(type='checkbox' checked=false aria-disabled='false')
