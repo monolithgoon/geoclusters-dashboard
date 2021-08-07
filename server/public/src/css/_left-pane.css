@@ -4,7 +4,8 @@ section.left-pane-container {
    margin-right: 10px;
    border: 1px solid grey;	
    overflow: footer;
-   z-index: var(--z5);
+   /* z-index: var(--z5); */
+   z-index: var(--zmax);
 }
 
 section.left-pane-container a {

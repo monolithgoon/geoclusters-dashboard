@@ -69,6 +69,24 @@ repairFeatsCoords = (featureCollection) => {
 };
 
 
+exports._getFeatCenter = (featGeometry) => {
+
+	try {
+
+		const lngLat = turf.centerOfMass(featGeometry).geometry.coordinates; // LNG-LAT FORMAT		
+		const latLng = [lngLat[1], lngLat[0]] // CONVERT TO LAT. LNG FORMAT
+
+		return {
+			lngLat,
+			latLng,
+		};
+		
+	} catch (getFeatCenterErr) {
+		console.error(`getFeatCenterErr: ${getFeatCenterErr.message}`)
+	};
+};
+
+
 // LOOP THRU EACH FEAT. AND CONVERT STRING COORDS. TO INTEGERS
 exports._sanitizeFeatCollCoords = (featureCollection = mandatoryParam()) => {
 	// let modFeatureCollection = repairFeatsCoords(_CheckGeoJSON.hasInvalidFeatsCoords(_CheckGeoJSON.isValidFeatColl(featureCollection)))

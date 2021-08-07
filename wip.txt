@@ -52,3 +52,23 @@ https://github.com/vue-leaflet/Vue2Leaflet/issues/473
 // agc filter functionality
 // AGC insights summary
 // Fully functional app settings
+
+
+AVG Dashboard
+
+Deliverables
+
+1.) Render legacy AGCs
+2.) Render live AGC data from a registration portal
+
+Technical Implementation
+1.) Legacy AGCs
+
+
+Automated Land Parcelization
+
+Overview
+
+Deliverables
+
+Technical Implementation

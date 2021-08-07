@@ -1,7 +1,7 @@
 `use strict`;
 const turf = require('@turf/turf');
 const startcase = require('lodash.startcase');
-const { _capitalizeWords } = require('../utils/helpers.js');
+const { _capitalizeWords, _getFeatCenter } = require('../utils/helpers.js');
 
 
 const _mandatoryParam = () => {
@@ -274,49 +274,60 @@ exports._getClusterFeatProps = (clusterFeature = _mandatoryParam(), {featIdx}={}
 		      
 		const props = clusterFeature.properties;
 
-		const featureID = TraverseObject.evaluateValue(props, "chunk_id")
-			? TraverseObject.getFinalValue()
-			: TraverseObject.evaluateValue(props, "plot_id")
-			? TraverseObject.getFinalValue()
-			: null;
+		if (props) {
 
-		const featureIndex = featIdx + 1;		
-
-		const featureAdmin = Object.freeze({
-			admin1: Object.freeze({
-				id: evaluateObjProps(props, {}, "plot_owner_bvn") || evaluateObjProps(props, {}, "owner_id"), // REMOVE
-				titles: Object.freeze({
-					title1: 
-						evaluateObjProps(props, {}, 'owner_name') || 
-						evaluateObjProps(props, {}, "plot_owner_first_name"),
-					title2: evaluateObjProps(props, {}, "plot_owner_middle_name"),
-					title3: evaluateObjProps(props, {}, "plot_owner_last_name"),
+			const featureID = TraverseObject.evaluateValue(props, "chunk_id")
+				? TraverseObject.getFinalValue()
+				: TraverseObject.evaluateValue(props, "plot_id")
+				? TraverseObject.getFinalValue()
+				: null;
+	
+			const featureIndex = featIdx + 1;		
+	
+			const featureAdmin = Object.freeze({
+				admin1: Object.freeze({
+					id: evaluateObjProps(props, {}, "plot_owner_bvn") || evaluateObjProps(props, {}, "owner_id"), // REMOVE
+					titles: Object.freeze({
+						title1: 
+							evaluateObjProps(props, {}, 'owner_name') || 
+							evaluateObjProps(props, {}, "plot_owner_first_name"),
+						title2: evaluateObjProps(props, {}, "plot_owner_middle_name"),
+						title3: evaluateObjProps(props, {}, "plot_owner_last_name"),
+					}),
+					photoBase64: "",
+					photoURL: evaluateObjProps(props, {defaultReturn: "/assets/icons/icons8-person-48.png"}, "owner_photo_url")
 				}),
-				photoBase64: "",
-				photoURL: evaluateObjProps(props, {defaultReturn: "/assets/icons/icons8-person-48.png"}, "owner_photo_url")
-			}),
-		});
+			});
+	
+			const featureArea = 
+				evaluateObjProps(props, {}, 'chunk_size') || 
+				evaluateObjProps(props, {}, "plot_owner_allocation_size");
+	
+			let featCenterLat, featCenterLng;
+			if (clusterFeature.geometry) {
+				[featCenterLat, featCenterLng] = [..._getFeatCenter(clusterFeature.geometry).latLng];
+			};
+			
+			return {
+				featureID,
+				featureIndex,
+				featureArea,
+				// featCenterFeat,
+				featCenterLat,
+				featCenterLng,
+				// featOwnerID,
+				// featOwnerName: {
+				//    firstName,
+				//    middleName,
+				//    lastName,
+				// },
+				featureAdmin,
+				// featRenderHash,
+			};
 
-		const featureArea = 
-			evaluateObjProps(props, {}, 'chunk_size') || 
-			evaluateObjProps(props, {}, "plot_owner_allocation_size");
-		
-		return {
-			featureID,
-		   featureIndex,
-		   featureArea,
-		   // featCenterFeat,
-		   // featCenterLat,
-		   // featCenerLng,
-		   // featOwnerID,
-		   // featOwnerName: {
-		   //    firstName,
-		   //    middleName,
-		   //    lastName,
-		   // },
-			featureAdmin,
-		   // featRenderHash,
-	};
+		} else {
+			throw new Error(`propsInterfaceErr: Cannot get properties`);
+		};
 
 	} catch (getClusterFeatPropsErr) {
 		console.error(`getClusterFeatPropsErr: ${getClusterFeatPropsErr.message}`);

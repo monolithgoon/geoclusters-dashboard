@@ -9,17 +9,24 @@ export const AVG_BASE_MAP = L.map("avg_base_map_container", { zoomSnap: 0.01, pr
    // .setView([36.80504251142855, 10.185470319310479], 13.5);
    // .setView([36.8364914310283, 10.070729096590059], 15);
    // .setView([36.8370066107919, 10.059871561852127], 14.5);
-
-   // .setView([4.654776030857737, 7.03691902649687], 14.5);
    .setView([9.4699247854766355, 7.217137278865754], 6.4);
+
+((map)=>{
+
+   map.on("zoomend", function() {
+      console.log(map.getZoom());
+   });
+      
+      map.on("moveend", function() {
+      console.log(map.getCenter());
+   });
+   
+})(AVG_BASE_MAP);
 
 
 // INIT. FEAT. DETAIL MINIMAP
 export const FEAT_DETAIL_MAP = L.map("feature_detail_map_container", { zoomSnap: 0.01, preferCanvas: true })
    .setView([15.0043, 7.4430], 7.5);
-   // .setView([36.80504251142855, 10.185470319310479], 13.5);
-   // .setView([36.8364914310283, 10.070729096590059], 15);
-   // .setView([36.8370066107919, 10.059871561852127], 14.5);
 
 
 // REMOVE
