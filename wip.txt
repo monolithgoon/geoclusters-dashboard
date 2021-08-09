@@ -62,6 +62,8 @@ https://github.com/Leaflet/Leaflet.markercluster#other-options
 
 
 AVG Dashboard
+We created this transparency audit, and user-feedback tool that renders all the sub-plots for each parcelized AGC on an interactive map. It ensures the farmers and other vested parties have clear visual representation showing exactly where the plots are situated, without needing to export the coordinate data to an external map visualization tool like Google Earth or Ersi AgcGIS.
+Also, the preview map gives all parties involved comfort that parcelization was done fairly and accurately. It has visual guides to help a user authenticate the size of each plot.
 
 Deliverables
 
@@ -71,10 +73,15 @@ Deliverables
 Technical Implementation
 1.) Legacy AGCs
 
+2.) Live AGC data
+- API endpoints
+- 
+
 Data layer access control
    - Implemented protected routes
 
-   Auth. access control
+   Auth. access control 
+      - using JWT
    User role acces control
 
 
@@ -82,6 +89,39 @@ Automated Land Parcelization
 
 Overview
 
+   The auto-parcelization service provides a fast, precise, and repeatable tool for farmers in AGCs to divide up their shared land expanse into smaller, contiguous plots, whose sizes match each farmer's pre-specified hectarage need. The tool immdeately reports back high-resolution coordinates of each farmer's plot boundaries, and eliminates the need to physically scout every single plot with expensive survey equipment.
+
+   The API has simple, clean endpoints that easily interface with NIRSAL's AGC registration portal. 
+   
+   The payload for land auto-subdivision simply needs to be a GEOJSON FeatureCollection and an array of farmers and hectarage allocation per farmer.
+
 Deliverables
+Automatically sub-divide delineated land into smaller, adjacent plots, each sized according to farmers' pre-agreed hectarage allocations.
+We worked to make the returned parcelzied AGC data payload lightweight, and easily shareable with relevant external parties.
+
+For this new section of work, our team has been tasked to set up a completely automatic system to receive, evaluate, process and convert 3 formats (GPX, KML, KMZ) of computer generated and/or direct GPS field data. These file types need to be converted into easily transmittable GeoJSON, and bundled together with farmer info.
+
+Features 
+
+   API is accesible via 3 secured endpoints. 
+      - POST Endpoints
+         - 1st endpoint receives delineated AGC land data in optimized-for-web, geospatial data format (GeoJSON**), together with which farmer allocations and limited biometric data (photographs) have been bundled.
+         - 2nd endpoint handles the 3 flavors of geospatial file data: GPX, KML, SHP
+            - GPX data is typically discrete point data, acquired by a user walking a path with a GPS device. However, they are typically not closed shapes. These GPX tracks need to be coverted into closed, sub-dividable polygons. However, in cases where the user fails to return to their starting point, this conversion will not be possible. Our code will detect this condition, and report the error back to the AGC portal in order for the user to take action.
+            - KML/KMZ files oftentimes come included with useless topology info. that needs to be striped away. Our programming will be robust enough to handle the extraction of only the pertinent data.
+      - GET Endpoint
+         - returns high-res., parcelized plot coordinates, and other auto-parcelization metadata, ready for consumption by interested parties.
+
+   - We have been tasked with builidng a validation check that compares the AGC land size against the total farmer allocations. This check reports back to the portal to perimit the user continue with auto parcelization or require that they reupload their land survey size or modify their allocaitons
+
+   - Each plot has high-resolution boundary coordinates that guarantees robust extensibility of the auto-parcelization platform, preparedness for next-level agri-tech applications & seamless integration with other high-tech platforms.
+   To wit, the upper limit of precision for the sub-divided plot coordinates is somewhere between 0.3-0.5 hectares. This means for example that a agri-drone applying pesticides can fly the coordinates of a 0.3 ha. (3,000 SQM) plot without fear of overlap into another farmer's plot. This level of precision was a deliberate effort.
+
+
 
 Technical Implementation
+   - The methodology for accessing the parcelization service is documented here: 
+      https://geoclusters.herokuapp.com/api-guide
+   - Raw Base64 farmer photo data is converted from 
+
+Features

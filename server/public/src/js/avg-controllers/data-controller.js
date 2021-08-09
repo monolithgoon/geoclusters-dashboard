@@ -1,4 +1,24 @@
 `use strict`
+import { DOM_ELEMENTS } from "../utils/dom-elements.js";
+import { _ManipulateDOM } from "../utils/helpers.js";
+import { APP_STATE } from "./state-controller.js";
+
+
+export function _retreiveGeoJSONData() {
+
+	const geoClusters = JSON.parse(_ManipulateDOM.getDataset(DOM_ELEMENTS().geoClustersDatasetDiv));
+         
+	APP_STATE.saveDBCollection(`geo-clusters`, [...geoClusters]); 
+
+	return {
+		geoClusters,
+		// statesAdminBounds,
+		// lgaAdminBounds,
+		// wardsAdminBounds,
+	};
+};
+
+
 export async function _queryAPI(fetch, apiHost, apiCollectionPath, {queryString=``}) {
 
 	console.log(`%c ${this.currentTarget} is getting latest data from API`, `background-color: lightgrey; color: blue;`);

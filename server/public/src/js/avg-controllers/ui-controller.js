@@ -619,36 +619,21 @@ const InputsHandlers = ((dom) => {
 
 
 // DOM ELEM. EVT. LIST'NRS.
-function _activateEventListeners() {
+function _mountHandlers() {
 
    try {
 
       window.addEventListener(`DOMContentLoaded`, async (windowObj) => {
 
-         // save the UI default settings
-         APP_STATE.saveDefaultSettings(pollAVGSettingsValues());
-                  
+         // FIXME > DOWNLOAD COLLS. IN RESPONSE TO DB. INSERTS
          // await downloadDBCollections(windowObj);
-
+         // REMOVE > DEPRC.
          const legacyClustersColl = _TraverseObject.evaluateValue(APP_STATE.returnDBCollections(), [0], "data", "legacy_agcs");
-         
-         populateResultsSidebar(legacyClustersColl);
-   
-         // ADD CLICK HAND. AFTER DIVS HAVE BEEN MADE
-         resultTitleClickHandler(_getDOMElements().resultTitleDivs);
-
-         // SANDBOX > SAVE DATA FROM BACKEND
-         const geoClusters = JSON.parse(_ManipulateDOM.getDataset(DOM_ELEMENTS().geoClustersDatasetDiv));
-         
-         APP_STATE.saveDBCollection(`geo-clusters`, [...geoClusters]); 
-
-         await _AnimateClusters.renderClusters(geoClusters, {
-            useBuffer: pollAVGSettingsValues().bufferFeatsChk ,
-            bufferAmt: APP_STATE.CONFIG_DEFAULTS.RENDERED_PLOT_BUFFER,
-            bufferUnits: pollAVGSettingsValues().distanceUnits,
-         });
+         populateResultsSidebar(legacyClustersColl);   
       });
-
+      
+      // ADD CLICK HAND. AFTER DIVS HAVE BEEN MADE
+      resultTitleClickHandler(_getDOMElements().resultTitleDivs);
 
       // SETTINGS CHANGE EVENT SEQ.
       InputsHandlers.areaUnits(getAreaUnitsRadios());
@@ -682,4 +667,4 @@ function _activateEventListeners() {
 };
 
 
-export { _activateEventListeners };
+export { _mountHandlers };

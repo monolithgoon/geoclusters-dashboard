@@ -950,7 +950,7 @@ export const _AnimateClusters = (function(avgBaseMap, clusterFeatsMap) {
             switch (true) {
 
                case zoomLevel < 8.5:
-                  // useBuffer = false;
+                  useBuffer = false;
                   break;
 
                case zoomLevel < 12:

@@ -47,7 +47,7 @@ export const APP_STATE = (function() {
    let currentSettings = {};
 
    // instantiate an object that holds a db. collection 
-   const DB_COLLECTION = {
+   const DATA_STORE = {
       name: ``,
       data: {},
    };
@@ -76,7 +76,7 @@ export const APP_STATE = (function() {
       },
 
       saveDBCollection: function(collectionName, json) {
-         const newCollection = Object.create(DB_COLLECTION);
+         const newCollection = Object.create(DATA_STORE);
          newCollection.name = collectionName;
          newCollection.data = json;
          DB_COLLECTIONS.push(newCollection);

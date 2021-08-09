@@ -40,10 +40,6 @@ function retreiveClustersData() {
       
    const returnedClusters = combineObjArrays(parcelizedClusters, legacyClusters);
 
-   const numClusterFeatures = (()=>{
-
-   })
-
    const clustersSummary = {
       totalNumClusters: returnedClusters.length,
       totalNumFeatures: (()=>{

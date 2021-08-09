@@ -288,10 +288,10 @@ input, button,
          z-index: 1;
          display: grid;
 
-         border-radius: 10px;
+         /* border-radius: 10px; */
          border: 1px solid white;
          color: white;
-         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+         font-family: 'Roboto', Tahoma, Geneva, Verdana, sans-serif;
       }
 
       .welcome-pane-container {
