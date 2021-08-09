@@ -108,7 +108,7 @@ function getAppSettingsInputs() {
 
 
 // GET SETTINGS VALUES
-export const pollAVGSettingsValues = () => {
+export const _pollAVGSettingsValues = () => {
 
    try {
             
@@ -299,7 +299,7 @@ function clusterTitleClickSeq(evtObj) {
    // REMOVE
    const previousRenderedGJ = APP_STATE.retreiveLastRenderedGJ();
    console.log({previousRenderedGJ});
-   console.log(pollAVGSettingsValues());
+   console.log(_pollAVGSettingsValues());
 
    // get the main parent container
    const resultContainerDiv = _ManipulateDOM.getParentElement(evtObj.target, {parentLevel: 3});
@@ -324,10 +324,10 @@ function clusterTitleClickSeq(evtObj) {
       _AnimateClusters.renderEverythingNow(clusterGeoJSON, 
          {
             baseMapZoomLvl: APP_STATE.CONFIG_DEFAULTS.LEAFLET_ADMIN_LEVEL_3_ZOOM,
-            useBuffer: pollAVGSettingsValues().bufferFeatsChk, 
-            bufferUnits: pollAVGSettingsValues().distanceUnits,
+            useBuffer: _pollAVGSettingsValues().bufferFeatsChk, 
+            bufferUnits: _pollAVGSettingsValues().distanceUnits,
             bufferAmt: APP_STATE.CONFIG_DEFAULTS.RENDERED_PLOT_BUFFER,
-            areaUnits: pollAVGSettingsValues().areaUnits
+            areaUnits: _pollAVGSettingsValues().areaUnits
          }
       );
 
@@ -376,7 +376,7 @@ function featCardClickSeq(clusterFeatures) {
 
          // this => clusterFeatCard
          if (this.currentTarget.id === _CheckGeoJSON.getId(clusterFeatures[i])) {
-            _AnimateClusters.panToClusterPlot(clusterFeatures[i], {zoomLevel: pollAVGSettingsValues().clusterMap.zoomValue});
+            _AnimateClusters.panToClusterPlot(clusterFeatures[i], {zoomLevel: _pollAVGSettingsValues().clusterMap.zoomValue});
             _AnimateClusters.renderFeatPopup(_getClusterFeatProps(clusterFeatures[i], i), _TurfHelpers.getLngLat(clusterFeatures[i]));
          };
       };
@@ -399,7 +399,7 @@ function featCardClickSeq(clusterFeatures) {
       
 //                // this => clusterFeatCard
 //                if (this.currentTarget.id === _CheckGeoJSON.getId(clusterFeatures[i])) {
-//                      _AnimateClusters.panToClusterPlot(clusterFeatures[i], {zoomLevel: pollAVGSettingsValues().clusterMap.zoomValue});
+//                      _AnimateClusters.panToClusterPlot(clusterFeatures[i], {zoomLevel: _pollAVGSettingsValues().clusterMap.zoomValue});
 //                   _AnimateClusters.renderFeatPopup(mapboxMap, _TurfHelpers.getLngLat(clusterFeatures[i]));
 //                };
 //             };
@@ -566,10 +566,10 @@ const InputsHandlers = ((dom) => {
                if (APP_STATE.retreiveLastRenderedGJ()) {
                   _AnimateClusters.renderClusterPlotsLabels(APP_STATE.retreiveLastRenderedGJ(), 
                      {
-                        useBuffer: pollAVGSettingsValues().bufferFeatsChk,
-                        bufferUnits: pollAVGSettingsValues().distanceUnits,
+                        useBuffer: _pollAVGSettingsValues().bufferFeatsChk,
+                        bufferUnits: _pollAVGSettingsValues().distanceUnits,
                         bufferAmt: APP_STATE.CONFIG_DEFAULTS.RENDERED_PLOT_BUFFER,
-                        areaUnits: pollAVGSettingsValues().areaUnits
+                        areaUnits: _pollAVGSettingsValues().areaUnits
                      }
                   );
                };
