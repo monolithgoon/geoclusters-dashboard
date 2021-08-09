@@ -63,6 +63,7 @@ exports.getClustersData = catchAsync(async(req, res, next) => {
    req.app.locals.returnedClusters = returnedClusters;
 
    next();
+   
 }, `getClustersDataErr`);
 
 

@@ -1,11 +1,9 @@
 `use strict`
+const catchAsync = require('../utils/catch-async.js');
 const chalk = require('../utils/chalk-messages.js');
-const axios = require("axios");
 
 
-exports.renderAVGDashboard = async (req, res, next) => {
-
-   // console.log(chalk.console(JSON.stringify(req.app.locals.geoClusters[0])));
+exports.renderAVGDashboard = catchAsync((req, res, next) => {
 
    console.log(chalk.success(`SUCCESSFULLY CALLED 'renderAVGDashboard' VIEW CONTROLLER FN. `));
 
@@ -22,10 +20,12 @@ exports.renderAVGDashboard = async (req, res, next) => {
    } catch (renderAGVErr) {
       console.error(chalk.fail(`renderAGVErr: ${renderAGVErr.message}`));
    };
-};
+
+}, `renderDashboardErr`);
 
 
-exports.renderLandingPage = async (req, res, next) => {
+exports.renderLandingPage = catchAsync((req, res, next) => {
+   console.log(chalk.highlight(req.app.locals.clustersSummary))
    console.log(chalk.success(`SUCCESSFULLY CALLED 'renderLandingPage' VIEW CONTROLLER FN. `));
    res.status(200).render('landing', {
       title: "AGC Platform - SSR V1.0",
@@ -33,4 +33,4 @@ exports.renderLandingPage = async (req, res, next) => {
       totalNumClusters: req.app.locals.clustersSummary.totalNumClusters,
       totalNumFeatures: req.app.locals.clustersSummary.totalNumFeatures,
    });
-};
+}, `renderLandingPageErr`);
