@@ -2,7 +2,7 @@
 import { _queryAPI } from "./data-controller.js";
 import { _TraverseObject, _getCheckedRadio, _stringifyPropValues, _TurfHelpers, _ManipulateDOM } from "../utils/helpers.js";
 import { _sanitizeFeatCollCoords, _CheckGeoJSON, _getBufferedPolygon } from "../utils/helpers.js";
-import { _RenderMaps, _switchMapboxMapLayer } from "../controllers/maps-controller.js";
+import { _AnimateClusters } from "../controllers/maps-controller.js";
 import { APP_STATE } from "./state-controller.js";
 import { _getClusterFeatProps, _GetClusterProps } from "../interfaces/cluster-props-adapter.js";
 import { _GenerateClusterFeatMarkup, _GenerateClusterMarkup, _GenClusterModalMarkup } from "./markup-generator.js";
@@ -321,7 +321,7 @@ function clusterTitleClickSeq(evtObj) {
       populateClusterFeatsSidebar(clusterGeoJSON);
       
       // 2.
-      _RenderMaps.renderEverythingNow(clusterGeoJSON, 
+      _AnimateClusters.renderEverythingNow(clusterGeoJSON, 
          {
             baseMapZoomLvl: APP_STATE.CONFIG_DEFAULTS.LEAFLET_ADMIN_LEVEL_3_ZOOM,
             useBuffer: pollAVGSettingsValues().bufferFeatsChk, 
@@ -376,8 +376,8 @@ function featCardClickSeq(clusterFeatures) {
 
          // this => clusterFeatCard
          if (this.currentTarget.id === _CheckGeoJSON.getId(clusterFeatures[i])) {
-            _RenderMaps.panClusterPlotsFeatMap(clusterFeatures[i], {zoomLevel: pollAVGSettingsValues().clusterMap.zoomValue});
-            _RenderMaps.renderFeatPopup(_getClusterFeatProps(clusterFeatures[i], i), _TurfHelpers.getLngLat(clusterFeatures[i]));
+            _AnimateClusters.panToClusterPlot(clusterFeatures[i], {zoomLevel: pollAVGSettingsValues().clusterMap.zoomValue});
+            _AnimateClusters.renderFeatPopup(_getClusterFeatProps(clusterFeatures[i], i), _TurfHelpers.getLngLat(clusterFeatures[i]));
          };
       };
 
@@ -399,8 +399,8 @@ function featCardClickSeq(clusterFeatures) {
       
 //                // this => clusterFeatCard
 //                if (this.currentTarget.id === _CheckGeoJSON.getId(clusterFeatures[i])) {
-//                      _RenderMaps.panClusterPlotsFeatMap(clusterFeatures[i], {zoomLevel: pollAVGSettingsValues().clusterMap.zoomValue});
-//                   _RenderMaps.renderFeatPopup(mapboxMap, _TurfHelpers.getLngLat(clusterFeatures[i]));
+//                      _AnimateClusters.panToClusterPlot(clusterFeatures[i], {zoomLevel: pollAVGSettingsValues().clusterMap.zoomValue});
+//                   _AnimateClusters.renderFeatPopup(mapboxMap, _TurfHelpers.getLngLat(clusterFeatures[i]));
 //                };
 //             };
       
@@ -564,7 +564,7 @@ const InputsHandlers = ((dom) => {
          radios.forEach(radio => {
             radio.addEventListener(`change`, async (e) => {
                if (APP_STATE.retreiveLastRenderedGJ()) {
-                  _RenderMaps.renderClusterPlotLabel(APP_STATE.retreiveLastRenderedGJ(), 
+                  _AnimateClusters.renderClusterPlotsLabels(APP_STATE.retreiveLastRenderedGJ(), 
                      {
                         useBuffer: pollAVGSettingsValues().bufferFeatsChk,
                         bufferUnits: pollAVGSettingsValues().distanceUnits,
@@ -579,7 +579,7 @@ const InputsHandlers = ((dom) => {
 
       plotsMapStyle: () => {
          dom.plotsMapStyleRadios.forEach(radio => {
-            radio.addEventListener(`change`, _switchMapboxMapLayer);
+            radio.addEventListener(`change`, _AnimateClusters.refreshClusterPlotsMap);
          });   
       },
 
@@ -642,7 +642,7 @@ function _activateEventListeners() {
          
          APP_STATE.saveDBCollection(`geo-clusters`, [...geoClusters]); 
 
-         await _RenderMaps.renderClusters(geoClusters, { 
+         await _AnimateClusters.renderClusters(geoClusters, {
             useBuffer: pollAVGSettingsValues().bufferFeatsChk ,
             bufferAmt: APP_STATE.CONFIG_DEFAULTS.RENDERED_PLOT_BUFFER,
             bufferUnits: pollAVGSettingsValues().distanceUnits,

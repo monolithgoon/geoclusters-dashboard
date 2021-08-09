@@ -219,7 +219,15 @@ exports._GetClusterProps = (clusterFeatureCollection = _mandatoryParam()) => {
 		
 		const subdivideMetadata = evaluateObjProps(props, {}, 'parcelization_metadata');
 		
-		let primaryCommodity = evaluateObjProps(props, {}, 'geo_cluster_details', 'primary_crop');
+		// REMOVE
+		// let primaryCommodity = evaluateObjProps(props, {}, 'geo_cluster_details', 'primary_crop');
+		// 	primaryCommodity = startcase(primaryCommodity);
+
+		let primaryCommodity = TraverseObject.evaluateValue(props, 'geo_cluster_details', 'primary_crop') 
+			? TraverseObject.getFinalValue()
+			: TraverseObject.evaluateValue(props, 'primary_crop')
+			? TraverseObject.getFinalValue()
+			: "Rice";
 			primaryCommodity = startcase(primaryCommodity);
 
 		let clusterGovAdmin1 = Object.freeze({

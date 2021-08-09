@@ -19,7 +19,10 @@ https://www.sitepoint.com/es6-default-parameters/
 
 
 https://github.com/mapbox/geojsonhint
+https://www.npmjs.com/package/geojson-validation
 https://geojson.io/#map=14/10.1299/12.5018
+
+
 https://studio.mapbox.com/tilesets/
 https://docs.mapbox.com/help/getting-started/map-design/
 https://www.tophap.com/map/N4IgtiBcoMZQ2gWgIwCZUDoDMAGLBWATn3WUIHZd8AaLcjADjoYfIcNYBYdKBdakAC8oyThnw5JU6VNQCADlBwCARktUB7BEjSYsyBqhKpkk5MnwA2WvSY8sWBp1Q5TD-jvQZULQo9QOfiScNoycEpxolsjkroScvLwAvgJgAC5QIDAaADYaAE4gAgDWmagABACCACZgAJb5AIY55QAi+eUAxOUAQqjkyNTlAKJgAKb5AJ4AbnU5OWNDAMKV5fGWOAxFIADOitDgGtVjma1jaY1z23XVmZyOhDicluTbAGb5GmAAMnU7GZA3s0dmMUiAFlAgTkQUkgA
@@ -43,6 +46,11 @@ https://github.com/vue-leaflet/Vue2Leaflet/issues/473
 https://github.com/manubb/Leaflet.PixiOverlay
 
 
+https://github.com/adammertel/Leaflet.MarkerCluster.PlacementStrategies
+https://github.com/ghybs/Leaflet.MarkerCluster.LayerSupport
+https://github.com/Leaflet/Leaflet.markercluster#other-options
+
+
 // Auto full screen
 // logout user
 // upload legacy agcs
@@ -63,11 +71,7 @@ Deliverables
 Technical Implementation
 1.) Legacy AGCs
 
+Data layer access control
+   - Implemented protected routes
 
-Automated Land Parcelization
-
-Overview
-
-Deliverables
-
-Technical Implementation
+   Auth. access contro

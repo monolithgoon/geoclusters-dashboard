@@ -27,8 +27,11 @@ exports.renderAVGDashboard = async (req, res, next) => {
 
 exports.renderLandingPage = async (req, res, next) => {
    console.log(chalk.success(`SUCCESSFULLY CALLED 'renderLandingPage' VIEW CONTROLLER FN. `));
+   console.log(chalk.console(req.app.locals.clustersSummary.totalNumFeatures))
    res.status(200).render('landing', {
       title: "AGC Platform - SSR V1.0",
-      user: "FieldDev Group"
-   })
+      user: "FieldDev Group",
+      totalNumClusters: req.app.locals.clustersSummary.totalNumClusters,
+      totalNumFeatures: req.app.locals.clustersSummary.totalNumFeatures,
+   });
 };
