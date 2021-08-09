@@ -277,15 +277,21 @@ input, button,
    @media screen and (min-width: 850px) {
       
       .floating-pane {
-         margin: 25px;
+         margin: 30px;
          margin-right: 10px;
          padding: 8px;
+         padding: 10px;
+         max-height: 20vh;
          position: absolute;
          bottom: 0;
          right: 0;
          z-index: 1;
-         min-height: 30vh;
          display: grid;
+
+         border-radius: 10px;
+         border: 1px solid white;
+         color: white;
+         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       }
 
       .welcome-pane-container {

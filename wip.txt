@@ -74,4 +74,14 @@ Technical Implementation
 Data layer access control
    - Implemented protected routes
 
-   Auth. access contro
+   Auth. access control
+   User role acces control
+
+
+Automated Land Parcelization
+
+Overview
+
+Deliverables
+
+Technical Implementation
