@@ -8,6 +8,31 @@
 }
 
 
+/* BLUR */
+@supports (-webkit-backdrop-filter: none) or (backdrop-filter: none) {
+   .blur {
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
+      background-color: rgba(122, 157, 37, 0.2);
+   }
+}
+
+
+/* SUB-SCRIPT & SUPER-SCRIPT */
+.super-scr {
+   position: relative;
+   bottom: 1.0em;
+   left: 0.1em;
+   left: 0.05em;
+}
+
+.sub-scr {
+   position: relative;
+   top: 1.0em;
+   right: 0.1em;
+}
+
+
 /* POSITION */
 .pos-relative {
    position: relative;
@@ -131,7 +156,7 @@ div.line-1pt {
    justify-content: space-between;
 }
 
-.flex-row-start,
+/* .flex-row-start, */
 .flex-row-center-start {
    display: flex;
    flex-direction: row;
@@ -180,6 +205,16 @@ div.line-1pt {
    flex-direction: column;
    align-items: center;
    justify-content: flex-start;
+}
+
+.flex-col {
+   display: flex;
+   flex-direction: column;
+   justify-content: flex-start;
+}
+
+.flex-end {
+   align-items: flex-end;
 }
 
 .flex-1 {

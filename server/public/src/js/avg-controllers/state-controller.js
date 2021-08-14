@@ -55,8 +55,10 @@ export const APP_STATE = (function() {
    // hold all the collections & their data
    const DB_COLLECTIONS = [];
    
+   // 
+   
    // keep track of the GJ. that was just rendered
-   const renderedGeojson = [];
+   const renderedGeoJSON = [];
    
    return {
 
@@ -95,14 +97,18 @@ export const APP_STATE = (function() {
       saveRenderedGeojson: function(geojson) {
          // FIXME > TOO WEAK FOR CHECKING VALID GJ.
          // TODO > REPORT BACK SAVED SUCCEED OR NO
-         if (geojson) { renderedGeojson.push(geojson) }
+         if (geojson) { renderedGeoJSON.push(geojson) }
       },
       retreiveRenderedGJ: function() {
-         return renderedGeojson;
+         return renderedGeoJSON;
       },
       retreiveLastRenderedGJ: function() {
-         const lastGeojson = renderedGeojson[renderedGeojson.length-1];
-         return lastGeojson ? lastGeojson : null;
+         let lastGeoJSON;
+         if (renderedGeoJSON.length === 1) {
+            return lastGeoJSON = renderedGeoJSON.length[0];
+         };
+         lastGeoJSON = renderedGeoJSON[renderedGeoJSON.length-1];
+         return lastGeoJSON ? lastGeoJSON : null;
       },
    };
 })();

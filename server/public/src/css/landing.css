@@ -39,8 +39,11 @@
    grid-template-rows: 2fr 0.5fr auto;      
 }
 
+.welcome-pane-content a:hover {
+   text-decoration: underline !important;
+}
+
 .welcome-pane-header {
-   /* padding: 1.2rem; */
 
    color: white;
    
@@ -89,7 +92,8 @@
    grid-area: brands;
 }
 
-.welcome-pane-header h1 > div {  
+.welcome-pane-header h1 > div,
+.welcome-pane-header h1 > span {
    font-family: 'Fjalla One', sans-serif;
    font-size: 3.4rem;
    line-height: 50px; 
@@ -98,7 +102,6 @@
 }
 
 .welcome-pane-body {
-   /* background-color: rgba(0,0,0,0.1); */
    background-color:white;
 }
 
@@ -186,6 +189,16 @@ input, button,
    display: none
 }
 
+#login_next_btn:hover,
+#login_submit_btn:hover {
+   background-color: var(--btn-fill-hover);
+}
+
+#login_next_btn:active,
+#login_submit_btn:active {
+   background-color: var(--btn-fill-active);
+}
+
 #login_next_btn:disabled,
 #login_submit_btn:disabled {
    background-color: lightgrey;
@@ -269,7 +282,6 @@ input, button,
 
 .welcome-pane-footer nav > a {
    padding: 0 10px;
-   text-decoration: none;
 }
 
 

@@ -74,6 +74,43 @@ const LeafletMapsSetup = ((baseMap, featDetailMap)=>{
    baseMap.on("moveend", function() {
       console.log(baseMap.getCenter());
    });
+
+   // TODO > WIP
+   // Create additional Control placeholders
+   (function addControlPlaceholders(map) {
+      
+      var corners = map._controlCorners; 
+      const l = 'leaflet-'; 
+      const container = map._controlContainer;
+
+      function createCorner(vSide, hSide) {
+         var className = l + vSide + ' ' + l + hSide;
+         corners[vSide + hSide] = L.DomUtil.create('div', className, container);
+      };
+
+      function initCorner(className) {
+         corners[className] = L.DomUtil.create('div', className, container);
+         console.log(corners[className]);
+         document.querySelector(`.basemap-controls-container`).appendChild(corners[className])
+      };
+
+      createCorner('verticalcenter', 'left');
+      createCorner('verticalcenter', 'right');
+
+      initCorner('basemap-controls-placeholder');
+
+   })(baseMap);
+   
+   // TODO > WIP
+   (function setupCustomControls(map){
+
+      // Change the position of the Zoom Control to a newly created placeholder.
+      map.zoomControl.setPosition('basemap-controls-placeholder');
+
+      // You can also put other controls in the same placeholder.
+      L.control.scale({position: 'verticalcenterright'}).addTo(map);
+      L.control.scale({position: 'basemap-controls-placeholder'}).addTo(map);
+   })(baseMap);
    
 })(AVG_BASE_MAP, FEAT_DETAIL_MAP);
 
@@ -342,8 +379,8 @@ const MapboxMaps = ((plotsMap) => {
          };
       },
 
-      switchLayer: ({layerId=_mandatoryParam()}) => {
-         plotsMap.setStyle(`mapbox://styles/mapbox/${layerId}`);
+      switchLayer: ({layerId=_mandatoryParam(), map=plotsMap}) => {
+         map.setStyle(`mapbox://styles/mapbox/${layerId}`);
       },
 
       // PAN MAP TO GEOJSON'S CENTER
@@ -645,8 +682,43 @@ const LeafletMaps = ((baseMap)=>{
                break;
          };
       },
-      renderFeatColl: (featColl, {map=baseMap}) => {
 
+      uniteFeatColl: featColl => {
+         return featColl;
+      },
+
+      renderFeatColl: (featColl, {map=baseMap}) => {
+         
+         try {
+            
+            if (turf.geojsonType(featColl, "FeatureCollection", "renderFeatColl"));
+            
+            const polygons = [];
+            featColl.features.forEach(feature=>{
+               polygons.push(feature.geometry)
+            })
+            // console.log(...polygons)
+            const unitedFeatures2 = turf.union(featColl.features)
+            const unitedFeatures = turf.union(...polygons)
+
+            // const unitedFeatures = featColl.features.reduce((featsUnion, currentFeat) => {
+            //    console.log({featsUnion})
+            //    console.log({currentFeat})
+            //    if (!featsUnion.geometry && currentFeat.geometry) featsUnion = currentFeat;
+            //    return featsUnion = turf.union(featsUnion.geometry, currentFeat.geometry);
+            // }, featColl.features[0]);
+
+            // const unitedFeatures2 = turf.featureReduce(featColl, (featsUnion, currentFeat) => {
+            //    if (!featsUnion.geometry && currentFeat.geometry) featsUnion = currentFeat;
+            //    return featsUnion = turf.union(featsUnion.geometry, currentFeat.geometry);
+            // }, featColl.features[0]);
+
+            console.log(unitedFeatures)
+            console.log(unitedFeatures2)
+
+         } catch (renderFeatCollErr) {
+            console.error(renderFeatCollErr.message)
+         };
       },
       // REMOVE
       renderFeatureMarker__2: async (feature, {map=baseMap}) => {
@@ -929,10 +1001,10 @@ export const _AnimateClusters = (function(avgBaseMap, clusterFeatsMap) {
          refreshClusterPlotsMap: (eventObj) => {
             var layerId = eventObj.target.id;
             if (layerId) { 
-               MapboxMaps.switchLayer(layerId);
+               MapboxMaps.switchLayer({layerId, map:clusterFeatsMap});
             } else {
                // TODO
-            }
+            };
          },
 
          panToClusterPlot: (geoJSONFeat, {zoomLevel}) => {
@@ -966,14 +1038,18 @@ export const _AnimateClusters = (function(avgBaseMap, clusterFeatsMap) {
                for (let idx = 0; idx < featureCollections.length; idx++) {
                   const featColl = featureCollections[idx];
                   const featCollMarkers = [];
-                  for (let idy = 0; idy < featColl.features.length; idy++) {
-                     const feature = featColl.features[idy];
-                     await LeafletMaps.renderFeature(feature, {map: avgBaseMap, useBuffer, bufferAmt, bufferUnits});
-                     // allFeatures.push(feature);
-                     // LeafletMaps.renderFeaturesMarkers(allFeatures, {map: avgBaseMap});
-                     const featMarker = LeafletMaps.initMarker(feature, {useBuffer, bufferAmt, bufferUnits});
-                     featCollMarkers.push(featMarker);
-                  };
+                  if (featColl.features.length > 0) {
+                     LeafletMaps.uniteFeatColl(featColl);
+                     LeafletMaps.renderFeatColl(featColl, {map: avgBaseMap});
+                     for (let idy = 0; idy < featColl.features.length; idy++) {
+                        const feature = featColl.features[idy];
+                        await LeafletMaps.renderFeature(feature, {map: avgBaseMap, useBuffer, bufferAmt, bufferUnits});
+                        // allFeatures.push(feature);
+                        // LeafletMaps.renderFeaturesMarkers(allFeatures, {map: avgBaseMap});
+                        const featMarker = LeafletMaps.initMarker(feature, {useBuffer, bufferAmt, bufferUnits});
+                        featCollMarkers.push(featMarker);
+                     };
+                  }
                   if (featCollMarkers.length > 0) {
                      LeafletMaps.saveMarkerGroup(featCollMarkers);
                      await LeafletMaps.renderMarkerCluster(featCollMarkers, {map: avgBaseMap})

@@ -22,8 +22,6 @@ exports.renderLandingPage = catchAsync(async(req, res, next) => {
 
    console.log(chalk.success(`SUCCESSFULLY CALLED 'renderLandingPage' VIEW CONTROLLER FN. `));
 
-   console.log(chalk.highlight(JSON.stringify(req.app.locals.clustersSummary)))
-
    res.status(200).render('landing', {
       title: "AGC Platform - SSR V1.0",
       user: "FieldDev Group",

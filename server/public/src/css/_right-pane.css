@@ -27,7 +27,7 @@ section.right-pane-container {
    border: 3px dashed darkorchid;
    max-height: 89vh;
 }
-      
+
 .right-pane-content-body {
    display: grid;
    grid-template-columns: 1fr;

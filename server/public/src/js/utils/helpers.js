@@ -684,7 +684,7 @@ export function _getUsableGeometry(geoJSON) {
 			break;
 
 		case "MultiPolygon":
-			polygonFeats = _TurfHelpers.unkinkPolygon(geoJSON).features; // HACKY WAY OF CONVERTING TO FEAT. COLL.
+			polygonFeats = _TurfHelpers.unkinkPolygon(geoJSON).features; // HACKY WAY OF CONVERTING MULTIPOLY. TO FEAT. COLL.
 			break;	
 	
 		case "GeometryCollection":

@@ -188,7 +188,7 @@ function masterSlaveControl(master, slaves) {
          // FIXME > THIS HARDCODED PARENT BEH. WILL FAIL
          // show master when slave is clicked
          console.log(master.parentNode)
-         console.log(master.parentNode.style.display)
+         console.log(master.parentNode.style.display);
          _ManipulateDOM.blockElement(master.parentNode);
 
          if (slaveCheckbox.checked === false) { master.checked = false}
@@ -569,7 +569,7 @@ const InputsHandlers = ((dom) => {
                         useBuffer: _pollAVGSettingsValues().bufferFeatsChk,
                         bufferUnits: _pollAVGSettingsValues().distanceUnits,
                         bufferAmt: APP_STATE.CONFIG_DEFAULTS.RENDERED_PLOT_BUFFER,
-                        areaUnits: _pollAVGSettingsValues().areaUnits
+                        areaUnits: _pollAVGSettingsValues().areaUnits,
                      }
                   );
                };
@@ -577,9 +577,25 @@ const InputsHandlers = ((dom) => {
          });
       },
 
+      // FIXME > NOT RENDERING PROPELY
       plotsMapStyle: () => {
          dom.plotsMapStyleRadios.forEach(radio => {
-            radio.addEventListener(`change`, _AnimateClusters.refreshClusterPlotsMap);
+            radio.addEventListener(`change`, (evtObj) => {
+               _AnimateClusters.refreshClusterPlotsMap(evtObj);
+               console.log(APP_STATE.retreiveLastRenderedGJ());
+               if (APP_STATE.retreiveLastRenderedGJ()) {
+                  console.log(`FUCK MIKE LINDEL`)
+                  // _AnimateClusters.renderClusterPlots(APP_STATE.retreiveLastRenderedGJ(),
+                  _AnimateClusters.renderEverythingNow(APP_STATE.retreiveLastRenderedGJ(),
+                     {
+                        useBuffer: _pollAVGSettingsValues().bufferFeatsChk,
+                        bufferUnits: _pollAVGSettingsValues().distanceUnits,
+                        bufferAmt: APP_STATE.CONFIG_DEFAULTS.RENDERED_PLOT_BUFFER,
+                        areaUnits: _pollAVGSettingsValues().areaUnits,
+                     }
+                  );
+               };
+            });
          });   
       },
 

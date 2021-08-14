@@ -5,7 +5,10 @@ const viewsController = require("../controllers/view-controller.js");
 const dataController = require("../controllers/data-controller.js");
 const authController = require("../controllers/auth-controller.js");
 
-router.get("/", viewsController.renderLandingPage);
+router.get("/", 
+	dataController.getClustersSummary,
+	viewsController.renderLandingPage
+);
 
 router.get("/landing",
 	dataController.getClustersSummary,

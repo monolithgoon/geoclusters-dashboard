@@ -37,6 +37,9 @@
 	--grey-line-50: #eee;
 	--grey-line-100: #dfe6e9;
 	--grey-line-200: lightgrey;
+	--btn-fill-rest: #0078D4;
+	--btn-fill-hover: #006CBE;
+	--btn-fill-active: #1683D8;
 
 	/* FONT SIZES */
 	--pt3r-font: 0.3rem;
@@ -220,10 +223,27 @@ line-height: 15px;
 		grid-template-areas:	
 				'left-pane		hidden-pane 	.	header	header'
 				'left-pane		hidden-pane 	. 			. 			right-pane';
+				
+		grid-template-areas:	
+				'left-pane		hidden-pane 	.	header	header'
+				'left-pane		hidden-pane 	. 	map-controls	right-pane';
 	
 		background: #EFE9DD;
 		background: #75cff0;
 		position: relative;
+	}
+
+	section.basemap-controls-container {
+		grid-area: map-controls;
+		margin: 10px;
+		margin-top: 0;
+	}
+
+	.basemap-controls-placeholder {
+		display: grid;
+		border: 2px solid white;
+		z-index: var(--z-idx-2);
+		/* max-width: 35px; */
 	}
 	
 	.user-action-container {
@@ -278,7 +298,6 @@ line-height: 15px;
 		max-width  : 250px;
 		display: grid;
 		grid-template-rows: var(--app-grid-template-rows);
-		/* border     : 1px solid slateblue; */
 		z-index: var(--zmax);
 		overflow-y: hidden;
 	}
