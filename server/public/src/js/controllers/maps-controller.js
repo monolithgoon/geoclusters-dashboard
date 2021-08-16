@@ -4,7 +4,7 @@ import { _clusterFeatPopupMarkup, _GenerateClusterFeatMarkup, _leafletMarkerMark
 import { _pollAVGSettingsValues, _getDOMElements } from "../avg-controllers/ui-controller.js";
 import { _getClusterFeatProps } from "../interfaces/cluster-props-adapter.js";
 import { LAYER_COLORS } from "../utils/mapbox-layer-colors.js";
-import { _TurfHelpers, _getBufferedPolygon, _CheckGeoJSON, _ManipulateDOM, _GeometryMath, _getUsableGeometry, _mandatoryParam } from "../utils/helpers.js";
+import { _TurfHelpers, _getBufferedPolygon, _ProcessGeoJSON, _ManipulateDOM, _GeometryMath, _getUsableGeometry, _mandatoryParam } from "../utils/helpers.js";
 
 
 const LeafletMapsSetup = ((baseMap, featDetailMap)=>{
@@ -133,7 +133,7 @@ function getMapboxLayers(geoJSON, {featureIndex, layerId, color, thickness, fill
    let layerColor = getLayerColor(featureIndex);
 
    // this layerId has a correspondig featCard with an identical id
-   layerId = layerId ? layerId : _CheckGeoJSON.getId(geoJSON);
+   layerId = layerId ? layerId : _ProcessGeoJSON.getId(geoJSON);
 
    if (layerId) {
 
@@ -472,12 +472,12 @@ const MapboxMaps = ((plotsMap) => {
       },
       
       // SIMPLE MAPBOX GJ. RENDER FN.
-      drawFeatFeatColl: ({map, featOrFeatColl}) => {
+      drawFeatFeatColl: (featOrFeatColl, {map=plotsMap}) => {
 
          try {
 
             // RENDER ONLY FEATS. OR FEAT. COLLS.
-            if (map && _CheckGeoJSON.isValidFeatOrColl(featOrFeatColl)) {
+            if (map && _ProcessGeoJSON.isValidFeatOrColl(featOrFeatColl)) {
          
                // CALC. SOME METADATA
                const gjUniqueID = featOrFeatColl._id;
@@ -544,7 +544,19 @@ const LeafletMaps = ((baseMap)=>{
    
          const featCenterLatLng = [featProps.featCenterLat, featProps.featCenterLng];
    
-         featMarker = L.marker(featCenterLatLng);
+         // featMarker = L.marker(featCenterLatLng);
+         featMarker = L.circleMarker(featCenterLatLng, {
+            radius: 5,
+            weight: 2,
+            opacity: 1,
+            color: "white",
+            fillOpacity: 1,
+            fillColor: "#6ab04c", // forest green
+            fillColor: "#fbc531", // sun yellow
+            fillColor: "#e84118", // bright red
+            fillColor: "#ff6348", // orange
+            fillColor: "#4cd137", // skittles green
+         });
    
 
       } else {
@@ -608,18 +620,25 @@ const LeafletMaps = ((baseMap)=>{
          leafletGJLayer.addData(gjPointFeat);
          map.flyTo(leafletGJLayer.getBounds().getCenter(), zoomLevel);      
       },
-      panFeatCenter: (gjFeature, {map=baseMap, zoomLevel}) => {
-         const featCenter = turf.centerOfMass(gjFeature); // FIXME
+      panFeatCenter: (geoJSON, {map=baseMap, zoomLevel}) => {
+         const featCenter = turf.centerOfMass(geoJSON); // FIXME
          LeafletMaps.panToPoint(featCenter, {map, zoomLevel});
+      },
+      fitFeatBounds: (geoJSON, {map=baseMap}) => {
+         const leafletGJLayer = L.geoJson(geoJSON);
+         map.fitBounds(leafletGJLayer.getBounds(), {padding: [150, 150]});
       },
       addPointMarker: (gjPointFeat, {map=baseMap, zoomLevel}) => {
 
       },
-      getFeatPolyOutline: (featGeometry, {lineColor="white", lineWeight=3, lineOpacity=1}={}) => {
+      getFeatPolyOutline: (featGeometry, {lineColor="white", lineWeight=3, lineOpacity=1, lineDashArray=``, lineDashOffset=0}={}) => {
          const polygonOutline = L.geoJSON(featGeometry, {
             "color": lineColor, 
             "weight": lineWeight,
             "opacity": lineOpacity,
+            "fillOpacity": 0,
+            "dashArray": lineDashArray,
+            "dashOffset": lineDashOffset,
          });
          return polygonOutline;
       },
@@ -656,7 +675,8 @@ const LeafletMaps = ((baseMap)=>{
             featCenter,
          };
       },
-      renderFeature: async (gjFeature, {map=baseMap, useBuffer, bufferAmt, bufferUnits}) => {
+
+      drawFeature: (gjFeature, {map=baseMap, useBuffer, bufferAmt, bufferUnits, lineColor, lineWeight, lineOpacity, lineDashArray}) => {
 
          switch (_TurfHelpers.getType(gjFeature)) {
 
@@ -674,7 +694,10 @@ const LeafletMaps = ((baseMap)=>{
 
                const { featGeometry, featCoords } = LeafletMaps.getFeatureData(gjFeature);
 
-               LeafletMaps.getFeatPolyOutline(featGeometry).addTo(baseMapLayerGroup);
+               // RENDER OUTLINE
+               LeafletMaps.getFeatPolyOutline(featGeometry, {lineColor, lineWeight, lineOpacity, lineDashArray}).addTo(baseMapLayerGroup);
+
+               // RENDER FILL
                // LeafletMaps.getFeatPolyFill(featCoords).addTo(baseMapLayerGroup);
 
                createFeatMarker(gjFeature);
@@ -683,23 +706,55 @@ const LeafletMaps = ((baseMap)=>{
          };
       },
 
-      uniteFeatColl: featColl => {
-         return featColl;
-      },
-
-      renderFeatColl: (featColl, {map=baseMap}) => {
+      // REMOVE
+      renderFeatColl_2: (featColl, {map=baseMap}) => {
          
          try {
             
             if (turf.geojsonType(featColl, "FeatureCollection", "renderFeatColl"));
             
-            const polygons = [];
-            featColl.features.forEach(feature=>{
-               polygons.push(feature.geometry)
-            })
-            // console.log(...polygons)
-            const unitedFeatures2 = turf.union(featColl.features)
-            const unitedFeatures = turf.union(...polygons)
+
+            // console.log(featColl.features[0].geometry)
+            // console.log(featColl.features[1].geometry)
+
+            const UniteFeatures = (() => {
+               let featsUnion;
+               return {
+                  saveUnion: (currUnion) => {
+                     featsUnion = currUnion;
+                  },
+                  returnUnion: () => {
+                     return featsUnion;
+                  },
+               };
+            })();
+
+            for (let idx = 0; idx < featColl.features.length; idx++) {               
+
+               const currFeat = featColl.features[idx];
+
+               if (idx === 0) {
+                  if (currFeat.geometry && turf.getType(currFeat)) {
+                     UniteFeatures.saveUnion(currFeat);
+                  } else {
+                     break;
+                  }
+               };
+
+               if (currFeat.geometry && turf.getType(currFeat)) {
+                  const prevUnion = UniteFeatures.returnUnion();
+                  try {
+                     UniteFeatures.saveUnion(turf.union(currFeat.geometry, prevUnion.geometry));
+                     console.log(UniteFeatures.returnUnion())
+                  } catch (turfUnionErr) {
+                     console.error(`turfUnionErr: ${turfUnionErr.message}`)
+                  }
+               } else {
+                  break;
+               }              
+            };
+
+            const unitedFeatures = UniteFeatures.returnUnion();
 
             // const unitedFeatures = featColl.features.reduce((featsUnion, currentFeat) => {
             //    console.log({featsUnion})
@@ -714,7 +769,6 @@ const LeafletMaps = ((baseMap)=>{
             // }, featColl.features[0]);
 
             console.log(unitedFeatures)
-            console.log(unitedFeatures2)
 
          } catch (renderFeatCollErr) {
             console.error(renderFeatCollErr.message)
@@ -968,10 +1022,15 @@ export const _AnimateClusters = (function(avgBaseMap, clusterFeatsMap) {
    try {
 
       // pan map to entire cluster
-      const panToCluster = (featColl) => {
+      const panToCluster = (featColl, {zoomLevel}) => {
+
          const gjCenterCoords = turf.coordAll(turf.centerOfMass(featColl))[0];
          const gjBounds = turf.bbox(featColl);
+
          MapboxMaps.panToCoords(clusterFeatsMap, gjCenterCoords, gjBounds, {zoom:16, pitch:0, bearing:0, boundsPadding:0});
+
+         LeafletMaps.panFeatCenter(featColl, {map: avgBaseMap, zoomLevel});
+         LeafletMaps.fitFeatBounds(featColl, {map: avgBaseMap});
       };
       
       // pan to a single cluster feat.
@@ -1007,12 +1066,48 @@ export const _AnimateClusters = (function(avgBaseMap, clusterFeatsMap) {
             };
          },
 
+         renderFeatPopup: (props, centerLngLat) => {
+            MapboxMaps.openFeatPopup(clusterFeatsMap, props, centerLngLat);
+         },
+
          panToClusterPlot: (geoJSONFeat, {zoomLevel}) => {
             panToClusterFeat(geoJSONFeat, {zoomLevel});
          },
 
-         renderCluster: (featColl) => {
-            MapboxMaps.drawFeatFeatColl({map: clusterFeatsMap, featOrFeatColl: featColl})
+         renderCluster: (gjFeatColl, {
+               useBuffer, 
+               bufferAmt, 
+               bufferUnits, 
+               lineColor, 
+               lineWeight, 
+               lineOpacity, 
+               lineDashArray
+            } = {}) => {
+
+            // REMOVE
+            // render cluster plots outlines on the plots map
+            MapboxMaps.drawFeatFeatColl(gjFeatColl, {map: clusterFeatsMap});
+
+            // render feats. on base map            
+            for (let idx = 0; idx < gjFeatColl.features.length; idx++) {
+               const gjFeature = gjFeatColl.features[idx];
+               LeafletMaps.drawFeature(gjFeature, {map: avgBaseMap, useBuffer, bufferAmt, bufferUnits, lineColor, lineWeight, lineOpacity, lineDashArray});
+            };
+         },
+
+         renderClusterPoly: (featColl, {useBuffer, bufferAmt, bufferUnits}={}) => {
+
+            try {
+               
+               const featCollPoly = _ProcessGeoJSON.getFeatCollPoly(featColl, {useBuffer, bufferAmt, bufferUnits});
+               const featCollBbox = _ProcessGeoJSON.getBbox(featCollPoly);
+
+               if (featCollPoly) LeafletMaps.drawFeature(featCollPoly, {map: avgBaseMap, lineColor: "#6ab04c", lineWeight: 6});
+               if (featCollPoly) LeafletMaps.drawFeature(featCollPoly, {map: avgBaseMap, lineColor: "#badc58", lineWeight: 2});
+
+            } catch (renderClusterPolyErr) {
+               console.log(`renderClusterPolyErr: ${renderClusterPolyErr.message}`)
+            };
          },
 
          renderClusters: async (featureCollections, {useBuffer, bufferAmt, bufferUnits}={}) => {
@@ -1035,21 +1130,28 @@ export const _AnimateClusters = (function(avgBaseMap, clusterFeatsMap) {
             
             // const allFeatures = [];
             if (featureCollections.length > 0) {
+
                for (let idx = 0; idx < featureCollections.length; idx++) {
+
                   const featColl = featureCollections[idx];
                   const featCollMarkers = [];
+
                   if (featColl.features.length > 0) {
-                     LeafletMaps.uniteFeatColl(featColl);
-                     LeafletMaps.renderFeatColl(featColl, {map: avgBaseMap});
+
+                     // 1. render featColl. poly
+                     _AnimateClusters.renderClusterPoly(featColl, {useBuffer: true, bufferAmt: 5, bufferUnits})
+
+                     // 2. render feats. & feats. markers
                      for (let idy = 0; idy < featColl.features.length; idy++) {
                         const feature = featColl.features[idy];
-                        await LeafletMaps.renderFeature(feature, {map: avgBaseMap, useBuffer, bufferAmt, bufferUnits});
                         // allFeatures.push(feature);
                         // LeafletMaps.renderFeaturesMarkers(allFeatures, {map: avgBaseMap});
                         const featMarker = LeafletMaps.initMarker(feature, {useBuffer, bufferAmt, bufferUnits});
                         featCollMarkers.push(featMarker);
                      };
-                  }
+                  };
+
+                  // 3. render  marker clusters
                   if (featCollMarkers.length > 0) {
                      LeafletMaps.saveMarkerGroup(featCollMarkers);
                      await LeafletMaps.renderMarkerCluster(featCollMarkers, {map: avgBaseMap})
@@ -1080,12 +1182,11 @@ export const _AnimateClusters = (function(avgBaseMap, clusterFeatsMap) {
             // fire custom fn.
             clusterFeatsMap.fire('closeAllPopups');
             
-            panToCluster(featColl);
-            _AnimateClusters.renderCluster(featColl);
+            panToCluster(featColl, {zoomLevel: baseMapZoomLvl});
+
+            _AnimateClusters.renderCluster(featColl, {useBuffer, bufferAmt, bufferUnits, lineColor: "white", lineWeight: 1, lineDashArray: "3"});
             _AnimateClusters.renderClusterPlots(featColl, {useBuffer, bufferAmt, bufferUnits});
             _AnimateClusters.renderClusterPlotsLabels(featColl, {useBuffer, bufferUnits, bufferAmt, areaUnits});
-            
-            LeafletMaps.panFeatCenter(featColl, {zoomLevel: baseMapZoomLvl});
          },
       };
 

@@ -17,11 +17,11 @@ import { _clientSideRouter } from "./routers/router.js";
       // save the UI default settings
       APP_STATE.saveDefaultSettings(_pollAVGSettingsValues());
 
-      // GET DATA
+      // GET CLUSTERS' DATA
       const { geoClusters } = _retreiveGeoJSONData();
       // const geoClusters = _TraverseObject.evaluateValue(APP_STATE.returnDBCollection("geo-clusters"), "data");
 
-      // RENDER DATA
+      // RENDER CLUSTERS' DATA
       await _AnimateClusters.renderClusters(geoClusters, {
          useBuffer: _pollAVGSettingsValues().bufferFeatsChk ,
          bufferUnits: _pollAVGSettingsValues().distanceUnits,

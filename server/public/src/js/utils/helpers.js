@@ -516,6 +516,15 @@ export const _TurfHelpers = (()=>{
 			};
 		},
 
+		// TODO
+		uniteFeats: (features) => {
+			try {
+				turf.union(...features);
+			} catch (turfUnionErr) {
+				console.error(`turfUnionErr: ${turfUnionErr.message}`)
+			}
+		},
+
 		centerOfMass: (geoJSONFeature) => {
 			try {
 				return turf.centerOfMass(geoJSONFeature);
@@ -540,31 +549,39 @@ export const _TurfHelpers = (()=>{
 			};
 		},
 
-		calcPolyArea: (polygon, {units = `hectares`}={}) => {
-			let polyArea;
+		calcPolyArea: (gjPolygon, {units = `hectares`}={}) => {
+
 			try {
-				if (polygon) {
-					polyArea = turf.area(polygon);
-					switch (true) {
-						case units === `hectares` || units === `ha.` || units === `ha`:
-							polyArea = polyArea / 10000;
-							break;
-						case units === `acres` || units === `ac.` || units === `ac`:
-							polyArea = polyArea / 4046.86;
-							break;
-						case units === `sqkm` || units === `square kilometers`:
-							polyArea = polyArea / 1000000;
-							break;
-						case units === `sqm` || units === `square meters`:
-							polyArea = polyArea;
-							break;
-						case !units:
-							polyArea = polyArea;
-						default:
-							break;
-					}
-					return polyArea;
-				};
+				
+				if (
+						gjPolygon &&
+						turf.getType(gjPolygon) === "Polygon" ||
+						turf.getType(gjPolygon) === "MultiPolygon"
+					) {
+
+						let polyArea = turf.area(gjPolygon);
+
+						switch (true) {
+							case units === `hectares` || units === `ha.` || units === `ha`:
+								polyArea = polyArea / 10000;
+								break;
+							case units === `acres` || units === `ac.` || units === `ac`:
+								polyArea = polyArea / 4046.86;
+								break;
+							case units === `sqkm` || units === `square kilometers`:
+								polyArea = polyArea / 1000000;
+								break;
+							case units === `sqm` || units === `square meters`:
+								polyArea = polyArea;
+								break;
+							case !units:
+								polyArea = polyArea;
+							default:
+								break;
+						};
+
+						return polyArea;
+					};
 			} catch (calcPolyAreaErr) {
 				console.error(`calcPolyAreaErr: ${calcPolyAreaErr.message}`)
 			};
@@ -573,7 +590,7 @@ export const _TurfHelpers = (()=>{
 })();
 
 
-export const _CheckGeoJSON = (()=>{
+export const _ProcessGeoJSON = (()=>{
 
 	return {
 
@@ -636,6 +653,29 @@ export const _CheckGeoJSON = (()=>{
 			} catch (getGeoJSONIdErr) {
 				console.error(`getGeoJSONIdErr: ${getGeoJSONIdErr.message}`)
 			};
+		},
+
+		getPresentationPoly: (geoJSONPoly, {useBuffer, bufferAmt, bufferUnits='kilometers'}) => {
+			const presentationPolygon = useBuffer ? _getBufferedPolygon(geoJSONPoly, bufferAmt, {bufferUnits}) : geoJSONPoly;
+			return presentationPolygon;
+		},
+
+		getFeatCollPoly: (featColl, {useBuffer, bufferAmt, bufferUnits}={}) => {
+			try {
+				turf.geojsonType(featColl, "FeatureCollection", "getFeatCollPolyErr");
+				let featCollPoly = turf.union(...featColl.features);
+				featCollPoly = _ProcessGeoJSON.getPresentationPoly(featCollPoly, {useBuffer, bufferAmt, bufferUnits})
+				console.log({bufferAmt})
+				console.log({featCollPoly})
+				return featCollPoly;
+			} catch (getFeatCollPolyErr) {
+				console.error(`getFeatCollPolyErr: ${getFeatCollPolyErr.message}`)
+			};
+		},
+
+		getBbox: gjPolygon => {
+			let gjPolyBbox;
+			return gjPolyBbox;
 		},
 	};
 })();
@@ -790,7 +830,7 @@ export function _repairFeatsCoords (featureCollection) {
 
 // LOOP THRU EACH FEAT. AND CONVERT STRING COORDS. TO INTEGERS
 export function _sanitizeFeatCollCoords(featureCollection = _mandatoryParam()) {
-	let modFeatureCollection = _repairFeatsCoords(_CheckGeoJSON.hasInvalidFeatsCoords(_CheckGeoJSON.isValidFeatColl(featureCollection)))
+	let modFeatureCollection = _repairFeatsCoords(_ProcessGeoJSON.hasInvalidFeatsCoords(_ProcessGeoJSON.isValidFeatColl(featureCollection)))
 	return modFeatureCollection ? modFeatureCollection : featureCollection;
 };
 
@@ -843,6 +883,7 @@ export function _getBufferedPolygon(polygon, bufferAmt, {bufferUnits="kilometers
 };
 
 
+// REMOVE
 export function _getBufferedPolygon2(polygon, bufferAmt, {bufferUnits="kilometers"}) {
 
 	try {

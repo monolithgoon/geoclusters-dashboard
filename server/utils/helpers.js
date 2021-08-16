@@ -89,7 +89,7 @@ exports._getFeatCenter = (featGeometry) => {
 
 // LOOP THRU EACH FEAT. AND CONVERT STRING COORDS. TO INTEGERS
 exports._sanitizeFeatCollCoords = (featureCollection = mandatoryParam()) => {
-	// let modFeatureCollection = repairFeatsCoords(_CheckGeoJSON.hasInvalidFeatsCoords(_CheckGeoJSON.isValidFeatColl(featureCollection)))
+	// let modFeatureCollection = repairFeatsCoords(_ProcessGeoJSON.hasInvalidFeatsCoords(_ProcessGeoJSON.isValidFeatColl(featureCollection)))
    let modFeatureCollection = repairFeatsCoords(featureCollection);
 	return modFeatureCollection ? modFeatureCollection : featureCollection;
 };

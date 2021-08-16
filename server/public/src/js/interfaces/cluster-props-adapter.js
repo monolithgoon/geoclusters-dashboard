@@ -1,5 +1,5 @@
 `use strict`;
-import { _CheckGeoJSON, _mandatoryParam, _TraverseObject} from "../utils/helpers.js";
+import { _ProcessGeoJSON, _mandatoryParam, _TraverseObject} from "../utils/helpers.js";
 
 
 // REMOVE > DEPRC.
@@ -49,12 +49,12 @@ export const _GetClusterProps = (clusterFeatureCollection = _mandatoryParam()) =
 	try {
 		
 		// FIXME > REMOVE TO OUTSIDE CONTEXT
-		if (!_CheckGeoJSON.isValidFeatColl(clusterFeatureCollection)) {
+		if (!_ProcessGeoJSON.isValidFeatColl(clusterFeatureCollection)) {
 			throw new Error(`The supplied GeoJSON is not a valid FeatureCollection`);
 		};
       
 		// FIXME > REMOVE TO OUTSIDE CONTEXT
-		if (!_CheckGeoJSON.hasItirableFeats(clusterFeatureCollection.features)) {
+		if (!_ProcessGeoJSON.hasItirableFeats(clusterFeatureCollection.features)) {
 			throw new Error(`The supplied FeatureCollection does not have itirable Features`);
 		};
       

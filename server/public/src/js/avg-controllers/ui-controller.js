@@ -1,7 +1,7 @@
 'use strict'
 import { _queryAPI } from "./data-controller.js";
 import { _TraverseObject, _getCheckedRadio, _stringifyPropValues, _TurfHelpers, _ManipulateDOM } from "../utils/helpers.js";
-import { _sanitizeFeatCollCoords, _CheckGeoJSON, _getBufferedPolygon } from "../utils/helpers.js";
+import { _sanitizeFeatCollCoords, _ProcessGeoJSON, _getBufferedPolygon } from "../utils/helpers.js";
 import { _AnimateClusters } from "../controllers/maps-controller.js";
 import { APP_STATE } from "./state-controller.js";
 import { _getClusterFeatProps, _GetClusterProps } from "../interfaces/cluster-props-adapter.js";
@@ -333,6 +333,10 @@ function clusterTitleClickSeq(evtObj) {
 
       // 2b. 
       APP_STATE.saveRenderedGeojson(clusterGeoJSON);
+
+      // REMOVE > UN-NEEDED
+      const currRenderedGJ = APP_STATE.getRenderedGeoJSON(clusterGeoJSON);
+      console.log({currRenderedGJ});
       
       // 3.
       clickedResultContainerSeq(resultContainerDiv, adjacentResultDivs);
@@ -375,7 +379,7 @@ function featCardClickSeq(clusterFeatures) {
       for (var i = 0; i < clusterFeatures.length; i++) {
 
          // this => clusterFeatCard
-         if (this.currentTarget.id === _CheckGeoJSON.getId(clusterFeatures[i])) {
+         if (this.currentTarget.id === _ProcessGeoJSON.getId(clusterFeatures[i])) {
             _AnimateClusters.panToClusterPlot(clusterFeatures[i], {zoomLevel: _pollAVGSettingsValues().clusterMap.zoomValue});
             _AnimateClusters.renderFeatPopup(_getClusterFeatProps(clusterFeatures[i], i), _TurfHelpers.getLngLat(clusterFeatures[i]));
          };
@@ -398,7 +402,7 @@ function featCardClickSeq(clusterFeatures) {
 //             for (var i = 0; i < clusterFeatures.length; i++) {
       
 //                // this => clusterFeatCard
-//                if (this.currentTarget.id === _CheckGeoJSON.getId(clusterFeatures[i])) {
+//                if (this.currentTarget.id === _ProcessGeoJSON.getId(clusterFeatures[i])) {
 //                      _AnimateClusters.panToClusterPlot(clusterFeatures[i], {zoomLevel: _pollAVGSettingsValues().clusterMap.zoomValue});
 //                   _AnimateClusters.renderFeatPopup(mapboxMap, _TurfHelpers.getLngLat(clusterFeatures[i]));
 //                };
@@ -453,7 +457,7 @@ async function populateClusterFeatsSidebar(clusterFeatColl) {
 
             // SANDBOX
             // ASSIGN A UNIQE ID TO THE CARD DIV
-            clusterFeatCard.id = _CheckGeoJSON.getId(clusterFeature);
+            clusterFeatCard.id = _ProcessGeoJSON.getId(clusterFeature);
 
             clusterFeatCard.addEventListener('click', e => { featCardClickSeq.call(e, clusterFeatures); });
 
@@ -657,6 +661,7 @@ function _mountHandlers() {
       // CHANGE CLUSTER PLOTS MAP STYLE
       InputsHandlers.plotsMapStyle();
 
+      // REMOVE > DUPLICATE
       // RESULT ITEM TITLE CLICK HAND.
       resultTitleClickHandler(_getDOMElements().resultTitleDivs);
       
