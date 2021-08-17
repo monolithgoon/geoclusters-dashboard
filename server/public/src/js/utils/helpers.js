@@ -685,7 +685,7 @@ export function _getUsableGeometry(geoJSON) {
 					refinedGeoJSON = turf.union(...polygonFeats);
 					if (_TurfHelpers.getType(refinedGeoJSON) !== "Polygon") {
 						console.error(`FAILED REFINING GEOJSON`);
-						discardedMultipolyParts.push(...polygonFeats)
+						discardedMultipolyParts.push(...polygonFeats);
 					} else {
 						return refinedGeoJSON;
 					};
@@ -879,18 +879,17 @@ export const _ProcessGeoJSON = (()=>{
 
 				// REMOVE
 				// let featCollPoly = turf.union(...featColl.features);
-				// featCollPoly = _getUsableGeometry(featCollPoly).refinedGeoJSON;
 
 					console.log(featColl.properties.clusterName)
 
 				let featCollPoly = _getUsableGeometry(turf.union(...featColl.features)).refinedGeoJSON;
 				
-					console.log(turf.getType(featCollPoly), _TurfHelpers.calcPolyArea(featCollPoly));
+					// console.log(turf.getType(featCollPoly), _TurfHelpers.calcPolyArea(featCollPoly));
 
 				if (featCollPoly) featCollPoly = _ProcessGeoJSON.getPresentationPoly(featCollPoly, {useBuffer, bufferAmt, bufferUnits});
 
-					console.log({bufferAmt})
-					console.log(turf.area(featCollPoly))
+					// console.log({bufferAmt})
+					// console.log(turf.area(featCollPoly))
 
 				return featCollPoly;
 
@@ -899,9 +898,20 @@ export const _ProcessGeoJSON = (()=>{
 			};
 		},
 
-		getBbox: gjPolygon => {
-			let gjPolyBbox;
-			return gjPolyBbox;
+		getBbox: geoJSON => {
+			try {
+				return turf.bbox(geoJSON);
+			} catch (getBboxErr) {
+				console.error(`getBboxErr: ${getBboxErr.message}`);
+			};
+		},
+
+		getBboxPoly: (geoJSON) => {
+			try {
+				return turf.bboxPolygon(_ProcessGeoJSON.getBbox(geoJSON));
+			} catch (getBboxPolyErr) {
+				console.error(`getBboxPolyErr: ${getBboxPolyErr.message}`);
+			};
 		},
 	};
 })();
