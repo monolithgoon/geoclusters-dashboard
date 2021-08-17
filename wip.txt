@@ -51,6 +51,11 @@ https://github.com/ghybs/Leaflet.MarkerCluster.LayerSupport
 https://github.com/Leaflet/Leaflet.markercluster#other-options
 
 
+https://adammertel.github.io/Leaflet.MarkerCluster.PlacementStrategies/demo/random-data.html
+https://stackoverflow.com/questions/33614912/how-to-locate-leaflet-zoom-control-in-a-desired-position
+https://gis.stackexchange.com/questions/360293/add-something-into-l-circlemarker
+http://embed.plnkr.co/Je7c0m/
+
 // Auto full screen
 // logout user
 // upload legacy agcs

@@ -546,7 +546,7 @@ const LeafletMaps = ((baseMap)=>{
    
          // featMarker = L.marker(featCenterLatLng);
          featMarker = L.circleMarker(featCenterLatLng, {
-            radius: 5,
+            radius: 7,
             weight: 2,
             opacity: 1,
             color: "white",
@@ -1139,7 +1139,7 @@ export const _AnimateClusters = (function(avgBaseMap, clusterFeatsMap) {
                   if (featColl.features.length > 0) {
 
                      // 1. render featColl. poly
-                     _AnimateClusters.renderClusterPoly(featColl, {useBuffer: true, bufferAmt: 5, bufferUnits})
+                     _AnimateClusters.renderClusterPoly(featColl, {useBuffer: true, bufferAmt: 0.01, bufferUnits})
 
                      // 2. render feats. & feats. markers
                      for (let idy = 0; idy < featColl.features.length; idy++) {
@@ -1479,4 +1479,4 @@ const AffectLeafletMarker = (() => {
        e.target.link.style.backgroundColor = 'white';
    });
    
-})();
+})();    
