@@ -881,7 +881,7 @@ export const _ProcessGeoJSON = (()=>{
 				// let featCollPoly = turf.union(...featColl.features);
 				// featCollPoly = _getUsableGeometry(featCollPoly).refinedGeoJSON;
 
-				console.log(featColl.properties.clusterName)
+					console.log(featColl.properties.clusterName)
 
 				let featCollPoly = _getUsableGeometry(turf.union(...featColl.features)).refinedGeoJSON;
 				

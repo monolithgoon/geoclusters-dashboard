@@ -678,31 +678,37 @@ const LeafletMaps = ((baseMap)=>{
 
       drawFeature: (gjFeature, {map=baseMap, useBuffer, bufferAmt, bufferUnits, lineColor, lineWeight, lineOpacity, lineDashArray}) => {
 
-         switch (_TurfHelpers.getType(gjFeature)) {
-
-            case "Point":
-                  console.log("Fuck You Rita Nwaokolo");
+         try {
+            
+            switch (_TurfHelpers.getType(gjFeature)) {
+   
+               case "Point":
+                     console.log("Fuck You Rita Nwaokolo");
+                     createFeatMarker(gjFeature);
+                  break;
+   
+               case "GeometryCollection":
+                  throw new Error(`Cannot create marker for this feature: ${gjFeature} of type ${_TurfHelpers.getType(gjFeature)}`)      
+            
+               default:
+   
+                  gjFeature = getPresentationPoly(gjFeature, {useBuffer, bufferAmt, bufferUnits});
+   
+                  const { featGeometry, featCoords } = LeafletMaps.getFeatureData(gjFeature);
+   
+                  // RENDER OUTLINE
+                  LeafletMaps.getFeatPolyOutline(featGeometry, {lineColor, lineWeight, lineOpacity, lineDashArray}).addTo(baseMapLayerGroup);
+   
+                  // RENDER FILL
+                  // LeafletMaps.getFeatPolyFill(featCoords).addTo(baseMapLayerGroup);
+   
                   createFeatMarker(gjFeature);
-               break;
+   
+                  break;
+            };
 
-            case "GeometryCollection":
-               throw new Error(`Cannot create marker for this feature: ${gjFeature} of type ${_TurfHelpers.getType(gjFeature)}`)      
-         
-            default:
-
-               gjFeature = getPresentationPoly(gjFeature, {useBuffer, bufferAmt, bufferUnits});
-
-               const { featGeometry, featCoords } = LeafletMaps.getFeatureData(gjFeature);
-
-               // RENDER OUTLINE
-               LeafletMaps.getFeatPolyOutline(featGeometry, {lineColor, lineWeight, lineOpacity, lineDashArray}).addTo(baseMapLayerGroup);
-
-               // RENDER FILL
-               // LeafletMaps.getFeatPolyFill(featCoords).addTo(baseMapLayerGroup);
-
-               createFeatMarker(gjFeature);
-
-               break;
+         } catch (LDrawFeatErr) {
+            console.error(`LDrawFeatErr: ${LDrawFeatErr.message}`);
          };
       },
 
@@ -1106,7 +1112,7 @@ export const _AnimateClusters = (function(avgBaseMap, clusterFeatsMap) {
                if (featCollPoly) LeafletMaps.drawFeature(featCollPoly, {map: avgBaseMap, lineColor: "#badc58", lineWeight: 2});
 
             } catch (renderClusterPolyErr) {
-               console.log(`renderClusterPolyErr: ${renderClusterPolyErr.message}`)
+               console.error(`renderClusterPolyErr: ${renderClusterPolyErr.message}`)
             };
          },
 
@@ -1139,6 +1145,7 @@ export const _AnimateClusters = (function(avgBaseMap, clusterFeatsMap) {
                   if (featColl.features.length > 0) {
 
                      // 1. render featColl. poly
+                     // TODO > ADJUST BUFFER BY CLUSTER SIZE
                      _AnimateClusters.renderClusterPoly(featColl, {useBuffer: true, bufferAmt: 0.01, bufferUnits})
 
                      // 2. render feats. & feats. markers
