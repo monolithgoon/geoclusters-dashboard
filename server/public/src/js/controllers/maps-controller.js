@@ -919,9 +919,8 @@ const LeafletMaps = (baseMap => {
                      // NOTE: COORDS. IN MAPBOX ARE "lngLat"
                      L.marker([plotCorner[1], plotCorner[0]], {
                         icon: L.divIcon({
-                           className: `plot-polygon-vertex-coords-label`,
-                           html: `<span>${idx}</span> ${plotCorner[0].toFixed(6)}°N, ${plotCorner[1].toFixed(6)}°E`,
-                           // iconSize: [70, 15]
+                           className: `polygon-vertex-coords-label--lg`,
+                           html: `<span>${idx}</span>${plotCorner[0].toFixed(6)}°N, ${plotCorner[1].toFixed(6)}°E`,
                            iconSize: [100, 30]
                         }),
                         zIndexOffset: 98
@@ -932,7 +931,7 @@ const LeafletMaps = (baseMap => {
                      L.marker([midpointCoords[1], midpointCoords[0]], {
                         draggable: true,
                         icon: L.divIcon({
-                           className: `plot-polygon-vertex-dist-label`,
+                           className: `polygon-vertex-dist-label--lg`,
                            html: `${distance.toFixed(0)} m`,
                            iconSize: [30, 15]
                         }),
@@ -944,7 +943,7 @@ const LeafletMaps = (baseMap => {
                      L.marker([midpointCoords[1], midpointCoords[0]], {
                         draggable: true,
                         icon: L.divIcon({
-                           className: `plot-polygon-vertex-dist-bearing-label`,
+                           className: `polygon-vertex-dist-bearing-label--lg`,
                            html: `${distance.toFixed(0)} m, ${degMinSec}`,
                            // iconSize: [30, 15]
                            iconSize: [50, 30]
@@ -1554,7 +1553,8 @@ export const _AnimateClusters = (function(avgBaseMap, clusterFeatsMap) {
                      // RENDER CLUSTER BBOX SURVEY DETAILS
                      if (finalBboxPoly) {
                         finalBboxPoly.properties = featCollProps;
-                        LeafletMaps.drawFeature(finalBboxPoly, {map: avgBaseMap, lineColor: "cyan", lineWeight: 1});
+                        // LeafletMaps.drawFeature(finalBboxPoly, {map: avgBaseMap, lineColor: "cyan", lineWeight: 1, lineDashArray: "80, 20"});
+                        LeafletMaps.drawFeature(finalBboxPoly, {map: avgBaseMap, lineColor: "cyan", lineWeight: 0.55});
                         LeafletMaps.drawPolySurveyDetails(finalBboxPoly, {bearingThresh: 0, distThresh: 5});
                      };
                   };

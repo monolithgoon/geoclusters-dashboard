@@ -171,30 +171,50 @@
    display: none;
 }
 
+.polygon-vertex-coords-label--lg,
 .plot-polygon-vertex-coords-label {
    padding: 2px;
    padding-left: 0;
+   font-weight: bold;
+   color: black;
+   background-color: white;
+   border: 1px solid black;
+
+   /* box-shadow: 0px 0px 0px 1px rgba(255,255,255,1);
+   -webkit-box-shadow: 0px 0px 0px 1px rgba(255,255,255,1);
+   -moz-box-shadow: 0px 0px 0px 1px rgba(255,255,255,1); */
+
+   display: flex !important;
+   align-items: center !important;
+   justify-content: space-between !important;
+}
+
+.plot-polygon-vertex-coords-label {
 	width: 100px !important; /* OVERIDE .leaflet-marker-icon STYLING */
 	height: 15px !important; /* OVERIDE .leaflet-marker-icon STYLING */
    font-size: 7px;
-   font-weight: bold;
-	color: black;
-	background-color: white;
-   border: 1px solid black;
-   
-   /* border-radius: 2px;
-   box-shadow: 0px 0px 0px 1px rgba(255,255,255,1);
-   -webkit-box-shadow: 0px 0px 0px 1px rgba(255,255,255,1);
-   -moz-box-shadow: 0px 0px 0px 1px rgba(255,255,255,1); */
 }
 
+.polygon-vertex-coords-label--lg {
+   padding-right: 8px;
+   width: 120px !important;
+	height: 17px !important;
+   font-size: 8.5px;
+}
+
+.polygon-vertex-coords-label--lg span,
 .plot-polygon-vertex-coords-label span {
    padding: 2px;
    color: white;
    background-color: black;
+}
+
+.plot-polygon-vertex-coords-label span {
    border: 1px solid black;
 }
 
+.polygon-vertex-dist-label--lg,
+.polygon-vertex-dist-bearing-label--lg,
 .plot-polygon-vertex-dist-label,
 .plot-polygon-vertex-dist-bearing-label {
    padding: 2px;
@@ -206,8 +226,13 @@
 	background-color: #00b894;
 	background-color: #00cec9;
 	border: 1px solid black;
+
+   display: flex !important;
+   align-items: center !important;
+   justify-content: center !important;
 }
 
+.polygon-vertex-dist-bearing-label--lg,
 .plot-polygon-vertex-dist-bearing-label {
    display: none !important;
 }
@@ -275,13 +300,21 @@
          display: block !important;
       }
 
+      .polygon-vertex-dist-label--lg,
       .plot-polygon-vertex-dist-label {
          display: none !important;
       }
       
       .plot-polygon-vertex-dist-bearing-label {
-         width: 90px !important; /* OVERIDE .leaflet-marker-icon STYLING */
          display: block !important;
+         width: 90px !important; /* OVERIDE .leaflet-marker-icon STYLING */
+      }
+
+      .polygon-vertex-dist-bearing-label--lg {
+         display: flex !important;
+         width: 100px !important; /* OVERIDE .leaflet-marker-icon STYLING */
+         height: 17px !important; /* OVERIDE .leaflet-marker-icon STYLING */
+         font-size: 9px;
       }
    }
    
