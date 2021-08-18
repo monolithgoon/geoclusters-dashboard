@@ -356,7 +356,7 @@ function resultTitleClickHandler(resultTitleDivs) {
          // CLEAR THE CLICK LISTENERS ON "PRE-LOADED" RESULT DIVS
          resultTitle.removeEventListener(`click`, clusterTitleClickSeq);
             
-         resultTitle.addEventListener(`click`, clusterTitleClickSeq)
+         resultTitle.addEventListener(`click`, clusterTitleClickSeq);
       };
 
    } catch (resultTitleClickErr) {

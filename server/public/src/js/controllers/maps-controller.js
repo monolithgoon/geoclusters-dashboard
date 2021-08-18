@@ -2,9 +2,9 @@
 import { AVG_BASE_MAP, CLUSTER_PLOTS_MAP, FEAT_DETAIL_MAP, _getTileLayers } from "../config/maps-config.js";
 import { _clusterFeatPopupMarkup, _GenerateClusterFeatMarkup, _leafletMarkerMarkup } from "../avg-controllers/markup-generator.js";
 import { _pollAVGSettingsValues, _getDOMElements } from "../avg-controllers/ui-controller.js";
-import { _getClusterFeatProps } from "../interfaces/cluster-props-adapter.js";
 import { LAYER_COLORS } from "../utils/mapbox-layer-colors.js";
 import { _TurfHelpers, _getBufferedPolygon, _ProcessGeoJSON, _ManipulateDOM, _GeometryMath, _getUsableGeometry, _mandatoryParam } from "../utils/helpers.js";
+import { _getClusterFeatProps } from "../interfaces/cluster-props-adapter.js";
 
 
 const LeafletMapsSetup = ((baseMap, featDetailMap)=>{
@@ -283,7 +283,20 @@ const LLayerGroupController = ((leafletBaseMap, leafletModalMap)=>{
    const baseMapLayerGroup = L.layerGroup().addTo(leafletBaseMap);
    const modalMapLayerGroup = L.layerGroup().addTo(leafletModalMap);
 
+   const LAYER_GROUPS = [];
+
    return {
+      initLayerGroup: layerGroupId => {
+         const layerGroupObj = {
+            "layer_group_id": layerGroupId,
+            "layer_group": L.layerGroup(),
+         };
+         LAYER_GROUPS.push(layerGroupObj);
+      },
+      retreiveLayerGroup: layerGroupId => {
+         const layerGroup = LAYER_GROUPS.find(lgroup => lgroup.layer_group_id === layerGroupId);
+         return layerGroup.layer_group;
+      },
       getLayerGroups: () => {
          return {
             baseMapLayerGroup,
@@ -291,13 +304,13 @@ const LLayerGroupController = ((leafletBaseMap, leafletModalMap)=>{
          };
       },
    };
+
 })(AVG_BASE_MAP, FEAT_DETAIL_MAP);
 
 
-const LeafletMaps = ((baseMap)=>{
+const LeafletMaps = (baseMap => {
 
-   const markerGroups = [];
-
+   const MARKER_GROUPS = [];
    const baseMapLayerGroup = LLayerGroupController.getLayerGroups().baseMapLayerGroup;
    
    // REMOVE
@@ -378,6 +391,31 @@ const LeafletMaps = ((baseMap)=>{
       getMapZoom: (map=baseMap) => {
          return map.getZoom();
       },
+      getClusterPropsMarkup: (clusterProps) => {
+
+         try {
+            
+            const HTMLMarkup =  `
+               <div class= "plot-metadata-label--chunk-size"> 
+                  <span> ${clusterProps.clusterArea.toFixed(1)} hectares </span>
+                  <span> ${(clusterProps.clusterArea * 2.47105).toFixed(1)} acres </span> 
+               </div>
+               <div class="metadata-label--owner-info"> 
+                  <span> AGC ID • ${clusterProps.clusterID} </span>
+                  <span> ${clusterProps.clusterName} </span>
+               </div>
+               <div class="metadata-label--turn-by-turn" id="metadata_label_turn_by_turn">
+                  <a href="#" role="button" title="Plot boundary turn-by-turn directions" aria-label="Plot boundary turn-by-turn directions"></a>
+                     <span >
+                        <i id="" class="fas fa-route"></i>
+                     </span>
+               </div>`
+            return HTMLMarkup;
+
+         } catch (HTMLMarkupErr) {
+            console.error(`HTMLMarkupErr: ${HTMLMarkupErr.message}`);
+         };
+      },
       createHTMLMarker: (props, latLngPosition, styleClass, {draggable=true}) => {
          const HTMLMarker = L.marker(latLngPosition, {
             draggable: draggable,
@@ -389,11 +427,22 @@ const LeafletMaps = ((baseMap)=>{
          });
          return HTMLMarker;
       },
+      getClusterHTMLMarker: (props, latLngPosition, styleClass, {draggable=true}) => {
+         const HTMLMarker = L.marker(latLngPosition, {
+            draggable: draggable,
+            icon: L.divIcon({
+               className: `${styleClass}`,
+               html: LeafletMaps.getClusterPropsMarkup(props),
+            }),
+            zIndexOffset: 100
+         });
+         return HTMLMarker;
+      },
       initMarker: (gjFeature, {useBuffer, bufferAmt, bufferUnits}) => {
          return createFeatMarker(gjFeature, {useBuffer, bufferAmt, bufferUnits});
       },
       saveMarkerGroup: (markers) => {
-         markerGroups.push(markers)
+         MARKER_GROUPS.push(markers)
       },
       panToPoint: (gjPointFeat, {map=baseMap, zoomLevel}) => {
          const leafletGJLayer = L.geoJson();
@@ -409,7 +458,7 @@ const LeafletMaps = ((baseMap)=>{
          map.fitBounds(leafletGJLayer.getBounds(), {padding: [150, 150]});
       },
       addPointMarker: (gjPointFeat, {map=baseMap, zoomLevel}) => {
-
+         // TODO
       },
       getFeatPolyOutline: (featGeometry, {lineColor="white", lineWeight=3, lineOpacity=1, lineDashArray=``, lineDashOffset=0}={}) => {
          const polygonOutline = L.geoJSON(featGeometry, {
@@ -782,6 +831,7 @@ const LeafletMaps = ((baseMap)=>{
             pixiOverlay.addTo(map);
          });
       },
+
       renderMarkerCluster: async (markers, {map=baseMap}) => {
 
          const markerCluster = createMarkerClusterGroup({
@@ -798,6 +848,134 @@ const LeafletMaps = ((baseMap)=>{
          };
          
          map.addLayer(markerCluster);
+      },
+
+      drawPolySurveyDetails: (gjPolygon, {distThresh=10, bearingThresh=45}) => {
+         
+         const polyProps = gjPolygon.properties;
+         const polyId = polyProps.clusterID ? polyProps.clusterID : polyProps.featureID;
+         const polyGeometry = gjPolygon.geometry;
+         const polyCoords = gjPolygon.geometry.coordinates[0];
+         const polyCenter = getFeatCenter(polyGeometry).latLng;
+
+         // INIT. LAYER GROUP FOR THIS POLY.
+         LLayerGroupController.initLayerGroup(polyProps.clusterID);
+         const surveyDetailsLayerGroup = LLayerGroupController.retreiveLayerGroup(polyProps.clusterID);
+
+         // BUILD A DATA OBJ. TO HOLD THE NAV. INFO. FOR EACH PLOT
+         const POLYGON_BOUNDARY_DATA = {
+            poly_id: 0,
+            start_coords: 0,
+            vertex_pairs: [],
+            vertex_bearings: [],
+            vertex_deltas: [],
+         };
+
+         try {
+
+            // RENDER THE CLUSTER FEATURE VERTICE DETAILS
+            (function renderBoundsDetails() {
+               
+               // ADD A MARKER TO PLOT CENTER
+               L.marker(polyCenter).addTo(surveyDetailsLayerGroup);
+               
+               // DISPLAY PLOT METADATA AT CENTER OF FEATURE
+               console.log({polyProps})
+               LeafletMaps.getClusterHTMLMarker(polyProps, polyCenter, 'plot-metadata-label', {draggable:true}).addTo(surveyDetailsLayerGroup);
+      
+               // TODO
+               // renderFeatVertices()
+               
+               // SHOW THE DISTANCE & BEARING BTW. FARM PLOT CORNERS
+               for (let idx = 0; idx < polyCoords.length; idx++) {
+      
+                  // REFERENCE THE INDEX OF THIS PLOT
+                  POLYGON_BOUNDARY_DATA.poly_id = polyId;
+      
+                  const plotCorner = polyCoords[idx];
+      
+                  const fromPlotCorner = polyCoords[idx];
+                  const toPlotCorner = polyCoords[idx + 1] === undefined ? polyCoords[0] : polyCoords[idx + 1]; // RETURN BACK TO STARTING CORNER
+      
+                  // SAVE THE CURRENT PLOT CORNERS > REMOVE THE REDUNDANT PAIR @ START POINT..
+                  POLYGON_BOUNDARY_DATA.vertex_pairs.push([fromPlotCorner, toPlotCorner]);
+      
+                  const midpoint = _TurfHelpers.midpoint(fromPlotCorner, toPlotCorner)
+                  const midpointCoords = midpoint.geometry.coordinates; // TO PLACE THE DIST. LABELS
+                  const distance = _TurfHelpers.distance(fromPlotCorner, toPlotCorner, {distUnits: 'kilometers'}) * 1000;
+                  const turfBearing = _TurfHelpers.distance(fromPlotCorner, toPlotCorner, {distUnits: 'degrees'});
+                  const mathBearing = _GeometryMath.computeBearing(fromPlotCorner, toPlotCorner);
+                  const degMinSec = _GeometryMath.getDegMinSec(mathBearing); // CONVERT bearing to 0° 0' 4.31129" FORMAT    
+   
+                  // YOU ARE AT STARTING POINT WHEN BEARING === 0
+                  // DON'T SHOW A MIDPOINT DIST. MARKER HERE
+                  // ONLY SHOW LABELS IF DIST. BTW. VERTICES > 5.0 meters
+                  if (turfBearing !== 0 && distance > distThresh) {
+                  // if (turfBearing !== 0 && mathBearing > bearingThresh && distance > distThresh) {
+      
+                     // SHOW THE PLOT VERTICES AS LEAFLET ICONS
+                     // IMPORTANT 
+                     // NOTE: COORDS. IN LEAFLET ARE "latLng" 
+                     // NOTE: COORDS. IN MAPBOX ARE "lngLat"
+                     L.marker([plotCorner[1], plotCorner[0]], {
+                        icon: L.divIcon({
+                           className: `plot-polygon-vertex-coords-label`,
+                           html: `<span>${idx}</span> ${plotCorner[0].toFixed(6)}°N, ${plotCorner[1].toFixed(6)}°E`,
+                           // iconSize: [70, 15]
+                           iconSize: [100, 30]
+                        }),
+                        zIndexOffset: 98
+                        
+                     }).addTo(surveyDetailsLayerGroup);   
+      
+                     // SHOW DIST. BTW. CORNERS ONLY (FOR SMALL SCREENS)
+                     L.marker([midpointCoords[1], midpointCoords[0]], {
+                        draggable: true,
+                        icon: L.divIcon({
+                           className: `plot-polygon-vertex-dist-label`,
+                           html: `${distance.toFixed(0)} m`,
+                           iconSize: [30, 15]
+                        }),
+                        zIndexOffset: 99
+         
+                     }).addTo(surveyDetailsLayerGroup);
+                     
+                     // SHOW DIST. & BEARING (FOR DESKTOP)
+                     L.marker([midpointCoords[1], midpointCoords[0]], {
+                        draggable: true,
+                        icon: L.divIcon({
+                           className: `plot-polygon-vertex-dist-bearing-label`,
+                           html: `${distance.toFixed(0)} m, ${degMinSec}`,
+                           // iconSize: [30, 15]
+                           iconSize: [50, 30]
+                        }),
+                        zIndexOffset: 99
+         
+                     }).addTo(surveyDetailsLayerGroup);
+                     
+                     // SAVE THE BEARING BTW. THE VERTICES
+                     POLYGON_BOUNDARY_DATA.vertex_bearings.push(mathBearing);
+                     POLYGON_BOUNDARY_DATA.vertex_deltas.push(distance);
+      
+                  } else if (turfBearing === 0) {
+                     // THE BEARING == 0 => THAT CORNER IS THE PLOT "STARTING" POINT
+      
+                     // SAVE THE BEARING & COORDS. @ 0
+                     POLYGON_BOUNDARY_DATA.start_coords = plotCorner;
+                     
+                     // ADD AN ANIMATED MARKER
+                     // surveyDetailsLayerGroup.addLayer(getAnimatedPersonMarker([plotCorner[1], plotCorner[0]]));
+                  };
+               };
+      
+               // DATA OBJ. WITH THE NAV. INFO. FOR EACH PLOT
+               // console.log({...POLYGON_BOUNDARY_DATA});
+               
+            })();
+
+         } catch (surveyDetailsErr) {
+            console.error(`surveyDetailsErr: ${surveyDetailsErr.message}`);
+         };
       },
    };
 
@@ -871,9 +1049,8 @@ const MapboxMaps = ((plotsMap) => {
       // EXTRACT GEOJSON DATA FROM A MAPBOX LAYER EVENT
       getLayerData: (layer) => {
          const layerGeoJSON = layer.features[0];
+         // const layerProps = layerGeoJSON.properties; // FIXME
          const layerProps = _getClusterFeatProps(layerGeoJSON);
-         const rops = (layerGeoJSON.properties);
-         console.log(rops)
          const lngLatCenter = layer.lngLat;
          const layerGeometry = layer.features[0].geometry;
          const layerCoords = layerGeometry.coordinates[0];
@@ -1101,7 +1278,7 @@ const MapboxFillLayerHandler = ((leafletModalMap)=>{
                };     
             })(clickedLayer.id);
             
-            // RENDER THE CLUSTER FEATURE  
+            // RENDER THE CLUSTER FEATURE VERTICE DETAILS
             (function renderBoundsDetails(featureData, leafletMap, leafletLayerGroup) {
 
                // REMOVE
@@ -1347,22 +1524,44 @@ export const _AnimateClusters = (function(avgBaseMap, clusterFeatsMap) {
          renderClusterPoly: (featColl, {useBuffer, bufferAmt, bufferUnits}={}) => {
 
             try {
+
+               const featCollProps = featColl.properties;
                
-               const featCollPoly = _ProcessGeoJSON.getFeatCollPoly(featColl, {useBuffer, bufferAmt, bufferUnits});
+               if (featCollProps) {
 
-               if (featCollPoly) LeafletMaps.drawFeature(featCollPoly, {map: avgBaseMap, lineColor: "#6ab04c", lineWeight: 6});
-               if (featCollPoly) LeafletMaps.drawFeature(featCollPoly, {map: avgBaseMap, lineColor: "#badc58", lineWeight: 2});
+                  // GET THE POLY
+                  const featCollPoly = _ProcessGeoJSON.getFeatCollPoly(featColl, {useBuffer, bufferAmt, bufferUnits});
 
-               // FIXME > THE PRES. POLY HAS CURVED EDGES
-               let featCollBboxPoly, presentationBboxPoly;
-               if (featCollPoly) featCollBboxPoly = _ProcessGeoJSON.getBboxPoly(featCollPoly);
-               // if (featCollBboxPoly) LeafletMaps.drawFeature(featCollBboxPoly, {map: avgBaseMap, lineColor: "red", lineWeight: 1});
-               if (featCollBboxPoly) presentationBboxPoly = _ProcessGeoJSON.getPresentationPoly(featCollBboxPoly, {useBuffer: true, bufferAmt: 0.03, bufferUnits});
-               // if (presentationBboxPoly) LeafletMaps.drawFeature(presentationBboxPoly, {map: avgBaseMap, lineColor: "white", lineWeight: 1});
-               if (presentationBboxPoly) LeafletMaps.drawFeature(_ProcessGeoJSON.getBboxPoly(presentationBboxPoly), {map: avgBaseMap, lineColor: "cyan", lineWeight: 1});
+                  // TRANSFER THE ORIGINAL PROPS.
+                  if (featCollPoly) {
+
+                     let bufferedBboxPoly, finalBboxPoly;
+
+                     featCollPoly.properties = featCollProps;
+   
+                     // RENDER THE POLY
+                     LeafletMaps.drawFeature(featCollPoly, {map: avgBaseMap, lineColor: "#6ab04c", lineWeight: 6});
+                     LeafletMaps.drawFeature(featCollPoly, {map: avgBaseMap, lineColor: "#badc58", lineWeight: 2});
+   
+                     // RENDER CLUSTER SURVEY DETAILS
+                     // LeafletMaps.drawPolySurveyDetails(featCollPoly, {bearingThresh: 45, distThresh: 15});
+   
+                     // GET BBOX
+                     let featCollBboxPoly = _ProcessGeoJSON.getBboxPoly(featCollPoly);
+                     if (featCollBboxPoly) bufferedBboxPoly = _ProcessGeoJSON.getPresentationPoly(featCollBboxPoly, {useBuffer: true, bufferAmt: 0.03, bufferUnits});
+                     if (bufferedBboxPoly) finalBboxPoly = _ProcessGeoJSON.getBboxPoly(bufferedBboxPoly)
+                     
+                     // RENDER CLUSTER BBOX SURVEY DETAILS
+                     if (finalBboxPoly) {
+                        finalBboxPoly.properties = featCollProps;
+                        LeafletMaps.drawFeature(finalBboxPoly, {map: avgBaseMap, lineColor: "cyan", lineWeight: 1});
+                        LeafletMaps.drawPolySurveyDetails(finalBboxPoly, {bearingThresh: 0, distThresh: 5});
+                     };
+                  };
+               };
 
             } catch (renderClusterPolyErr) {
-               console.error(`renderClusterPolyErr: ${renderClusterPolyErr.message}`)
+               console.error(`renderClusterPolyErr: ${renderClusterPolyErr.message}`);
             };
          },
 
@@ -1434,7 +1633,7 @@ export const _AnimateClusters = (function(avgBaseMap, clusterFeatsMap) {
 
          renderEverythingNow: (featColl, {baseMapZoomLvl=0, useBuffer=false, bufferUnits, bufferAmt, areaUnits}) => {
             
-            console.log(featColl);
+            console.log({featColl});
 
             // fire custom fn.
             clusterFeatsMap.fire('closeAllPopups');
@@ -1444,6 +1643,11 @@ export const _AnimateClusters = (function(avgBaseMap, clusterFeatsMap) {
             _AnimateClusters.renderCluster(featColl, {useBuffer, bufferAmt, bufferUnits, lineColor: "white", lineWeight: 1, lineDashArray: "3"});
             _AnimateClusters.renderClusterPlots(featColl, {useBuffer, bufferAmt, bufferUnits});
             _AnimateClusters.renderClusterPlotsLabels(featColl, {useBuffer, bufferUnits, bufferAmt, areaUnits});
+
+            //
+            // const featCollId = featColl.properties.clusterID;
+            const clusterLayerGroup = LLayerGroupController.retreiveLayerGroup(featColl.properties.clusterID);
+            clusterLayerGroup.addTo(avgBaseMap);
          },
       };
 
@@ -1451,19 +1655,6 @@ export const _AnimateClusters = (function(avgBaseMap, clusterFeatsMap) {
       console.error(`renderMapsErr: ${renderMapsErr.message}`)
    };   
 })(AVG_BASE_MAP, CLUSTER_PLOTS_MAP);
-
-
-function createHTMLMarker(props, latLngPosition, styleClass, {draggable=true}) {
-   const HTMLMarker = L.marker(latLngPosition, {
-      draggable: draggable,
-      icon: L.divIcon({
-         className: `${styleClass}`,
-         html: _leafletMarkerMarkup(props),
-      }),
-      zIndexOffset: 100
-   })
-   return HTMLMarker;
-};
 
 
 // TODO
