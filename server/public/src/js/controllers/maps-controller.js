@@ -1588,6 +1588,11 @@ export const _AnimateClusters = (function(avgBaseMap, clusterFeatsMap) {
                
                if (featCollProps) {
 
+                  // TODO > WHAT IF THE FEAT. COLL. HAS FEATS. IN A MULTI. POLY ARRANGEMENT?
+                  (function analyzeFeatColl() {
+                     // TODO > DERIVE IDs FOR EACH MULTI. POLY.
+                  })();
+                  
                   // GET THE POLY
                   const featCollPoly = _ProcessGeoJSON.getFeatCollPoly(featColl, {useBuffer, bufferAmt, bufferUnits});
 
