@@ -1,6 +1,6 @@
 `use strict`
 import { AVG_BASE_MAP, CLUSTER_PLOTS_MAP, FEAT_DETAIL_MAP, _getTileLayers } from "../config/maps-config.js";
-import { _clusterFeatPopupMarkup, _GenerateClusterFeatMarkup, _leafletMarkerMarkup } from "../avg-controllers/markup-generator.js";
+import { _clusterFeatPopupMarkup, _GenerateClusterFeatMarkup } from "../avg-controllers/markup-generator.js";
 import { _pollAVGSettingsValues, _getDOMElements } from "../avg-controllers/ui-controller.js";
 import { LAYER_COLORS } from "../utils/mapbox-layer-colors.js";
 import { _TurfHelpers, _getBufferedPolygon, _ProcessGeoJSON, _ManipulateDOM, _GeometryMath, _getUsableGeometry, _mandatoryParam } from "../utils/helpers.js";
@@ -60,18 +60,17 @@ const LLayerGroupController = ((leafletBaseMap, leafletModalMap)=>{
 
 const LeafletMapsSetup = ((baseMap, featDetailMap)=>{
 
-   const { googleStreets, googleHybrid, osmStd, osmBW, mapboxOutdoors, bingMapsArial, bingMapsArial_2 } = _getTileLayers();
-   const defaultTileLayer = googleHybrid;
-
+   const { googleStreets, googleHybrid, osmStd, osmBW, mapboxOutdoors, bingMapsArial } = _getTileLayers();
+   
    // baseMap.on('load', function() {
-      baseMap.addLayer(defaultTileLayer);
+      baseMap.addLayer(googleHybrid);
    // });
 
       // baseMap.setView([9.4699247854766355, 7.217137278865754], 6.4);
       baseMap.setView([8.925135520364144, 9.268105727065828], 6.5);
 
    // featDetailMap.on('load', function() {
-      featDetailMap.addLayer(defaultTileLayer);
+      featDetailMap.addLayer(googleHybrid);
       // .setZIndex(-99);
    // });
    
@@ -90,8 +89,8 @@ const LeafletMapsSetup = ((baseMap, featDetailMap)=>{
       switch (true) {
    
          case mapZoom < 8:
-            map.addLayer(defaultTileLayer);
-            removeTileLayers(map, {keepLayer: defaultTileLayer});
+            map.addLayer(googleHybrid);
+            removeTileLayers(map, {keepLayer: googleHybrid});
             break
          
          case mapZoom > 7 && mapZoom < 10:
@@ -105,14 +104,19 @@ const LeafletMapsSetup = ((baseMap, featDetailMap)=>{
 
             break;
    
-         case mapZoom > 13:
+         case mapZoom > 13 && mapZoom < 18:
             map.addLayer(bingMapsArial); // or => bingMapsArial.addTo(map);
             removeTileLayers(map, {keepLayer: bingMapsArial});
             break;
       
+         case mapZoom > 18:
+            map.addLayer(googleHybrid); // or => googleHybrid.addTo(map);
+            removeTileLayers(map, {keepLayer: googleHybrid});
+            break;
+      
          default:
             removeTileLayers(map, {});
-            defaultTileLayer.addTo(map);
+            googleHybrid.addTo(map);
             break;
       };
    };
@@ -136,10 +140,10 @@ const LeafletMapsSetup = ((baseMap, featDetailMap)=>{
             case zoomLevel > 12 && zoomLevel < 14:
                visRank = 3;
                break;
-            case zoomLevel > 14 && zoomLevel < 17.5:
+            case zoomLevel > 14 && zoomLevel < 18:
                visRank = 4;
                break;
-            case zoomLevel > 17.5:
+            case zoomLevel > 18:
                visRank = 5;
                break;
             default:
@@ -476,17 +480,38 @@ const LeafletMaps = (baseMap => {
                      </span>
                </div>`
             return HTMLMarkup;
-
          } catch (HTMLMarkupErr) {
             console.error(`HTMLMarkupErr: ${HTMLMarkupErr.message}`);
          };
       },
+      getFeatPropsMarkup: (featProps) => {
+         try {
+            const HTMLMarkup =  `
+            <div class= "plot-metadata-label--chunk-size"> 
+               <span> ${featProps.featureArea} hectares </span>
+               <span> ${(featProps.featureArea * 2.47105).toFixed(1)} acres </span> 
+            </div>
+            <div class="metadata-label--owner-info"> 
+               <span> Plot-${featProps.featureIndex} </span>
+               <span> ${_.startCase(_joinWordsArray(Object.values(featProps.featureAdmin.admin1.titles)))} </span>
+            </div>
+            <div class="metadata-label--turn-by-turn" id="metadata_label_turn_by_turn">
+               <a href="#" role="button" title="Plot boundary turn-by-turn directions" aria-label="Plot boundary turn-by-turn directions"></a>
+                  <span >
+                     <i id="" class="fas fa-route"></i>
+                  </span>
+            </div>`
+         return HTMLMarkup;      
+      } catch (HTMLMarkupErr) {
+         console.error(`HTMLMarkupErr: ${HTMLMarkupErr.message}`);
+      };
+   },
       createHTMLMarker: (props, latLngPosition, styleClass, {draggable=true}) => {
          const HTMLMarker = L.marker(latLngPosition, {
             draggable: draggable,
             icon: L.divIcon({
                className: `${styleClass}`,
-               html: _leafletMarkerMarkup(props),
+               html: LeafletMaps.getFeatPropsMarkup(props),
             }),
             zIndexOffset: 100
          });

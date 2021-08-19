@@ -145,7 +145,7 @@ export const _GenerateClusterFeatMarkup = ((classList) => {
                   <div class="card-text-top">
                      <div class="main-card-text">
                         <span class="feat-admin1-title flex-center justify-start">${_.startCase(_joinWordsArray(Object.values(props.featureAdmin.admin1.titles)))}</span>
-                        <span>4.40435°E 12.034462°N</span>
+                        <span>${props.featCenterLng.toFixed(6)}°E   ${props.featCenterLat.toFixed(6)}°N</span>
                      </div>
                      <div class="card-pills">
                         <span class="flex-row-center">Plot ${props.featureIndex}</span>
@@ -208,23 +208,3 @@ export const _clusterFeatPopupMarkup = (props) => {
       console.error(`featPopupMarkupErr: ${featPopupMarkupErr.message}`)
    };
 };
-
-
-export const _leafletMarkerMarkup = (props) => {
-   const HTMLMarkup =  `
-      <div class= "plot-metadata-label--chunk-size"> 
-         <span> ${props.featureArea} hectares </span>
-         <span> ${(props.featureArea * 2.47105).toFixed(1)} acres </span> 
-      </div>
-      <div class="metadata-label--owner-info"> 
-         <span> Plot-${props.featureIndex} </span>
-         <span> ${_.startCase(_joinWordsArray(Object.values(props.featureAdmin.admin1.titles)))} </span>
-      </div>
-      <div class="metadata-label--turn-by-turn" id="metadata_label_turn_by_turn">
-         <a href="#" role="button" title="Plot boundary turn-by-turn directions" aria-label="Plot boundary turn-by-turn directions"></a>
-            <span >
-               <i id="" class="fas fa-route"></i>
-            </span>
-      </div>`
-   return HTMLMarkup;
-}
