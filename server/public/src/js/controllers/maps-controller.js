@@ -295,23 +295,23 @@ const LLayerGroupController = ((leafletBaseMap, leafletModalMap)=>{
          LAYER_GROUP_OBJS.push(layerGroupObj);
          return layerGroupObj.layer_group;
       },
-      retreiveLayerGroupObj: (layerGroupId) => {
-         const layerGroupObj = LAYER_GROUP_OBJS.find(lgObj => lgObj.layer_group_id === layerGroupId);
-         return layerGroupObj;
-      },
-      retreiveLayerGroup: (layerGroupId, {visibilityRank}={}) => {
-         let layerGroupObj;
+      retreiveLayerGroups: (layerGroupId, {visibilityRank}={}) => {
+         console.log({LAYER_GROUP_OBJS});
+         let layerGroups = [];
          if (!visibilityRank) {            
-            layerGroupObj = LAYER_GROUP_OBJS.find(lgObj => lgObj.layer_group_id === layerGroupId);
+            layerGroups = LAYER_GROUP_OBJS.filter(lgObj => {
+               if (lgObj.layer_group_id === layerGroupId) return lgObj.layer_group;
+            });
+            return layerGroups;
          } else {
-            layerGroupObj = LAYER_GROUP_OBJS.find(lgObj => 
-               lgObj.layer_group_id === layerGroupId && 
-               lgObj.visibility_rank === visibilityRank
-            );
+            layerGroups = LAYER_GROUP_OBJS.filter(lgObj => {
+               if (
+                     lgObj.layer_group_id === layerGroupId && 
+                     lgObj.visibility_rank === visibilityRank
+                  ) return lgObj.layer_group;
+            });
          };
-         console.log({LAYER_GROUP_OBJS})
-         console.log({layerGroupObj})
-         return layerGroupObj.layer_group;
+         return layerGroups;
       },
       getLayerGroups: () => {
          return {
@@ -892,7 +892,6 @@ const LeafletMaps = (baseMap => {
                L.marker(polyCenter).addTo(llayerGroup);
                
                // DISPLAY PLOT METADATA AT CENTER OF FEATURE
-               console.log({polyProps})
                LeafletMaps.getClusterHTMLMarker(polyProps, polyCenter, 'plot-metadata-label', {draggable:true}).addTo(llayerGroup);
       
                // TODO
@@ -1664,9 +1663,13 @@ export const _AnimateClusters = (function(avgBaseMap, clusterFeatsMap) {
             _AnimateClusters.renderClusterPlots(featColl, {useBuffer, bufferAmt, bufferUnits});
             _AnimateClusters.renderClusterPlotsLabels(featColl, {useBuffer, bufferUnits, bufferAmt, areaUnits});
 
+            // GET LAYER GROUP(S)
+            // const layerGroups = LLayerGroupController.retreiveLayerGroups(featColl.properties.clusterID);
+            const layerGroups = LLayerGroupController.retreiveLayerGroups(featColl.properties.clusterID, {visibilityRank: 3});
+
             // ADD TO MAP
-            // LLayerGroupController.retreiveLayerGroup(featColl.properties.clusterID).addTo(avgBaseMap);
-            LLayerGroupController.retreiveLayerGroup(featColl.properties.clusterID, {visibilityRank: 3}).addTo(avgBaseMap);
+            console.log({layerGroups})
+            layerGroups.forEach(lg => {if (lg) lg.layer_group.addTo(avgBaseMap)});
          },
       };
 
