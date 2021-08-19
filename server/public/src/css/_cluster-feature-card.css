@@ -80,6 +80,7 @@
    object-fit: cover;
    vertical-align: middle;
    font-size: 0.5rem;
+   background-color: lightgoldenrodyellow;
 }
 
 .card-text-wrapper {
@@ -139,17 +140,11 @@
 
 .card-text-bottom {
    margin-bottom: 2px;
+   font-size: var(--cluster-feature-card-detail-text);
+   font-weight: lighter;
    display: flex;
    justify-content: flex-start;
    flex-wrap: wrap;
-}
-
-.card-text-bottom > div {
-   /* border: 1px solid var(--grey-line-200); */
-   /* border-bottom: none;
-   border-right: none; */
-   font-size: var(--cluster-feature-card-detail-text);
-   line-height: 2;
 }
 
 .card-text-bottom > div:hover {
@@ -159,8 +154,8 @@
 
 .card-text-bottom > div > span {
    padding: 1px 3px 0 3px;
-
    max-width: 90px;
+   font-weight: light;
    white-space: nowrap;
    overflow: hidden;
    text-overflow: ellipsis;

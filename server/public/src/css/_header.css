@@ -7,14 +7,20 @@ header.header-wrapper {
    flex-direction: row;
    justify-content: flex-end;
    font-size: var(--header-text-font-size);
-   font-family: 'Fira Sans';
-   /* border: 1px solid var(--grey-line-200); */
    z-index: var(--z4);
 }
 
 .navbar__container {
 	background-color: #bfbfbf;
    background-color: white;
+}
+
+.navbar__container .hide-on-small .navbar-brand > span {
+   font-family: 'IBM Plex Sans', sans-serif;
+   color: darkolivegreen;
+   font-size: 0.95rem;
+   font-weight: 600;
+   letter-spacing: -0.6px;
 }
 
 .app-activity-indicator-wrapper {
