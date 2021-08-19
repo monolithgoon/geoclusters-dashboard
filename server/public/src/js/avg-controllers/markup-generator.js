@@ -144,9 +144,7 @@ export const _GenerateClusterFeatMarkup = ((classList) => {
                <div class="card-text-wrapper">
                   <div class="card-text-top">
                      <div class="main-card-text">
-                        <span>
-                           <a class="feat-admin1-title flex-center justify-start" href="#">${_.startCase(_joinWordsArray(Object.values(props.featureAdmin.admin1.titles)))}</a>
-                        </span>
+                        <span class="feat-admin1-title flex-center justify-start">${_.startCase(_joinWordsArray(Object.values(props.featureAdmin.admin1.titles)))}</span>
                         <span>4.40435°E 12.034462°N</span>
                      </div>
                      <div class="card-pills">
