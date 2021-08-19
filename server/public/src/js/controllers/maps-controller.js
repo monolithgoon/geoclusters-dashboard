@@ -7,6 +7,57 @@ import { _TurfHelpers, _getBufferedPolygon, _ProcessGeoJSON, _ManipulateDOM, _Ge
 import { _getClusterFeatProps } from "../interfaces/cluster-props-adapter.js";
 
 
+const LLayerGroupController = ((leafletBaseMap, leafletModalMap)=>{
+
+   // Create groups to hold the leaflet layers and add it to the map
+   const baseMapLayerGroup = L.layerGroup().addTo(leafletBaseMap);
+   const modalMapLayerGroup = L.layerGroup().addTo(leafletModalMap);
+
+   const LAYER_GROUP_OBJS = [];
+
+   return {
+      initLayerGroup: (layerGroupId, {visibilityRank=3}) => {
+         const layerGroupObj = {
+            "layer_group_id": layerGroupId,
+            "visibility_rank": visibilityRank,
+            "layer_group": L.layerGroup(),
+         };
+         LAYER_GROUP_OBJS.push(layerGroupObj);
+         return layerGroupObj.layer_group;
+      },
+      returnLayerGroupObjs: ({layerGroupId, visibilityRank}) => {
+
+         console.log({LAYER_GROUP_OBJS});
+
+         let lgObjects = [];
+
+         if (layerGroupId && !visibilityRank) {            
+            lgObjects = LAYER_GROUP_OBJS.filter(lgObj => lgObj.layer_group_id === layerGroupId);
+         } else if (!layerGroupId && visibilityRank) {
+            lgObjects = LAYER_GROUP_OBJS.filter(lgObj => lgObj.visibility_rank === visibilityRank);
+         } else if (layerGroupId && visibilityRank) {
+            lgObjects = LAYER_GROUP_OBJS.filter(lgObj => {
+               if (
+                     lgObj.layer_group_id === layerGroupId && 
+                     lgObj.visibility_rank === visibilityRank
+                  ) return lgObj;
+            });
+         } else {
+            return LAYER_GROUP_OBJS;
+         };
+         return lgObjects;
+      },
+      getLayerGroups: () => {
+         return {
+            baseMapLayerGroup,
+            modalMapLayerGroup,
+         };
+      },
+   };
+
+})(AVG_BASE_MAP, FEAT_DETAIL_MAP);
+
+
 const LeafletMapsSetup = ((baseMap, featDetailMap)=>{
 
    const { googleStreets, googleHybrid, osmStd, osmBW, mapboxOutdoors, bingMapsArial, bingMapsArial_2 } = _getTileLayers();
@@ -67,8 +118,53 @@ const LeafletMapsSetup = ((baseMap, featDetailMap)=>{
    };
    
    baseMap.on("zoomend", function() {
-      console.log(baseMap.getZoom());
+
       switchTileLayers(baseMap);
+
+      const zoomLevel = LeafletMaps.getMapZoom();
+      console.log({zoomLevel});
+
+      const visibilityRank = (function getVisibilityRank(zoomLevel) {
+         let visRank;
+         switch (true) {
+            case zoomLevel < 8.5:
+               visRank = 1;
+               break;
+            case zoomLevel > 8.5 && zoomLevel < 12:
+               visRank = 2;
+               break;
+            case zoomLevel > 12 && zoomLevel < 14:
+               visRank = 3;
+               break;
+            case zoomLevel > 14 && zoomLevel < 17.5:
+               visRank = 4;
+               break;
+            case zoomLevel > 17.5:
+               visRank = 5;
+               break;
+            default:
+               break;
+         };
+         return visRank;
+      })(zoomLevel);
+      
+      (function addLayerGroups(visibilityRank) {
+
+         console.log({visibilityRank})
+
+         const layerGroupsObjs = LLayerGroupController.returnLayerGroupObjs({visibilityRank});
+
+         for (let idx = 0; idx < layerGroupsObjs.length; idx++) {
+            const lgObj = layerGroupsObjs[idx];
+            if (!baseMap.hasLayer(lgObj.layer_group)) lgObj.layer_group.addTo(baseMap);
+         };
+         
+      })(visibilityRank);
+
+      // TODO
+      (function removeLayerGroups(visibilityRank) {
+         
+      })();
    });
       
    baseMap.on("moveend", function() {
@@ -275,53 +371,6 @@ const MapboxPopupsController = (function() {
       },
    };
 })();
-
-
-const LLayerGroupController = ((leafletBaseMap, leafletModalMap)=>{
-
-   // Create groups to hold the leaflet layers and add it to the map
-   const baseMapLayerGroup = L.layerGroup().addTo(leafletBaseMap);
-   const modalMapLayerGroup = L.layerGroup().addTo(leafletModalMap);
-
-   const LAYER_GROUP_OBJS = [];
-
-   return {
-      initLayerGroup: (layerGroupId, {visibilityRank=3}) => {
-         const layerGroupObj = {
-            "layer_group_id": layerGroupId,
-            "visibility_rank": visibilityRank,
-            "layer_group": L.layerGroup(),
-         };
-         LAYER_GROUP_OBJS.push(layerGroupObj);
-         return layerGroupObj.layer_group;
-      },
-      retreiveLayerGroups: (layerGroupId, {visibilityRank}={}) => {
-         console.log({LAYER_GROUP_OBJS});
-         let layerGroups = [];
-         if (!visibilityRank) {            
-            layerGroups = LAYER_GROUP_OBJS.filter(lgObj => {
-               if (lgObj.layer_group_id === layerGroupId) return lgObj.layer_group;
-            });
-            return layerGroups;
-         } else {
-            layerGroups = LAYER_GROUP_OBJS.filter(lgObj => {
-               if (
-                     lgObj.layer_group_id === layerGroupId && 
-                     lgObj.visibility_rank === visibilityRank
-                  ) return lgObj.layer_group;
-            });
-         };
-         return layerGroups;
-      },
-      getLayerGroups: () => {
-         return {
-            baseMapLayerGroup,
-            modalMapLayerGroup,
-         };
-      },
-   };
-
-})(AVG_BASE_MAP, FEAT_DETAIL_MAP);
 
 
 const LeafletMaps = (baseMap => {
@@ -1568,7 +1617,7 @@ export const _AnimateClusters = (function(avgBaseMap, clusterFeatsMap) {
                      if (finalBboxPoly) {
 
                         // INIT. LAYER GROUP FOR BBOX
-                        const bboxLayerGroup = LLayerGroupController.initLayerGroup(featCollProps.clusterID, {visibilityRank: 3});
+                        const bboxLayerGroup = LLayerGroupController.initLayerGroup(featCollProps.clusterID, {visibilityRank: 4});
 
                         finalBboxPoly.properties = featCollProps;
                         // LeafletMaps.drawFeature(finalBboxPoly, {featLayerGroup: bboxLayerGroup, lineColor: "cyan", lineWeight: 1, lineDashArray: "80, 20"});
@@ -1663,13 +1712,13 @@ export const _AnimateClusters = (function(avgBaseMap, clusterFeatsMap) {
             _AnimateClusters.renderClusterPlots(featColl, {useBuffer, bufferAmt, bufferUnits});
             _AnimateClusters.renderClusterPlotsLabels(featColl, {useBuffer, bufferUnits, bufferAmt, areaUnits});
 
-            // GET LAYER GROUP(S)
-            // const layerGroups = LLayerGroupController.retreiveLayerGroups(featColl.properties.clusterID);
-            const layerGroups = LLayerGroupController.retreiveLayerGroups(featColl.properties.clusterID, {visibilityRank: 3});
+            // REMOVE > DEPRC > ADDED VIA "zoomend"
+            // // GET LAYER GROUP(S)
+            // // const layerGroups = LLayerGroupController.returnLayerGroupObjs({layerGroupId: featColl.properties.clusterID});
+            // const layerGroups = LLayerGroupController.returnLayerGroupObjs({layerGroupId: featColl.properties.clusterID, visibilityRank: 4});
 
-            // ADD TO MAP
-            console.log({layerGroups})
-            layerGroups.forEach(lg => {if (lg) lg.layer_group.addTo(avgBaseMap)});
+            // // ADD TO MAP
+            // layerGroups.forEach(lg => {if (lg) lg.layer_group.addTo(avgBaseMap)});
          },
       };
 
