@@ -8,18 +8,21 @@ header.header-wrapper {
    justify-content: flex-end;
    font-size: var(--header-text-font-size);
    z-index: var(--z4);
+
+   font-family: 'Roboto', sans-serif;
 }
 
 .navbar__container {
-	background-color: #bfbfbf;
+   background-color: #bfbfbf;
    background-color: white;
+   color: black;
 }
 
 .navbar__container .hide-on-small .navbar-brand > span {
-   font-family: 'IBM Plex Sans', sans-serif;
+   /* font-family: 'IBM Plex Sans', sans-serif; */
    color: darkolivegreen;
    font-size: 0.95rem;
-   font-weight: 600;
+   font-weight: normal;
    letter-spacing: -0.6px;
 }
 

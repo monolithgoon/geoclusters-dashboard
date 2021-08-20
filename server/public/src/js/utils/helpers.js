@@ -516,15 +516,6 @@ export const _TurfHelpers = (()=>{
 			};
 		},
 
-		// TODO
-		uniteFeats: (features) => {
-			try {
-				turf.union(...features);
-			} catch (turfUnionErr) {
-				console.error(`turfUnionErr: ${turfUnionErr.message}`)
-			}
-		},
-
 		centerOfMass: (geoJSONFeature) => {
 			try {
 				return turf.centerOfMass(geoJSONFeature);
@@ -633,17 +624,27 @@ export function _getUsableGeometry(geoJSON) {
 			break;
 
 		case "MultiPolygon":
-			const multiPolyFeatColl = _TurfHelpers.unkinkPolygon(geoJSON);
-			if (multiPolyFeatColl) {
-				polygonFeats = multiPolyFeatColl.features; // HACKY WAY OF CONVERTING MULTIPOLY. TO FEAT. COLL.
-			} else {
-				const multiPolyFeats = [];
-				for (let idx = 0; idx < geoJSON.geometry.coordinates.length; idx++) {
-					const polygonCoords = geoJSON.geometry.coordinates[idx];
-					multiPolyFeats.push(turf.polygon(polygonCoords));
-					polygonFeats = multiPolyFeats;
-				};
+
+		// REMOVE > DEPRC.
+			// const multiPolyFeatColl = _TurfHelpers.unkinkPolygon(geoJSON); // HACKY WAY OF CONVERTING MULTIPOLY. TO FEAT. COLL.
+			// if (multiPolyFeatColl) {
+			// 	polygonFeats = multiPolyFeatColl.features;
+			// } else {
+			// 	const multiPolyFeats = [];
+			// 	for (let idx = 0; idx < geoJSON.geometry.coordinates.length; idx++) {
+			// 		const polygonCoords = geoJSON.geometry.coordinates[idx];
+			// 		multiPolyFeats.push(turf.polygon(polygonCoords));
+			// 		polygonFeats = multiPolyFeats;
+			// 	};
+			// };
+
+			const multiPolyFeats = [];
+			for (let idx = 0; idx < geoJSON.geometry.coordinates.length; idx++) {
+				const polygonCoords = geoJSON.geometry.coordinates[idx];
+				multiPolyFeats.push(turf.polygon(polygonCoords));
+				polygonFeats = multiPolyFeats;
 			};
+
 			break;	
 
 		case "GeometryCollection":
@@ -654,7 +655,7 @@ export function _getUsableGeometry(geoJSON) {
 			break;
 	}
 
-	if (polygonFeats) {
+	if (polygonFeats && polygonFeats.length > 0) {
 		
 		// ONLY 1 POLYGON WAS FOUND IN THE GEOJSON
 		if (polygonFeats.length === 1 ) {
@@ -681,13 +682,14 @@ export function _getUsableGeometry(geoJSON) {
 					// THE FEATURES ARE PROB. SIMILAR IN SIZE > LOOP THRU & TRY TO MERGE THEM
 					
 					// PERFORM A SIMPLE UNION, THEN COLLECT ALL THE PARTS THAT DON'T UNITE
-					// console.error(polygonFeats)
-					refinedGeoJSON = turf.union(...polygonFeats);
+					// refinedGeoJSON = turf.union(...polygonFeats);
+					refinedGeoJSON = _ProcessGeoJSON.bufferUniteFeats(polygonFeats, {maxBufferAmt: 0.05, bufferStep: 0.0025});
+					
 					if (_TurfHelpers.getType(refinedGeoJSON) !== "Polygon") {
 						console.error(`FAILED REFINING GEOJSON`);
 						discardedMultipolyParts.push(...polygonFeats);
-					} else {
-						return refinedGeoJSON;
+					// } else {
+					// 	return refinedGeoJSON;
 					};
 					
 				} else if (featureAreaRatio >= 0.005 && featureAreaRatio < 0.40) {
@@ -758,7 +760,7 @@ return modFeatureCollection ? modFeatureCollection : featureCollection;
 // SOMETIMES, BUFFERING A POLYGON DEFORMS IT
 // turf.buffer SOMETIMES MUTILATES A MULTIPOLYGON CHUNK; DEAL WITH THAT
 // THIS REVERTS THE BUFFER TO THE ORG. POLY IF ANY DEFORMATION WOULD HAPPEN
-export function _getBufferedPolygon(gjPolygon, bufferAmt, {bufferUnits="kilometers"}) {
+export function _getBufferedPolygon(gjPolygon, bufferAmt, {bufferUnits="kilometers"}={}) {
 
 // if (_TurfHelpers.getType(gjPolygon) === "Polygon") { // REMOVE
 if(gjPolygon) {
@@ -866,6 +868,57 @@ export const _ProcessGeoJSON = (()=>{
 			};
 		},
 
+		// TODO
+		bufferUniteFeats: (featsArray, {bufferAmt=0.05, maxBufferAmt, bufferStep}={}) => {
+			const bufferedFeats = [];
+			try {
+				if (maxBufferAmt && bufferStep) {
+					let bufferAmount = bufferStep;
+					while (bufferAmount <= maxBufferAmt) {
+						bufferAmount += bufferStep;
+						console.log({bufferAmount});
+					};
+					for (let idx = 0; idx < featsArray.length; idx++) {
+						let feat = featsArray[idx];
+						feat = _getBufferedPolygon(feat, bufferAmt);
+						bufferedFeats.push(feat);
+					};
+					const unitedFeats = turf.union(...bufferedFeats);
+					if (_TurfHelpers.getType(unitedFeats) === "Polygon") return unitedFeats;
+					return turf.union(...bufferedFeats);
+				} else {
+					return turf.union(...featsArray);
+				};
+			} catch (bufferFeatsErr) {
+				console.error(`bufferFeatsErr: ${bufferFeatsErr.message}`);
+			};
+		},		
+
+		// TODO
+		bufferUniteFeats: (featsArray, {maxBufferAmt, bufferStep}={}) => {
+			const bufferedFeats = [];
+			try {
+				if (maxBufferAmt && bufferStep) {
+					let bufferAmount = bufferStep;
+					while (bufferAmount <= maxBufferAmt) {
+						bufferAmount += bufferStep;
+						console.log({bufferAmount});
+						for (let idx = 0; idx < featsArray.length; idx++) {
+							let feat = featsArray[idx];
+							feat = _getBufferedPolygon(feat, bufferAmount);
+							bufferedFeats.push(feat);
+						};
+						const unitedFeats = turf.union(...bufferedFeats);
+						if (_TurfHelpers.getType(unitedFeats) === "Polygon") return unitedFeats;
+					};
+				} else {
+					return turf.union(...featsArray);
+				};
+			} catch (bufferFeatsErr) {
+				console.error(`bufferFeatsErr: ${bufferFeatsErr.message}`);
+			};
+		},		
+
 		getPresentationPoly: (geoJSONPoly, {useBuffer, bufferAmt, bufferUnits='kilometers'}) => {
 			const presentationPolygon = useBuffer ? _getBufferedPolygon(geoJSONPoly, bufferAmt, {bufferUnits}) : geoJSONPoly;
 			return presentationPolygon;
@@ -876,9 +929,6 @@ export const _ProcessGeoJSON = (()=>{
 			try {
 
 				turf.geojsonType(featColl, "FeatureCollection", "getFeatCollPolyErr");
-
-				// REMOVE
-				// let featCollPoly = turf.union(...featColl.features);
 
 					console.log(featColl.properties.clusterName)
 

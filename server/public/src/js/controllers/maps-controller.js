@@ -34,7 +34,8 @@ const LLayerGroupController = ((leafletBaseMap, leafletModalMap)=>{
          if (layerGroupId && !visibilityRank) {            
             lgObjects = LAYER_GROUP_OBJS.filter(lgObj => lgObj.layer_group_id === layerGroupId);
          } else if (!layerGroupId && visibilityRank) {
-            lgObjects = LAYER_GROUP_OBJS.filter(lgObj => lgObj.visibility_rank === visibilityRank);
+            // lgObjects = LAYER_GROUP_OBJS.filter(lgObj => lgObj.visibility_rank === visibilityRank);
+            lgObjects = LAYER_GROUP_OBJS.filter(lgObj => lgObj.visibility_rank <= visibilityRank);
          } else if (layerGroupId && visibilityRank) {
             lgObjects = LAYER_GROUP_OBJS.filter(lgObj => {
                if (
@@ -128,7 +129,7 @@ const LeafletMapsSetup = ((baseMap, featDetailMap)=>{
       const zoomLevel = LeafletMaps.getMapZoom();
       console.log({zoomLevel});
 
-      const visibilityRank = (function getVisibilityRank(zoomLevel) {
+      const zoomVisibilityRank = (function getVisibilityRank(zoomLevel) {
          let visRank;
          switch (true) {
             case zoomLevel < 8.5:
@@ -152,23 +153,23 @@ const LeafletMapsSetup = ((baseMap, featDetailMap)=>{
          return visRank;
       })(zoomLevel);
       
-      (function addLayerGroups(visibilityRank) {
+      (function addLayerGroups(map, currVisRank) {
 
-         console.log({visibilityRank})
+         console.log({currVisRank})
 
-         const layerGroupsObjs = LLayerGroupController.returnLayerGroupObjs({visibilityRank});
+         const layerGroupsObjs = LLayerGroupController.returnLayerGroupObjs({currVisRank});
 
          for (let idx = 0; idx < layerGroupsObjs.length; idx++) {
             const lgObj = layerGroupsObjs[idx];
-            if (!baseMap.hasLayer(lgObj.layer_group)) lgObj.layer_group.addTo(baseMap);
+
+            // TODO > RENDER ONLY LAYER GROUPS IN MAP VIEW BOUNDS
+
+            if (!map.hasLayer(lgObj.layer_group)) lgObj.layer_group.addTo(map);
+
+            if(map.hasLayer(lgObj.layer_group) && lgObj.visibility_rank > currVisRank) map.removeLayer(lgObj.layer_group);
          };
          
-      })(visibilityRank);
-
-      // TODO
-      (function removeLayerGroups(visibilityRank) {
-         
-      })();
+      })(baseMap, zoomVisibilityRank);
    });
       
    baseMap.on("moveend", function() {
@@ -208,7 +209,7 @@ const LeafletMapsSetup = ((baseMap, featDetailMap)=>{
       map.zoomControl.setPosition('basemap-controls-placeholder');
 
       // You can also put other controls in the same placeholder.
-      L.control.scale({position: 'verticalcenterright'}).addTo(map);
+      // L.control.scale({position: 'verticalcenterright'}).addTo(map);
       L.control.scale({position: 'basemap-controls-placeholder'}).addTo(map);
    })(baseMap);
    
@@ -469,9 +470,9 @@ const LeafletMaps = (baseMap => {
                   <span> ${clusterProps.clusterArea.toFixed(1)} hectares </span>
                   <span> ${(clusterProps.clusterArea * 2.47105).toFixed(1)} acres </span> 
                </div>
-               <div class="metadata-label--owner-info"> 
+               <div class="metadata-label--owner-info__avg"> 
+               <span> ${clusterProps.clusterName} </span>
                   <span> AGC ID • ${clusterProps.clusterID} </span>
-                  <span> ${clusterProps.clusterName} </span>
                </div>
                <div class="metadata-label--turn-by-turn" id="metadata_label_turn_by_turn">
                   <a href="#" role="button" title="Plot boundary turn-by-turn directions" aria-label="Plot boundary turn-by-turn directions"></a>
@@ -491,7 +492,7 @@ const LeafletMaps = (baseMap => {
                <span> ${featProps.featureArea} hectares </span>
                <span> ${(featProps.featureArea * 2.47105).toFixed(1)} acres </span> 
             </div>
-            <div class="metadata-label--owner-info"> 
+            <div class="metadata-label--owner-info__avg"> 
                <span> Plot-${featProps.featureIndex} </span>
                <span> ${_.startCase(_joinWordsArray(Object.values(featProps.featureAdmin.admin1.titles)))} </span>
             </div>
@@ -940,7 +941,10 @@ const LeafletMaps = (baseMap => {
          map.addLayer(markerCluster);
       },
 
-      drawPolySurveyDetails: (gjPolygon, llayerGroup, {distThresh=10, bearingThresh=45}) => {
+      drawPolySurveyDetails: (gjPolygon, polyLayerGroup, {distThresh=10, bearingThresh=45}) => {
+
+         const clusterBboxLabelsLG = LLayerGroupController.initLayerGroup("fakeId", {visibilityRank: 4})
+         const clusterSurveyLabelsLG = LLayerGroupController.initLayerGroup("fakeId", {visibilityRank: 5})
          
          const polyProps = gjPolygon.properties;
          const polyId = polyProps.clusterID ? polyProps.clusterID : polyProps.featureID;
@@ -963,10 +967,11 @@ const LeafletMaps = (baseMap => {
             (function renderBoundsDetails() {
                
                // ADD A MARKER TO PLOT CENTER
-               L.marker(polyCenter).addTo(llayerGroup);
+               L.marker(polyCenter).addTo(polyLayerGroup);
                
                // DISPLAY PLOT METADATA AT CENTER OF FEATURE
-               LeafletMaps.getClusterHTMLMarker(polyProps, polyCenter, 'plot-metadata-label', {draggable:true}).addTo(llayerGroup);
+               const clusterMetaLabelsLG = LLayerGroupController.initLayerGroup("cluster-metadata-labels", {visibilityRank: 3})
+               LeafletMaps.getClusterHTMLMarker(polyProps, polyCenter, 'plot-metadata-label', {draggable:true}).addTo(clusterMetaLabelsLG);
       
                // TODO
                // renderFeatVertices()
@@ -1010,7 +1015,7 @@ const LeafletMaps = (baseMap => {
                         }),
                         zIndexOffset: 98
                         
-                     }).addTo(llayerGroup);   
+                     }).addTo(polyLayerGroup);   
       
                      // SHOW DIST. BTW. CORNERS ONLY (FOR SMALL SCREENS)
                      L.marker([midpointCoords[1], midpointCoords[0]], {
@@ -1022,7 +1027,7 @@ const LeafletMaps = (baseMap => {
                         }),
                         zIndexOffset: 99
          
-                     }).addTo(llayerGroup);
+                     }).addTo(polyLayerGroup);
                      
                      // SHOW DIST. & BEARING (FOR DESKTOP)
                      L.marker([midpointCoords[1], midpointCoords[0]], {
@@ -1030,12 +1035,11 @@ const LeafletMaps = (baseMap => {
                         icon: L.divIcon({
                            className: `polygon-vertex-dist-bearing-label--lg`,
                            html: `${distance.toFixed(0)} m, ${degMinSec}`,
-                              // iconSize: [30, 15]
                            iconSize: [50, 30]
                         }),
                         zIndexOffset: 99
          
-                     }).addTo(llayerGroup);
+                     }).addTo(polyLayerGroup);
                      
                      // SAVE THE BEARING BTW. THE VERTICES
                      POLYGON_BOUNDARY_DATA.vertex_bearings.push(mathBearing);
@@ -1048,7 +1052,7 @@ const LeafletMaps = (baseMap => {
                      POLYGON_BOUNDARY_DATA.start_coords = plotCorner;
                      
                      // ADD AN ANIMATED MARKER
-                     // llayerGroup.addLayer(getAnimatedPersonMarker([plotCorner[1], plotCorner[0]]));
+                     // polyLayerGroup.addLayer(getAnimatedPersonMarker([plotCorner[1], plotCorner[0]]));
                   };
                };
       
@@ -1622,7 +1626,7 @@ export const _AnimateClusters = (function(avgBaseMap, clusterFeatsMap) {
                   const featCollPoly = _ProcessGeoJSON.getFeatCollPoly(featColl, {useBuffer, bufferAmt, bufferUnits});
 
                   // TRANSFER THE ORIGINAL PROPS.
-                  if (featCollPoly) {
+                  if (featCollPoly && _TurfHelpers.getType(featCollPoly) === "Polygon") {
 
                      let bufferedBboxPoly, finalBboxPoly;
 
@@ -1632,11 +1636,11 @@ export const _AnimateClusters = (function(avgBaseMap, clusterFeatsMap) {
                      const clusterPolyLayerGroup = LLayerGroupController.initLayerGroup(featCollProps.clusterID, {visibilityRank: 5});
    
                      // RENDER THE POLY
-                     LeafletMaps.drawFeature(featCollPoly, {lineColor: "#6ab04c", lineWeight: 6});
-                     LeafletMaps.drawFeature(featCollPoly, {lineColor: "#badc58", lineWeight: 2});
+                     LeafletMaps.drawFeature(featCollPoly, {lineColor: "#6ab04c", lineWeight: 5});
+                     LeafletMaps.drawFeature(featCollPoly, {lineColor: "#badc58", lineWeight: 1});
    
                      // RENDER CLUSTER SURVEY DETAILS
-                     LeafletMaps.drawPolySurveyDetails(featCollPoly, clusterPolyLayerGroup, {bearingThresh: 45, distThresh: 15});
+                     LeafletMaps.drawPolySurveyDetails(featCollPoly, clusterPolyLayerGroup, {bearingThresh: 45, distThresh: 30});
    
                      // GET BBOX
                      let featCollBboxPoly = _ProcessGeoJSON.getBboxPoly(featCollPoly);
@@ -1667,6 +1671,7 @@ export const _AnimateClusters = (function(avgBaseMap, clusterFeatsMap) {
 
             const zoomLevel = LeafletMaps.getMapZoom();
             
+            // TODO
             switch (true) {
 
                case zoomLevel < 8.5:
