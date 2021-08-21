@@ -472,7 +472,7 @@ const LeafletMaps = (baseMap => {
                </div>
                <div class="metadata-label--owner-info__avg"> 
                <span> ${clusterProps.clusterName} </span>
-                  <span> AGC ID • ${clusterProps.clusterID} </span>
+                  <span>${clusterProps.clusterFeatsNum} Farmers</span>
                </div>
                <div class="metadata-label--turn-by-turn" id="metadata_label_turn_by_turn">
                   <a href="#" role="button" title="Plot boundary turn-by-turn directions" aria-label="Plot boundary turn-by-turn directions"></a>
@@ -942,15 +942,12 @@ const LeafletMaps = (baseMap => {
       },
 
       drawPolySurveyDetails: (gjPolygon, polyLayerGroup, {distThresh=10, bearingThresh=45}) => {
-
-         const clusterBboxLabelsLG = LLayerGroupController.initLayerGroup("fakeId", {visibilityRank: 4})
-         const clusterSurveyLabelsLG = LLayerGroupController.initLayerGroup("fakeId", {visibilityRank: 5})
          
          const polyProps = gjPolygon.properties;
          const polyId = polyProps.clusterID ? polyProps.clusterID : polyProps.featureID;
-         const polyGeometry = gjPolygon.geometry;
          const polyCoords = gjPolygon.geometry.coordinates[0];
-         const polyCenter = getFeatCenter(polyGeometry).latLng;
+         // const polyGeometry = gjPolygon.geometry;
+         // const polyCenter = getFeatCenter(polyGeometry).latLng;
 
          // BUILD A DATA OBJ. TO HOLD THE NAV. INFO. FOR EACH PLOT
          const POLYGON_BOUNDARY_DATA = {
@@ -966,12 +963,12 @@ const LeafletMaps = (baseMap => {
             // RENDER THE CLUSTER FEATURE VERTICE DETAILS
             (function renderBoundsDetails() {
                
-               // ADD A MARKER TO PLOT CENTER
-               L.marker(polyCenter).addTo(polyLayerGroup);
+               // // ADD A MARKER TO PLOT CENTER
+               // L.marker(polyCenter).addTo(polyLayerGroup);
                
-               // DISPLAY PLOT METADATA AT CENTER OF FEATURE
-               const clusterMetaLabelsLG = LLayerGroupController.initLayerGroup("cluster-metadata-labels", {visibilityRank: 3})
-               LeafletMaps.getClusterHTMLMarker(polyProps, polyCenter, 'plot-metadata-label', {draggable:true}).addTo(clusterMetaLabelsLG);
+               // // DISPLAY PLOT METADATA AT CENTER OF FEATURE
+               // const clusterMetaLabelsLG = LLayerGroupController.initLayerGroup("cluster-metadata-labels", {visibilityRank: 3})
+               // LeafletMaps.getClusterHTMLMarker(polyProps, polyCenter, 'plot-metadata-label', {draggable:true}).addTo(clusterMetaLabelsLG);
       
                // TODO
                // renderFeatVertices()
@@ -1626,34 +1623,33 @@ export const _AnimateClusters = (function(avgBaseMap, clusterFeatsMap) {
             };
          },
 
-         // renderClusterPoly: (featColl, {useBuffer, bufferAmt, bufferUnits}={}) => {
-         renderClusterPoly: (featCollPoly, {useBuffer, bufferAmt, bufferUnits}={}) => {
+         renderClusterPoly: (featCollPoly, {bufferUnits}={}) => {
 
             try {
 
                const polyProps = featCollPoly.properties;
+               const polyGeometry = featCollPoly.geometry;
+               const polyCenter = getFeatCenter(polyGeometry).latLng;      
                
-               // if (featColl) {
-                  
-                  // // GET THE POLY
-                  // const featCollPoly = _ProcessGeoJSON.getFeatCollPoly(featColl, {useBuffer, bufferAmt, bufferUnits});
-
                   if (featCollPoly && _TurfHelpers.getType(featCollPoly) === "Polygon") {
 
                      let bufferedBboxPoly, finalBboxPoly;
                      
-                     // // TRANSFER THE ORIGINAL PROPS.
-                     // featCollPoly.properties = polyProps;
+                     // INIT LG. FOR CLUSTER HTML MARKER
+                     const clusterMetaLabelsLG = LLayerGroupController.initLayerGroup("cluster-metadata-labels", {visibilityRank: 3});
 
-                     // INIT. LAYER GROUP FOR CLUSTER POLY.
-                     const clusterPolyLayerGroup = LLayerGroupController.initLayerGroup(polyProps.clusterID, {visibilityRank: 5});
+                     // DISPLAY CLUSTER DETAILS IN HTML MARKER
+                     LeafletMaps.getClusterHTMLMarker(polyProps, polyCenter, 'plot-metadata-label', {draggable:true}).addTo(clusterMetaLabelsLG);                     
    
+                     // INIT. LAYER GROUP FOR CLUSTER POLY.
+                     const clusterPolyOutlineLG = LLayerGroupController.initLayerGroup(polyProps.clusterID, {visibilityRank: 5});
+                     
+                     // RENDER CLUSTER SURVEY DETAILS
+                     LeafletMaps.drawPolySurveyDetails(featCollPoly, clusterPolyOutlineLG, {bearingThresh: 45, distThresh: 30});
+
                      // RENDER THE POLY
                      LeafletMaps.drawFeature(featCollPoly, {lineColor: "#6ab04c", lineWeight: 5});
                      LeafletMaps.drawFeature(featCollPoly, {lineColor: "#badc58", lineWeight: 1});
-   
-                     // RENDER CLUSTER SURVEY DETAILS
-                     LeafletMaps.drawPolySurveyDetails(featCollPoly, clusterPolyLayerGroup, {bearingThresh: 45, distThresh: 30});
    
                      // GET BBOX
                      let featCollBboxPoly = _ProcessGeoJSON.getBboxPoly(featCollPoly);
@@ -1666,14 +1662,17 @@ export const _AnimateClusters = (function(avgBaseMap, clusterFeatsMap) {
                         // INIT. LAYER GROUP FOR BBOX
                         const bboxLayerGroup = LLayerGroupController.initLayerGroup(polyProps.clusterID, {visibilityRank: 4});
 
+                        // ADD A MARKER TO PLOT CENTER
+                        L.marker(polyCenter).addTo(bboxLayerGroup);
+
                         finalBboxPoly.properties = polyProps;
+
                         // LeafletMaps.drawFeature(finalBboxPoly, {featLayerGroup: bboxLayerGroup, lineColor: "cyan", lineWeight: 1, lineDashArray: "80, 20"});
                         LeafletMaps.drawFeature(finalBboxPoly, {featLayerGroup: bboxLayerGroup, lineColor: "cyan", lineWeight: 0.55});
                         
                         LeafletMaps.drawPolySurveyDetails(finalBboxPoly, bboxLayerGroup, {bearingThresh: 0, distThresh: 5});
                      };
                   };
-               // };
 
             } catch (renderClusterPolyErr) {
                console.error(`renderClusterPolyErr: ${renderClusterPolyErr.message}`);
@@ -1714,7 +1713,7 @@ export const _AnimateClusters = (function(avgBaseMap, clusterFeatsMap) {
 
                      const clusterPolygon = await _AnimateClusters.getClusterPoly(featColl, {useBuffer: true, bufferAmt: 0.01, bufferUnits})
 
-                     if (clusterPolygon) _AnimateClusters.renderClusterPoly(clusterPolygon, {useBuffer: true, bufferAmt: 0.01, bufferUnits});
+                     if (clusterPolygon) _AnimateClusters.renderClusterPoly(clusterPolygon, {bufferUnits});
 
                      // 2. render feats. & feats. markers
                      for (let idy = 0; idy < featColl.features.length; idy++) {
@@ -1759,7 +1758,8 @@ export const _AnimateClusters = (function(avgBaseMap, clusterFeatsMap) {
             
             panToCluster(featColl, {zoomLevel: baseMapZoomLvl});
 
-            _AnimateClusters.renderCluster(featColl, {useBuffer, bufferAmt, bufferUnits, lineColor: "white", lineWeight: 1, lineDashArray: "3"});
+            // FIXME > "renderCluster" IS A BAD NAME FOR WHAT THIS DOES
+            _AnimateClusters.renderCluster(featColl, {useBuffer, bufferAmt, bufferUnits, lineColor: "#feca57", lineWeight: 1.5, lineDashArray: "3"});
             _AnimateClusters.renderClusterPlots(featColl, {useBuffer, bufferAmt, bufferUnits});
             _AnimateClusters.renderClusterPlotsLabels(featColl, {useBuffer, bufferUnits, bufferAmt, areaUnits});
 
