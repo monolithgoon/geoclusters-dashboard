@@ -1609,7 +1609,7 @@ export const _AnimateClusters = (function(avgBaseMap, clusterFeatsMap) {
             };
          },
 
-         getClusterPoly: (featColl, {useBuffer, bufferAmt, bufferUnits}={}) => {
+         getClusterPoly: async (featColl, {useBuffer, bufferAmt, bufferUnits}={}) => {
             // TODO > WHAT IF THE FEAT. COLL. HAS FEATS. IN A MULTI. POLY ARRANGEMENT?
             (function analyzeFeatColl() {
                // TODO > DERIVE IDs FOR EACH MULTI. POLY.
@@ -1712,13 +1712,9 @@ export const _AnimateClusters = (function(avgBaseMap, clusterFeatsMap) {
                      // 1. render featColl. poly
                      // TODO > ADJUST BUFFER BY CLUSTER SIZE
 
-                     const clusterPolygon = _AnimateClusters.getClusterPoly(featColl, {useBuffer: true, bufferAmt: 0.01, bufferUnits})
-                     console.log({clusterPolygon})
+                     const clusterPolygon = await _AnimateClusters.getClusterPoly(featColl, {useBuffer: true, bufferAmt: 0.01, bufferUnits})
 
-                     // _AnimateClusters.renderClusterPoly(featColl, {useBuffer: true, bufferAmt: 0.01, bufferUnits})
-                     if (clusterPolygon) {
-                        _AnimateClusters.renderClusterPoly(clusterPolygon, {useBuffer: true, bufferAmt: 0.01, bufferUnits})
-                     }
+                     if (clusterPolygon) _AnimateClusters.renderClusterPoly(clusterPolygon, {useBuffer: true, bufferAmt: 0.01, bufferUnits});
 
                      // 2. render feats. & feats. markers
                      for (let idy = 0; idy < featColl.features.length; idy++) {
