@@ -1,12 +1,13 @@
 `use strict`
-import { DOM_ELEMENTS } from "../utils/dom-elements.js";
+import { _MonitorExecution } from "../controllers/fn-monitor.js";
+import { GET_DOM_ELEMENTS } from "../utils/dom-elements.js";
 import { _ManipulateDOM } from "../utils/helpers.js";
 import { APP_STATE } from "./state-controller.js";
 
 
 export function _retreiveGeoJSONData() {
 
-	const geoClusters = JSON.parse(_ManipulateDOM.getDataset(DOM_ELEMENTS().geoClustersDatasetDiv));
+	const geoClusters = JSON.parse(_ManipulateDOM.getDataset(GET_DOM_ELEMENTS().geoClustersDatasetDiv));
          
 	APP_STATE.saveDBCollection(`geo-clusters`, [...geoClusters]); 
 
@@ -19,7 +20,7 @@ export function _retreiveGeoJSONData() {
 };
 
 
-export async function _queryAPI(fetch, apiHost, apiCollectionPath, {queryString=``}) {
+async function queryAPI(fetch, apiHost, apiCollectionPath, {queryString=``}) {
 
 	console.log(`%c ${this.currentTarget} is getting latest data from API`, `background-color: lightgrey; color: blue;`);
 
@@ -42,6 +43,43 @@ export async function _queryAPI(fetch, apiHost, apiCollectionPath, {queryString=
 		console.error(`queryAPIErr: ${queryAPIErr.message}`);
 		return null;
 	};
+};
+
+
+// DOWNLOAD & SAVE DB. COLLECTIONS
+export async function _downloadDBCollections(eventObj) {
+
+   try {
+      
+      for (const APIResourcePath of APP_STATE.CONFIG_DEFAULTS.API_RESOURCE_PATHS) {
+         
+         // const dbQueryStr = APP_STATE.CONFIG_DEFAULTS.LEGACY_CLUSTER_QUERY_STR;
+         
+         // create an intermediate "pipeline"?? fn.
+         const apiDataQuery = function() {
+            console.log(document.domain)
+            return queryAPI.call(eventObj, window.fetch, APP_STATE.CONFIG_DEFAULTS.API_HOST_HEROKU, APIResourcePath, {});
+         };
+   
+         // EXECUTE THE API CALL
+         await _MonitorExecution.execute(apiDataQuery);
+
+         _MonitorExecution.getExecutionTime();
+         
+         // get the resource name
+         const dbCollectionName = APIResourcePath.slice(APIResourcePath.indexOf('/')+1);
+         
+         // SAVE THE RETURNED DATA
+         APP_STATE.saveDBCollection(dbCollectionName, _MonitorExecution.getData());
+
+         // console.info(_MonitorExecution.getData());
+
+         console.log(...APP_STATE.returnDBCollections());
+      };
+
+   } catch (getDBCollErr) {
+      console.error(`getDBCollErr: ${getDBCollErr}`);
+   };
 };
 
 

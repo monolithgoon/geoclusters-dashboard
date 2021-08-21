@@ -101,15 +101,17 @@ export const APP_STATE = (function() {
          if (geoJSON) { 
             renderedGeoJSONArray.push(geoJSON);
             currRenderedGeoJSON = geoJSON;
+            console.log({currRenderedGeoJSON});
          }
       },
       retreiveRenderedGJArray: function() {
          return renderedGeoJSONArray;
       },
       retreiveLastRenderedGJ: function() {
-         let lastGeoJSON;
+         let lastRenderedGeoJSON;
          if (renderedGeoJSONArray.length === 1) {
-            return lastGeoJSON = renderedGeoJSONArray.length[0];
+            console.log({lastRenderedGeoJSON});
+            return lastRenderedGeoJSON = renderedGeoJSONArray.length[0];
          };
          lastGeoJSON = renderedGeoJSONArray[renderedGeoJSONArray.length-1];
          return lastGeoJSON ? lastGeoJSON : null;

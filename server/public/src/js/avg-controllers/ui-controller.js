@@ -1,5 +1,4 @@
 'use strict'
-import { _queryAPI } from "./data-controller.js";
 import { _TraverseObject, _getCheckedRadio, _stringifyPropValues, _TurfHelpers, _ManipulateDOM } from "../utils/helpers.js";
 import { _sanitizeFeatCollCoords, _ProcessGeoJSON, _getBufferedPolygon } from "../utils/helpers.js";
 import { _AnimateClusters } from "../controllers/maps-controller.js";
@@ -7,7 +6,7 @@ import { APP_STATE } from "./state-controller.js";
 import { _getClusterFeatProps, _GetClusterProps } from "../interfaces/cluster-props-adapter.js";
 import { _GenerateClusterFeatMarkup, _GenerateClusterMarkup, _GenClusterModalMarkup } from "./markup-generator.js";
 import { _clientSideRouter, _navigateTo } from "../routers/router.js";
-import { DOM_ELEMENTS } from "../utils/dom-elements.js";
+import { GET_DOM_ELEMENTS } from "../utils/dom-elements.js";
 
 
 export function _getDOMElements() {
@@ -36,7 +35,7 @@ export function _getDOMElements() {
    const resultModalCloseBtn = document.getElementById(`result_item_modal_close_btn`);
    const resultsListWrapper = document.getElementById(`results_list_wrapper`);
    const resultItemDivs = document.querySelectorAll(`.result-item`);
-   const resultTitleDivs = document.querySelectorAll(`.result-item-title`);
+   const clusterTitleDivs = document.querySelectorAll(`.result-item-title`);
 
    const clusterFeatsNumEl = document.getElementById(`cluster_feats_num`);
    const clusterAreaEl = document.getElementById(`cluster_area`);
@@ -65,7 +64,7 @@ export function _getDOMElements() {
       resultModalCloseBtn,
       resultsListWrapper,      
       resultItemDivs,
-      resultTitleDivs,
+      clusterTitleDivs,
       clusterFeatsNumEl,
       clusterAreaEl,
       clusterUsedAreaEl,
@@ -74,24 +73,6 @@ export function _getDOMElements() {
       bufferFeatsChkBx,
       renderMultiFeatsChkBx,
    };
-};
-
-
-function getFilterCheckboxes() {
-
-   const filterCheckboxes = document.querySelectorAll(`.results-filter-checkbox[type=checkbox]`);
-   const filterCheckboxMasters = document.querySelectorAll(`.results-filter-checkbox.master-checkbox[type=checkbox]`)
-   
-   return {
-      filterCheckboxes,
-      filterCheckboxMasters,
-   };
-};
-
-
-function getAreaUnitsRadios() {
-   const areaUnitsRadios = document.querySelectorAll(`.map-area-units-radio`);
-   return areaUnitsRadios;
 };
 
 
@@ -113,10 +94,10 @@ export const _pollAVGSettingsValues = () => {
    try {
             
       // settings 'keys'
-      const baseMapKey = _getCheckedRadio(_getDOMElements().baseMapRadios).radioValue;
-      const plotsMapStyleKey = _getCheckedRadio(_getDOMElements().plotsMapStyleRadios).radioValue;
-      const distanceUnits = _getCheckedRadio(_getDOMElements().distanceUnitsRadios).radioValue;
-      const areaUnits = _getCheckedRadio(_getDOMElements().areaUnitsRadios).radioValue;
+      const baseMapKey = _getCheckedRadio(GET_DOM_ELEMENTS().baseMapRadios).radioValue;
+      const plotsMapStyleKey = _getCheckedRadio(GET_DOM_ELEMENTS().plotsMapStyleRadios).radioValue;
+      const distanceUnits = _getCheckedRadio(GET_DOM_ELEMENTS().distanceUnitsRadios).radioValue;
+      const areaUnits = _getCheckedRadio(GET_DOM_ELEMENTS().areaUnitsRadios).radioValue;
    
       return {
          baseMapKey,
@@ -125,17 +106,25 @@ export const _pollAVGSettingsValues = () => {
          areaUnits,
 
          clusterMap: {
-            zoomValue: (_getDOMElements().clusterMapZoomRange).value,
+            zoomValue: (GET_DOM_ELEMENTS().clusterMapZoomRange).value,
          },
 
-         bufferFeatsChk: (_getDOMElements().bufferFeatsChkBx).checked,
-         renderMultiFeatsChk: (_getDOMElements().renderMultiFeatsChkBx).checked,
+         bufferFeatsChk: (GET_DOM_ELEMENTS().bufferFeatsChkBx).checked,
+         renderMultiFeatsChk: (GET_DOM_ELEMENTS().renderMultiFeatsChkBx).checked,
       };
       
    } catch (pollAppSettingsErr) {
       console.error(`pollAppSettingsErr: ${pollAppSettingsErr.message}`)
    };
 };
+
+export const _PollAppSettings = ((dom) => {
+   return {
+      getValues: () => {
+
+      }
+   }
+})(GET_DOM_ELEMENTS());
 
 
 // RESULT TITLE MAIN PARENT SEQ.
@@ -200,76 +189,6 @@ function masterSlaveControl(master, slaves) {
 };
 
 
-// ACTIVATE THE DIV THAT DISPLAYS APP ACTIVITY
-const ShowActivity = (()=>{
-   
-   try {
-      
-      function toggleIndicatorWrapper (wrapperDiv) {
-         _ManipulateDOM.toggleClassList(wrapperDiv, "reveal");         
-      };
-      function toggleIndicator (indicatorDiv) {
-         _ManipulateDOM.toggleClassList(indicatorDiv, "spinner-grow", "text-light", "spinner-grow-sm");
-      };
-      return {
-         activityStart: (wrapperDiv, indicatorDiv) => {
-            toggleIndicatorWrapper(wrapperDiv)
-            toggleIndicator(indicatorDiv)
-         },
-         activityEnd: (wrapperDiv, indicatorDiv) => {
-            // indicatorDiv.innerText = `Data Loaded`;
-            // setTimeout(() => {
-            //    indicatorDiv.innerText = ``
-            //    toggleIndicator(indicatorDiv);
-            //    toggleIndicatorWrapper(wrapperDiv);
-            // }, 3000);
-            toggleIndicator(indicatorDiv);
-            toggleIndicatorWrapper(wrapperDiv);
-         },
-      };
-
-   } catch (showActivityErr) {
-      console.error(`showActivityErr: ${showActivityErr.message}`)
-   };
-})();
-
-
-// CALC. TIME TO EXE. A FN. && DISPLAY INDICATOR
-const MonitorExecution = (function(dom) {
-
-	let returnedData, executionMs;
-
-	return {
-
-		execute: async function(callback) {
-						
-			ShowActivity.activityStart(dom.appActivityIndWrapper, dom.appActivityInd);
-	
-         console.log(`%c This funciton [${callback}] is executing ..`, `background-color: lightgrey; color: blue;`);
-
-			let exeStart = window.performance.now();
-
-			returnedData = await callback();
-
-			let exeEnd = window.performance.now();
-
-			executionMs = exeEnd - exeStart;
-
-			ShowActivity.activityEnd(dom.appActivityIndWrapper, dom.appActivityInd);
-		},
-
-		getExecutionTime: function() {
-         console.log(`%c The fn. executed in: ${((executionMs)/1000).toFixed(2)} seconds`, `background-color: yellow; color: blue;`);
-			return executionMs;
-		},
-
-		getData: function() {
-			return returnedData;
-		},
-	};
-})(DOM_ELEMENTS());
-
-
 // open modal for clicked result
 function activateResultModal(modalDiv, featureCollection) {
 
@@ -292,79 +211,6 @@ function activateResultModal(modalDiv, featureCollection) {
 };
 
 
-function clusterTitleClickSeq(evtObj) {
-
-   evtObj.preventDefault();
-
-   // REMOVE
-   const previousRenderedGJ = APP_STATE.retreiveLastRenderedGJ();
-   console.log({previousRenderedGJ});
-   console.log(_pollAVGSettingsValues());
-
-   // get the main parent container
-   const resultContainerDiv = _ManipulateDOM.getParentElement(evtObj.target, {parentLevel: 3});
-
-   // get the siblings of the main parent container
-   const adjacentResultDivs = _ManipulateDOM.getSiblingElements(resultContainerDiv);
-
-   // get the geojson for that result
-   const clusterGeoJSON = JSON.parse(_ManipulateDOM.getDataset(resultContainerDiv));
-
-   // TODO > VALIDATE GJ. HERE
-   if (clusterGeoJSON) {
-      
-      // 1.
-      activateResultModal(_getDOMElements().resultModalDiv, clusterGeoJSON);
-
-      // 1b.
-      // render cluster feature cards.
-      populateClusterFeatsSidebar(clusterGeoJSON);
-      
-      // 2.
-      _AnimateClusters.renderEverythingNow(clusterGeoJSON, 
-         {
-            baseMapZoomLvl: APP_STATE.CONFIG_DEFAULTS.LEAFLET_ADMIN_LEVEL_3_ZOOM,
-            useBuffer: _pollAVGSettingsValues().bufferFeatsChk, 
-            bufferUnits: _pollAVGSettingsValues().distanceUnits,
-            bufferAmt: APP_STATE.CONFIG_DEFAULTS.RENDERED_PLOT_BUFFER,
-            areaUnits: _pollAVGSettingsValues().areaUnits
-         }
-      );
-
-      // 2b. 
-      APP_STATE.saveRenderedGeojson(clusterGeoJSON);
-
-      // REMOVE > UN-NEEDED
-      const currRenderedGJ = APP_STATE.getRenderedGeoJSON(clusterGeoJSON);
-      console.log({currRenderedGJ});
-      
-      // 3.
-      clickedResultContainerSeq(resultContainerDiv, adjacentResultDivs);
-
-      // 4. 
-      APP_STATE.saveRenderedGeojson(clusterGeoJSON);
-   };
-};
-
-
-function resultTitleClickHandler(resultTitleDivs) {
-
-   try {
-
-      for (const resultTitle of resultTitleDivs) {
-
-         // CLEAR THE CLICK LISTENERS ON "PRE-LOADED" RESULT DIVS
-         resultTitle.removeEventListener(`click`, clusterTitleClickSeq);
-            
-         resultTitle.addEventListener(`click`, clusterTitleClickSeq);
-      };
-
-   } catch (resultTitleClickErr) {
-      console.error(`resultTitleClickErr: ${resultTitleClickErr.message}`)
-   };
-};
-
-
 /**
  * Listen to the element and when it is clicked, do four things:
  * 1. Get the geoJSON associated with the clicked link
@@ -372,7 +218,7 @@ function resultTitleClickHandler(resultTitleDivs) {
  * 3. Close all other popups and display popup for clicked store
  * 4. Highlight listing in sidebar (and remove highlight for all other listings)
  **/
-function featCardClickSeq(clusterFeatures) {
+ function featCardClickSeq(clusterFeatures) {
 
    try {
       
@@ -417,14 +263,6 @@ function featCardClickSeq(clusterFeatures) {
 //    };      
 
 // })(CLUSTER_PLOTS_MAP);
-
-
-function renderClusterSummary(props, dom) {
-   dom.clusterFeatsNumEl.innerText = props.clusterFeatsNum;
-   dom.clusterAreaEl.innerText = `${+(props.clusterArea).toFixed(1)} ha.`;
-   dom.clusterUsedAreaEl.innerText = `${+(props.clusterUsedArea).toFixed(1)} ha.`;
-   dom.clusterUnusedAreaEl.innerText = `${+(props.clusterUnusedArea).toFixed(1)} ha.`;
-};
 
 
 async function populateClusterFeatsSidebar(clusterFeatColl) {
@@ -473,40 +311,76 @@ async function populateClusterFeatsSidebar(clusterFeatColl) {
 };
 
 
-// DOWNLOAD & SAVE DB. COLLECTIONS
-async function downloadDBCollections(eventObj) {
+function clusterTitleClickSeq(evtObj) {
+
+   evtObj.preventDefault();
+
+   // REMOVE
+   console.log(_pollAVGSettingsValues());
+
+   // get the main parent container
+   const resultContainerDiv = _ManipulateDOM.getParentElement(evtObj.target, {parentLevel: 3});
+
+   // get the siblings of the main parent container
+   const adjacentResultDivs = _ManipulateDOM.getSiblingElements(resultContainerDiv);
+
+   // get the geojson for that result
+   const clusterGeoJSON = JSON.parse(_ManipulateDOM.getDataset(resultContainerDiv));
+
+   // TODO > VALIDATE GJ. HERE
+   if (clusterGeoJSON) {
+      
+      // 1.
+      activateResultModal(_getDOMElements().resultModalDiv, clusterGeoJSON);
+
+      // 1b.
+      // render cluster feature cards.
+      populateClusterFeatsSidebar(clusterGeoJSON);
+      
+      // 2.
+      _AnimateClusters.renderEverythingNow(clusterGeoJSON, 
+         {
+            baseMapZoomLvl: APP_STATE.CONFIG_DEFAULTS.LEAFLET_ADMIN_LEVEL_3_ZOOM,
+            useBuffer: _pollAVGSettingsValues().bufferFeatsChk, 
+            bufferUnits: _pollAVGSettingsValues().distanceUnits,
+            bufferAmt: APP_STATE.CONFIG_DEFAULTS.RENDERED_PLOT_BUFFER,
+            areaUnits: _pollAVGSettingsValues().areaUnits
+         }
+      );
+
+      // 2b. 
+      APP_STATE.saveRenderedGeojson(clusterGeoJSON);
+      
+      // 3.
+      clickedResultContainerSeq(resultContainerDiv, adjacentResultDivs);
+   };
+};
+
+
+// REMOVE > DEPRC.
+function clusterTitleClickHandler(clusterTitleDivs) {
 
    try {
-      
-      for (const APIResourcePath of APP_STATE.CONFIG_DEFAULTS.API_RESOURCE_PATHS) {
-         
-         // const dbQueryStr = APP_STATE.CONFIG_DEFAULTS.LEGACY_CLUSTER_QUERY_STR;
-         
-         // create an intermediate "pipeline"?? fn.
-         const apiDataQuery = function() {
-            console.log(document.domain)
-            return _queryAPI.call(eventObj, window.fetch, APP_STATE.CONFIG_DEFAULTS.API_HOST_HEROKU, APIResourcePath, {});
-         };
-   
-         // EXECUTE THE API CALL
-         await MonitorExecution.execute(apiDataQuery);
 
-         MonitorExecution.getExecutionTime();
-         
-         // get the resource name
-         const dbCollectionName = APIResourcePath.slice(APIResourcePath.indexOf('/')+1);
-         
-         // SAVE THE RETURNED DATA
-         APP_STATE.saveDBCollection(dbCollectionName, MonitorExecution.getData());
+      for (const resultTitle of clusterTitleDivs) {
 
-         // console.info(MonitorExecution.getData());
-
-         console.log(...APP_STATE.returnDBCollections());
+         // CLEAR THE CLICK LISTENERS ON "PRE-LOADED" RESULT DIVS
+         resultTitle.removeEventListener(`click`, clusterTitleClickSeq);
+            
+         resultTitle.addEventListener(`click`, clusterTitleClickSeq);
       };
 
-   } catch (getDBCollErr) {
-      console.error(`getDBCollErr: ${getDBCollErr}`);
+   } catch (resultTitleClickErr) {
+      console.error(`resultTitleClickErr: ${resultTitleClickErr.message}`)
    };
+};
+
+
+function renderClusterSummary(props, dom) {
+   dom.clusterFeatsNumEl.innerText = props.clusterFeatsNum;
+   dom.clusterAreaEl.innerText = `${+(props.clusterArea).toFixed(1)} ha.`;
+   dom.clusterUsedAreaEl.innerText = `${+(props.clusterUsedArea).toFixed(1)} ha.`;
+   dom.clusterUnusedAreaEl.innerText = `${+(props.clusterUnusedArea).toFixed(1)} ha.`;
 };
 
 
@@ -560,132 +434,130 @@ $(document).ready(function () {
 });
 
 
-const InputsHandlers = ((dom) => {
+const DelegateImputsEvents = (dom => {
+   
+   // ADD RIPPLES TO BTN. CLICKS
+   if (dom.buttons) {
+
+      for (const button of dom.buttons) {
+
+         button.addEventListener(`click`, (evt) => {
+
+            const button = evt.currentTarget;
+          
+            const rippleCircle = document.createElement("span");
+            const circleDiameter = Math.max(button.clientWidth, button.clientHeight);
+            const circleRadius = circleDiameter / 2;
+          
+            rippleCircle.style.width = rippleCircle.style.height = `${circleDiameter}px`;
+            rippleCircle.style.left = `${evt.clientX - button.offsetLeft - circleRadius}px`;
+            rippleCircle.style.top = `${evt.clientY - button.offsetTop - circleRadius}px`;
+            rippleCircle.classList.add("ripple-circle");
+          
+            const rippleEl = button.getElementsByClassName("ripple-circle")[0];
+          
+            if (rippleEl) rippleEl.remove();
+          
+            button.appendChild(rippleCircle);      
+         });
+      };
+   };
+
+   // EXPAND DASHBOARD SIDEBAR
+   if (dom.sidebarExpandBtn && dom.appSidebar) {
+      dom.sidebarExpandBtn.addEventListener(`click`, ()=>{
+         dom.appSidebar.classList.toggle(`expanded`);
+      });
+   };   
+
+   // CHANGE CLUSTER PLOTS AREA UNITS
+   if (dom.areaUnitsRadios) {
+      const radios = dom.areaUnitsRadios;
+      radios.forEach(radio => {
+         radio.addEventListener(`change`, async (e) => {
+            if (APP_STATE.retreiveLastRenderedGJ()) {
+               _AnimateClusters.renderClusterPlotsLabels(APP_STATE.retreiveLastRenderedGJ(), 
+                  {
+                     useBuffer: _pollAVGSettingsValues().bufferFeatsChk,
+                     bufferUnits: _pollAVGSettingsValues().distanceUnits,
+                     bufferAmt: APP_STATE.CONFIG_DEFAULTS.RENDERED_PLOT_BUFFER,
+                     areaUnits: _pollAVGSettingsValues().areaUnits,
+                  }
+               );
+            };
+         });
+      });
+   };
+
+   // FIXME > NOT RENDERING PROPELY
+   // CHANGE CLUSTER PLOTS MAP STYLE
+   if (dom.plotsMapStyleRadios) {
+      dom.plotsMapStyleRadios.forEach(radio => {
+         radio.addEventListener(`change`, (evtObj) => {
+            _AnimateClusters.refreshClusterPlotsMap(evtObj);
+            console.log(APP_STATE.retreiveLastRenderedGJ());
+            if (APP_STATE.retreiveLastRenderedGJ()) {
+               console.log(`FUCK MIKE LINDEL`)
+               // _AnimateClusters.renderClusterPlots(APP_STATE.retreiveLastRenderedGJ(),
+               _AnimateClusters.renderEverythingNow(APP_STATE.retreiveLastRenderedGJ(),
+                  {
+                     useBuffer: _pollAVGSettingsValues().bufferFeatsChk,
+                     bufferUnits: _pollAVGSettingsValues().distanceUnits,
+                     bufferAmt: APP_STATE.CONFIG_DEFAULTS.RENDERED_PLOT_BUFFER,
+                     areaUnits: _pollAVGSettingsValues().areaUnits,
+                  }
+               );
+            };
+         });
+      });
+   };
+
+   // CLUSTER RESULT TITLE CLICK HAND.
+   if (dom.clusterTitleDivs) {
+      for (const resultTitle of dom.clusterTitleDivs) {
+         resultTitle.addEventListener(`click`, clusterTitleClickSeq);
+      };
+   };
+
+   // CLUSTER RESULT ITEM CHECKBOX BEH.
+   if (dom.resultItemCheckboxes && dom.masterResultCheckbox) {
+      const slaveResultCheckboxes = dom.resultItemCheckboxes;
+      const selectAllResultsChk = dom.masterResultCheckbox
+      masterSlaveControl(selectAllResultsChk, slaveResultCheckboxes);
+   };
+
+   // TODO > RESULT ITEM CHECKBOX MAP+FILTER EVENT SEQ.
+
+   // FILTER CHECKBOX CHANGE EVENT SEQ.
+   if (dom.clusterFilterCheckboxes) {
+      const checkboxes = dom.clusterFilterCheckboxes;
+      checkboxes.forEach(checkbox => {
+         checkbox.addEventListener(`change`, async (e)=>{
+            const checkboxLabelTxt = e.target.labels[0].innerText; 
+            if (e.target.checked) {
+               console.log(`%c ${checkboxLabelTxt} checked`, `color: white; background-color:blue;`);
+            } else {
+               console.log(`%c ${checkboxLabelTxt} un-checked`, `color: white; background-color:green;`);
+            };
+            // TODO > WIP
+            // filterResults(checkboxLabelTxt);
+            // renderFilterPill(checkboxLabelTxt);
+         });
+      });
+   };
+
+   // MASTER FILTER CHECKBOX BEH.
+   if (dom.clusterFilterCheckboxMasters) {
+      const masterCheckboxes = dom.clusterFilterCheckboxMasters;
+      masterCheckboxes.forEach(masterCheckbox => {
+         const inputGroupWrapper = _ManipulateDOM.getParentElement(masterCheckbox, {parentLevel: 4})
+         const slaveCheckboxes = _ManipulateDOM.getSubordinates(inputGroupWrapper, masterCheckbox, ".form-check-input")
+         masterSlaveControl(masterCheckbox, slaveCheckboxes);
+      });
+   };
          
    return {
-
-      areaUnits: (radios) => {
-         radios.forEach(radio => {
-            radio.addEventListener(`change`, async (e) => {
-               if (APP_STATE.retreiveLastRenderedGJ()) {
-                  _AnimateClusters.renderClusterPlotsLabels(APP_STATE.retreiveLastRenderedGJ(), 
-                     {
-                        useBuffer: _pollAVGSettingsValues().bufferFeatsChk,
-                        bufferUnits: _pollAVGSettingsValues().distanceUnits,
-                        bufferAmt: APP_STATE.CONFIG_DEFAULTS.RENDERED_PLOT_BUFFER,
-                        areaUnits: _pollAVGSettingsValues().areaUnits,
-                     }
-                  );
-               };
-            });
-         });
-      },
-
-      // FIXME > NOT RENDERING PROPELY
-      plotsMapStyle: () => {
-         dom.plotsMapStyleRadios.forEach(radio => {
-            radio.addEventListener(`change`, (evtObj) => {
-               _AnimateClusters.refreshClusterPlotsMap(evtObj);
-               console.log(APP_STATE.retreiveLastRenderedGJ());
-               if (APP_STATE.retreiveLastRenderedGJ()) {
-                  console.log(`FUCK MIKE LINDEL`)
-                  // _AnimateClusters.renderClusterPlots(APP_STATE.retreiveLastRenderedGJ(),
-                  _AnimateClusters.renderEverythingNow(APP_STATE.retreiveLastRenderedGJ(),
-                     {
-                        useBuffer: _pollAVGSettingsValues().bufferFeatsChk,
-                        bufferUnits: _pollAVGSettingsValues().distanceUnits,
-                        bufferAmt: APP_STATE.CONFIG_DEFAULTS.RENDERED_PLOT_BUFFER,
-                        areaUnits: _pollAVGSettingsValues().areaUnits,
-                     }
-                  );
-               };
-            });
-         });   
-      },
-
-      // TODO > 
-      filterCheckboxes: (checkboxes) => {
-        checkboxes.forEach(checkbox => {
-            checkbox.addEventListener(`change`, async (e)=>{
-               const checkboxLabelTxt = e.target.labels[0].innerText; 
-               if (e.target.checked) {
-                  console.log(`%c ${checkboxLabelTxt} checked`, `color: white; background-color:blue;`);
-               } else {
-                  console.log(`%c ${checkboxLabelTxt} un-checked`, `color: white; background-color:green;`);
-               };
-               // filterResults(checkboxLabelTxt);
-               // renderFilterPill(checkboxLabelTxt);
-            });
-         });
-      },
-
-      clusterResultsCheckboxes: () => {
-         const slaveResultCheckboxes = dom.resultItemCheckboxes;
-         const selectAllResultsChk = dom.masterResultCheckbox
-         masterSlaveControl(selectAllResultsChk, slaveResultCheckboxes);
-      },
-
-      masterFilterCheckboxes: (masterCheckboxes) => {
-         masterCheckboxes.forEach(masterCheckbox => {
-            const inputGroupWrapper = _ManipulateDOM.getParentElement(masterCheckbox, {parentLevel: 4})
-            const slaveCheckboxes = _ManipulateDOM.getSubordinates(inputGroupWrapper, masterCheckbox, ".form-check-input")
-            masterSlaveControl(masterCheckbox, slaveCheckboxes);
-         });
-      },
-
-   }
-
-})(DOM_ELEMENTS());
-
-
-// DOM ELEM. EVT. LIST'NRS.
-function _mountHandlers() {
-
-   try {
-
-      window.addEventListener(`DOMContentLoaded`, async (windowObj) => {
-
-         // FIXME > DOWNLOAD COLLS. IN RESPONSE TO DB. INSERTS
-         // await downloadDBCollections(windowObj);
-         // REMOVE > DEPRC.
-         const legacyClustersColl = _TraverseObject.evaluateValue(APP_STATE.returnDBCollections(), [0], "data", "legacy_agcs");
-         populateResultsSidebar(legacyClustersColl);   
-      });
-      
-      // ADD CLICK HAND. AFTER DIVS HAVE BEEN MADE
-      resultTitleClickHandler(_getDOMElements().resultTitleDivs);
-
-      // SETTINGS CHANGE EVENT SEQ.
-      InputsHandlers.areaUnits(getAreaUnitsRadios());
-
-      // CHANGE CLUSTER PLOTS MAP STYLE
-      InputsHandlers.plotsMapStyle();
-
-      // REMOVE > DUPLICATE
-      // RESULT ITEM TITLE CLICK HAND.
-      resultTitleClickHandler(_getDOMElements().resultTitleDivs);
-      
-      // RESULT ITEM CHECKBOX BEH.
-      InputsHandlers.clusterResultsCheckboxes();
-
-      // TODO
-      // RESULT ITEM CHECKBOX MAP+FILTER EVENT SEQ.
-
-      // FILTER CHECKBOX EVENT SEQ.
-      InputsHandlers.filterCheckboxes(getFilterCheckboxes().filterCheckboxes);
-   
-      // MASTER FILTER CHECKBOX BEH.
-      InputsHandlers.masterFilterCheckboxes(getFilterCheckboxes().filterCheckboxMasters);
-
-      // EXPAND APP SIDEBAR
-      _getDOMElements().sidebarExpandBtn.addEventListener(`click`, ()=>{
-         _getDOMElements().appSidebar.classList.toggle(`expanded`);
-      });
-      
-   } catch (addEvtListenErr) {
-      console.error(addEvtListenErr.message);
+      // nothing here
    };
-};
 
-
-export { _mountHandlers };
+})(GET_DOM_ELEMENTS());

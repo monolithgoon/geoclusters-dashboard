@@ -1609,31 +1609,44 @@ export const _AnimateClusters = (function(avgBaseMap, clusterFeatsMap) {
             };
          },
 
-         renderClusterPoly: (featColl, {useBuffer, bufferAmt, bufferUnits}={}) => {
+         getClusterPoly: (featColl, {useBuffer, bufferAmt, bufferUnits}={}) => {
+            // TODO > WHAT IF THE FEAT. COLL. HAS FEATS. IN A MULTI. POLY ARRANGEMENT?
+            (function analyzeFeatColl() {
+               // TODO > DERIVE IDs FOR EACH MULTI. POLY.
+            })();
+            const featCollProps = featColl.properties;
+            if (featCollProps) {
+               // GET THE POLY
+               const featCollPoly = _ProcessGeoJSON.getFeatCollPoly(featColl, {useBuffer, bufferAmt, bufferUnits});
+               // TRANSFER THE ORIGINAL PROPS.
+               if (featCollPoly) {
+                  featCollPoly.properties = featCollProps;
+               };
+               return featCollPoly;
+            };
+         },
+
+         // renderClusterPoly: (featColl, {useBuffer, bufferAmt, bufferUnits}={}) => {
+         renderClusterPoly: (featCollPoly, {useBuffer, bufferAmt, bufferUnits}={}) => {
 
             try {
 
-               const featCollProps = featColl.properties;
+               const polyProps = featCollPoly.properties;
                
-               if (featCollProps) {
-
-                  // TODO > WHAT IF THE FEAT. COLL. HAS FEATS. IN A MULTI. POLY ARRANGEMENT?
-                  (function analyzeFeatColl() {
-                     // TODO > DERIVE IDs FOR EACH MULTI. POLY.
-                  })();
+               // if (featColl) {
                   
-                  // GET THE POLY
-                  const featCollPoly = _ProcessGeoJSON.getFeatCollPoly(featColl, {useBuffer, bufferAmt, bufferUnits});
+                  // // GET THE POLY
+                  // const featCollPoly = _ProcessGeoJSON.getFeatCollPoly(featColl, {useBuffer, bufferAmt, bufferUnits});
 
-                  // TRANSFER THE ORIGINAL PROPS.
                   if (featCollPoly && _TurfHelpers.getType(featCollPoly) === "Polygon") {
 
                      let bufferedBboxPoly, finalBboxPoly;
-
-                     featCollPoly.properties = featCollProps;
+                     
+                     // // TRANSFER THE ORIGINAL PROPS.
+                     // featCollPoly.properties = polyProps;
 
                      // INIT. LAYER GROUP FOR CLUSTER POLY.
-                     const clusterPolyLayerGroup = LLayerGroupController.initLayerGroup(featCollProps.clusterID, {visibilityRank: 5});
+                     const clusterPolyLayerGroup = LLayerGroupController.initLayerGroup(polyProps.clusterID, {visibilityRank: 5});
    
                      // RENDER THE POLY
                      LeafletMaps.drawFeature(featCollPoly, {lineColor: "#6ab04c", lineWeight: 5});
@@ -1651,16 +1664,16 @@ export const _AnimateClusters = (function(avgBaseMap, clusterFeatsMap) {
                      if (finalBboxPoly) {
 
                         // INIT. LAYER GROUP FOR BBOX
-                        const bboxLayerGroup = LLayerGroupController.initLayerGroup(featCollProps.clusterID, {visibilityRank: 4});
+                        const bboxLayerGroup = LLayerGroupController.initLayerGroup(polyProps.clusterID, {visibilityRank: 4});
 
-                        finalBboxPoly.properties = featCollProps;
+                        finalBboxPoly.properties = polyProps;
                         // LeafletMaps.drawFeature(finalBboxPoly, {featLayerGroup: bboxLayerGroup, lineColor: "cyan", lineWeight: 1, lineDashArray: "80, 20"});
                         LeafletMaps.drawFeature(finalBboxPoly, {featLayerGroup: bboxLayerGroup, lineColor: "cyan", lineWeight: 0.55});
                         
                         LeafletMaps.drawPolySurveyDetails(finalBboxPoly, bboxLayerGroup, {bearingThresh: 0, distThresh: 5});
                      };
                   };
-               };
+               // };
 
             } catch (renderClusterPolyErr) {
                console.error(`renderClusterPolyErr: ${renderClusterPolyErr.message}`);
@@ -1698,7 +1711,14 @@ export const _AnimateClusters = (function(avgBaseMap, clusterFeatsMap) {
 
                      // 1. render featColl. poly
                      // TODO > ADJUST BUFFER BY CLUSTER SIZE
-                     _AnimateClusters.renderClusterPoly(featColl, {useBuffer: true, bufferAmt: 0.01, bufferUnits})
+
+                     const clusterPolygon = _AnimateClusters.getClusterPoly(featColl, {useBuffer: true, bufferAmt: 0.01, bufferUnits})
+                     console.log({clusterPolygon})
+
+                     // _AnimateClusters.renderClusterPoly(featColl, {useBuffer: true, bufferAmt: 0.01, bufferUnits})
+                     if (clusterPolygon) {
+                        _AnimateClusters.renderClusterPoly(clusterPolygon, {useBuffer: true, bufferAmt: 0.01, bufferUnits})
+                     }
 
                      // 2. render feats. & feats. markers
                      for (let idy = 0; idy < featColl.features.length; idy++) {

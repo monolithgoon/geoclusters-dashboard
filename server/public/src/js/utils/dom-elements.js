@@ -1,5 +1,7 @@
 `use strict`
-export function DOM_ELEMENTS() {
+export function GET_DOM_ELEMENTS() {
+
+   const buttons = document.getElementsByTagName("button");
 
    const appSidebar = document.getElementById(`v_pills_tab`);
    const sidebarExpandBtn = document.getElementById(`app_sidebar_expand_button`);
@@ -7,6 +9,13 @@ export function DOM_ELEMENTS() {
 
    const appActivityIndWrapper = document.querySelector(`.app-activity-indicator-wrapper`);
    const appActivityInd = document.querySelector(`.app-activity-indicator`);
+
+   // CLUSTER RESULTS
+   const resultsCountDiv = document.getElementById('results_count');
+   const resultsStatus = document.getElementById('results_status');
+
+   const clusterFilterCheckboxes = document.querySelectorAll(`.results-filter-checkbox[type=checkbox]`);
+   const clusterFilterCheckboxMasters = document.querySelectorAll(`.results-filter-checkbox.master-checkbox[type=checkbox]`)
 
    // SETTINGS INPUTS
    // const settingsToggleInputs = document.querySelectorAll(`.settings-sidebar-body input[type=checkbox]`);
@@ -17,20 +26,14 @@ export function DOM_ELEMENTS() {
    const areaUnitsRadios = document.querySelectorAll(`.map-area-units-radio`);
    const clusterMapZoomRange = document.getElementById("cluster_map_zoom");
    
-   const resultsCountDiv = document.getElementById('results_count');
-   const resultsStatus = document.getElementById('results_status');
-
    const resultModalDiv = document.getElementById(`result_item_modal`);
    const resultModalCloseBtn = document.getElementById(`result_item_modal_close_btn`);
    const resultsListWrapper = document.getElementById(`results_list_wrapper`);
    const geoClustersDatasetDiv = document.getElementById(`geo_clusters_dataset_div`);
    const resultItemDivs = document.querySelectorAll(`.result-item`);
-   const resultTitleDivs = document.querySelectorAll(`.result-item-title`);
+   const clusterTitleDivs = document.querySelectorAll(`.result-item-title`);
    const masterResultCheckbox = document.getElementById(`select_all_results_chk`);
    const resultItemCheckboxes = document.querySelectorAll(`.result-item-checkbox[type=checkbox]`);
-
-   const clusterFilterCheckboxes = document.querySelectorAll(`.results-filter-checkbox[type=checkbox]`);
-   const clusterFilterCheckboxMasters = document.querySelectorAll(`.results-filter-checkbox.master-checkbox[type=checkbox]`)
 
    const clusterFeatsNumEl = document.getElementById(`cluster_feats_num`);
    const clusterAreaEl = document.getElementById(`cluster_area`);
@@ -43,6 +46,8 @@ export function DOM_ELEMENTS() {
 
 
    return {
+      buttons,
+
       appSidebar,
       sidebarExpandBtn,
       // settingsSidebarToggleBtn,
@@ -62,7 +67,7 @@ export function DOM_ELEMENTS() {
       resultsListWrapper,
       geoClustersDatasetDiv,
       resultItemDivs,
-      resultTitleDivs,
+      clusterTitleDivs,
       masterResultCheckbox,
       resultItemCheckboxes,
 
