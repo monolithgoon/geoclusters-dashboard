@@ -273,6 +273,7 @@ div.line-1pt {
 
 .notification-badge.orange-badge {
    border: 2px solid white;
+   background-color: #f6b93b;
    background-color: darkorange;
 }
 

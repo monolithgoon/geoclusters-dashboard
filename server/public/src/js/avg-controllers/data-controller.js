@@ -1,8 +1,8 @@
 `use strict`
 import { _MonitorExecution } from "../controllers/fn-monitor.js";
 import { GET_DOM_ELEMENTS } from "../utils/dom-elements.js";
-import { _ManipulateDOM } from "../utils/helpers.js";
 import { APP_STATE } from "./state-controller.js";
+import { _ManipulateDOM } from "./ui-controller.js";
 
 
 export function _retreiveGeoJSONData() {

@@ -1,9 +1,9 @@
 `use strict`
 import { AVG_BASE_MAP, CLUSTER_PLOTS_MAP, FEAT_DETAIL_MAP, _getTileLayers } from "../config/maps-config.js";
 import { _clusterFeatPopupMarkup, _GenerateClusterFeatMarkup } from "../avg-controllers/markup-generator.js";
-import { _pollAVGSettingsValues, _getDOMElements } from "../avg-controllers/ui-controller.js";
+import { _ManipulateDOM, _pollAVGSettingsValues } from "../avg-controllers/ui-controller.js";
 import { LAYER_COLORS } from "../utils/mapbox-layer-colors.js";
-import { _TurfHelpers, _getBufferedPolygon, _ProcessGeoJSON, _ManipulateDOM, _GeometryMath, _getUsableGeometry, _mandatoryParam } from "../utils/helpers.js";
+import { _TurfHelpers, _getBufferedPolygon, _ProcessGeoJSON, _GeometryMath, _getUsableGeometry, _mandatoryParam } from "../utils/helpers.js";
 import { _getClusterFeatProps } from "../interfaces/cluster-props-adapter.js";
 
 
@@ -1369,6 +1369,7 @@ const MapboxFillLayerHandler = ((leafletModalMap)=>{
                // REMOVE
                // leafletMap.invalidateSize();
 
+               // FIX ME > NOT WORKING PROPERLY
                if (!_pollAVGSettingsValues().renderMultiFeatsChk) {
                   leafletLayerGroup.clearLayers();
                };
@@ -1636,7 +1637,7 @@ export const _AnimateClusters = (function(avgBaseMap, clusterFeatsMap) {
                      let bufferedBboxPoly, finalBboxPoly;
                      
                      // INIT LG. FOR CLUSTER HTML MARKER
-                     const clusterMetaLabelsLG = LLayerGroupController.initLayerGroup("cluster-metadata-labels", {visibilityRank: 3});
+                     const clusterMetaLabelsLG = LLayerGroupController.initLayerGroup("cluster-metadata-labels", {visibilityRank: 2});
 
                      // DISPLAY CLUSTER DETAILS IN HTML MARKER
                      LeafletMaps.getClusterHTMLMarker(polyProps, polyCenter, 'plot-metadata-label', {draggable:true}).addTo(clusterMetaLabelsLG);                     

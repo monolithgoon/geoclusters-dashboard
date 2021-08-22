@@ -1,6 +1,7 @@
 `use strict`
+import { _ManipulateDOM } from "../avg-controllers/ui-controller.js";
 import { GET_DOM_ELEMENTS } from "../utils/dom-elements.js";
-import { _ManipulateDOM } from "../utils/helpers.js";
+
 
 // ACTIVATE THE DIV THAT DISPLAYS APP ACTIVITY
 const ShowActivity = (()=>{
