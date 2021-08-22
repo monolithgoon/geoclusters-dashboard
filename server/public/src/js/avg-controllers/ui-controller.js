@@ -218,6 +218,45 @@ export const _ManipulateDOM = (() => {
 				inline: `nearest`,
 			});	
 		},
+
+      // MASTER-SLAVE CHECKBOX BEHAVIOR
+      masterSlaveControl: (master, slaves) => {
+      
+         master.addEventListener(`change`, (e)=>{
+            if (e.target.checked) {
+               // check slaves
+               slaves.forEach(checkbox => {
+                  checkbox.checked = true;
+                  if (checkbox.labels[0]) {
+                     const slaveCheckboxLabelTxt = checkbox.labels[0].innerText;
+                     // console.log(slaveCheckboxLabelTxt);
+                  };
+               });
+            } else {
+               // uncheck slaves
+               slaves.forEach(checkbox => {
+                  checkbox.checked = false;
+               });
+            };
+         });
+
+         // TOGGLE MASTER TO 'OFF' WHEN SLAVE IS 'OFF'
+         slaves.forEach(slaveCheckbox => {
+            slaveCheckbox.addEventListener(`change`, (e)=>{
+
+               // FIXME > THIS HARDCODED PARENT BEH. WILL FAIL
+               // show master when slave is clicked
+               console.log(master.parentNode)
+               console.log(master.parentNode.style.display);
+               _ManipulateDOM.blockElement(master.parentNode);
+
+               if (slaveCheckbox.checked === false) { master.checked = false}
+            });
+         });
+
+         // TODO
+         // toggle master to "on" if ALL slaves are "on"
+      },
 	}
 })();
 
@@ -270,46 +309,6 @@ export const _PollAppSettings = ((dom) => {
       }
    }
 })(GET_DOM_ELEMENTS());
-
-
-// MASTER-SLAVE CHECKBOX BEHAVIOR
-function masterSlaveControl(master, slaves) {
-  
-   master.addEventListener(`change`, (e)=>{
-      if (e.target.checked) {
-         // check slaves
-         slaves.forEach(checkbox => {
-            checkbox.checked = true;
-            if (checkbox.labels[0]) {
-               const slaveCheckboxLabelTxt = checkbox.labels[0].innerText;
-               // console.log(slaveCheckboxLabelTxt);
-            };
-         });
-      } else {
-         // uncheck slaves
-         slaves.forEach(checkbox => {
-            checkbox.checked = false;
-         });
-      };
-   });
-
-   // TOGGLE MASTER TO 'OFF' WHEN SLAVE IS 'OFF'
-   slaves.forEach(slaveCheckbox => {
-      slaveCheckbox.addEventListener(`change`, (e)=>{
-
-         // FIXME > THIS HARDCODED PARENT BEH. WILL FAIL
-         // show master when slave is clicked
-         console.log(master.parentNode)
-         console.log(master.parentNode.style.display);
-         _ManipulateDOM.blockElement(master.parentNode);
-
-         if (slaveCheckbox.checked === false) { master.checked = false}
-      });
-   });
-
-   // TODO
-   // toggle master to "on" if ALL slaves are "on"
-};
 
 
 const PopulateDOM = ((dom) => {
@@ -519,19 +518,18 @@ const DOMSequence = ((dom) => {
 })(GET_DOM_ELEMENTS());
 
 
-// FIXME > DON'T USE JQUERY
-// SETTINGS SIDEBAR TOGGLE
-$(document).ready(function () {
-   $("#avg_settings_sidebar_toggle_btn").on("click", function () {
-      $("#avg_settings_sidebar").toggleClass("active");
-   });
-   $("#settings_sidebar_close_btn").on("click", function () {
-      $("#avg_settings_sidebar").toggleClass("active");
-   });
-});
-
-
 const DelegateImputsEvents = (dom => {
+
+   // FIXME > DON'T USE JQUERY
+   // SETTINGS SIDEBAR TOGGLE
+   $(document).ready(function () {
+      $("#avg_settings_sidebar_toggle_btn").on("click", function () {
+         $("#avg_settings_sidebar").toggleClass("active");
+      });
+      $("#settings_sidebar_close_btn").on("click", function () {
+         $("#avg_settings_sidebar").toggleClass("active");
+      });
+   });
    
    // ADD RIPPLES TO BTN. CLICKS
    if (dom.buttons) {
@@ -620,7 +618,7 @@ const DelegateImputsEvents = (dom => {
    if (dom.resultItemCheckboxes && dom.masterResultCheckbox) {
       const slaveResultCheckboxes = dom.resultItemCheckboxes;
       const selectAllResultsChk = dom.masterResultCheckbox
-      masterSlaveControl(selectAllResultsChk, slaveResultCheckboxes);
+      _ManipulateDOM.masterSlaveControl(selectAllResultsChk, slaveResultCheckboxes);
    };
 
    // TODO > RESULT ITEM CHECKBOX MAP+FILTER EVENT SEQ.
@@ -649,7 +647,7 @@ const DelegateImputsEvents = (dom => {
       masterCheckboxes.forEach(masterCheckbox => {
          const inputGroupWrapper = _ManipulateDOM.getParentElement(masterCheckbox, {parentLevel: 4})
          const slaveCheckboxes = _ManipulateDOM.getSubordinates(inputGroupWrapper, masterCheckbox, ".form-check-input")
-         masterSlaveControl(masterCheckbox, slaveCheckboxes);
+         _ManipulateDOM.masterSlaveControl(masterCheckbox, slaveCheckboxes);
       });
    };
          
