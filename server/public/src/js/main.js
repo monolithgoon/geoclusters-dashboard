@@ -29,7 +29,7 @@ import { _clientSideRouter } from "./routers/router.js";
       // FIXME > DOWNLOAD COLLS. IN RESPONSE TO DB. INSERTS
       (async function retreiveLiveData (windowObj) {
 
-         await _downloadDBCollections(windowObj);
+         // await _downloadDBCollections(windowObj);
 
          (function renderLiveData() {
          

@@ -11,6 +11,7 @@ exports.renderAVGDashboard = catchAsync(async(req, res, next) => {
          title: "AVG Dashboard - SSR Alpha",
          user: "FieldDev Group",
          geoClusters: req.app.locals.returnedClusters,
+         ngaAdminBounds: req.app.locals.ngaAdminBounds,
       });
 
       next();

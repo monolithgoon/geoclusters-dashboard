@@ -303,11 +303,31 @@ export const _pollAVGSettingsValues = () => {
    };
 };
 export const _PollAppSettings = ((dom) => {
+
+   // settings 'keys'
+   const baseMapKey = _getCheckedRadio(dom.baseMapRadios).radioValue;
+   const plotsMapStyleKey = _getCheckedRadio(dom.plotsMapStyleRadios).radioValue;
+   const distanceUnits = _getCheckedRadio(dom.distanceUnitsRadios).radioValue;
+   const areaUnits = _getCheckedRadio(dom.areaUnitsRadios).radioValue;
+   
    return {
       getValues: () => {
+         return {
+            baseMapKey,
+            plotsMapStyleKey,
+            distanceUnits,
+            areaUnits,
+      
+            clusterMap: {
+               zoomValue: (dom.clusterMapZoomRange).value,
+            },
+      
+            bufferFeatsChk: (dom.bufferFeatsChkBx).checked,
+            renderMultiFeatsChk: (dom.renderMultiFeatsChkBx).checked,      
+         };
+      },
+   };
 
-      }
-   }
 })(GET_DOM_ELEMENTS());
 
 

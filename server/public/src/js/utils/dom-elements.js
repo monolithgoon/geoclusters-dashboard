@@ -26,10 +26,12 @@ export function GET_DOM_ELEMENTS() {
    const areaUnitsRadios = document.querySelectorAll(`.map-area-units-radio`);
    const clusterMapZoomRange = document.getElementById("cluster_map_zoom");
    
+   const geoClustersDatasetEl = document.getElementById(`geo_clusters_dataset`);
+   const ngaAdminBoundsDatasetEl = document.getElementById(`nga_admin_bounds_dataset`);
+
    const resultModalDiv = document.getElementById(`result_item_modal`);
    const resultModalCloseBtn = document.getElementById(`result_item_modal_close_btn`);
    const resultsListWrapper = document.getElementById(`results_list_wrapper`);
-   const geoClustersDatasetDiv = document.getElementById(`geo_clusters_dataset_div`);
    const resultItemDivs = document.querySelectorAll(`.result-item`);
    const clusterTitleDivs = document.querySelectorAll(`.result-item-title`);
    const masterResultCheckbox = document.getElementById(`select_all_results_chk`);
@@ -62,10 +64,12 @@ export function GET_DOM_ELEMENTS() {
       resultsCountDiv,
       resultsStatus,
 
+      geoClustersDatasetEl,
+      ngaAdminBoundsDatasetEl,
+      
       resultModalDiv,
       resultModalCloseBtn,
       resultsListWrapper,
-      geoClustersDatasetDiv,
       resultItemDivs,
       clusterTitleDivs,
       masterResultCheckbox,

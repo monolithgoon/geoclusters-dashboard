@@ -7,15 +7,27 @@ import { _ManipulateDOM } from "./ui-controller.js";
 
 export function _retreiveGeoJSONData() {
 
-	const geoClusters = JSON.parse(_ManipulateDOM.getDataset(GET_DOM_ELEMENTS().geoClustersDatasetDiv));
-         
-	APP_STATE.saveDBCollection(`geo-clusters`, [...geoClusters]); 
+	try {
+		
+		const geoClusters = JSON.parse(_ManipulateDOM.getDataset(GET_DOM_ELEMENTS().geoClustersDatasetEl));
+		console.log({geoClusters})
+	
+		const ngaAdminBounds = JSON.parse(_ManipulateDOM.getDataset(GET_DOM_ELEMENTS().ngaAdminBoundsDatasetEl));
+		console.log({ngaAdminBounds})
+	
+		const { ngaAdminBoundsLvl1, ngaAdminBoundsLvl2, ngaAdminBoundsLvl3 } = ngaAdminBounds;
+				
+		APP_STATE.saveDBCollection(`geo-clusters`, [...geoClusters]); 
+	
+		return {
+			geoClusters,
+			ngaAdminBoundsLvl1,
+			ngaAdminBoundsLvl2,
+			ngaAdminBoundsLvl3,
+		};
 
-	return {
-		geoClusters,
-		// statesAdminBounds,
-		// lgaAdminBounds,
-		// wardsAdminBounds,
+	} catch (retreiveGJErr) {
+		console.error(`retreiveGJErr: ${retreiveGJErr.message}`);
 	};
 };
 

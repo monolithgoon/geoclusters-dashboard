@@ -471,8 +471,10 @@ const LeafletMaps = (baseMap => {
                   <span> ${(clusterProps.clusterArea * 2.47105).toFixed(1)} acres </span> 
                </div>
                <div class="metadata-label--owner-info__avg"> 
-               <span> ${clusterProps.clusterName} </span>
-                  <span>${clusterProps.clusterFeatsNum} Farmers</span>
+                  <span> ${clusterProps.clusterName} </span>
+                  <span>${clusterProps.clusterFeatsNum} Farmers •
+                     <span>Warwade, Lokoja</span>
+                  </span>
                </div>
                <div class="metadata-label--turn-by-turn" id="metadata_label_turn_by_turn">
                   <a href="#" role="button" title="Plot boundary turn-by-turn directions" aria-label="Plot boundary turn-by-turn directions"></a>
@@ -946,8 +948,6 @@ const LeafletMaps = (baseMap => {
          const polyProps = gjPolygon.properties;
          const polyId = polyProps.clusterID ? polyProps.clusterID : polyProps.featureID;
          const polyCoords = gjPolygon.geometry.coordinates[0];
-         // const polyGeometry = gjPolygon.geometry;
-         // const polyCenter = getFeatCenter(polyGeometry).latLng;
 
          // BUILD A DATA OBJ. TO HOLD THE NAV. INFO. FOR EACH PLOT
          const POLYGON_BOUNDARY_DATA = {
@@ -962,14 +962,7 @@ const LeafletMaps = (baseMap => {
 
             // RENDER THE CLUSTER FEATURE VERTICE DETAILS
             (function renderBoundsDetails() {
-               
-               // // ADD A MARKER TO PLOT CENTER
-               // L.marker(polyCenter).addTo(polyLayerGroup);
-               
-               // // DISPLAY PLOT METADATA AT CENTER OF FEATURE
-               // const clusterMetaLabelsLG = LLayerGroupController.initLayerGroup("cluster-metadata-labels", {visibilityRank: 3})
-               // LeafletMaps.getClusterHTMLMarker(polyProps, polyCenter, 'plot-metadata-label', {draggable:true}).addTo(clusterMetaLabelsLG);
-      
+                     
                // TODO
                // renderFeatVertices()
                
