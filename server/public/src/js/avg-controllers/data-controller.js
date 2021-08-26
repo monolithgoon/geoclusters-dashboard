@@ -1,19 +1,22 @@
 `use strict`
-import { _MonitorExecution } from "../controllers/fn-monitor.js";
 import { GET_DOM_ELEMENTS } from "../utils/dom-elements.js";
-import { APP_STATE } from "./state-controller.js";
 import { _ManipulateDOM } from "./ui-controller.js";
+import { _MonitorExecution } from "../controllers/fn-monitor.js";
+import { APP_STATE } from "./state-controller.js";
 
 
-export function _retreiveGeoJSONData() {
+export function _retreiveClusterGJDatasets() {
 
 	try {
 		
 		const geoClusters = JSON.parse(_ManipulateDOM.getDataset(GET_DOM_ELEMENTS().geoClustersDatasetEl));
-		console.log({geoClusters})
 	
 		const ngaAdminBounds = JSON.parse(_ManipulateDOM.getDataset(GET_DOM_ELEMENTS().ngaAdminBoundsDatasetEl));
 		console.log({ngaAdminBounds})
+		// let ngaAdminBounds = {};
+		// let ngaAdminBoundsDataset = _ManipulateDOM.getDataset(GET_DOM_ELEMENTS().ngaAdminBoundsDatasetEl);
+		// console.log({ngaAdminBoundsDataset})
+		// if (ngaAdminBoundsDataset) ngaAdminBounds = JSON.parse(ngaAdminBoundsDataset);
 	
 		const { ngaAdminBoundsLvl1, ngaAdminBoundsLvl2, ngaAdminBoundsLvl3 } = ngaAdminBounds;
 				
@@ -32,13 +35,13 @@ export function _retreiveGeoJSONData() {
 };
 
 
-async function queryAPI(fetch, apiHost, apiCollectionPath, {queryString=``}) {
+async function queryAPI(fetch, apiHost, apiResourcePath, {queryString=``}) {
 
 	console.log(`%c ${this.currentTarget} is getting latest data from API`, `background-color: lightgrey; color: blue;`);
 
 	try {
 		
-		const apiResponse = await fetch(`${apiHost}/api/${apiCollectionPath}/${queryString}`);
+		const apiResponse = await fetch(`${apiHost}/api/${apiResourcePath}/${queryString}`);
 		const data = await apiResponse.json();
 
 		if (!data) { throw new Error(`Endpoint did not respond; check your connection`); }
@@ -58,19 +61,62 @@ async function queryAPI(fetch, apiHost, apiCollectionPath, {queryString=``}) {
 };
 
 
+export async function _getAdminBounds(eventObj) {
+
+	try {
+
+		for (const apiResourcePath of APP_STATE.CONFIG_DEFAULTS.ADMIN_BOUNDS_GEOJSON_API_RESOURCE_PATHS) {
+			console.log({apiResourcePath})
+
+			const apiDataQuery = function() {
+
+				console.log(document.domain);
+
+					return queryAPI.call(eventObj, window.fetch, 
+						APP_STATE.CONFIG_DEFAULTS.ADMIN_BOUNDS_GEOJSON_API_HOST, 
+						apiResourcePath, 
+						{});
+			};
+
+			// EXECUTE THE API CALL
+			await _MonitorExecution.execute(apiDataQuery);
+
+			_MonitorExecution.getExecutionTime();
+
+			console.log(_MonitorExecution.getData());
+			
+			// FIXME > STORE THE ADMIN BOUNDS GEOJSON FILES IN APP_STATE
+			// get the resource name
+			// const dbCollectionName = geoClusterResourcePath.slice(geoClusterResourcePath.indexOf('/')+1);
+			
+			// SAVE THE RETURNED DATA
+			// APP_STATE.saveDBCollection(dbCollectionName, _MonitorExecution.getData());
+		};
+
+	} catch (getAdminBoundsErr) {
+			console.error(`getAdminBoundsErr: ${getAdminBoundsErr.message}`)
+		};
+};
+
+
 // DOWNLOAD & SAVE DB. COLLECTIONS
 export async function _downloadDBCollections(eventObj) {
 
    try {
       
-      for (const APIResourcePath of APP_STATE.CONFIG_DEFAULTS.API_RESOURCE_PATHS) {
+      for (const geoClusterResourcePath of APP_STATE.CONFIG_DEFAULTS.GEO_CLUSTER_API_RESOURCE_PATHS) {
          
          // const dbQueryStr = APP_STATE.CONFIG_DEFAULTS.LEGACY_CLUSTER_QUERY_STR;
          
          // create an intermediate "pipeline"?? fn.
          const apiDataQuery = function() {
-            console.log(document.domain)
-            return queryAPI.call(eventObj, window.fetch, APP_STATE.CONFIG_DEFAULTS.API_HOST_HEROKU, APIResourcePath, {});
+
+            console.log(document.domain);
+
+            return queryAPI.call(eventObj, window.fetch, 
+					APP_STATE.CONFIG_DEFAULTS.GEO_CLUSTER_API_HOST_HEROKU, 
+					geoClusterResourcePath, 
+					{});
          };
    
          // EXECUTE THE API CALL
@@ -79,7 +125,7 @@ export async function _downloadDBCollections(eventObj) {
          _MonitorExecution.getExecutionTime();
          
          // get the resource name
-         const dbCollectionName = APIResourcePath.slice(APIResourcePath.indexOf('/')+1);
+         const dbCollectionName = geoClusterResourcePath.slice(geoClusterResourcePath.indexOf('/')+1);
          
          // SAVE THE RETURNED DATA
          APP_STATE.saveDBCollection(dbCollectionName, _MonitorExecution.getData());

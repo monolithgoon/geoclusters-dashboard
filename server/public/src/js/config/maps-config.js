@@ -26,6 +26,38 @@ export const CLUSTER_PLOTS_MAP = new mapboxgl.Map({
    zoom: 8,
 });
 
+// export const CLUSTER_PLOTS_MAP_2 = new mapboxgl.Map({
+//    container: 'parcelization_map_container', // container ID
+//    style: {
+//        'version': 8,
+//        'sources': {
+//            'raster-tiles': {
+//                'type': 'raster',
+//                'tiles': [
+//                    'https://stamen-tiles.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.jpg'
+//                ],
+//                'tileSize': 256,
+//                'attribution':
+//                    'Map tiles by <a target="_top" rel="noopener" href="http://stamen.com">Stamen Design</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a target="_top" rel="noopener" href="http://openstreetmap.org">OpenStreetMap</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>'
+//            }
+//        },
+//        'layers': [
+//            {
+//                'id': 'simple-tiles',
+//                'type': 'raster',
+//                'source': 'raster-tiles',
+//                'minzoom': 0,
+//                'maxzoom': 22
+//            }
+//        ]
+//    },
+//    center: [7.03691902649687, 4.654776030857737], // starting position
+//    pitch: 50,
+//    bearing: 10, // bearing in degrees
+//    zoom: 8,
+// });
+
+
 
 const MAP_TILE_SOURCES = Object.freeze({
 

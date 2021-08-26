@@ -6,7 +6,7 @@ import { APP_STATE } from "./state-controller.js";
 import { _getClusterFeatProps, _GetClusterProps } from "../interfaces/cluster-props-adapter.js";
 import { _GenerateClusterFeatMarkup, _GenerateClusterMarkup, _GenClusterModalMarkup } from "./markup-generator.js";
 import { _clientSideRouter, _navigateTo } from "../routers/router.js";
-import { GET_DOM_ELEMENTS } from "../utils/dom-elements.js";
+import { GET_DOM_ELEMENTS, DOM_ELEMENTS } from "../utils/dom-elements.js";
 
 
 export const _ManipulateDOM = (() => {
@@ -328,10 +328,10 @@ export const _PollAppSettings = ((dom) => {
       },
    };
 
-})(GET_DOM_ELEMENTS());
+})(DOM_ELEMENTS);
 
 
-const PopulateDOM = ((dom) => {
+export const _PopulateDOM = ((dom) => {
 
    function renderClusterSummary(props) {
       dom.clusterFeatsNumEl.innerText = props.clusterFeatsNum;
@@ -365,16 +365,13 @@ const PopulateDOM = ((dom) => {
       },
       
       // TODO > THIS SHOULD FIRE ON FILTER INPUT CHANGES
-      clusterResultsSidebar: () => {
+      clusterResultsSidebar: ({dbCollection}) => {
 
          try {
       
             // CREATE NEW RESULT DIVS FOR EACH LEGACY CLUSTER
             if (dbCollection) {
-      
-               // TODO > FILTER OUT UNWANTED LEGACY AGCS
-               dbCollection = dbCollection.slice(1)
-      
+            
                for (let idx = 0; idx < dbCollection.length; idx++) {
       
                   let clusterGeoJSON = dbCollection[idx];
@@ -468,6 +465,7 @@ const DOMSequence = ((dom) => {
       
          // REMOVE
          console.log(_pollAVGSettingsValues());
+         console.log((_PollAppSettings.getValues()))
       
          // get the main parent container
          const resultContainerDiv = _ManipulateDOM.getParentElement(evtObj.target, {parentLevel: 3});

@@ -25,9 +25,10 @@ export const APP_STATE = (function() {
       LEAFLET_ADMIN_LEVEL_2_ZOOM: 12,
       LEAFLET_ADMIN_LEVEL_3_ZOOM: 16,
       LEAFLET_MAX_ZOOM: 18,
-      API_HOST_LOCAL: `http://127.0.0.1:9090`,
-      API_HOST_HEROKU: `https://geoclusters.herokuapp.com`,
-      API_RESOURCE_PATHS: ["v2/legacy-agcs", "v1/parcelized-agcs", "v1/agcs"],
+
+      GEO_CLUSTER_API_HOST_LOCAL: `http://127.0.0.1:9090`,
+      GEO_CLUSTER_API_HOST_HEROKU: `https://geoclusters.herokuapp.com`,
+      GEO_CLUSTER_API_RESOURCE_PATHS: ["v2/legacy-agcs", "v1/parcelized-agcs", "v1/agcs"],
       LEGACY_CLUSTER_QUERY_STR: `?fields=
                                     properties.geo_cluster_details,
                                     properties.geo_cluster_governance_structure,
@@ -40,6 +41,10 @@ export const APP_STATE = (function() {
                                     features.properties.plot_owner_gender`,
       CLUSTER_RESULT_DATA_ATTR_NAME: `geoclusterdatastream`,
 
+      // ADMIN_BOUNDS_GEOJSON_API_HOST: `https://avgmap.herokuapp.com`,
+      ADMIN_BOUNDS_GEOJSON_API_HOST: `http://127.0.0.1:9090`,
+      ADMIN_BOUNDS_GEOJSON_API_RESOURCE_PATHS: [`nga-admin-bounds`],
+      // ADMIN_BOUNDS_GEOJSON_API_RESOURCE_PATHS: [`/nga-admin-bounds-lvl1`, `/nga-admin-bounds-lvl2`, `/nga-admin-bounds-lvl3`],
    });
 
    // keep track of sidebar settings
