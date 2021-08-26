@@ -82,15 +82,8 @@ export async function _getAdminBounds(eventObj) {
 			await _MonitorExecution.execute(apiDataQuery);
 
 			_MonitorExecution.getExecutionTime();
-
-			console.log(_MonitorExecution.getData());
 			
-			// FIXME > STORE THE ADMIN BOUNDS GEOJSON FILES IN APP_STATE
-			// get the resource name
-			// const dbCollectionName = geoClusterResourcePath.slice(geoClusterResourcePath.indexOf('/')+1);
-			
-			// SAVE THE RETURNED DATA
-			// APP_STATE.saveDBCollection(dbCollectionName, _MonitorExecution.getData());
+			return _MonitorExecution.getData();
 		};
 
 	} catch (getAdminBoundsErr) {
@@ -99,6 +92,7 @@ export async function _getAdminBounds(eventObj) {
 };
 
 
+// FIXME > MAKE THIS A GENERIC FUNCTION THAT ONLY RETURNS DATA FROM THE API AND NOTHING MORE
 // DOWNLOAD & SAVE DB. COLLECTIONS
 export async function _downloadDBCollections(eventObj) {
 

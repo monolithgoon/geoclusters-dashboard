@@ -87,7 +87,6 @@ const ProcessFiles = ((root) => {
 
       returnDirectoryFiles: async filesDirectory => {
          const ngaAdmiinBoundsLvl3Files = await ProcessFiles.scanDirectory(filesDirectory);
-         console.log({ngaAdmiinBoundsLvl3Files});
          return ngaAdmiinBoundsLvl3Files;
       },
 
@@ -108,11 +107,6 @@ const ProcessFiles = ((root) => {
 
    };
 })(__approotdir);
-
-
-// REMOVE
-// ProcessFiles.initBaseFiles();
-// ProcessFiles.returnDirectoryFiles(`/localdata/nga-ward-bounds-openAFRICA`);
 
 
 const parseString = async str => {
@@ -159,14 +153,17 @@ exports.getAdminBoundsGJ = catchAsync((async(req, res, next) => {
 
    await ProcessFiles.initBaseFiles();
    const ngaAdmiinBoundsLvl3Files = await ProcessFiles.returnDirectoryFiles(`/localdata/nga-ward-bounds-openAFRICA`);
+
+   const ngaAdminBounds = {
+      // ngaAdminBoundsLvl1: ngaAdmiinBoundsLvl1Files,
+      // ngaAdminBoundsLvl2: ngaAdmiinBoundsLvl2Files,
+      ngaAdminBoundsLvl3: ngaAdmiinBoundsLvl3Files
+   }
    
    res.status(200).json({
       status: `success`,
       requested_at: req.requestTime,
-      data: {
-         collection_name: `nga-admin-bounds-lvl3`,
-         collection_data: ngaAdmiinBoundsLvl3Files,
-      },
+      data: ngaAdminBounds,
    });
 
 }), `getAdminBoundsErr`);

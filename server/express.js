@@ -54,7 +54,7 @@ EXPRESS_SERVER.use(`/api`, limiter);
 EXPRESS_SERVER.use(express.static(path.join(__dirname, "public")));
 
 
-// 4. middleware that parses JSON data from the request body into req.body
+// 6. middleware that parses JSON data from the request body into req.body
 EXPRESS_SERVER.use(bodyParser.json({ limit: "100kb" }));
 
 
@@ -103,6 +103,7 @@ EXPRESS_SERVER.use(express.urlencoded({ extended: true }));
 // Load the routes
 const viewRouter = require("./routes/view-routes.js");
 const userRouter = require("./routes/user-routes.js");
+const adminBoundsRouter = require("./routes/admin-bounds-routes.js");
 
 
 // REMOVE > SEEMS TO BE BLOCKING ALL ROUTES
@@ -115,6 +116,7 @@ const userRouter = require("./routes/user-routes.js");
 // MOUNT THE ROUTES
 EXPRESS_SERVER.use("/", viewRouter);
 EXPRESS_SERVER.use("/api/v1/users/", userRouter);
+EXPRESS_SERVER.use("/api/v1/admin-bounds/", adminBoundsRouter);
 
 
 // GLOBAL ERROR HANDLING M.WARE

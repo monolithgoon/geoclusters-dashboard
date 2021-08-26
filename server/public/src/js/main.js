@@ -31,14 +31,20 @@ import { GET_DOM_ELEMENTS } from "./utils/dom-elements.js";
 
       // GET ADMIN BOUNDS GEOJSON
       (async function retreiveAdminBoundsGJ (window) {
-         await _getAdminBounds(window);
+
+         const adminBoundsData = await _getAdminBounds(window);
+
+         console.log({adminBoundsData});
+
+			// FIXME > STORE THE ADMIN BOUNDS GEOJSON FILES IN APP_STATE
       })(windowObj);
+
 
       // GET FRESH DATA FROM DB.
       // FIXME > DOWNLOAD COLLS. IN RESPONSE TO DB. INSERTS
       (async function retreiveLiveData (window) {
 
-         await _downloadDBCollections(window);
+         // await _downloadDBCollections(window);
 
          (function renderLiveData() {
          

@@ -7,8 +7,8 @@ router.get("/nga-admin-bounds",
 	dataController.getAdminBoundsGJ,
 );
 
-router.get("/nga-admin-bounds-lvl3",
-	dataController.getAdminBoundsLvl3Geojson
-);
+// router.get("/nga-admin-bounds-lvl3",
+// 	dataController.getAdminBoundsLvl3Geojson,
+// );
 
 module.exports = router;

@@ -480,11 +480,11 @@ const DOMSequence = ((dom) => {
          if (clusterGeoJSON) {
             
             // 1.
-            PopulateDOM.clusterDetailsModal(dom.resultModalDiv, clusterGeoJSON);
+            _PopulateDOM.clusterDetailsModal(dom.resultModalDiv, clusterGeoJSON);
       
             // 1b.
             // render cluster feature cards.
-            PopulateDOM.clusterFeatsSidebar(clusterGeoJSON);
+            _PopulateDOM.clusterFeatsSidebar(clusterGeoJSON);
             
             // 2.
             _AnimateClusters.renderEverythingNow(clusterGeoJSON, 
