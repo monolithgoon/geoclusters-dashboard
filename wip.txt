@@ -65,9 +65,15 @@ https://docs.mapbox.com/help/troubleshooting/working-with-large-geojson-data/
 https://blog.mapbox.com/rendering-big-geodata-on-the-fly-with-geojson-vt-4e4d2a5dd1f2
 
 
+// DECK.gl
+https://deck.gl/docs/get-started/using-with-map/
+https://deck.gl/examples/geojson-layer-paths/
+
+
 // LOAD GEOJSON FROM URL
 https://gis.stackexchange.com/questions/68489/loading-external-geojson-file-into-leaflet-map
 https://stackoverflow.com/questions/22356682/how-to-load-l-geojson-from-url
+
 
 // GIT
 https://learngitbranching.js.org/

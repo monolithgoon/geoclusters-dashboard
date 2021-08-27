@@ -94,12 +94,12 @@ const LeafletMapsSetup = ((baseMap, featDetailMap)=>{
             removeTileLayers(map, {keepLayer: googleHybrid});
             break
          
-         case mapZoom > 7 && mapZoom < 10:
-            map.addLayer(googleStreets);
-            removeTileLayers(map, {keepLayer: googleStreets});
+         case mapZoom > 8 && mapZoom < 11.5:
+            map.addLayer(osmStd);
+            removeTileLayers(map, {keepLayer: osmStd});
             break;
    
-         case mapZoom > 10 && mapZoom < 13:
+         case mapZoom > 11.5 && mapZoom < 13:
             map.addLayer(googleStreets);
             removeTileLayers(map, {keepLayer: googleStreets});
 
@@ -211,6 +211,10 @@ const LeafletMapsSetup = ((baseMap, featDetailMap)=>{
       // You can also put other controls in the same placeholder.
       // L.control.scale({position: 'verticalcenterright'}).addTo(map);
       L.control.scale({position: 'basemap-controls-placeholder'}).addTo(map);
+
+      // LEAFLET BETTERSCALE PLUGIN
+      L.control.betterscale({position: 'basemap-controls-placeholder', metric: true, imperial: false}).addTo(map); 
+
    })(baseMap);
    
 })(AVG_BASE_MAP, FEAT_DETAIL_MAP);

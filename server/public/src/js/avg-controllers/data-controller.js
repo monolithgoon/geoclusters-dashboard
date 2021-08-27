@@ -66,7 +66,6 @@ export async function _getAdminBounds(eventObj) {
 	try {
 
 		for (const apiResourcePath of APP_STATE.CONFIG_DEFAULTS.ADMIN_BOUNDS_GEOJSON_API_RESOURCE_PATHS) {
-			console.log({apiResourcePath})
 
 			const apiDataQuery = function() {
 
