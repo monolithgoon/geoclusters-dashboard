@@ -32,7 +32,6 @@ const ProcessFiles = ((root) => {
 
    // UTILITY FN. FOR fs.readFileAsync ... RETURNS A PROMISE
    const getFileData = (fileName, filesDirectory) => {
-      console.log({fileName});
       return fs.readFileAsync(path.resolve(`${__approotdir}/${filesDirectory}/${fileName}`), `utf8`);
    };
 

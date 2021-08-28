@@ -60,7 +60,7 @@ import { GET_DOM_ELEMENTS } from "./utils/dom-elements.js";
                const adminBoundsFeatCollArr = ngaAdminBoundsData.data;
                for (let idx = 0; idx < adminBoundsFeatCollArr.length; idx++) {
                   const adminBoundFeatColl = adminBoundsFeatCollArr[idx];
-                  _RenderEngine.renderFeatColl(adminBoundFeatColl, {useBuffer: false, lineColor: "white", lineWeight: 0.5, lineDashArray: "3"}) 
+                  _RenderEngine.renderFeatColl(adminBoundFeatColl, {useBuffer: false, lineColor: "#dfe6e9", lineWeight: 0.8, lineDashArray: "3"}) 
                };
             };   
          };
