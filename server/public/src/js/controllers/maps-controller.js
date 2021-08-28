@@ -589,8 +589,8 @@ const LeafletMaps = (baseMap => {
          // const refinedFeat = _getUsableGeometry(feature).refinedGeoJSON;
          const refinedFeat = feature;
 
-         featGeometry = refinedFeat.geometry;
-         featCoords = refinedFeat.geometry.coordinates;
+         if (refinedFeat.geometry) featGeometry = refinedFeat.geometry;
+         if (featGeometry) featCoords = refinedFeat.geometry.coordinates;
          // featCenter = getFeatCenter(featGeometry).latLng;
          if (feature.properties) featProps = feature.properties;
          
@@ -623,10 +623,14 @@ const LeafletMaps = (baseMap => {
                   const { featGeometry, featCoords } = LeafletMaps.getFeatureData(gjFeature);
    
                   // RENDER OUTLINE
-                  LeafletMaps.getFeatPolyOutline(featGeometry, {lineColor, lineWeight, lineOpacity, lineDashArray}).addTo(featLayerGroup);
+                  if (featGeometry) {
+                     LeafletMaps.getFeatPolyOutline(featGeometry, {lineColor, lineWeight, lineOpacity, lineDashArray}).addTo(featLayerGroup);
+                  } else {
+                     console.warn(`Cannot render feat ${gjFeature}. Geometry is invalid.`)
+                  };
    
                   // RENDER FILL
-                  // LeafletMaps.getFeatPolyFill(featCoords).addTo(featLayerGroup);
+                  // if (featCoords) LeafletMaps.getFeatPolyFill(featCoords).addTo(featLayerGroup);
    
                   // REMOVE
                   // FIXME > DOES THIS BELONG HERE??
@@ -1526,7 +1530,7 @@ const MapboxFillLayerHandler = ((leafletModalMap)=>{
 
 
 // RENDER GEOJSON ON DISPLAYED MAPS
-export const _AnimateClusters = (function(avgBaseMap, clusterFeatsMap) {
+export const _RenderEngine = (function(avgBaseMap, clusterFeatsMap) {
 
    try {
 
@@ -1583,19 +1587,36 @@ export const _AnimateClusters = (function(avgBaseMap, clusterFeatsMap) {
             panToClusterFeat(geoJSONFeat, {zoomLevel});
          },
 
+         renderFeatColl: (gjFeatColl, {
+            useBuffer, 
+            bufferAmt, 
+            bufferUnits, 
+            lineColor, 
+            lineWeight, 
+            lineOpacity, 
+            lineDashArray
+         } = {}) => {
+
+            // render feats. on base map            
+            for (let idx = 0; idx < gjFeatColl.features.length; idx++) {
+               const gjFeature = gjFeatColl.features[idx];
+               LeafletMaps.drawFeature(gjFeature, {useBuffer, bufferAmt, bufferUnits, lineColor, lineWeight, lineOpacity, lineDashArray});
+            };
+         },
+
          renderCluster: (gjFeatColl, {
-               useBuffer, 
-               bufferAmt, 
-               bufferUnits, 
-               lineColor, 
-               lineWeight, 
-               lineOpacity, 
-               lineDashArray
-            } = {}) => {
+            useBuffer, 
+            bufferAmt, 
+            bufferUnits, 
+            lineColor, 
+            lineWeight, 
+            lineOpacity, 
+            lineDashArray
+         } = {}) => {
 
             // REMOVE
             // render cluster plots outlines on the plots map
-            MapboxMaps.drawFeatFeatColl(gjFeatColl, {map: clusterFeatsMap});
+            // MapboxMaps.drawFeatFeatColl(gjFeatColl, {map: clusterFeatsMap});
 
             // render feats. on base map            
             for (let idx = 0; idx < gjFeatColl.features.length; idx++) {
@@ -1709,9 +1730,9 @@ export const _AnimateClusters = (function(avgBaseMap, clusterFeatsMap) {
                      // 1. render featColl. poly
                      // TODO > ADJUST BUFFER BY CLUSTER SIZE
 
-                     const clusterPolygon = await _AnimateClusters.getClusterPoly(featColl, {useBuffer: true, bufferAmt: 0.01, bufferUnits})
+                     const clusterPolygon = await _RenderEngine.getClusterPoly(featColl, {useBuffer: true, bufferAmt: 0.01, bufferUnits})
 
-                     if (clusterPolygon) _AnimateClusters.renderClusterPoly(clusterPolygon, {bufferUnits});
+                     if (clusterPolygon) _RenderEngine.renderClusterPoly(clusterPolygon, {bufferUnits});
 
                      // 2. render feats. & feats. markers
                      for (let idy = 0; idy < featColl.features.length; idy++) {
@@ -1757,9 +1778,9 @@ export const _AnimateClusters = (function(avgBaseMap, clusterFeatsMap) {
             panToCluster(featColl, {zoomLevel: baseMapZoomLvl});
 
             // FIXME > "renderCluster" IS A BAD NAME FOR WHAT THIS DOES
-            _AnimateClusters.renderCluster(featColl, {useBuffer, bufferAmt, bufferUnits, lineColor: "#feca57", lineWeight: 1.5, lineDashArray: "3"});
-            _AnimateClusters.renderClusterPlots(featColl, {useBuffer, bufferAmt, bufferUnits});
-            _AnimateClusters.renderClusterPlotsLabels(featColl, {useBuffer, bufferUnits, bufferAmt, areaUnits});
+            _RenderEngine.renderCluster(featColl, {useBuffer, bufferAmt, bufferUnits, lineColor: "#feca57", lineWeight: 1.5, lineDashArray: "3"});
+            _RenderEngine.renderClusterPlots(featColl, {useBuffer, bufferAmt, bufferUnits});
+            _RenderEngine.renderClusterPlotsLabels(featColl, {useBuffer, bufferUnits, bufferAmt, areaUnits});
 
             // REMOVE > DEPRC > ADDED VIA "zoomend"
             // // GET LAYER GROUP(S)

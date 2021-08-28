@@ -1,7 +1,7 @@
 'use strict'
 import { _TraverseObject, _getCheckedRadio, _stringifyPropValues, _TurfHelpers } from "../utils/helpers.js";
 import { _sanitizeFeatCollCoords, _ProcessGeoJSON, _getBufferedPolygon } from "../utils/helpers.js";
-import { _AnimateClusters } from "../controllers/maps-controller.js";
+import { _RenderEngine } from "../controllers/maps-controller.js";
 import { APP_STATE } from "./state-controller.js";
 import { _getClusterFeatProps, _GetClusterProps } from "../interfaces/cluster-props-adapter.js";
 import { _GenerateClusterFeatMarkup, _GenerateClusterMarkup, _GenClusterModalMarkup } from "./markup-generator.js";
@@ -487,7 +487,7 @@ const DOMSequence = ((dom) => {
             _PopulateDOM.clusterFeatsSidebar(clusterGeoJSON);
             
             // 2.
-            _AnimateClusters.renderEverythingNow(clusterGeoJSON, 
+            _RenderEngine.renderEverythingNow(clusterGeoJSON, 
                {
                   baseMapZoomLvl: APP_STATE.CONFIG_DEFAULTS.LEAFLET_ADMIN_LEVEL_3_ZOOM,
                   useBuffer: _pollAVGSettingsValues().bufferFeatsChk, 
@@ -520,8 +520,8 @@ const DOMSequence = ((dom) => {
   
               // this => clusterFeatCard
               if (this.currentTarget.id === _ProcessGeoJSON.getId(clusterFeatures[i])) {
-                 _AnimateClusters.panToClusterPlot(clusterFeatures[i], {zoomLevel: _pollAVGSettingsValues().clusterMap.zoomValue});
-                 _AnimateClusters.renderFeatPopup(_getClusterFeatProps(clusterFeatures[i], i), _TurfHelpers.getLngLat(clusterFeatures[i]));
+                 _RenderEngine.panToClusterPlot(clusterFeatures[i], {zoomLevel: _pollAVGSettingsValues().clusterMap.zoomValue});
+                 _RenderEngine.renderFeatPopup(_getClusterFeatProps(clusterFeatures[i], i), _TurfHelpers.getLngLat(clusterFeatures[i]));
               };
            };
   
@@ -589,7 +589,7 @@ const DelegateImputsEvents = (dom => {
       radios.forEach(radio => {
          radio.addEventListener(`change`, async (e) => {
             if (APP_STATE.retreiveLastRenderedGJ()) {
-               _AnimateClusters.renderClusterPlotsLabels(APP_STATE.retreiveLastRenderedGJ(), 
+               _RenderEngine.renderClusterPlotsLabels(APP_STATE.retreiveLastRenderedGJ(), 
                   {
                      useBuffer: _pollAVGSettingsValues().bufferFeatsChk,
                      bufferUnits: _pollAVGSettingsValues().distanceUnits,
@@ -607,12 +607,12 @@ const DelegateImputsEvents = (dom => {
    if (dom.plotsMapStyleRadios) {
       dom.plotsMapStyleRadios.forEach(radio => {
          radio.addEventListener(`change`, (evtObj) => {
-            _AnimateClusters.refreshClusterPlotsMap(evtObj);
+            _RenderEngine.refreshClusterPlotsMap(evtObj);
             console.log(APP_STATE.retreiveLastRenderedGJ());
             if (APP_STATE.retreiveLastRenderedGJ()) {
                console.log(`FUCK MIKE LINDEL`)
-               // _AnimateClusters.renderClusterPlots(APP_STATE.retreiveLastRenderedGJ(),
-               _AnimateClusters.renderEverythingNow(APP_STATE.retreiveLastRenderedGJ(),
+               // _RenderEngine.renderClusterPlots(APP_STATE.retreiveLastRenderedGJ(),
+               _RenderEngine.renderEverythingNow(APP_STATE.retreiveLastRenderedGJ(),
                   {
                      useBuffer: _pollAVGSettingsValues().bufferFeatsChk,
                      bufferUnits: _pollAVGSettingsValues().distanceUnits,

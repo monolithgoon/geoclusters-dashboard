@@ -10,23 +10,11 @@ export function _retreiveClusterGJDatasets() {
 	try {
 		
 		const geoClusters = JSON.parse(_ManipulateDOM.getDataset(GET_DOM_ELEMENTS().geoClustersDatasetEl));
-	
-		const ngaAdminBounds = JSON.parse(_ManipulateDOM.getDataset(GET_DOM_ELEMENTS().ngaAdminBoundsDatasetEl));
-		console.log({ngaAdminBounds})
-		// let ngaAdminBounds = {};
-		// let ngaAdminBoundsDataset = _ManipulateDOM.getDataset(GET_DOM_ELEMENTS().ngaAdminBoundsDatasetEl);
-		// console.log({ngaAdminBoundsDataset})
-		// if (ngaAdminBoundsDataset) ngaAdminBounds = JSON.parse(ngaAdminBoundsDataset);
-	
-		const { ngaAdminBoundsLvl1, ngaAdminBoundsLvl2, ngaAdminBoundsLvl3 } = ngaAdminBounds;
-				
+					
 		APP_STATE.saveDBCollection(`geo-clusters`, [...geoClusters]); 
 	
 		return {
 			geoClusters,
-			ngaAdminBoundsLvl1,
-			ngaAdminBoundsLvl2,
-			ngaAdminBoundsLvl3,
 		};
 
 	} catch (retreiveGJErr) {
@@ -61,19 +49,19 @@ async function queryAPI(fetch, apiHost, apiResourcePath, {queryString=``}) {
 };
 
 
-export async function _getAdminBounds(eventObj) {
+export async function _getAPIResource(eventObj, resourcePath, resourceHost) {
 
 	try {
 
-		for (const apiResourcePath of APP_STATE.CONFIG_DEFAULTS.ADMIN_BOUNDS_GEOJSON_API_RESOURCE_PATHS) {
+		// for (const resourcePath of APP_STATE.CONFIG_DEFAULTS.ADMIN_BOUNDS_GEOJSON_API_RESOURCE_PATHS) {
 
 			const apiDataQuery = function() {
 
 				console.log(document.domain);
 
 					return queryAPI.call(eventObj, window.fetch, 
-						APP_STATE.CONFIG_DEFAULTS.ADMIN_BOUNDS_GEOJSON_API_HOST, 
-						apiResourcePath, 
+						resourceHost, 
+						resourcePath, 
 						{});
 			};
 
@@ -83,7 +71,7 @@ export async function _getAdminBounds(eventObj) {
 			_MonitorExecution.getExecutionTime();
 			
 			return _MonitorExecution.getData();
-		};
+		// };
 
 	} catch (getAdminBoundsErr) {
 			console.error(`getAdminBoundsErr: ${getAdminBoundsErr.message}`)

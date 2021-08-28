@@ -254,7 +254,6 @@ block dashboard
                         //-   .h-divider-grey-100
 
                         span#geo_clusters_dataset(data-geoclusters = `${JSON.stringify(geoClusters)}`)
-                        sppan#nga_admin_bounds_dataset(data-ngaadminbounds = `${JSON.stringify(ngaAdminBounds)}`)
 
                         each geoCluster, clusterIdx in geoClusters
                           .result-item.flex-col-start(data-geoclusterdatastream=`${JSON.stringify(geoCluster)}`)

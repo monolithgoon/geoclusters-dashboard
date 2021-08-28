@@ -1,9 +1,9 @@
 `use strict`;
-import { _downloadDBCollections, _retreiveClusterGJDatasets, _getAdminBounds } from "./avg-controllers/data-controller.js";
+import { _downloadDBCollections, _retreiveClusterGJDatasets, _getAPIResource } from "./avg-controllers/data-controller.js";
 import { _TraverseObject } from "./utils/helpers.js";
 import { _pollAVGSettingsValues, _PopulateDOM } from "./avg-controllers/ui-controller.js";
 import { APP_STATE } from "./avg-controllers/state-controller.js";
-import { _AnimateClusters } from "./controllers/maps-controller.js";
+import { _RenderEngine } from "./controllers/maps-controller.js";
 import { _clientSideRouter } from "./routers/router.js";
 import { GET_DOM_ELEMENTS } from "./utils/dom-elements.js";
 
@@ -21,7 +21,7 @@ import { GET_DOM_ELEMENTS } from "./utils/dom-elements.js";
 
       if (geoClusters && geoClusters.length > 0) { 
          // RENDER CLUSTERS' DATA ON BASE MAP
-         await _AnimateClusters.renderClusters(geoClusters, {
+         await _RenderEngine.renderClusters(geoClusters, {
             useBuffer: _pollAVGSettingsValues().bufferFeatsChk ,
             bufferUnits: _pollAVGSettingsValues().distanceUnits,
             bufferAmt: APP_STATE.CONFIG_DEFAULTS.RENDERED_PLOT_BUFFER,
@@ -32,11 +32,39 @@ import { GET_DOM_ELEMENTS } from "./utils/dom-elements.js";
       // GET ADMIN BOUNDS GEOJSON
       (async function retreiveAdminBoundsGJ (window) {
 
-         const adminBoundsData = await _getAdminBounds(window);
+         const apiHost = APP_STATE.CONFIG_DEFAULTS.ADMIN_BOUNDS_GEOJSON_API_HOST;
+         const adminBoundsAPIResourcePaths = APP_STATE.CONFIG_DEFAULTS.ADMIN_BOUNDS_GEOJSON_API_RESOURCE_PATHS;
 
-         console.log({adminBoundsData});
+         for (const adminBoundsResourcePath of adminBoundsAPIResourcePaths) {
 
-			// FIXME > STORE THE ADMIN BOUNDS GEOJSON FILES IN APP_STATE
+            const ngaAdminBoundsData = await _getAPIResource(window, adminBoundsResourcePath, apiHost);
+            console.log({ngaAdminBoundsData});
+            
+            // const ngaAdminBoundsLvl1Arr = ngaAdminBoundsData.data.ngaAdminBoundsLvl1Files;
+            // const ngaAdminBoundsLvl2Arr = ngaAdminBoundsData.data.ngaAdminBoundsLvl2Files;
+            // const ngaAdminBoundsLvl3Arr = ngaAdminBoundsData.data.ngaAdminBoundsLvl3Files;
+
+            // console.log({ngaAdminBoundsLvl1Arr});
+            // console.log({ngaAdminBoundsLvl2Arr});
+            // console.log({ngaAdminBoundsLvl3Arr});
+   
+            // get the resource name
+            // const resourceName = adminBoundsResourcePath.slice(adminBoundsResourcePath.indexOf('/')+1);
+            
+            // SAVE THE RETURNED DATA
+            // APP_STATE.saveDBCollection(resourceName, _MonitorExecution.getData());
+
+            // FIXME > RENDER THIS IN SEPARATE FN.
+            console.log({adminBoundsResourcePath});
+            if (adminBoundsResourcePath === `v1/admin-bounds/nga-admin-bounds-lvl1`) {
+               const adminBoundsFeatCollArr = ngaAdminBoundsData.data;
+               for (let idx = 0; idx < adminBoundsFeatCollArr.length; idx++) {
+                  const adminBoundFeatColl = adminBoundsFeatCollArr[idx];
+                  _RenderEngine.renderFeatColl(adminBoundFeatColl, {useBuffer: false, lineColor: "white", lineWeight: 0.5, lineDashArray: "3"}) 
+               };
+            };   
+         };
+
       })(windowObj);
 
 

@@ -22,7 +22,6 @@ router.route("/dashboard")
 	.get(
 		authController.protectRoute,
 		authController.restrictTo(`manager`, `admin`),
-		dataController.getAdminBoundsGeoJSON,
 		dataController.getClustersData,
 		viewsController.renderAVGDashboard
 	);

@@ -31,8 +31,9 @@ const ProcessFiles = ((root) => {
    };
 
    // UTILITY FN. FOR fs.readFileAsync ... RETURNS A PROMISE
-   const getFileData = (fileName) => {
-      return fs.readFileAsync(path.resolve(`${__approotdir}/localdata/nga-ward-bounds-openAFRICA/${fileName}`), `utf8`);
+   const getFileData = (fileName, filesDirectory) => {
+      console.log({fileName});
+      return fs.readFileAsync(path.resolve(`${__approotdir}/${filesDirectory}/${fileName}`), `utf8`);
    };
 
    // FN. TO GET ONLY GEOJSON FILES
@@ -43,10 +44,12 @@ const ProcessFiles = ((root) => {
 
    return {
       
-      initBaseFiles: async () => { 
+      initBaseFiles: async () => {
          try {            
-            // START A BLANK nga-ward-bounds FILE
-            fs.writeFile(path.resolve(`${__approotdir}/localdata/nga-ward-bounds.geojson`), ``, () => console.log(chalk.warningBright(`Base nga-ward-bounds.geojson file created`)));
+            // START BLANK GEOJSON FILES THAT (WILL) EVENTUALLY HOLD THE MERGED DIR. FILES
+            fs.writeFile(path.resolve(`${__approotdir}/localdata/nga-lvl1-admin-bounds.geojson`), ``, () => console.log(chalk.warningBright(`Base nga-ward-bounds.geojson file created`)));
+            fs.writeFile(path.resolve(`${__approotdir}/localdata/nga-lvl2-admin-bounds.geojson`), ``, () => console.log(chalk.warningBright(`Base nga-ward-bounds.geojson file created`)));
+            fs.writeFile(path.resolve(`${__approotdir}/localdata/nga-lvl3-admin-bounds.geojson`), ``, () => console.log(chalk.warningBright(`Base nga-ward-bounds.geojson file created`)));
          } catch (fielWriteErr) {
             throw new Error(`fielWriteErr: ${fielWriteErr.message}`);
          };   
@@ -57,7 +60,7 @@ const ProcessFiles = ((root) => {
       // USE Promise.all to TIME WHEN ALL ASYNC readFiles HAS COMPLETED
       scanDirectory: async filesDirectory => {
 
-         console.log(chalk.working(`READING GEOJSON FILE(S) DATA`));
+         console.log(chalk.working(`READING GEOJSON FILE(S) DATA in ${filesDirectory}`));
 
          return fs.readdirAsync(path.resolve(`${root}/${filesDirectory}`))
 
@@ -65,7 +68,9 @@ const ProcessFiles = ((root) => {
                gjFileNames = gjFileNames.filter(isGeoJSONFile);
                gjFileNames.forEach(gjFileName => console.log({gjFileName}));
                // console.log(chalk.console(JSON.stringify({gjFileNames})));
-               return Promise.all(gjFileNames.map(getFileData));
+               return Promise.all(gjFileNames.map(gjFileName => {
+                  return getFileData(gjFileName, filesDirectory);
+               }))
             })
 
             .then(gjFiles => {
@@ -118,52 +123,84 @@ const parseString = async str => {
 };
 
 
+// REMOVE > DEPRC.
+// exports.getAdminBoundsGeoJSON = catchAsync((async(req, res, next) => {
+
+//    console.log(chalk.success(`SUCCESSFULLY CALLED 'getAdminBoundsGeoJSON' DATA CONTROLLER FN. `));
+   
+//    // ProcessFiles.retreiveFilesData([`nga-state-admin-bounds.geojson`, `nga-state-admin-bounds.geojson`, `nga-ward-bounds-openAFRICA.geojson`]);
+
+//    const ngaAdmiinBoundsLvl1 = await parseString(await ProcessFiles.retreiveFilesData([`nga-state-admin-bounds.geojson`]));
+//    const ngaAdmiinBoundsLvl2 = await parseString(await ProcessFiles.retreiveFilesData([`nga-lga-admin-bounds.geojson`]));
+//    const ngaAdmiinBoundsLvl3 = await parseString(await ProcessFiles.retreiveFilesData([`/nga-ward-admin-bounds-openAFRICA/nga-ward-bounds-openAFRICA_xaa.geojson`]));
+
+//    let ngaAdminBounds;
+//    if (ngaAdmiinBoundsLvl1 && ngaAdmiinBoundsLvl2 && ngaAdmiinBoundsLvl3) {
+//       ngaAdminBounds = {
+//          ngaAdmiinBoundsLvl1,
+//          ngaAdmiinBoundsLvl2,
+//          ngaAdmiinBoundsLvl3,
+//       };
+//    };
+
+//    // if (ngaAdminBounds) req.app.locals.ngaAdminBounds = ngaAdminBounds;
+   
+//    next();
+
+// }), `getAdminBoundsErr`);
+
+
+exports.getAdminBoundsLvl1GeoJSON = catchAsync((async(req, res, next) => {
+   const ngaAdmiinBoundsLvl1Files = await ProcessFiles.returnDirectoryFiles(`/localdata/nga-state-admin-bounds`);
+   res.status(200).json({
+      status: `success`,
+      requested_at: req.requestTime,
+      data: ngaAdmiinBoundsLvl1Files,
+   });
+}), `getAdminBoundsLvl1Err`);
+
+exports.getAdminBoundsLvl2GeoJSON = catchAsync((async(req, res, next) => {
+   const ngaAdmiinBoundsLvl2Files = await ProcessFiles.returnDirectoryFiles(`/localdata/nga-lga-admin-bounds`);
+   res.status(200).json({
+      status: `success`,
+      requested_at: req.requestTime,
+      data: ngaAdmiinBoundsLvl2Files,
+   });
+}), `getAdminBoundsLvl1Err`);
+
+exports.getAdminBoundsLvl3GeoJSON = catchAsync((async(req, res, next) => {
+   const ngaAdmiinBoundsLvl3Files = await ProcessFiles.returnDirectoryFiles(`/localdata/nga-ward-admin-bounds-openAFRICA`);
+   res.status(200).json({
+      status: `success`,
+      requested_at: req.requestTime,
+      data: ngaAdmiinBoundsLvl3Files,
+   });
+}), `getAdminBoundsLvl3Err`);
+
+
+// REMOVE > DEPRC.
 exports.getAdminBoundsGeoJSON = catchAsync((async(req, res, next) => {
-
-   console.log(chalk.success(`SUCCESSFULLY CALLED 'getAdminBoundsGeoJSON' DATA CONTROLLER FN. `));
-   
-   // ProcessFiles.retreiveFilesData([`nga-state-admin-bounds.geojson`, `nga-state-admin-bounds.geojson`, `nga-ward-bounds-openAFRICA.geojson`]);
-
-   const ngaAdmiinBoundsLvl1 = await parseString(await ProcessFiles.retreiveFilesData([`nga-state-admin-bounds.geojson`]));
-   const ngaAdmiinBoundsLvl2 = await parseString(await ProcessFiles.retreiveFilesData([`nga-lga-admin-bounds.geojson`]));
-   // const ngaAdmiinBoundsLvl3 = await parseString(await ProcessFiles.retreiveFilesData([`/nga-ward-bounds-openAFRICA/nga-ward-bounds-openAFRICA_xaa.geojson`]));
-   const ngaAdmiinBoundsLvl3 = {};
-
-   let ngaAdminBounds;
-   if (ngaAdmiinBoundsLvl1 && ngaAdmiinBoundsLvl2 && ngaAdmiinBoundsLvl3) {
-      ngaAdminBounds = {
-         ngaAdmiinBoundsLvl1,
-         ngaAdmiinBoundsLvl2,
-         ngaAdmiinBoundsLvl3,
-      };
-   };
-
-   if (ngaAdminBounds) req.app.locals.ngaAdminBounds = ngaAdminBounds;
-   
-   next();
-
-}), `getAdminBoundsErr`);
-
-
-exports.getAdminBoundsGJ = catchAsync((async(req, res, next) => {
 
    console.log(chalk.success(`SUCCESSFULLY CALLED 'getAdminBoundsGJ' DATA CONTROLLER FN. `));
    
    // ProcessFiles.retreiveFilesData([`nga-state-admin-bounds.geojson`, `nga-state-admin-bounds.geojson`, `nga-ward-bounds-openAFRICA.geojson`]);
 
    await ProcessFiles.initBaseFiles();
-   const ngaAdmiinBoundsLvl3Files = await ProcessFiles.returnDirectoryFiles(`/localdata/nga-ward-bounds-openAFRICA`);
 
-   const ngaAdminBounds = {
-      // ngaAdminBoundsLvl1: ngaAdmiinBoundsLvl1Files,
-      // ngaAdminBoundsLvl2: ngaAdmiinBoundsLvl2Files,
-      ngaAdminBoundsLvl3: ngaAdmiinBoundsLvl3Files
-   }
+   const ngaAdmiinBoundsLvl1Files = await ProcessFiles.returnDirectoryFiles(`/localdata/nga-state-admin-bounds`);
+   const ngaAdmiinBoundsLvl2Files = await ProcessFiles.returnDirectoryFiles(`/localdata/nga-lga-admin-bounds`);
+   const ngaAdmiinBoundsLvl3Files = await ProcessFiles.returnDirectoryFiles(`/localdata/nga-ward-admin-bounds-openAFRICA`);
+
+   const ngaAdminBoundsFiles = {
+      ngaAdminBoundsLvl1Files: ngaAdmiinBoundsLvl1Files,
+      ngaAdminBoundsLvl2Files: ngaAdmiinBoundsLvl2Files,
+      ngaAdminBoundsLvl3Files: ngaAdmiinBoundsLvl3Files
+   };
    
    res.status(200).json({
       status: `success`,
       requested_at: req.requestTime,
-      data: ngaAdminBounds,
+      data: ngaAdminBoundsFiles,
    });
 
 }), `getAdminBoundsErr`);
