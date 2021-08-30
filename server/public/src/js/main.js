@@ -54,14 +54,20 @@ import { GET_DOM_ELEMENTS } from "./utils/dom-elements.js";
             // SAVE THE RETURNED DATA
             // APP_STATE.saveDBCollection(resourceName, _MonitorExecution.getData());
 
-            // FIXME > RENDER THIS IN SEPARATE FN.
             console.log({adminBoundsResourcePath});
-            if (adminBoundsResourcePath === `v1/admin-bounds/nga-admin-bounds-lvl1`) {
-               const adminBoundsFeatCollArr = ngaAdminBoundsData.data;
-               for (let idx = 0; idx < adminBoundsFeatCollArr.length; idx++) {
-                  const adminBoundFeatColl = adminBoundsFeatCollArr[idx];
-                  _RenderEngine.renderFeatColl(adminBoundFeatColl, {useBuffer: false, lineColor: "#dfe6e9", lineWeight: 0.8, lineDashArray: "3"}) 
-               };
+
+            // FIXME > RENDER THIS IN SEPARATE FN.
+            // if (adminBoundsResourcePath === `v1/admin-bounds/nga-admin-bounds-lvl1`) {
+            //    const adminBoundsFeatCollArr = ngaAdminBoundsData.data;
+            //    for (let idx = 0; idx < adminBoundsFeatCollArr.length; idx++) {
+            //       const adminBoundFeatColl = adminBoundsFeatCollArr[idx];
+            //       _RenderEngine.renderFeatColl(adminBoundFeatColl, {useBuffer: false, lineColor: "#dfe6e9", lineWeight: 0.8, lineDashArray: "3"}) 
+            //    };
+            // };
+
+            if (adminBoundsResourcePath === `v1/admin-bounds/nga-geo-pol-regions`) {
+               const ngaGeoPolRegionsGJ = ngaAdminBoundsData.data;
+               _RenderEngine.renderFeatColl(ngaGeoPolRegionsGJ, {useBuffer: false, lineColor: "#dfe6e9", lineWeight: 1.8, lineDashArray: "3"}) 
             };   
          };
 

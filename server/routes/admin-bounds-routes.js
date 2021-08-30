@@ -19,4 +19,8 @@ router.get("/nga-admin-bounds-lvl3",
 	dataController.getAdminBoundsLvl3GeoJSON,
 );
 
+router.get("/nga-geo-pol-regions",
+	dataController.getGeoPolRegions,
+);
+
 module.exports = router;

@@ -1,9 +1,19 @@
 `use strict`
+const turf = require("@turf/turf");
 const fs = require('fs');
 const fsPromises = require('fs').promises;
 const path = require('path');
 const catchAsync = require('../utils/catch-async.js');
 const chalk = require("../utils/chalk-messages.js");
+
+
+const parseString = async str => {
+   try {
+      return JSON.parse(str);
+   } catch (parseStringErr) {
+      console.error(`parseStringErr: ${parseStringErr.message}`);
+   };
+};
 
 
 const ProcessFiles = ((root) => {
@@ -109,17 +119,60 @@ const ProcessFiles = ((root) => {
          };
       },      
 
+      getNGAGeoPolRegions: async () => {
+
+         const ngaAdmiinBoundsLvl1FeatColl = await parseString(await ProcessFiles.retreiveFilesData([`nga-state-admin-bounds.geojson`]));
+         
+         const geoPolRegionsGJ = {
+            "type": "FeatureCollection",                                                                                         
+            "features": [],
+         };    
+         
+         const geoPolRegions = {
+            northCentral: ["Benue", "Federal Capital Territory", "Kogi", "Kwara", "Nasarawa", "Niger", "Plateau"],
+            northEast: ["Adamawa", "Bauchi", "Borno", "Gombe", "Taraba", "Yobe"],
+            northWest: ["Kaduna", "Katsina", "Kano", "Kebbi", "Sokoto", "Jigawa", "Zamfara"],
+            southEast: ["Abia", "Anambra", "Ebonyi", "Enugu", "Imo"],
+            south: ["Akwa Ibom", "Bayelsa", "Cross River", "Delta", "Edo", "Rivers"],
+            southWest: ["Ekiti", "Lagos", "Osun", "Ondo", "Ogun", "Oyo"],
+         };
+         
+         Object.keys(geoPolRegions).forEach((key, idx) => {
+
+            const stateFeats = [];
+
+            const region = geoPolRegions[key];
+
+            region.forEach(state => {
+
+               // search stateAdminBounds;
+               const matchingStateFeat = ngaAdmiinBoundsLvl1FeatColl.features.filter(adminBoundFeat => adminBoundFeat.properties.admin1Name === state);
+
+               // populate feat. colls. array;
+               stateFeats.push(matchingStateFeat[0]);
+            });
+
+            // unite feat. colls.
+            const regionGJ = turf.union(...stateFeats);
+            
+            // derive properties
+            regionGJ.properties = {
+               "regionName": key,
+               "admin1Names": geoPolRegions[key],
+            };
+            
+            console.log({regionGJ});
+
+            // return united feats.
+            geoPolRegionsGJ.features.push(regionGJ)
+         });
+         
+         // save to file
+         fs.writeFile(path.resolve(`${__approotdir}/localdata/nga-geo-pol-regions.geojson`), JSON.stringify(geoPolRegionsGJ), () => console.log(chalk.warningBright(`nga-geo-pol-regions.geojson file created`)));
+      },
+
    };
 })(__approotdir);
-
-
-const parseString = async str => {
-   try {
-      return JSON.parse(str);
-   } catch (parseStringErr) {
-      console.error(`parseStringErr: ${parseStringErr.message}`);
-   };
-};
 
 
 // REMOVE > DEPRC.
@@ -165,7 +218,7 @@ exports.getAdminBoundsLvl2GeoJSON = catchAsync((async(req, res, next) => {
       requested_at: req.requestTime,
       data: ngaAdmiinBoundsLvl2Files,
    });
-}), `getAdminBoundsLvl1Err`);
+}), `getAdminBoundsLvl2Err`);
 
 exports.getAdminBoundsLvl3GeoJSON = catchAsync((async(req, res, next) => {
    const ngaAdmiinBoundsLvl3Files = await ProcessFiles.returnDirectoryFiles(`/localdata/nga-ward-admin-bounds-openAFRICA`);
@@ -175,6 +228,15 @@ exports.getAdminBoundsLvl3GeoJSON = catchAsync((async(req, res, next) => {
       data: ngaAdmiinBoundsLvl3Files,
    });
 }), `getAdminBoundsLvl3Err`);
+
+exports.getGeoPolRegions = catchAsync((async(req, res, next) => {
+   const ngaGeoPolRegionsGJ = await parseString(await ProcessFiles.retreiveFilesData([`nga-geo-pol-regions.geojson`]));
+   res.status(200).json({
+      status: `success`,
+      requested_at: req.requestTime,
+      data: ngaGeoPolRegionsGJ,
+   });
+}), `getGeoPolRegionsErr`);
 
 
 // REMOVE > DEPRC.
