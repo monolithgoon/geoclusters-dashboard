@@ -67,7 +67,7 @@ import { GET_DOM_ELEMENTS } from "./utils/dom-elements.js";
 
             if (adminBoundsResourcePath === `v1/admin-bounds/nga-geo-pol-regions`) {
                const ngaGeoPolRegionsGJ = ngaAdminBoundsData.data;
-               _RenderEngine.renderFeatColl(ngaGeoPolRegionsGJ, {useBuffer: false, lineColor: "#dfe6e9", lineWeight: 1.8, lineDashArray: "3"}) 
+               _RenderEngine.renderFeatColl(ngaGeoPolRegionsGJ, {useBuffer: false, lineColor: "#BDC581", lineWeight: 1}) 
             };   
          };
 
