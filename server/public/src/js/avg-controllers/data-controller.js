@@ -10,9 +10,7 @@ export function _retreiveClusterGJDatasets() {
 	try {
 		
 		const geoClusters = JSON.parse(_ManipulateDOM.getDataset(GET_DOM_ELEMENTS().geoClustersDatasetEl));
-					
-		APP_STATE.saveDBCollection(`geo-clusters`, [...geoClusters]); 
-	
+						
 		return {
 			geoClusters,
 		};
@@ -25,7 +23,7 @@ export function _retreiveClusterGJDatasets() {
 
 async function queryAPI(fetch, apiHost, apiResourcePath, {queryString=``}) {
 
-	console.log(`%c ${this.currentTarget} is getting latest data from API`, `background-color: lightgrey; color: blue;`);
+	// console.log(`%c ${this.currentTarget} is getting latest data from API`, `background-color: lightgrey; color: blue;`);
 
 	try {
 		
@@ -49,7 +47,7 @@ async function queryAPI(fetch, apiHost, apiResourcePath, {queryString=``}) {
 };
 
 
-export async function _getAPIResource(eventObj, resourcePath, resourceHost) {
+export async function _getAPIResource(eventObj, resourceHost, resourcePath) {
 
 	try {
 
@@ -74,7 +72,7 @@ export async function _getAPIResource(eventObj, resourcePath, resourceHost) {
 		// };
 
 	} catch (getAdminBoundsErr) {
-			console.error(`getAdminBoundsErr: ${getAdminBoundsErr.message}`)
+			console.error(`getAPIResourceErr: ${getAdminBoundsErr.message}`)
 		};
 };
 

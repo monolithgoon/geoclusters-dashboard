@@ -8,79 +8,48 @@ import { _clientSideRouter } from "./routers/router.js";
 import { GET_DOM_ELEMENTS } from "./utils/dom-elements.js";
 
 
-(function initApp() {
+const InitApp = (() => {
 
-   window.addEventListener(`DOMContentLoaded`, async (windowObj) => {
-      
-      // save the UI default settings
-      APP_STATE.saveDefaultSettings(_pollAVGSettingsValues());
+   // nothing here;
+   function renderGeoPolRegions(resourceName, featColl) {
+      if (resourceName === `nga-geo-pol-regions` && featColl) {
+         _RenderEngine.renderFeatColl(featColl, {useBuffer: false, lineColor: "#BDC581", lineWeight: 0.8});
+      };
+   };
 
-      // GET CLUSTERS' DATA
-      const { geoClusters } = _retreiveClusterGJDatasets();
-      // const geoClusters = _TraverseObject.evaluateValue(APP_STATE.returnDBCollection("geo-clusters"), "data");
-
-      if (geoClusters && geoClusters.length > 0) { 
+   //
+   async function renderClustersData (featCollArray) {
+      if (featCollArray && featCollArray.length > 0) { 
          // RENDER CLUSTERS' DATA ON BASE MAP
-         await _RenderEngine.renderClusters(geoClusters, {
+         await _RenderEngine.renderClusters(featCollArray, {
             useBuffer: _pollAVGSettingsValues().bufferFeatsChk ,
             bufferUnits: _pollAVGSettingsValues().distanceUnits,
             bufferAmt: APP_STATE.CONFIG_DEFAULTS.RENDERED_PLOT_BUFFER,
          });
       };
-      
+   };
 
-      // GET ADMIN BOUNDS GEOJSON
-      (async function retreiveAdminBoundsGJ (window) {
+   return {
 
-         const apiHost = APP_STATE.CONFIG_DEFAULTS.ADMIN_BOUNDS_GEOJSON_API_HOST;
-         const adminBoundsAPIResourcePaths = APP_STATE.CONFIG_DEFAULTS.ADMIN_BOUNDS_GEOJSON_API_RESOURCE_PATHS;
+      retreiveCachedClusters: async () => {
 
-         for (const adminBoundsResourcePath of adminBoundsAPIResourcePaths) {
+         // GET CLUSTERS' DATA
+         const { geoClusters } = _retreiveClusterGJDatasets();
+         // const geoClusters = _TraverseObject.evaluateValue(APP_STATE.returnDBCollection("geo-clusters"), "data");
 
-            const ngaAdminBoundsData = await _getAPIResource(window, adminBoundsResourcePath, apiHost);
-            console.log({ngaAdminBoundsData});
-            
-            // const ngaAdminBoundsLvl1Arr = ngaAdminBoundsData.data.ngaAdminBoundsLvl1Files;
-            // const ngaAdminBoundsLvl2Arr = ngaAdminBoundsData.data.ngaAdminBoundsLvl2Files;
-            // const ngaAdminBoundsLvl3Arr = ngaAdminBoundsData.data.ngaAdminBoundsLvl3Files;
+         APP_STATE.saveDBCollection(`geo-clusters`, [...geoClusters]);
 
-            // console.log({ngaAdminBoundsLvl1Arr});
-            // console.log({ngaAdminBoundsLvl2Arr});
-            // console.log({ngaAdminBoundsLvl3Arr});
-   
-            // get the resource name
-            // const resourceName = adminBoundsResourcePath.slice(adminBoundsResourcePath.indexOf('/')+1);
-            
-            // SAVE THE RETURNED DATA
-            // APP_STATE.saveDBCollection(resourceName, _MonitorExecution.getData());
-
-            console.log({adminBoundsResourcePath});
-
-            // FIXME > RENDER THIS IN SEPARATE FN.
-            // if (adminBoundsResourcePath === `v1/admin-bounds/nga-admin-bounds-lvl1`) {
-            //    const adminBoundsFeatCollArr = ngaAdminBoundsData.data;
-            //    for (let idx = 0; idx < adminBoundsFeatCollArr.length; idx++) {
-            //       const adminBoundFeatColl = adminBoundsFeatCollArr[idx];
-            //       _RenderEngine.renderFeatColl(adminBoundFeatColl, {useBuffer: false, lineColor: "#dfe6e9", lineWeight: 0.8, lineDashArray: "3"}) 
-            //    };
-            // };
-
-            if (adminBoundsResourcePath === `v1/admin-bounds/nga-geo-pol-regions`) {
-               const ngaGeoPolRegionsGJ = ngaAdminBoundsData.data;
-               _RenderEngine.renderFeatColl(ngaGeoPolRegionsGJ, {useBuffer: false, lineColor: "#BDC581", lineWeight: 1}) 
-            };   
-         };
-
-      })(windowObj);
-
+         // RENDER ON MAP
+         await renderClustersData(geoClusters);
+      },
 
       // GET FRESH DATA FROM DB.
       // FIXME > DOWNLOAD COLLS. IN RESPONSE TO DB. INSERTS
-      (async function retreiveLiveData (window) {
-
+      renderLiveClusters: async (window) => {
+         
          // await _downloadDBCollections(window);
 
-         (function renderLiveData() {
+         (function renderLiveClusters() {
          
             const legacyClustersColl = _TraverseObject.evaluateValue(APP_STATE.returnDBCollection("legacy-agcs"), "data");
             
@@ -98,8 +67,48 @@ import { GET_DOM_ELEMENTS } from "./utils/dom-elements.js";
                };
             };
          })();      
+      },
 
-      })(windowObj);
+      // GET ADMIN BOUNDS GEOJSON
+      retreiveAdminBoundsGJ: async (window) => {
+
+         const apiHost = APP_STATE.CONFIG_DEFAULTS.ADMIN_BOUNDS_GEOJSON_API_HOST;
+         const adminBoundsAPIResourcePaths = APP_STATE.CONFIG_DEFAULTS.ADMIN_BOUNDS_GEOJSON_API_RESOURCE_PATHS;
+
+         for (const adminBoundsResourcePath of adminBoundsAPIResourcePaths) {
+
+            console.log({adminBoundsResourcePath});
+
+            // get the resource name
+            const resourceName = adminBoundsResourcePath.slice(adminBoundsResourcePath.indexOf('/nga') + 1);
+            console.log({resourceName});
+
+            const adminBoundsResource = await _getAPIResource(window, apiHost, adminBoundsResourcePath);
+            console.log({adminBoundsResource});
+                           
+            // SAVE THE RETURNED DATA
+            APP_STATE.saveDBCollection(resourceName, adminBoundsResource.data);
+
+            // RENDER ON MAP
+            renderGeoPolRegions(resourceName, adminBoundsResource.data);
+         };
+      },
+   };
+})();
+
+
+(() => {
+
+   window.addEventListener(`DOMContentLoaded`, async (windowObj) => {
+      
+      // save the UI default settings
+      APP_STATE.saveDefaultSettings(_pollAVGSettingsValues());
+
+      await InitApp.retreiveCachedClusters();
+
+      await InitApp.retreiveAdminBoundsGJ();
+      
+      await InitApp.renderLiveClusters(windowObj);
 
       // SANDBOX
       //    document.body.addEventListener('click', e => {
@@ -114,4 +123,5 @@ import { GET_DOM_ELEMENTS } from "./utils/dom-elements.js";
       //    // init. the client side router
       //    _clientSideRouter();
    });
+
 })();

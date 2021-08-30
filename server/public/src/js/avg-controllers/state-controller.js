@@ -42,8 +42,8 @@ export const APP_STATE = (function() {
                                     
       CLUSTER_RESULT_DATA_ATTR_NAME: `geoclusterdatastream`,
 
-      // ADMIN_BOUNDS_GEOJSON_API_HOST: `http://127.0.0.1:1010`,
-      ADMIN_BOUNDS_GEOJSON_API_HOST: `https://avgmap.herokuapp.com`,
+      ADMIN_BOUNDS_GEOJSON_API_HOST: `http://127.0.0.1:1010`,
+      // ADMIN_BOUNDS_GEOJSON_API_HOST: `https://avgmap.herokuapp.com`,
 
       // ADMIN_BOUNDS_GEOJSON_API_RESOURCE_PATHS: [`v1/admin-bounds/nga-admin-bounds`],
       // ADMIN_BOUNDS_GEOJSON_API_RESOURCE_PATHS: [`v1/admin-bounds/nga-geo-pol-regions`, `v1/admin-bounds/nga-admin-bounds-lvl1`, `v1/admin-bounds/nga-admin-bounds-lvl2`, `v1/admin-bounds/nga-admin-bounds-lvl3`],
