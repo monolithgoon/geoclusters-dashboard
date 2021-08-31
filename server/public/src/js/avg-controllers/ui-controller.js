@@ -6,7 +6,7 @@ import { APP_STATE } from "./state-controller.js";
 import { _getClusterFeatProps, _GetClusterProps } from "../interfaces/cluster-props-adapter.js";
 import { _GenerateClusterFeatMarkup, _GenerateClusterMarkup, _GenClusterModalMarkup } from "./markup-generator.js";
 import { _clientSideRouter, _navigateTo } from "../routers/router.js";
-import { GET_DOM_ELEMENTS, DOM_ELEMENTS } from "../utils/dom-elements.js";
+import { GET_DOM_ELEMENTS } from "../utils/dom-elements.js";
 
 
 export const _ManipulateDOM = (() => {
@@ -328,7 +328,7 @@ export const _PollAppSettings = ((dom) => {
       },
    };
 
-})(DOM_ELEMENTS);
+})(GET_DOM_ELEMENTS());
 
 
 export const _PopulateDOM = ((dom) => {
@@ -418,7 +418,7 @@ export const _PopulateDOM = ((dom) => {
                   // ASSIGN A UNIQE ID TO THE CARD DIV
                   clusterFeatCard.id = _ProcessGeoJSON.getId(clusterFeature);
       
-                  clusterFeatCard.addEventListener('click', e => { DOMSequence.featCardClickSeq.call(e, clusterFeatures); });
+                  clusterFeatCard.addEventListener('click', evt => { DOMSequence.featCardClickSeq.call(evt, clusterFeatures, evt); });
       
                   _ManipulateDOM.populateDataset(clusterFeatCard, `clusterfeatdatastream`, JSON.stringify(clusterFeature));
       
@@ -512,20 +512,20 @@ const DOMSequence = ((dom) => {
        * 3. Close all other popups and display popup for clicked store
        * 4. Highlight listing in sidebar (and remove highlight for all other listings)
        **/
-      featCardClickSeq: (clusterFeatures) => {
+      featCardClickSeq: (clusterFeatures, evt) => {
   
         try {
            
            for (var i = 0; i < clusterFeatures.length; i++) {
   
               // this => clusterFeatCard
-              if (this.currentTarget.id === _ProcessGeoJSON.getId(clusterFeatures[i])) {
+              if (evt.currentTarget.id === _ProcessGeoJSON.getId(clusterFeatures[i])) {
                  _RenderEngine.panToClusterPlot(clusterFeatures[i], {zoomLevel: _pollAVGSettingsValues().clusterMap.zoomValue});
                  _RenderEngine.renderFeatPopup(_getClusterFeatProps(clusterFeatures[i], i), _TurfHelpers.getLngLat(clusterFeatures[i]));
               };
            };
   
-           _ManipulateDOM.addRemoveClass(this.currentTarget, 'selected');
+           _ManipulateDOM.addRemoveClass(evt.currentTarget, 'selected');
   
         } catch (cardClickSeqErr) {
            console.error(`cardClickSeqErr: ${cardClickSeqErr.message}`);
@@ -534,6 +534,26 @@ const DOMSequence = ((dom) => {
    };
 
 })(GET_DOM_ELEMENTS());
+
+function featCardClickSeq (clusterFeatures) {
+
+  try {
+     
+     for (var i = 0; i < clusterFeatures.length; i++) {
+
+        // this => clusterFeatCard
+        if (this.currentTarget.id === _ProcessGeoJSON.getId(clusterFeatures[i])) {
+           _RenderEngine.panToClusterPlot(clusterFeatures[i], {zoomLevel: _pollAVGSettingsValues().clusterMap.zoomValue});
+           _RenderEngine.renderFeatPopup(_getClusterFeatProps(clusterFeatures[i], i), _TurfHelpers.getLngLat(clusterFeatures[i]));
+        };
+     };
+
+     _ManipulateDOM.addRemoveClass(this.currentTarget, 'selected');
+
+  } catch (cardClickSeqErr) {
+     console.error(`cardClickSeqErr: ${cardClickSeqErr.message}`);
+  };
+};
 
 
 const DelegateImputsEvents = (dom => {

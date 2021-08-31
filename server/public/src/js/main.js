@@ -77,8 +77,6 @@ const InitApp = (() => {
 
          for (const adminBoundsResourcePath of adminBoundsAPIResourcePaths) {
 
-            console.log({adminBoundsResourcePath});
-
             // get the resource name
             const resourceName = adminBoundsResourcePath.slice(adminBoundsResourcePath.indexOf('/nga') + 1);
             console.log({resourceName});

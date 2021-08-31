@@ -36,6 +36,8 @@ section.right-pane-container {
    opacity: 0.8;
    opacity: 1;
    transition: opacity .2s ease-in;
+   
+   height: 100%;
 }
 
 .right-pane-content-body:hover {
@@ -71,6 +73,7 @@ section.right-pane-container {
    display: grid;
    /* grid-template-rows: 40vh 45px calc(40vh - 60px) auto; */
    grid-template-rows: 35vh 45px calc(43vh - 20px);
+   grid-template-rows: auto 45px 40vh;
 }
 
 .cluster-details-tab-pane .tab-pane-footer {

@@ -3,7 +3,7 @@ import { AVG_BASE_MAP, CLUSTER_PLOTS_MAP, FEAT_DETAIL_MAP, _getTileLayers } from
 import { _clusterFeatPopupMarkup, _GenerateClusterFeatMarkup } from "../avg-controllers/markup-generator.js";
 import { _ManipulateDOM, _pollAVGSettingsValues } from "../avg-controllers/ui-controller.js";
 import { LAYER_COLORS } from "../utils/mapbox-layer-colors.js";
-import { _TurfHelpers, _getBufferedPolygon, _ProcessGeoJSON, _GeometryMath, _getUsableGeometry, _mandatoryParam } from "../utils/helpers.js";
+import { _TurfHelpers, _getBufferedPolygon, _ProcessGeoJSON, _GeometryMath, _getUsableGeometry, _mandatoryParam, _joinWordsArray } from "../utils/helpers.js";
 import { _getClusterFeatProps } from "../interfaces/cluster-props-adapter.js";
 
 
@@ -89,19 +89,19 @@ const LeafletMapsSetup = ((baseMap, featDetailMap)=>{
    
       switch (true) {
    
-         case mapZoom < 8:
+         case mapZoom < 9.5:
             map.addLayer(googleHybrid);
             removeTileLayers(map, {keepLayer: googleHybrid});
             break
          
-         case mapZoom > 8 && mapZoom < 11.5:
-            map.addLayer(osmStd);
-            removeTileLayers(map, {keepLayer: osmStd});
+         case mapZoom > 9.5 && mapZoom < 11.5:
+            map.addLayer(googleStreets);
+            removeTileLayers(map, {keepLayer: googleStreets});
             break;
    
          case mapZoom > 11.5 && mapZoom < 13:
-            map.addLayer(googleStreets);
-            removeTileLayers(map, {keepLayer: googleStreets});
+            map.addLayer(osmStd);
+            removeTileLayers(map, {keepLayer: osmStd});
 
             break;
    
@@ -132,10 +132,10 @@ const LeafletMapsSetup = ((baseMap, featDetailMap)=>{
       const zoomVisibilityRank = (function getVisibilityRank(zoomLevel) {
          let visRank;
          switch (true) {
-            case zoomLevel < 8.5:
+            case zoomLevel < 8.8:
                visRank = 1;
                break;
-            case zoomLevel > 8.5 && zoomLevel < 12:
+            case zoomLevel > 8.8 && zoomLevel < 12:
                visRank = 2;
                break;
             case zoomLevel > 12 && zoomLevel < 14:
@@ -552,7 +552,8 @@ const LeafletMaps = (baseMap => {
       },
       fitFeatBounds: (geoJSON, {map=baseMap}) => {
          const leafletGJLayer = L.geoJson(geoJSON);
-         map.fitBounds(leafletGJLayer.getBounds(), {padding: [150, 150]});
+         // map.fitBounds(leafletGJLayer.getBounds(), {padding: [150, 150]});
+         map.fitBounds(leafletGJLayer.getBounds(), {padding: [130, 80]});
       },
       addPointMarker: (gjPointFeat, {map=baseMap, zoomLevel}) => {
          // TODO

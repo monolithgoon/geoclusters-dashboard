@@ -271,7 +271,18 @@
       
       .metadata-label--turn-by-turn:hover {
          background-color: pink;
-         color: blue;
+         background-color: #00cec9;
+         color: black;
+      }
+      
+      .metadata-label--turn-by-turn > span {
+         height: 100%;
+         width: 100%;
+         display: grid;
+         place-items: center;
+      }
+      .metadata-label--turn-by-turn > span:hover {
+         transform: scale(1.2);
       }
       
       .metadata-label--turn-by-turn > a:active {

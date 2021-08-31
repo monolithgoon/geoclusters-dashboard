@@ -89,9 +89,9 @@ block dashboard
                     span#results_status(role='status')
                     span#results_count.results-count= `${geoClusters.length} AGCs`
 
-                  button.btn.btn-outline-primary.btn-sm(title='Show or Hide Sidebar' aria-label='Show or hide sidebar' aria-haspopup='true' tabindex='0') Collapse
+                  //- button.btn.btn-outline-primary.btn-sm.pane-resize-btn(title='Show or Hide Sidebar' data-bs-toggle="collapse" data-bs-target="#left_pane_content" aria-label='Show or hide sidebar' aria-haspopup='true' tabindex='0') Resize
 
-                .left-pane-content
+                #left_pane_content.left-pane-content
                   .search-wrapper.line-3pt
                     .search-input-group
                       label(for='search_input')
@@ -315,7 +315,7 @@ block dashboard
               section#hidden_pane_container.hidden-pane-container
                 .pane-controls
                   .line-height-pt6 Filters
-                  button.btn.btn-outline-primary.btn-sm(type='button' data-bs-toggle='collapse' data-bs-target='#hidden_pane_content' aria-expanded='false' aria-controls='hidden_pane_content')
+                  button.btn.btn-outline-primary.btn-sm.pane-resize-btn(type='button' data-bs-toggle='collapse' data-bs-target='#hidden_pane_content' aria-expanded='false' aria-controls='hidden_pane_content')
                     | Expand
                   //- button.btn.btn-outline-danger.btn-sm(type='button' data-bs-toggle='collapse' data-bs-target='#collapseExample' aria-expanded='false' aria-controls='collapseExample')
                   //-   | Close
@@ -690,7 +690,7 @@ block dashboard
               section.right-pane-container
                 .pane-controls
                   .line-height-pt6 AGC Insights &amp; Details
-                  button.btn.btn-outline-primary.btn-sm(type='button' data-bs-toggle='collapse' data-bs-target='#right_pane_content' aria-expanded='false' aria-controls='right_pane_content')
+                  button.btn.btn-outline-primary.btn-sm.pane-resize-btn(type='button' data-bs-toggle='collapse' data-bs-target='#right_pane_content' aria-expanded='false' aria-controls='right_pane_content')
                     | Resize
 
                 #right_pane_content.right-pane-content.show
