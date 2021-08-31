@@ -23,7 +23,7 @@ export function _retreiveClusterGJDatasets() {
 
 async function queryAPI(fetch, apiHost, apiResourcePath, {queryString=``}) {
 
-	// console.log(`%c ${this.currentTarget} is getting latest data from API`, `background-color: lightgrey; color: blue;`);
+	console.log(`%c ${this.currentTarget} is getting latest data from API`, `background-color: lightgrey; color: blue;`);
 
 	try {
 		

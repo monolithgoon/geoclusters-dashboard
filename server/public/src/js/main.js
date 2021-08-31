@@ -106,7 +106,7 @@ const InitApp = (() => {
 
       await InitApp.retreiveCachedClusters();
 
-      await InitApp.retreiveAdminBoundsGJ();
+      await InitApp.retreiveAdminBoundsGJ(windowObj);
       
       await InitApp.renderLiveClusters(windowObj);
 
