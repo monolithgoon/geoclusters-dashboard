@@ -393,6 +393,13 @@ line-height: 15px;
 }
 
 @font-face {
+	font-family: 'UberMove';
+	src: url('https://static2.sharepointonline.com/files/fabric/assets/fonts/segoeui-westeuropean/segoeui-regular.woff2') format('woff2'), url('https://static2.sharepointonline.com/files/fabric/assets/fonts/segoeui-westeuropean/segoeui-regular.woff') format('woff');
+	src: url('../../assets/fonts/UberMove-Regular.woff2') format('woff2');
+	font-style: normal;
+}
+
+@font-face {
 	font-family: "Fira Santa";
 	/* src: url('../../assets/fonts/FiraSans-ExtraBold.ttf') format('ttf'); */
 	src: url('../../assets/fonts/FiraSans-Bold.ttf') format('ttf');

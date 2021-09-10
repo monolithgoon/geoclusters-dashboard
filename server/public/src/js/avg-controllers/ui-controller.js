@@ -47,6 +47,14 @@ export const _ManipulateDOM = (() => {
 			};
 		},
 
+      toggleInnerHTML: (element, text1, text2) => {
+         if (element) {
+            console.log({element})
+            if (element.innerHTML === text1) element.innerHTML = text2;
+            if (element.innerHTML === text2) element.innerHTML = text1;
+         };
+      },
+
 		affectDOMElement: (elementId, activeClass) => {
 			const relatedElement = document.getElementById(elementId);
 			_ManipulateDOM.addRemoveClass(relatedElement, activeClass);
@@ -643,6 +651,13 @@ const DelegateImputsEvents = (dom => {
             };
          });
       });
+   };
+
+   console.log(dom.paneResizeBtns);
+   if (dom.paneResizeBtns) {
+      dom.paneResizeBtns.forEach(btn => btn.addEventListener(`click`, () => {
+        _ManipulateDOM.toggleInnerHTML(btn, "Expand", "Collapse");
+      }));
    };
 
    // CLUSTER RESULT TITLE CLICK HAND.

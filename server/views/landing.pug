@@ -6,8 +6,32 @@ block append landing-page-head-scripts
 block landing-page
 
   .floating-pane
-    div #{totalNumClusters} AGCs
-    div #{totalNumFeatures} Farmers
+    .top-section
+      div 
+        span #{totalNumClusters} 
+        span AGCS
+      div 
+        span #{totalNumFeatures} 
+        span FARMERS
+    .bottom-section
+      div 
+        span NORTH CENTRAL
+        span 2,230
+      div 
+        span NORTH EAST
+        span 2,360
+      div 
+        span NORTH WEST
+        span 550
+      div 
+        span SOUTH EAST 
+        span 1,063
+      div 
+        span SOUTH
+        span 110
+      div 
+        span SOUTH WEST 
+        span 635 
 
   .welcome-pane-container
 
@@ -73,7 +97,7 @@ block landing-page
       var elem = document.documentElement;
 
       //- View in fullscreen
-      function openFullscreen() {
+      function openFullScreen() {
         if (elem.requestFullscreen) {
           elem.requestFullscreen()
             .then(function() {
@@ -88,9 +112,15 @@ block landing-page
         } else if (elem.msRequestFullscreen) { /* IE11 */
           elem.msRequestFullscreen();
         };
-      };
 
-      openFullscreen();
+        //- REMOVE THE CLICK LIST. AFTER 2 SECONDS
+        if (!window.screenTop && !window.screenY) {
+          console.log('Browser is in fullscreen');
+          setTimeout(()=>{
+            document.removeEventListener('click', openFullScreen);
+          }, 2000)
+        };        
+      };
 
       //- INIT. LANDING PAGE MAP
       mapboxgl.accessToken = `pk.eyJ1IjoibW9ub2xpdGhnb29uIiwiYSI6ImNrN3B1MnNjaDBhNTczcHFkdmJ0aHR6dWEifQ.O0mHuJ2wKNqKz3E_BIsnog`;
@@ -148,8 +178,16 @@ block landing-page
 
       const appActivityInd = document.querySelector(`.app-activity-indicator`);
 
+      //- DELEGATION
+
+      //- CLICK PAGE FOR FULL SCREEN
+      document.addEventListener('click', openFullScreen);
+
       if (loginEmailInput) {
         loginEmailInput.addEventListener('keyup', e => {
+
+          openFullScreen();
+          
           const isValid = loginEmailInput.checkValidity();
           if (isValid) {
             loginNextBtn.disabled = false;

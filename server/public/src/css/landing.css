@@ -49,16 +49,16 @@
    
    display: grid;
    column-gap: 5px;
-   row-gap: 15px;
+   row-gap: auto;
 
    grid-template-columns: 0.5fr auto;
-   grid-template-rows: repeat(4, 1fr);
+   grid-template-rows: 1fr repeat(2, auto) 1fr;
 
    grid-template-areas:
-   "brands brands"
-   ". brand-title"
-   ". brand-title"
-   "logo logo";
+      "brands brands"
+      ". brand-title"
+      ". brand-title"
+      "logo logo";
 }
 
 .brand-logo,
@@ -219,11 +219,6 @@ input, button,
 }
 
 @supports (-webkit-backdrop-filter: none) or (backdrop-filter: none) {
-   .floating-pane {
-      -webkit-backdrop-filter: blur(10px);
-      backdrop-filter: blur(10px);
-      /* background-color: rgba(255, 255, 255, 0.2); */
-   }
    .welcome-pane-header {
       -webkit-backdrop-filter: blur(10px);
       backdrop-filter: blur(10px);
@@ -287,23 +282,86 @@ input, button,
 
 /* @media screen and (min-width: 968px) { */
    @media screen and (min-width: 850px) {
+
+      @supports (-webkit-backdrop-filter: none) or (backdrop-filter: none) {
+         .floating-pane .top-section {
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            /* background-color: rgba(255, 255, 255, 0.2); */
+            background-color: rgba(122, 157, 37, 0.1);
+         }
+      }      
       
       .floating-pane {
-         margin: 30px;
          margin-right: 10px;
-         padding: 8px;
-         padding: 10px;
          max-height: 20vh;
          position: absolute;
          bottom: 0;
          right: 0;
          z-index: 1;
+         
          display: grid;
+         color: inherit;
+         font-family: 'Roboto', sans-serif;
+         font-size: 0.75rem;
+         line-height: normal;
+         bottom: 9.5vh;
 
-         /* border-radius: 10px; */
-         border: 1px solid white;
+         box-shadow: 
+            0 4px 8px 0 rgba(0,0,0,0.2),
+            0 7px 20px 0 rgba(0,0,0,0.2);
+      }
+
+      .floating-pane .top-section {
+         padding: 10px;
          color: white;
-         font-family: 'Roboto', Tahoma, Geneva, Verdana, sans-serif;
+         font-size: .8rem;
+         font-size: bold;
+      }
+
+      .floating-pane .top-section {
+         display: grid;
+         grid-template-columns: repeat(2, 1fr);
+         font-size: 1.25rem;
+      }
+
+      .floating-pane .top-section > div {
+         display: grid;
+         grid-template-rows: auto 1fr;
+      }
+
+      .floating-pane .top-section > div > span:first-of-type {
+         font-family: 'UberMove';
+      }
+
+      .floating-pane .top-section > div > span:last-of-type {
+         font-size: 0.55rem;
+         color: blanchedalmond;
+         color: gainsboro;
+         color: lightgrey;
+      }
+
+      .floating-pane .bottom-section {
+         padding: 10px 0;
+         background-color: white;
+         display: grid;
+         grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .floating-pane .bottom-section > div {
+         padding: 0 10px;
+         padding-right: 0;
+         display: grid;
+         grid-template-rows: auto 1fr;
+         font-size: 0.5rem;
+         font-weight: 600;
+         color: grey;
+      }
+
+      .floating-pane .bottom-section > div > span:last-of-type {
+         font-family: 'UberMove';
+         font-size: 1.1rem;
+         color: darkolivegreen;
       }
 
       .welcome-pane-container {

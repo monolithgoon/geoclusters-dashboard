@@ -68,6 +68,11 @@ https://blog.mapbox.com/rendering-big-geodata-on-the-fly-with-geojson-vt-4e4d2a5
 // DECK.gl
 https://deck.gl/docs/get-started/using-with-map/
 https://deck.gl/examples/geojson-layer-paths/
+https://github.com/visgl/deck.gl/blob/8.5-release/examples/get-started/pure-js/leaflet/app.js
+
+
+// LEAFLET VECTOR GRID
+https://leaflet.github.io/Leaflet.VectorGrid/vectorgrid-api-docs.html
 
 
 // LOAD GEOJSON FROM URL
@@ -77,6 +82,9 @@ https://stackoverflow.com/questions/22356682/how-to-load-l-geojson-from-url
 
 // GIT
 https://learngitbranching.js.org/
+
+
+https://agromonitoring.com/api/history-ndvi
 
 
 Github Personal Access Token

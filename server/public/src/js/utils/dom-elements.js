@@ -10,6 +10,8 @@ export function GET_DOM_ELEMENTS() {
    const appActivityIndWrapper = document.querySelector(`.app-activity-indicator-wrapper`);
    const appActivityInd = document.querySelector(`.app-activity-indicator`);
 
+   const paneResizeBtns = document.querySelectorAll(`.pane-resize-btn`);
+
    // CLUSTER RESULTS
    const resultsCountDiv = document.getElementById('results_count');
    const resultsStatus = document.getElementById('results_status');
@@ -59,6 +61,8 @@ export function GET_DOM_ELEMENTS() {
       distanceUnitsRadios,
       areaUnitsRadios,
       clusterMapZoomRange,
+
+      paneResizeBtns,
 
       resultsCountDiv,
       resultsStatus,

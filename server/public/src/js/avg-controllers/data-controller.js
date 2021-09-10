@@ -71,9 +71,9 @@ export async function _getAPIResource(eventObj, resourceHost, resourcePath) {
 			return _MonitorExecution.getData();
 		// };
 
-	} catch (getAdminBoundsErr) {
-			console.error(`getAPIResourceErr: ${getAdminBoundsErr.message}`)
-		};
+	} catch (getAPIResourceErr) {
+			console.error(`getAPIResourceErr: ${getAPIResourceErr.message}`)
+	};
 };
 
 
