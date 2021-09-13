@@ -6,6 +6,12 @@ section.right-pane-container {
    display: flex;
    flex-direction: column;
    overflow: hidden;
+
+   border: 1px solid grey;
+   box-shadow: 
+   0 4px 8px 0 rgba(0,0,0,0.2),
+   0 7px 20px 0 rgba(0,0,0,0.2);
+   z-index: var(--zmax);
 }
 
 .right-pane-container .pane-controls {
@@ -24,7 +30,7 @@ section.right-pane-container {
 
 /* REMOVE */
 .right-pane-content {
-   border: 3px dashed darkorchid;
+   /* border: 3px dashed darkorchid; */
    max-height: 89vh;
 }
 

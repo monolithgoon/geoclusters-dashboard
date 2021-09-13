@@ -48,15 +48,19 @@ block dashboard
       .d-flex.align-items-start
 
         #v_pills_tab.nav.flex-column.nav-pills.me-3(role='tablist' aria-orientation='vertical')
+
           button#app_sidebar_expand_button.btn.btn-outline(type='button' title='Expand App Sidebar' aria-label='expand app sidebar' aria-controls='' aria-selected='false')
             span
               img(src='https://img.icons8.com/metro/26/000000/chevron-right.png' alt='Sidebar Toggle Button' srcset='')
+              
           button#v-pills-home-tab.nav-link(title='Home' data-bs-toggle='pill' data-bs-target='#v-pills-home' type='button' role='tab' aria-controls='v-pills-home' aria-selected='true')
             span
               img(src="https://img.icons8.com/windows/28/ffffff/compass.png" alt='Home' srcset='')
+              
           button#v_pills_avg_map_tab.nav-link.active(title='AVG Map' data-bs-toggle='pill' data-bs-target='#v_pills_avg_map_tab_content' type='button' role='tab' aria-controls='v_pills_avg_map_tab_content' aria-selected='true')
             span
               img(src="https://img.icons8.com/wired/24/ffffff/layers.png" alt='AVG Map' srcset='')
+              
           button#v_pills_manage_clusters_tab.nav-link(title='Manage Clusters' data-bs-toggle='pill' data-bs-target='#v_pills_manage_clusters_tab_content' type='button' role='tab' aria-controls='v_pills_manage_clusters_tab_content' aria-selected='true')
             span
               img(src="https://img.icons8.com/dotty/28/ffffff/add-database.png" alt='Manage Clusters' srcset='')
@@ -64,9 +68,11 @@ block dashboard
           .flex-spacer.flex-1
           a#v-pills-profile-tab.nav-link(href="/dashboard/users" data-bs-toggle='pill' data-bs-target='#v-pills-profile' type='link' role='tab' aria-controls='v-pills-profile' aria-selected='false') &#x1F680;
             //- span(style='font-size: 1rem') 
+            
           button#v-pills-users-tab.nav-link.flex-row-center-around(title="Manage Users" data-bs-toggle='pill' data-bs-target='#v-pills-user' type='button' role='tab' aria-controls='v-pills-user' aria-selected='false')
             span
               img(src="https://img.icons8.com/small/24/ffffff/user.png")
+
           button#v-pills-settings-tab.nav-link(title="Dashboard Settings" data-bs-toggle='pill' data-bs-target='#v-pills-settings' type='button' role='tab' aria-controls='v-pills-settings' aria-selected='false')
             span
               img(src="https://img.icons8.com/wired/24/ffffff/settings.png")
@@ -94,13 +100,16 @@ block dashboard
                 #left_pane_content.left-pane-content
                   .search-wrapper.line-3pt
                     .search-input-group
-                      label(for='search_input')
-                        span
-                          img(src='https://img.icons8.com/android/24/000000/search.png')
-                      input(type='search' placeholder='Search AGCs, locations or famers' aria-label='search input' id="search_input")
+                      //- label(for='search_input')
+                      //-   span
+                      //-     img(src='https://img.icons8.com/android/24/000000/search.png')
+                      input(type='search' placeholder='Search AGCs, locations or farmers' aria-label='search input' id="search_input")
                       .search-action
-                        button.btn.btn-outline(type='button' title='Cancel Search' aria-label='Cancel search' aria-haspopup='true' tabindex='0') X
-                        button.btn.btn-outline-primary.btn-sm(type='button' title='Search Go' aria-label='Search go' aria-haspopup='true' tabindex='0') Go
+                        //- button.btn.btn-outline(type='button' title='Clear Search' aria-label='Clear search' aria-haspopup='true' tabindex='0') X
+                        //- button.btn.btn-outline-primary.btn-sm(type='button' title='Search Go' aria-label='Search go' aria-haspopup='true' tabindex='0')
+                        button.btn.btn-sm(type='button' title='Search Go' aria-label='Search go' aria-haspopup='true' tabindex='0')
+                          span
+                            i.fas.fa-search
 
                   .results-container
 
@@ -316,7 +325,7 @@ block dashboard
                 .pane-controls
                   .line-height-pt6 Filters
                   button.btn.btn-outline-primary.btn-sm.pane-resize-btn(type='button' data-bs-toggle='collapse' data-bs-target='#hidden_pane_content' aria-expanded='false' aria-controls='hidden_pane_content')
-                    | Expand
+                    | Resize
                   //- button.btn.btn-outline-danger.btn-sm(type='button' data-bs-toggle='collapse' data-bs-target='#collapseExample' aria-expanded='false' aria-controls='collapseExample')
                   //-   | Close
                   button.btn-close(type="button" aria-label="Close")
@@ -620,7 +629,7 @@ block dashboard
                             .dropdown
                               a#topbar_user_drop.dropdown-toggle.ripplelink(href='#' role='button' data-bs-toggle='dropdown' aria-expanded='false')
                                 span.account-user-avatar
-                                    img.rounded-circle(src='/assets/images/users/img_avatar1.png' alt=`Photo of ${loggedInUser.user_first_name}` style='width: 30px; height: 30px')
+                                  img.rounded-circle(src='/assets/images/users/img_avatar1.png' alt=`Photo of ${loggedInUser.user_first_name}` style='width: 30px; height: 30px')
                                 span
                                   span.account-user-name= `${loggedInUser.user_first_name} ${loggedInUser.user_last_name}`
                                   //- span.account-position - Field ICT
@@ -685,13 +694,14 @@ block dashboard
                 //-         span Logout
 
               section.basemap-controls-container.flex-col.flex-end
-                .basemap-controls-placeholder.blur Map Controls
+                //- .basemap-controls-placeholder.blur Map Controls
+                .basemap-controls-placeholder.blur
 
               section.right-pane-container
                 .pane-controls
                   .line-height-pt6 AGC Insights &amp; Details
                   button.btn.btn-outline-primary.btn-sm.pane-resize-btn(type='button' data-bs-toggle='collapse' data-bs-target='#right_pane_content' aria-expanded='false' aria-controls='right_pane_content')
-                    | Expand
+                    | Resize
 
                 #right_pane_content.right-pane-content.show
 
@@ -877,7 +887,7 @@ block dashboard
                                     a.page-link(href='#') Next
 
             #avg_base_map_container.leaflet-container.leaflet-touch.leaflet-fade-anim.leaflet-grab.leaflet-touch-drag.leaflet-touch-zoom(tabindex='0')
-            
+
 
               //- #exampleModal.modal.fade.modal-dialog.modal-dialog-centered.modal-lg(tabindex='-1' aria-labelledby='exampleModalLabel' aria-hidden='true')
               #exampleModal.modal.fade(tabindex='-1' aria-labelledby='exampleModalLabel' aria-hidden='true')
@@ -977,7 +987,7 @@ block dashboard
                 .settings-sidebar-footer
                   button#settings_default_reset.btn.btn-danger.btn-sm Reset to Defaults
 
-          #v_pills_manage_clusters_tab_content.tab-pane(role='tabpanel' aria-labelledby='v_pills_manage_clusters_tab_content') Legacy Cluster Import
+          #v_pills_manage_clusters_tab_content.tab-pane(role='tabpanel' aria-labelledby='v_pills_manage_clusters_tab') Legacy Cluster Import
           #v-pills-profile.tab-pane.fade(role='tabpanel' aria-labelledby='v-pills-profile-tab') Profile
           #v-pills-user.tab-pane.fade(role='tabpanel' aria-labelledby='v-pills-users-tab') Manage Users
           #v-pills-settings.tab-pane.fade(role='tabpanel' aria-labelledby='v-pills-settings-tab') Dashboard Settings

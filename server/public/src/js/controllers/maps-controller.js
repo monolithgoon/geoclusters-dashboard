@@ -178,7 +178,7 @@ const LeafletMapsSetup = ((baseMap, featDetailMap)=>{
 
    // TODO > WIP
    // Create additional Control placeholders
-   (function addControlPlaceholders(map) {
+   (function setupControlPlaceholders(map) {
       
       var corners = map._controlCorners; 
       const l = 'leaflet-'; 
@@ -203,10 +203,10 @@ const LeafletMapsSetup = ((baseMap, featDetailMap)=>{
    })(baseMap);
    
    // TODO > WIP
-   (function setupCustomControls(map){
+   (function addCustomControls(map){
 
       // Change the position of the Zoom Control to a newly created placeholder.
-      map.zoomControl.setPosition('basemap-controls-placeholder');
+      // map.zoomControl.setPosition('basemap-controls-placeholder');
 
       // You can also put other controls in the same placeholder.
       // L.control.scale({position: 'verticalcenterright'}).addTo(map);

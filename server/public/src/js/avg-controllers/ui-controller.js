@@ -609,7 +609,22 @@ const DelegateImputsEvents = (dom => {
       dom.sidebarExpandBtn.addEventListener(`click`, ()=>{
          dom.appSidebar.classList.toggle(`expanded`);
       });
-   };   
+   };
+
+   // RESULTS SEARCH BOX EVENT HANDLER >> NEW jQuery SEARCH 
+   $("#results_search_box").on("change paste keyup", function() {
+
+      var txt = $("#results_search_input").val();
+
+      // COMPARE SEARCH TEXT & LISTING '.item'
+      $(".result-item-title").each(function() {
+         if ( $(this).text().toUpperCase().indexOf(txt.toUpperCase()) != -1 ) {
+            $(this).show();
+         } else {
+            $(this).hide();
+         }
+      });
+   });
 
    // CHANGE CLUSTER PLOTS AREA UNITS
    if (dom.areaUnitsRadios) {
