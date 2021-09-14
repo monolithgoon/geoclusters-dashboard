@@ -24,12 +24,12 @@ section.left-pane-container a:hover {
 .left-pane-content {
    display: grid;
    grid-template-columns: 1fr;
-   grid-template-rows: auto calc(100vh - 90px);
+   grid-template-rows: auto calc(100vh - 75px);
    grid-template-areas: 
       'left-pane-s1'
       'left-pane-s2';
    font-size: var(--pt7r-font);
-   height: calc(100vh - 35px);
+   height: calc(100vh - 40px);
 }
 
 /* REMOVE */
@@ -89,7 +89,7 @@ section.left-pane-container a:hover {
    grid-template-columns: 1fr;
    grid-template-rows: auto 1fr auto;
    position: relative;
-   background-color: white;
+   background-color: transparent;
 }
 
 #results_scroll_top_button {
@@ -108,7 +108,7 @@ section.left-pane-container a:hover {
    display: flex;
    flex-direction: column;
    justify-content: flex-end;
-   background-color: inherit;
+   background-color: white;
 }
 
 .results-header > div {
@@ -127,6 +127,7 @@ section.left-pane-container a:hover {
    position: relative;
    font-family: 'Fira Sans', sans-serif;
    font-family: 'Roboto', sans-serif;
+   background-color: white;
 }
 
 .results-body .results-list-wrapper {
@@ -169,6 +170,14 @@ section.left-pane-container a:hover {
    line-height: 2;
    position: relative;
    display: none;
+}
+
+@supports (-webkit-backdrop-filter: none) or (backdrop-filter: none) {
+   .result-item-modal {
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
+      background-color: rgba(122, 157, 37, 0.2);
+   }
 }
 
 .result-item-modal.active {
