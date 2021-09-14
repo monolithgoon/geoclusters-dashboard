@@ -197,6 +197,7 @@ section.left-pane-container a:hover {
 .modal-person-avatar img {
    width: 60px;
    height: 60px;
+   border: 2px solid white;
 }
 
 .modal-person-details,

@@ -54,7 +54,8 @@
 	--filter-group-font-size: 0.6rem;
 	--pill-font-size: 0.5rem;
 	--cluster-feature-card-header-text: 0.7rem;
-	--cluster-feature-card-detail-text: 0.54rem;
+	/* --cluster-feature-card-detail-text: 0.54rem; */
+	--cluster-feature-card-detail-text: 0.6rem;
 
 	/* Z-INDEXES */
 	--z-idx-2: 500;
