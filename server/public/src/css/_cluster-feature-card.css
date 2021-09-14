@@ -145,6 +145,7 @@
    display: flex;
    justify-content: flex-start;
    flex-wrap: wrap;
+   letter-spacing: -0.5px;
 }
 
 .card-text-bottom > div:hover {

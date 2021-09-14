@@ -53,7 +53,7 @@
 	--pane-controls-font-size: 0.75rem;
 	--filter-group-font-size: 0.6rem;
 	--pill-font-size: 0.5rem;
-	--cluster-feature-card-header-text: 0.7rem;
+	--cluster-feature-card-header-text: 0.75rem;
 	/* --cluster-feature-card-detail-text: 0.54rem; */
 	--cluster-feature-card-detail-text: 0.6rem;
 
@@ -91,7 +91,7 @@ body, html {
 	font-family: "Roboto", sans-serif;
 	font-family: Shadows Into Light Two;
 	font-size: 1rem;
-	line-height: 2.3;
+	/* line-height: 2.3; */
 	-webkit-box-sizing:border-box;
 	-moz-box-sizing:border-box;
 	box-sizing:border-box;
