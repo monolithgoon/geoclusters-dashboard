@@ -1,10 +1,9 @@
 `use strict`
 import { AVG_BASE_MAP, CLUSTER_PLOTS_MAP, FEAT_DETAIL_MAP, _getTileLayers } from "../config/maps-config.js";
-import { _clusterFeatPopupMarkup, _GenerateClusterFeatMarkup } from "../avg-controllers/markup-generator.js";
+import { _getClusterFeatPopupMarkup, _GenerateClusterFeatMarkup } from "../avg-controllers/markup-generator.js";
 import { _ManipulateDOM, _pollAVGSettingsValues } from "../avg-controllers/ui-controller.js";
 import { LAYER_COLORS } from "../utils/mapbox-layer-colors.js";
 import { _TurfHelpers, _getBufferedPolygon, _ProcessGeoJSON, _GeometryMath, _getUsableGeometry, _mandatoryParam, _joinWordsArray } from "../utils/helpers.js";
-import { _getClusterFeatProps } from "../interfaces/cluster-props-adapter.js";
 
 
 const LLayerGroupController = ((leafletBaseMap, leafletModalMap)=>{
@@ -1136,8 +1135,8 @@ const MapboxMaps = ((plotsMap) => {
       // EXTRACT GEOJSON DATA FROM A MAPBOX LAYER EVENT
       getLayerData: (layer) => {
          const layerGeoJSON = layer.features[0];
-         // const layerProps = layerGeoJSON.properties; // FIXME
-         const layerProps = _getClusterFeatProps(layerGeoJSON);
+         const layerProps = layerGeoJSON.properties;
+         layerProps.featureAdmin = JSON.parse(layerGeoJSON.properties.featureAdmin)
          const lngLatCenter = layer.lngLat;
          const layerGeometry = layer.features[0].geometry;
          const layerCoords = layerGeometry.coordinates[0];
@@ -1227,13 +1226,14 @@ const MapboxMaps = ((plotsMap) => {
       },
 
       openFeatPopup: (map, props, centerLngLat) => {
+         console.log({props})
 
          MapboxMaps.clearPopups();
       
          // const popup = new mapboxgl.Popup({ className: "mapbox-metadata-popup" })
          const popup = new mapboxgl.Popup({closeOnClick: true})
             .setLngLat(centerLngLat)
-            .setHTML(_clusterFeatPopupMarkup(props))
+            .setHTML(_getClusterFeatPopupMarkup(props))
             .addTo(map);
       
             MapboxPopupsController.savePopup(popup);
@@ -1552,7 +1552,7 @@ export const _RenderEngine = (function(avgBaseMap, clusterFeatsMap) {
 
          try {
             
-            console.log(geoJSONFeat);
+            console.info({geoJSONFeat});
                         
             const gjCenterCoords = turf.coordAll(turf.centerOfMass(geoJSONFeat))[0];
             const gjBounds = turf.bbox(geoJSONFeat);

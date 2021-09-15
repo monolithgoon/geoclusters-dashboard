@@ -356,7 +356,7 @@ export const _PopulateDOM = ((dom) => {
 
          modalDiv.innerHTML = ``;
 
-         const clusterProps = _GetClusterProps(featureCollection);
+         const clusterProps = featureCollection.properties;
 
          modalDiv.innerHTML += _GenClusterModalMarkup.getInnerMarkup(clusterProps);
 
@@ -529,7 +529,7 @@ const DOMSequence = ((dom) => {
               // this => clusterFeatCard
               if (evt.currentTarget.id === _ProcessGeoJSON.getId(clusterFeatures[i])) {
                  _RenderEngine.panToClusterPlot(clusterFeatures[i], {zoomLevel: _pollAVGSettingsValues().clusterMap.zoomValue});
-                 _RenderEngine.renderFeatPopup(_getClusterFeatProps(clusterFeatures[i], i), _TurfHelpers.getLngLat(clusterFeatures[i]));
+                 _RenderEngine.renderFeatPopup(clusterFeatures[i].properties, _TurfHelpers.getLngLat(clusterFeatures[i]));
               };
            };
   
@@ -542,26 +542,6 @@ const DOMSequence = ((dom) => {
    };
 
 })(GET_DOM_ELEMENTS());
-
-function featCardClickSeq (clusterFeatures) {
-
-  try {
-     
-     for (var i = 0; i < clusterFeatures.length; i++) {
-
-        // this => clusterFeatCard
-        if (this.currentTarget.id === _ProcessGeoJSON.getId(clusterFeatures[i])) {
-           _RenderEngine.panToClusterPlot(clusterFeatures[i], {zoomLevel: _pollAVGSettingsValues().clusterMap.zoomValue});
-           _RenderEngine.renderFeatPopup(_getClusterFeatProps(clusterFeatures[i], i), _TurfHelpers.getLngLat(clusterFeatures[i]));
-        };
-     };
-
-     _ManipulateDOM.addRemoveClass(this.currentTarget, 'selected');
-
-  } catch (cardClickSeqErr) {
-     console.error(`cardClickSeqErr: ${cardClickSeqErr.message}`);
-  };
-};
 
 
 const DelegateImputsEvents = (dom => {

@@ -174,10 +174,10 @@ section.left-pane-container a:hover {
 
 @supports (-webkit-backdrop-filter: none) or (backdrop-filter: none) {
    .result-item-modal {
-      -webkit-backdrop-filter: blur(7px);
-      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(5px);
+      backdrop-filter: blur(5px);
       background-color: rgba(122, 157, 37, 0.6);
-      background-color: rgba(255, 255, 255, 0.6);
+      background-color: rgba(255, 255, 255, 0.7);
    }
 }
 
@@ -256,7 +256,7 @@ section.left-pane-container a:hover {
 .result-item-pill {
    /* padding: 3px 0; */
    margin: 3px 0;
-   margin-top: 6px;
+   margin-top: 5px;
    width: 100%;
    
    /* padding: 3px 5px;
@@ -282,7 +282,8 @@ section.left-pane-container a:hover {
    font-family: 'Roboto', sans-serif;
    font-size: 10px;
    letter-spacing: -0.2px;
-   color: #333;
+   /* color: #333; */
+   color: grey;
 }
 
 .result-item > *,

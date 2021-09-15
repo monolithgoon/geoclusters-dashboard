@@ -61,8 +61,23 @@
    line-height: 20px;
 }
 
+.bottom-section h1 > span:last-of-type {
+   padding: 5px;
+   border: 2px solid var(--bs-blue);
+}
+
+.bottom-section h1 > span:last-of-type:hover {
+   background-color: var(--bs-blue);
+}
+
+.bottom-section h1 > span:last-of-type > a:hover {
+   color: white;
+   font-weight: lighter;
+   background-color: var(--bs-blue);
+}
+
 /* ----------- Non-Retina Screens ----------- */
-@media screen and (min-device-width: 700px) and (max-device-width: 1600px) {
+@media screen and (min-device-width: 700px) {
 
    .error-page-wrapper {
       width: 30%;

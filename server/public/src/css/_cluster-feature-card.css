@@ -54,6 +54,7 @@
 
 .card-media-wrapper {
    padding: var(--card-padding-inside);
+   padding-left: 7px;
    display: grid;
    grid-template-rows: repeat(2, auto);
 }

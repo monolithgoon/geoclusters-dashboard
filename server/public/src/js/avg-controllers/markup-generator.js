@@ -73,7 +73,7 @@ export const _GenClusterModalMarkup = (() => {
       const populateMarkup = function(props) {
          const HTMLMarkup = `
             <div class="result-item-modal-header flex-row-center-btw">
-               <span>Block AGC</span><span>25 Ha.</span>
+               <span>Block AGC</span><span>${props.clusterArea.toFixed(0)} Ha.</span>
             </div>
             <div class="result-item-modal-title flex-row-center-btw">
                <span id="modal_title">${props.clusterName}</span>
@@ -88,7 +88,7 @@ export const _GenClusterModalMarkup = (() => {
                <span class="modal-person-avatar">
                   <img
                      class="rounded-circle"
-                     src="/assets/images/users/img_avatar2.png"
+                     src="/assets/images/users/img_avatar1.png"
                      alt="Modal Avatar" />
                </span>
                <span class="modal-person-details flex-col-center">Abdulsalam Dansuki, President</span>
@@ -103,7 +103,7 @@ export const _GenClusterModalMarkup = (() => {
                   capability . Funded June 17, 2019. 13.3 hectares unused.</span>
             </div>
             <div class="result-item-modal-footer flex-row-center-btw">
-               <span>200 Farmers</span><span>Kastina State</span>
+               <span>${props.clusterFeatsNum} Farmers</span><span>Kastina State</span>
             </div>
          `;
          return HTMLMarkup;
@@ -183,8 +183,7 @@ export const _GenerateClusterFeatMarkup = ((classList) => {
 })(["cluster-feature-card"]);
 
 
-export const _clusterFeatPopupMarkup = (props) => {
-
+export const _getClusterFeatPopupMarkup = (props) => {
    try {
       
       const HTMLMarkup = `
@@ -196,8 +195,8 @@ export const _clusterFeatPopupMarkup = (props) => {
       
             <div class="mapboxgl-popup-text-wrapper">
                <span class="mapboxgl-popup-title">${_.startCase(_joinWordsArray(Object.values(props.featureAdmin.admin1.titles)))}</span>
-               <span>VASTID • ${undefined}</span>
-               <span>Lat ${undefined}°N Lng ${undefined}°E </span>
+               <span>VASTID • ${props.featureID}</span>
+               <span>Lat ${props.featCenterLat.toFixed(6)}°N Lng ${props.featCenterLng.toFixed(6)}°E </span>
             </div>      
 
          </div>`
