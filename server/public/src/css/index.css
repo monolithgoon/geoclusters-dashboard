@@ -23,9 +23,7 @@
 	--app-header-height: 40px;
 	
 	/* GRIDS */
-	/* --app-grid-template-cols: 290px 240px 1.2fr 340px; */
-	--app-grid-template-cols: 290px 240px 1.2fr 1.2fr 340px;
-	--app-grid-template-cols: 260px 240px 1.2fr 1.2fr 340px;
+	--app-grid-template-cols: 290px 240px 1.2fr 1.2fr 360px;
 	--app-grid-template-rows: 0.15fr 2fr;
 	/* --app-grid-template-rows: 8vh 2fr; */
 	
