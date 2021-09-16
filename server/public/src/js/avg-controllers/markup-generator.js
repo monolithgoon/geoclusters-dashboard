@@ -132,7 +132,6 @@ export const _GenerateClusterFeatMarkup = ((classList) => {
 
       
       const populateMarkup = function(props) {
-         console.log({props});
          const plotOwnerUrl = props.featureAdmin.admin1.photoURL;
          const HTMLMarkup = `
             <div class="card-content-wrapper">
