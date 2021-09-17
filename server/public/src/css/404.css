@@ -1,6 +1,7 @@
 /* main */
 .main-container {
    width: 100vw;
+   height: 100vh;
    background: white;
    background-color: rgba(43, 49, 55, .4);
    font-family: 'Roboto', sans-serif;
@@ -9,7 +10,7 @@
 .error-page-wrapper {
    margin: auto;
    width: 100%;
-   height: 100vh;
+   height: 100%;
    background-color: rgba(43, 49, 55, .4);
    background: white;
    display: grid;
@@ -18,7 +19,6 @@
 
 .error-page-wrapper h1 {
    margin: 0;
-   padding: 20px 30px;
    font-family: 'Roboto', sans-serif;
    font-weight: bolder;
 }
@@ -53,33 +53,17 @@
    background: white;
 }
 
-.bottom-section {
-   padding-top: 20px;
-   padding-bottom: 20px;
-}
-
 .bottom-section h1 {
-   padding-top: 0;
-   padding-bottom: 15px;
+   padding: auto 0;
+   padding: 20px;
    font-size: 1rem;
    font-weight: normal;
-   line-height: 20px;
-
    display: flex;
    flex-direction: column;
    justify-content: space-around;
 }
 
-/* .bottom-section h1 > div:last-of-type {
-   padding: 5px;
-   border: 2px solid var(--bs-blue);
-}
-
-.bottom-section h1 > div:last-of-type:hover {
-   background-color: var(--bs-blue);
-} */
-
-.bottom-section h1 > div:last-of-type > a {
+.bottom-section h1 > div > a {
    display: flex;
    flex-direction: row;
    justify-content: center;
@@ -88,7 +72,7 @@
    font-weight: lighter;
 }
 
-.bottom-section h1 > div:last-of-type > a > i{
+.bottom-section h1 > div > a > i{
    padding: 0 10px;
 }
 
@@ -97,6 +81,7 @@
 
    .error-page-wrapper {
       width: 25%;
+      width: 30%;
    }
 
    .top-section h1 {

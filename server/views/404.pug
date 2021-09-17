@@ -8,16 +8,14 @@ block 404
 
          section.top-section
             h1= `${err_status_code}. Blocked.`
-            p You do not have permission to view this resource.
+            //- p You do not have permission to view this resource.
+            p= err_msg
 
          .page-graphic
             img(src="/assets/images/noun-dark-contour.svg" alt="")
 
          section.bottom-section
-
             h1
-               div= err_msg
-               br
                div
                   a.btn.btn-primary(href="/landing" role="button") Sign In
                      i(class="fas fa-arrow-circle-right")
