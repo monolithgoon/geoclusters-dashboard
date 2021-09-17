@@ -39,11 +39,11 @@
 }
 
 .top-section {
-   padding: auto;
+   padding-bottom: 20px;
 }
 
 .top-section h1 {
-   padding: 20px 35px;
+   padding: 20px 35px 10px;
    font-size: 55px;
    line-height: 50px;
 }
@@ -54,7 +54,6 @@
 }
 
 .bottom-section h1 {
-   padding: auto 0;
    padding: 20px;
    font-size: 1rem;
    font-weight: normal;
