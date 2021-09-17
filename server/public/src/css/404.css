@@ -61,7 +61,8 @@
 .bottom-section h1 {
    padding-top: 0;
    padding-bottom: 15px;
-   font-size: 18px;
+   font-size: 1rem;
+   font-weight: normal;
    line-height: 20px;
 
    display: flex;
