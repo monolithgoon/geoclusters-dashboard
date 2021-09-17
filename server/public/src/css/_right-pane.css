@@ -175,6 +175,7 @@ section.right-pane-container {
    padding: var(--card-margin-outside);
    padding-top: 0;
    background-color: #f8f9fa;
+   background-color: #e4ebf1;
    overflow-y: scroll;
 
    display: flex;
