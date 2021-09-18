@@ -284,15 +284,16 @@ block dashboard
                                 input.form-check-input.result-item-checkbox(id=`select_result_item_chk_${clusterIdx}` type='checkbox' value=`resultItemCheckbox${clusterIdx}` aria-label='select result checkbox')
                             .result-item-body.flex-col-start
                               small.result-item-subtitle
-                                a(href='#')= (geoCluster.properties.clusterLocation)
-                                //- a(href='#') Placeholder Cluster Location
+                                a.flex-row-start(href='#')
+                                  span= (geoCluster.properties.clusterLocation)
+                                  svg.location-svg-icon(preserveAspectRatio="xMidYMid" viewBox="0 0 24 24")
+                                    path(d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z")
                               .result-item-pill
                                 span= `${geoCluster.properties.clusterFeatsNum} Farmers`
                                 span=`•`
                                 span= `${geoCluster.properties.clusterArea.toFixed(0)} Hectares`
                                 span=`•`
                                 span= `${geoCluster.properties.primaryCommodity}`
-                              //- .result-item-text Lorem ipsum dolor sit, amet consectetur adipisicing elit. Inventore, ex.
                               .result-item-text= `Unused Land • ${geoCluster.properties.clusterUnusedArea.toFixed(1)} hectares • ${geoCluster.properties.clusterID}`
                           .h-divider-grey-100
 

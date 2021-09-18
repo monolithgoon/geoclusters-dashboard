@@ -166,6 +166,12 @@ div.line-1pt {
    align-items: flex-start;
 }
 
+.flex-row-end {
+   display: flex;
+   flex-direction: row;
+   align-items: flex-end;
+}
+
 .flex-row-btw,
 .flex-row-center-btw {
    display: flex;
@@ -174,7 +180,6 @@ div.line-1pt {
    justify-content: space-between;
 }
 
-/* .flex-row-start, */
 .flex-row-center-start {
    display: flex;
    flex-direction: row;

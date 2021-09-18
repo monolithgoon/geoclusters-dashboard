@@ -14,18 +14,36 @@ mandatoryParam = () => {
 // function escapeRegExp(string) {
 // 	return string.replace()
 // }
+const findSubStr = (subStr, baseStr) => {
+	// console.log({subStr})
+	// console.log({baseStr})
+	return subStr === baseStr;
+};
 exports._capitalizeWords = (baseStr, ...subStrings) => {
+	
+	baseStr = String(baseStr);
+	subStrings = subStrings.map(subStr => String(subStr));
+
+	// subStrings.forEach(subStr=>baseStr.split(" ").indexOf(subStr));
+	// subStrings.forEach(subStr=>baseStr.split(" ").find(findSubStr.bind(baseStr, subStr)));
+
 	try {
-		if (typeof baseStr === "string") {
-			for (const subStr of subStrings) {
-				console.log(subStr)
-				if (typeof subStr === "string") {
-					const regex = new RegExp(subStr, `g`);
-					baseStr = baseStr.replace(regex, subStr.toUpperCase());
-					// baseStr = baseStr.replace(/subStr/g, subStr.toUpperCase());
-					console.log(baseStr)
+		if (baseStr) {
+			// baseStr = String(baseStr);
+			// if (typeof baseStr === "string") {
+				for (let subStr of subStrings) {
+					if (subStr) {
+						// console.log({subStr})
+						// subStr = String(subStr);
+						// if (typeof subStr === "string") {
+							const regex = new RegExp(subStr, `g`);
+							baseStr = baseStr.replace(regex, subStr.toUpperCase());
+							// baseStr = baseStr.replace(/subStr/g, subStr.toUpperCase());
+							console.log({baseStr})
+						// };
+					};
 				};
-			};
+			// };
 		};
 		return baseStr;
 	} catch (capWordsErr) {

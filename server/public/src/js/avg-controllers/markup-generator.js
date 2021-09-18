@@ -1,4 +1,3 @@
-import { _GetClusterProps, _getClusterFeatProps } from "../interfaces/cluster-props-adapter.js";
 import { _createCard, _createDiv, _joinWordsArray } from "../utils/helpers.js";
 
 
@@ -20,7 +19,10 @@ export const _GenerateClusterMarkup = ((classList) => {
             <div class='result-item-header flex-row-start'>
                <div class='result-item-titles flex-col-start flex-1'>
                   <a class='result-item-title' title='Geo Cluster Name' href='#' title='Geo Cluster Name'>${props.clusterName}</ac>
-                  <small class='result-item-subtitle'>
+                  <small class='result-item-subtitle flex-row-center-btw'>
+                     <svg class="locaiton-svg-icon" preserveAspectRatio="xMidYMid" viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"></path>
+                     </svg>
                      <a>${props.clusterAdminLvl3}, ${props.clusterAdminLvl2}</a>
                   </small>
                </div>
@@ -73,12 +75,12 @@ export const _GenClusterModalMarkup = (() => {
       const populateMarkup = function(props) {
          const HTMLMarkup = `
             <div class="result-item-modal-header flex-row-center-btw">
-               <span>Block AGC</span><span>${props.clusterArea.toFixed(0)} Ha.</span>
+               <span>Block AGC</span><span>${props.clusterArea.toFixed(0)} Hectares</span>
             </div>
             <div class="result-item-modal-title flex-row-center-btw">
-               <span id="modal_title">${props.clusterName}</span>
+               <span id="modal_title">${props.clusterName.toUpperCase()}</span>
                <button
-                  class="btn-close"
+                  class="btn-close btn-close-white"
                   id="result_item_modal_close_btn"
                   type="button"
                   aria-label="close"
@@ -91,7 +93,7 @@ export const _GenClusterModalMarkup = (() => {
                      src="/assets/images/users/img_avatar1.png"
                      alt="Modal Avatar" />
                </span>
-               <span class="modal-person-details flex-col-center">Abdulsalam Dansuki, President</span>
+               <span class="modal-person-details flex-col-center">PMRO • Abdulsalam Dansuki</span>
                <span class="modal-person-contact flex-row-center-btw">
                   <span>08022242548</span><span>mallam-dan@gmail.com</span>
                   <span>Directions</span></span>
@@ -103,7 +105,13 @@ export const _GenClusterModalMarkup = (() => {
                   capability . Funded June 17, 2019. 13.3 hectares unused.</span>
             </div>
             <div class="result-item-modal-footer flex-row-center-btw">
-               <span>${props.clusterFeatsNum} Farmers</span><span>Kastina State</span>
+               <span>${props.clusterFeatsNum} Farmers</span>
+               <span class="flex-row-center-btw">
+                  <svg class="svgIcon" preserveAspectRatio="xMidYMid" viewBox="0 0 24 24">
+                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"></path>
+                  </svg>
+                  <span>Kastina State</span>
+               </span>
             </div>
          `;
          return HTMLMarkup;

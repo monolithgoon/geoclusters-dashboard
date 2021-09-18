@@ -1,6 +1,6 @@
 `use strict`;
 const turf = require('@turf/turf');
-const startcase = require('lodash.startcase');
+const _startcase = require('lodash.startcase');
 const { _capitalizeWords, _getFeatCenter } = require('../utils/helpers.js');
 
 
@@ -165,7 +165,9 @@ exports._GetClusterProps = (clusterFeatureCollection = _mandatoryParam()) => {
 			? TraverseObject.getFinalValue()
 			: null;
 
-			clusterName = _capitalizeWords(startcase(clusterName, `agc`, `pmro`));
+			// clusterName = _startcase(clusterName.toLowerCase());
+			// clusterName = _capitalizeWords(clusterName, 'Agc', 'Pmro', 'Fct');
+			clusterName = _capitalizeWords(_startcase(clusterName.toLowerCase()), 'Agc', 'Pmro', 'Fct');
 
 		const clusterFeatsNum = clusterFeatureCollection.features.length;
       
@@ -196,24 +198,24 @@ exports._GetClusterProps = (clusterFeatureCollection = _mandatoryParam()) => {
 		let clusterAdminLvl1 = TraverseObject.evaluateValue(props, "geo_cluster_details", "country")
 			? TraverseObject.getFinalValue()
 			: null;
-			clusterAdminLvl1 = startcase(clusterAdminLvl1);
+			clusterAdminLvl1 = _startcase(clusterAdminLvl1);
 
 		let clusterAdminLvl2 = TraverseObject.evaluateValue(props, "geo_cluster_details", "state")
 			? TraverseObject.getFinalValue()
 			: null;
-			clusterAdminLvl2 = startcase(clusterAdminLvl2);
+			clusterAdminLvl2 = _startcase(clusterAdminLvl2);
 
 		let clusterAdminLvl3 = TraverseObject.evaluateValue(props, "geo_cluster_details", "lga")
 			? TraverseObject.getFinalValue()
 			: null;
-			clusterAdminLvl3 = startcase(clusterAdminLvl3);
+			clusterAdminLvl3 = _startcase(clusterAdminLvl3);
 
 		let clusterAdminLvl4 = TraverseObject.evaluateValue(props, "geo_cluster_details", "ward")
 			? TraverseObject.getFinalValue()
 			: null;
-			clusterAdminLvl4 = startcase(clusterAdminLvl4);
+			clusterAdminLvl4 = _startcase(clusterAdminLvl4);
 
-		const clusterLocation = startcase(`${evaluateObjProps(props, {}, 'agc_location') || `${clusterAdminLvl4} ${clusterAdminLvl3} ${clusterAdminLvl2} ${clusterAdminLvl1}`}`);
+		const clusterLocation = _startcase(`${evaluateObjProps(props, {}, 'agc_location') || `${clusterAdminLvl4} ${clusterAdminLvl3} ${clusterAdminLvl2} ${clusterAdminLvl1}`}`);
 
 		const clusterRenderHash = evaluateObjProps(props, {}, 'preview_map_url_hash');
 		
@@ -221,14 +223,14 @@ exports._GetClusterProps = (clusterFeatureCollection = _mandatoryParam()) => {
 		
 		// REMOVE
 		// let primaryCommodity = evaluateObjProps(props, {}, 'geo_cluster_details', 'primary_crop');
-		// 	primaryCommodity = startcase(primaryCommodity);
+		// 	primaryCommodity = _startcase(primaryCommodity);
 
 		let primaryCommodity = TraverseObject.evaluateValue(props, 'geo_cluster_details', 'primary_crop') 
 			? TraverseObject.getFinalValue()
 			: TraverseObject.evaluateValue(props, 'primary_crop')
 			? TraverseObject.getFinalValue()
 			: "Rice";
-			primaryCommodity = startcase(primaryCommodity);
+			primaryCommodity = _startcase(primaryCommodity);
 
 		let clusterGovAdmin1 = Object.freeze({
 			adminTitle1: evaluateObjProps(props, {}, 'geo_cluster_governance_structure', 'president', 'first_name'),

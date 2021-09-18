@@ -22,8 +22,8 @@
 	--scrollbar-width: 7px;
 	--app-header-height: 40px;
 	
-	/* GRIDS */
-	--app-grid-template-cols: 290px 240px 1.2fr 1.2fr 360px;
+	/* APP GRIDS */
+	--app-grid-template-cols: 300px 240px 1.2fr 1.2fr 360px;
 	--app-grid-template-rows: 0.15fr 2fr;
 	/* --app-grid-template-rows: 8vh 2fr; */
 	

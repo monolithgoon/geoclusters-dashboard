@@ -3,7 +3,6 @@ import { _TraverseObject, _getCheckedRadio, _stringifyPropValues, _TurfHelpers }
 import { _sanitizeFeatCollCoords, _ProcessGeoJSON, _getBufferedPolygon } from "../utils/helpers.js";
 import { _RenderEngine } from "../controllers/maps-controller.js";
 import { APP_STATE } from "./state-controller.js";
-import { _getClusterFeatProps, _GetClusterProps } from "../interfaces/cluster-props-adapter.js";
 import { _GenerateClusterFeatMarkup, _GenerateClusterMarkup, _GenClusterModalMarkup } from "./markup-generator.js";
 import { _clientSideRouter, _navigateTo } from "../routers/router.js";
 import { GET_DOM_ELEMENTS } from "../utils/dom-elements.js";
