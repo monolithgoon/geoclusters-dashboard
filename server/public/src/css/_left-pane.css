@@ -141,7 +141,6 @@ button#results_scroll_top_button {
    overflow-x: hidden;
    overflow-y: auto;
    position: relative;
-   font-family: 'Fira Sans', sans-serif;
    font-family: 'Roboto', sans-serif;
    background-color: white;
 }
@@ -187,8 +186,7 @@ button#results_scroll_top_button {
    display: none;
    color: white;
    position: relative;
-   /* font-family: "UberMove", sans-serif;
-   font-family: "Google Sans", sans-serif; */
+   font-family: "UberMove", sans-serif;
 }
 
 @supports (-webkit-backdrop-filter: none) or (backdrop-filter: none) {
@@ -263,8 +261,6 @@ button#results_scroll_top_button {
 .result-item {
    padding: 6px 5px 4px 15px;
    cursor: pointer;
-
-   font-family: 'Fira Sans', sans-serif;
 }
 
 .result-item:hover {
@@ -288,7 +284,6 @@ button#results_scroll_top_button {
 }
 
 .result-item-titles > a {
-   font-family: 'Fira Sans', sans-serif;
    font-family: 'Roboto', sans-serif;
    font-size: .9rem;
    font-weight: 600;
@@ -301,6 +296,7 @@ button#results_scroll_top_button {
 }
 
 .result-item-subtitle {
+   font-family: "IBM Plex Sans", sans-serif;
    font-size: 11px;
    font-weight: 400;
    color: rgba(136, 136, 136, 0.877);
@@ -328,7 +324,6 @@ button#results_scroll_top_button {
    height: 100%;
    
    margin: 1px 0;
-   font-family: 'Fira Sans', sans-serif;
    font-family: 'Roboto', sans-serif;
    font-size: 11.5px;
    color: #333;
