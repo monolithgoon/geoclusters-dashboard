@@ -74,17 +74,19 @@ export const _GenClusterModalMarkup = (() => {
    try {
       const populateMarkup = function(props) {
          const HTMLMarkup = `
-            <div class="result-item-modal-header flex-row-center-btw">
-               <span>Block AGC</span><span>${props.clusterArea.toFixed(0)} Hectares</span>
-            </div>
-            <div class="result-item-modal-title flex-row-center-btw">
-               <span id="modal_title">${props.clusterName.toUpperCase()}</span>
+            <div class="result-item-modal-controls">
                <button
                   class="btn-close btn-close-white"
                   id="result_item_modal_close_btn"
                   type="button"
                   aria-label="close"
                ></button>
+            </div>
+            <div class="result-item-modal-header flex-row-center-btw">
+               <span>${props.clusterFeatsNum} Farmers</span><span>${props.clusterArea.toFixed(0)} Hectares</span>
+            </div>
+            <div class="result-item-modal-title flex-row-center">
+               <span id="modal_title">${props.clusterName.toUpperCase()}</span>
             </div>
             <div class="result-item-modal-body flex-col-center">
                <span class="modal-person-avatar">
@@ -96,16 +98,18 @@ export const _GenClusterModalMarkup = (() => {
                <span class="modal-person-details flex-col-center">PMRO • Abdulsalam Dansuki</span>
                <span class="modal-person-contact flex-row-center-btw">
                   <span>08022242548</span><span>mallam-dan@gmail.com</span>
-                  <span>Directions</span></span>
+                  <span></span></span>
             </div>
             <div class="result-item-modal-subtext">
                <span>
-                  Prim. commodity: Maize, Rice . Clay soil . No irriation . Closest PMRO
-                  site 40km away . No power . Closest market 10km away . No processing
-                  capability . Funded June 17, 2019. 13.3 hectares unused.</span>
+                  Primary commodity • Maize, Rice. Clay soil. No irriation. Closest PMRO
+                  site 40km away. No power. Closest market 10km away. No processing
+                  capability. Funded June 17, 2019. 13.3 hectares unused. 
+                     <span>Last visited • 21 August, 2021</span>
+                  </span>
             </div>
             <div class="result-item-modal-footer flex-row-center-btw">
-               <span>${props.clusterFeatsNum} Farmers</span>
+               <span>Block AGC</span>
                <span class="flex-row-center-btw">
                   <svg class="svgIcon" preserveAspectRatio="xMidYMid" viewBox="0 0 24 24">
                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"></path>

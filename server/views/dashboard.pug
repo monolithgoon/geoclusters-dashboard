@@ -113,11 +113,11 @@ block dashboard
 
                   .results-container
 
-                    button#results_filter_button.btn.btn-primary.btn-sm.ripplelink(data-bs-toggle='collapse' data-bs-target='#hidden_pane_container' aria-controls='hidden_pane_container' title='Open Result Filters' aria-label='show results filters' tabindex='0')
+                    button#results_filter_button.btn.btn-primary.btn-sm(data-bs-toggle='collapse' data-bs-target='#hidden_pane_container' aria-controls='hidden_pane_container' title='Open Result Filters' aria-label='show results filters' tabindex='0')
                       span
                         img(src='https://img.icons8.com/ios/24/ffffff/vertical-settings-mixer.png')
 
-                    button#results_scroll_top_button.btn.btn-outline.btn-sm.ripplelink(data-bs-toggle='modal' data-bs-target='#exampleModal' aria-controls='' title='Scroll To Top' aria-label='scroll to top' tabindex='0')
+                    button#results_scroll_top_button.btn.btn-outline.btn-sm(data-bs-toggle='' data-bs-target='' aria-controls='' title='Scroll To Top' aria-label='scroll to top' tabindex='0')
                       span
                         img(src='https://img.icons8.com/material/16/000000/chevron-up--v1.png')
 
@@ -206,12 +206,16 @@ block dashboard
 
                     #result_item_modal.result-item-modal
 
-                    .results-body
+                    .cluster-results-body
 
                       #results_list_wrapper.results-list-wrapper
-                        #listing_control_wrapper.list-controls-wrapper.flex-row-center-end
-                          label(for='select_all_results') Select All
-                          input#select_all_results_chk(type='checkbox' aria-label='select all results checkbox')
+                        #listing_control_wrapper.list-controls-wrapper.flex-row-center-btw
+                          span
+                            label(for='select_no_results') Select None
+                            input#select_no_results_chk.form-check-input(type='checkbox' aria-label='select no results checkbox')
+                          span
+                            label(for='select_all_results') Select All Results
+                            input#select_all_results_chk.form-check-input(type='checkbox' aria-label='select all results checkbox')
 
                         //- each geoCluster, clusterIdx in geoClusters
                         //-   .result-item.flex-col-start(data-geoclusterdatastream=`${JSON.stringify(geoCluster)}`)

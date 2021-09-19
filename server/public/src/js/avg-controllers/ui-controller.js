@@ -77,6 +77,10 @@ export const _ManipulateDOM = (() => {
 			element.style.display = `block`;
 		},
 
+      displayFlexElement: (element) => {
+         element.style.display = `flex`;
+      },
+
 		hideElement: (element) => {
 			element.style.display = `none`;
 		},
@@ -249,13 +253,14 @@ export const _ManipulateDOM = (() => {
 
          // TOGGLE MASTER TO 'OFF' WHEN SLAVE IS 'OFF'
          slaves.forEach(slaveCheckbox => {
+
             slaveCheckbox.addEventListener(`change`, (e)=>{
 
                // FIXME > THIS HARDCODED PARENT BEH. WILL FAIL
                // show master when slave is clicked
-               console.log(master.parentNode)
-               console.log(master.parentNode.style.display);
-               _ManipulateDOM.blockElement(master.parentNode);
+               console.log(`parentNode`, master.parentNode)
+               console.log(`parentNode style`, master.parentNode.style.display);
+               _ManipulateDOM.displayFlexElement(master.parentNode.parentNode);
 
                if (slaveCheckbox.checked === false) { master.checked = false}
             });
@@ -590,20 +595,54 @@ const DelegateImputsEvents = (dom => {
       });
    };
 
+   // TODO > WIP
    // RESULTS SEARCH BOX EVENT HANDLER >> NEW jQuery SEARCH 
-   $("#results_search_box").on("change paste keyup", function() {
+   if ($("#results_search_box")) {
+      $("#results_search_box").on("change paste keyup", function() {
+   
+         var txt = $("#results_search_input").val();
+   
+         // COMPARE SEARCH TEXT & LISTING '.item'
+         $(".result-item-title").each(function() {
+            if ( $(this).text().toUpperCase().indexOf(txt.toUpperCase()) != -1 ) {
+               $(this).show();
+            } else {
+               $(this).hide();
+            }
+         });
+      });
+   };
 
-      var txt = $("#results_search_input").val();
+   if (dom.clusterResultsBody) {
 
-      // COMPARE SEARCH TEXT & LISTING '.item'
-      $(".result-item-title").each(function() {
-         if ( $(this).text().toUpperCase().indexOf(txt.toUpperCase()) != -1 ) {
-            $(this).show();
-         } else {
-            $(this).hide();
+      const resultsBody = dom.clusterResultsBody;
+      const filterBtn = dom.resultsFilterBtn;
+      const scrollTopBtn = dom.resultsScrollTopBtn;
+
+      resultsBody.addEventListener("scroll", () => {
+
+         switch (true) {
+            case resultsBody.scrollTop > 300 && resultsBody.scrollTop < 1000:
+               if (filterBtn) filterBtn.style.display = "block";
+               break;
+            case resultsBody.scrollTop > 1000:
+               console.log("show scroll top");
+               if (scrollTopBtn) scrollTopBtn.style.display = "block";
+               break;
+            default:
+               if (filterBtn) filterBtn.style.display = "none";
+               if (scrollTopBtn) scrollTopBtn.style.display = "none";
+               break;
          }
       });
-   });
+   };
+
+   if (dom.resultsScrollTopBtn) {
+      dom.resultsScrollTopBtn.addEventListener("click", () => {
+         const resultsBody = dom.clusterResultsBody;
+         if (resultsBody) resultsBody.scropTop = 0;
+      });
+   };
 
    // CHANGE CLUSTER PLOTS AREA UNITS
    if (dom.areaUnitsRadios) {

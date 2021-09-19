@@ -30,8 +30,11 @@ export function GET_DOM_ELEMENTS() {
    
    const geoClustersDatasetEl = document.getElementById(`geo_clusters_dataset`);
 
+   const clusterResultsBody = document.querySelector(`.cluster-results-body`);
    const resultModalDiv = document.getElementById(`result_item_modal`);
    const resultModalCloseBtn = document.getElementById(`result_item_modal_close_btn`);
+   const resultsFilterBtn = document.getElementById(`results_filter_button`);
+   const resultsScrollTopBtn = document.getElementById(`results_scroll_top_button`);
    const resultsListWrapper = document.getElementById(`results_list_wrapper`);
    const resultItemDivs = document.querySelectorAll(`.result-item`);
    const clusterTitleDivs = document.querySelectorAll(`.result-item-title`);
@@ -69,8 +72,11 @@ export function GET_DOM_ELEMENTS() {
 
       geoClustersDatasetEl,
       
+      clusterResultsBody,
       resultModalDiv,
       resultModalCloseBtn,
+      resultsFilterBtn,
+      resultsScrollTopBtn,
       resultsListWrapper,
       resultItemDivs,
       clusterTitleDivs,

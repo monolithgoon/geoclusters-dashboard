@@ -94,6 +94,19 @@ section.left-pane-container a:hover {
    background-color: transparent;
 }
 
+button#results_filter_button {
+   position: absolute;
+   top: 60px;
+   right: 15px;
+   width: 48px;
+   height: 48px;
+   border-radius: 50% !important;
+   border: 1px solid white;
+   z-index: var(--zmax);
+   background-color: var(--theme-color);
+   display: none;
+}
+
 button#results_scroll_top_button {
    position: absolute;
    bottom: 45px;
@@ -104,6 +117,7 @@ button#results_scroll_top_button {
    border: 1px solid var(--theme-color);
    background-color: white;
    z-index: var(--z-idx-2);
+   display: none;
 }
       
 .results-header {
@@ -123,7 +137,7 @@ button#results_scroll_top_button {
    justify-content: center;
 }
 
-.results-body {
+.cluster-results-body {
    overflow-x: hidden;
    overflow-y: auto;
    position: relative;
@@ -132,47 +146,56 @@ button#results_scroll_top_button {
    background-color: white;
 }
 
-.results-body .results-list-wrapper {
+.cluster-results-body .form-check-input[type=checkbox] {
+	height: 1rem !important;
+	width: 1rem !important;
+   border-radius: 50%;
+   border: 1px solid grey;
+}
+
+.cluster-results-body .form-check-input[type=checkbox]:checked {
+	height: 1.1rem !important;
+	width: 1.1rem !important;
+   border: 2px solid lightsteelblue
+}
+
+.cluster-results-body .form-check-input[type=checkbox]:hover {
+   cursor: pointer;
+   border: 2px solid grey;
+}
+
+.cluster-results-body .results-list-wrapper {
    position: relative;
 }
 
 .list-controls-wrapper {
+   margin: 8px 0;
    padding: 0 5px 0 15px;
+   font-family: "UberMove";
+   font-size: 0.7rem;
+   font-weight: bold;
    display: none;
 }
 
-.list-controls-wrapper > input {
-   padding-left: 10px !important;
-   border-radius: 50% !important;
-}
-
-#results_filter_button {
-   position: absolute;
-   top: 45px;
-   right: 15px;
-   width: 48px;
-   height: 48px;
-   border-radius: 50%;
-   border: 1px solid white;
-   z-index: var(--zmax);
-   display: none;
+.list-controls-wrapper label {
+   padding-right: 10px
 }
 
 .result-item-modal {
    padding: 10px 20px;
-   display: grid;
-   grid-template-rows: .3fr .5fr 1fr .3fr;
-   line-height: 2;
-   position: relative;
+   line-height: 1.5;
    display: none;
-   background-color: #4cd137;
    color: white;
+   position: relative;
+   /* font-family: "UberMove", sans-serif;
+   font-family: "Google Sans", sans-serif; */
 }
 
 @supports (-webkit-backdrop-filter: none) or (backdrop-filter: none) {
    .result-item-modal {
       -webkit-backdrop-filter: blur(5px);
       backdrop-filter: blur(5px);
+      background-color: #4cd137;
       background-color: rgba(122, 157, 37, 0.6);
       background-color: rgba(255, 255, 255, 0.7);
       background-color: rgb(108 117 125 / 70%);
@@ -184,25 +207,46 @@ button#results_scroll_top_button {
    transition: height ease-out 0.3s;
 }
 
+.result-item-modal-controls {
+   position: absolute;
+   right: 50%;
+   left: 50%;
+   transform: translate(-50%, 0)
+}
+
+.result-item-modal-title {
+   padding: 10px 0;
+}
+
 .result-item-modal-title > span {
-   padding-right: 25px;
-   margin: 10px 0;
-   font-size: 1.5rem;
-   line-height: 1.3;
+   font-size: 1.2rem;
    font-weight: bold;
+   line-height: 1.3;
    letter-spacing: -0.4px;
+   text-align: center;
+}
+
+.result-item-modal-body {
+   padding-bottom: 10px;
 }
 
 .result-item-modal-subtext {
    margin-bottom: 10px;
    line-height: 1.3;
-   letter-spacing: -0.2px;
+   /* font-family: "IBM Plex Sans", sans-serif; */
+   font-size: 0.7rem;
+   letter-spacing: -0.1px;
+   word-spacing: 1.5px;
 }
 
 .result-item-modal-footer svg {
    padding-right: 5px;
    fill: white;
    height: 15px;
+}
+
+.modal-person-avatar {
+   padding-bottom: 10px;
 }
 
 .modal-person-avatar img {
@@ -250,13 +294,6 @@ button#results_scroll_top_button {
    font-weight: 600;
    letter-spacing: -0.5px;
    letter-spacing: -0.6px;
-}
-
-.result-item-controls .form-check-input[type=checkbox] {
-	height: 1rem !important;
-	width: 1rem !important;
-   border-radius: 50%;
-   border: 2px solid grey;
 }
 
 .result-item-body {
