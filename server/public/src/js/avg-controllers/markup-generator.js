@@ -86,7 +86,7 @@ export const _GenClusterModalMarkup = (() => {
                <span>${props.clusterFeatsNum} Farmers</span><span>${props.clusterArea.toFixed(0)} Hectares</span>
             </div>
             <div class="result-item-modal-title flex-row-center">
-               <span id="modal_title">${props.clusterName.toUpperCase()}</span>
+               <span id="modal_title">${props.clusterName}</span>
             </div>
             <div class="result-item-modal-body flex-col-center">
                <span class="modal-person-avatar">
