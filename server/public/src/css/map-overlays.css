@@ -6,23 +6,19 @@
 }
 
 .mapboxgl-popup-close-button {
+   margin: 5px;
+   width: 20px;
+   height: 20px;
    position: absolute;
    right: 0;
    top: 0;
    border: none;
-   background-color: lightgrey !important;
-   width: 20px;
-   height: 20px;
    align-items: center !important;
-   margin: 5px;
    border-radius: 50% !important;
-   font-size: 14px;
-   cursor: pointer;
-}
-
-.mapboxgl-popup-close-button {
+   font-size: 1rem;
    background-color: grey !important;
    color: white !important;
+   cursor: pointer;
 }
 
 .mapboxgl-popup-body {
@@ -52,7 +48,7 @@
    height: 45px;
    object-fit: cover;
    vertical-align: middle;
-   font-size: 0.5rem;
+   border-radius: 50%;
 }
 
 .agc-info-overlay {
