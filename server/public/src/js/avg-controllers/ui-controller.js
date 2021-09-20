@@ -626,7 +626,6 @@ const DelegateImputsEvents = (dom => {
                if (filterBtn) filterBtn.style.display = "block";
                break;
             case resultsBody.scrollTop > 1000:
-               console.log("show scroll top");
                if (scrollTopBtn) scrollTopBtn.style.display = "block";
                break;
             default:
@@ -640,7 +639,7 @@ const DelegateImputsEvents = (dom => {
    if (dom.resultsScrollTopBtn) {
       dom.resultsScrollTopBtn.addEventListener("click", () => {
          const resultsBody = dom.clusterResultsBody;
-         if (resultsBody) resultsBody.scropTop = 0;
+         if (resultsBody) resultsBody.scrollTop = 0;
       });
    };
 
