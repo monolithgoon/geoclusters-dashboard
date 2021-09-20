@@ -97,15 +97,17 @@ export const _GenClusterModalMarkup = (() => {
                </span>
                <span class="modal-person-details flex-col-center">PMRO • Abdulsalam Dansuki</span>
                <span class="modal-person-contact flex-row-center-btw">
-                  <span>08022242548</span><span>mallam-dan@gmail.com</span>
-                  <span></span></span>
+                  <span></span>
+                  <span></span>
+                  <span></span>
+               </span>
             </div>
             <div class="result-item-modal-subtext">
                <span>
                   Primary commodity • Maize, Rice. Clay soil. No irriation. Closest PMRO
                   site 40km away. No power. Closest market 10km away. No processing
                   capability. Funded June 17, 2019. 13.3 hectares unused. 
-                     <span>Last visited • 21 August, 2021</span>
+                     <span>Last visited • 21 August, 2021.</span>
                   </span>
             </div>
             <div class="result-item-modal-footer flex-row-center-btw">
