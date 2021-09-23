@@ -3,7 +3,7 @@ import { _TraverseObject, _getCheckedRadio, _stringifyPropValues, _TurfHelpers }
 import { _sanitizeFeatCollCoords, _ProcessGeoJSON, _getBufferedPolygon } from "../utils/helpers.js";
 import { _RenderEngine } from "../controllers/maps-controller.js";
 import { APP_STATE } from "./state-controller.js";
-import { _GenerateClusterFeatMarkup, _GenerateClusterMarkup, _GenClusterModalMarkup } from "./markup-generator.js";
+import { _GenerateClusterFeatMarkup, _GenerateClusterMarkup, _GenClusterModalMarkup } from "./markup-generators.js";
 import { _clientSideRouter, _navigateTo } from "../routers/router.js";
 import { GET_DOM_ELEMENTS } from "../utils/dom-elements.js";
 
@@ -343,6 +343,127 @@ export const _PollAppSettings = ((dom) => {
 })(GET_DOM_ELEMENTS());
 
 
+
+const DOMSequence = ((dom) => {
+
+   // RESULT TITLE MAIN PARENT SEQ.
+   function clickedResultContainerSeq(resultItemDiv, otherResultItems) {
+      
+      // scroll the result into view
+      resultItemDiv.scrollIntoView({
+         behavior: `smooth`,
+         block: `start`,
+         inline: `nearest`,
+      });
+      
+      // remove "active" class from other result items
+      otherResultItems.forEach(result => {
+         if (result !== resultItemDiv) {
+            _ManipulateDOM.removeClass(result, `is-active`);
+         };
+      });
+
+      // set clicked result to active
+      _ManipulateDOM.toggleClassList(resultItemDiv, `is-active`);
+   };
+   
+   return {
+
+      clusterTitleClickSeq: (evtObj) => {
+
+         evtObj.preventDefault();
+      
+         // REMOVE
+         console.log(_pollAVGSettingsValues());
+         console.log((_PollAppSettings.getValues()))
+      
+         // get the main parent container
+         const resultContainerDiv = _ManipulateDOM.getParentElement(evtObj.target, {parentLevel: 3});
+      
+         // get the siblings of the main parent container
+         const adjacentResultDivs = _ManipulateDOM.getSiblingElements(resultContainerDiv);
+      
+         // get the geojson for that result
+         const clusterGeoJSON = JSON.parse(_ManipulateDOM.getDataset(resultContainerDiv));
+      
+         // TODO > VALIDATE GJ. HERE
+         if (clusterGeoJSON) {
+            
+            // 1.
+            _PopulateDOM.clusterDetailsModal(dom.resultModalDiv, clusterGeoJSON);
+      
+            // 1b.
+            // render cluster feature cards.
+            _PopulateDOM.clusterFeatsSidebar(clusterGeoJSON);
+            
+            // 2.
+            _RenderEngine.renderEverythingNow(clusterGeoJSON, 
+               {
+                  baseMapZoomLvl: APP_STATE.CONFIG_DEFAULTS.LEAFLET_ADMIN_LEVEL_3_ZOOM,
+                  useBuffer: _pollAVGSettingsValues().bufferFeatsChk, 
+                  bufferUnits: _pollAVGSettingsValues().distanceUnits,
+                  bufferAmt: APP_STATE.CONFIG_DEFAULTS.RENDERED_PLOT_BUFFER,
+                  areaUnits: _pollAVGSettingsValues().areaUnits
+               }
+            );
+      
+            // 2b. 
+            APP_STATE.saveRenderedGeojson(clusterGeoJSON);
+            
+            // 3.
+            clickedResultContainerSeq(resultContainerDiv, adjacentResultDivs);
+         };
+      },      
+
+      /**
+       * Listen to the element and when it is clicked, do four things:
+       * 1. Get the geoJSON associated with the clicked link
+       * 2. Fly to the point
+       * 3. Close all other popups and display popup for clicked store
+       * 4. Highlight listing in sidebar (and remove highlight for all other listings)
+       **/
+      featCardClickSeq: (clusterFeatures, evt) => {
+
+         const clickedCard = evt.currentTarget;
+  
+         try {
+            
+            for (var i = 0; i < clusterFeatures.length; i++) {
+
+               // this => clusterFeatCard
+               if (evt.currentTarget.id === _ProcessGeoJSON.getId(clusterFeatures[i])) {
+                  _RenderEngine.panToClusterPlot(clusterFeatures[i], {zoomLevel: _pollAVGSettingsValues().clusterMap.zoomValue});
+                  _RenderEngine.renderFeatPopup(clusterFeatures[i].properties, _TurfHelpers.getLngLat(clusterFeatures[i]));
+               };
+            };
+
+            // HIGHLIGHT THE CLICKED CARD
+            _ManipulateDOM.addRemoveClass(evt.currentTarget, 'selected');
+            
+            // SHOW / HIDE CARD DRAWER
+            const cardDrawer = _ManipulateDOM.getSiblingElements(evt.currentTarget)[0];
+            cardDrawer.classList.toggle("flex-display");
+
+            // GET CLUSTER FEAT. WRAPPER
+            const clusterFeatWrapper = _ManipulateDOM.getParentElement(cardDrawer, {parentLevel: 1});
+
+            // SCROLL TO PARENT TOP
+            clusterFeatWrapper.scrollIntoView(true);
+            
+            // DIM OTHER CLUSTER FEATS.
+            const siblingFeatWrappers = _ManipulateDOM.getSiblingElements(clusterFeatWrapper);
+            siblingFeatWrappers.forEach(sibling => sibling.classList.toggle("dim-opacity"));
+
+         } catch (cardClickSeqErr) {
+            console.error(`cardClickSeqErr: ${cardClickSeqErr.message}`);
+         };
+      },
+   };
+
+})(GET_DOM_ELEMENTS());
+
+
+
 export const _PopulateDOM = ((dom) => {
 
    function renderClusterSummary(props) {
@@ -425,16 +546,18 @@ export const _PopulateDOM = ((dom) => {
       
                   let clusterFeature = clusterFeatures[idx];
                   
-                  const clusterFeatCard = await _GenerateClusterFeatMarkup.getClusterFeatDiv(clusterFeature.properties);
+                  const {clusterFeatCard, clusterFeatCardWrapper} = await _GenerateClusterFeatMarkup.getClusterFeatDiv(clusterFeature.properties);
       
                   // ASSIGN A UNIQE ID TO THE CARD DIV
                   clusterFeatCard.id = _ProcessGeoJSON.getId(clusterFeature);
       
+                  // EVENT DELEGATION
                   clusterFeatCard.addEventListener('click', evt => { DOMSequence.featCardClickSeq.call(evt, clusterFeatures, evt); });
       
                   _ManipulateDOM.populateDataset(clusterFeatCard, `clusterfeatdatastream`, JSON.stringify(clusterFeature));
       
-                  _ManipulateDOM.appendList(listingWrapper, clusterFeatCard);
+                  // _ManipulateDOM.appendList(listingWrapper, clusterFeatCard);
+                  _ManipulateDOM.appendList(listingWrapper, clusterFeatCardWrapper);
                };
             };
             
@@ -446,111 +569,18 @@ export const _PopulateDOM = ((dom) => {
 })(GET_DOM_ELEMENTS());
 
 
-const DOMSequence = ((dom) => {
 
-   // RESULT TITLE MAIN PARENT SEQ.
-   function clickedResultContainerSeq(resultItemDiv, otherResultItems) {
-      
-      // scroll the result into view
-      resultItemDiv.scrollIntoView({
-         behavior: `smooth`,
-         block: `start`,
-         inline: `nearest`,
-      });
-      
-      // remove "active" class from other result items
-      otherResultItems.forEach(result => {
-         if (result !== resultItemDiv) {
-            _ManipulateDOM.removeClass(result, `is-active`);
-         };
-      });
+const DelegatePreloadedDOMElementsEvents = (dom => {
 
-      // set clicked result to active
-      _ManipulateDOM.toggleClassList(resultItemDiv, `is-active`);
-   };
-   
-   return {
+   // SANDBOX
+   $("#test_feat_card").on("click", function(evt) {
+      const cardDrawer = _ManipulateDOM.getSiblingElements(evt.currentTarget)[0];
+      cardDrawer.classList.toggle("flex-display");
+      const clusterFeatWrapper = _ManipulateDOM.getParentElement(cardDrawer, {parentLevel: 1});
+      const siblingFeatWrappers = _ManipulateDOM.getSiblingElements(clusterFeatWrapper);
+      siblingFeatWrappers.forEach(sibling => sibling.classList.toggle("dim-opacity"));
+   });
 
-      clusterTitleClickSeq: (evtObj) => {
-
-         evtObj.preventDefault();
-      
-         // REMOVE
-         console.log(_pollAVGSettingsValues());
-         console.log((_PollAppSettings.getValues()))
-      
-         // get the main parent container
-         const resultContainerDiv = _ManipulateDOM.getParentElement(evtObj.target, {parentLevel: 3});
-      
-         // get the siblings of the main parent container
-         const adjacentResultDivs = _ManipulateDOM.getSiblingElements(resultContainerDiv);
-      
-         // get the geojson for that result
-         const clusterGeoJSON = JSON.parse(_ManipulateDOM.getDataset(resultContainerDiv));
-      
-         // TODO > VALIDATE GJ. HERE
-         if (clusterGeoJSON) {
-            
-            // 1.
-            _PopulateDOM.clusterDetailsModal(dom.resultModalDiv, clusterGeoJSON);
-      
-            // 1b.
-            // render cluster feature cards.
-            _PopulateDOM.clusterFeatsSidebar(clusterGeoJSON);
-            
-            // 2.
-            _RenderEngine.renderEverythingNow(clusterGeoJSON, 
-               {
-                  baseMapZoomLvl: APP_STATE.CONFIG_DEFAULTS.LEAFLET_ADMIN_LEVEL_3_ZOOM,
-                  useBuffer: _pollAVGSettingsValues().bufferFeatsChk, 
-                  bufferUnits: _pollAVGSettingsValues().distanceUnits,
-                  bufferAmt: APP_STATE.CONFIG_DEFAULTS.RENDERED_PLOT_BUFFER,
-                  areaUnits: _pollAVGSettingsValues().areaUnits
-               }
-            );
-      
-            // 2b. 
-            APP_STATE.saveRenderedGeojson(clusterGeoJSON);
-            
-            // 3.
-            clickedResultContainerSeq(resultContainerDiv, adjacentResultDivs);
-         };
-      },      
-
-      /**
-       * Listen to the element and when it is clicked, do four things:
-       * 1. Get the geoJSON associated with the clicked link
-       * 2. Fly to the point
-       * 3. Close all other popups and display popup for clicked store
-       * 4. Highlight listing in sidebar (and remove highlight for all other listings)
-       **/
-      featCardClickSeq: (clusterFeatures, evt) => {
-  
-        try {
-           
-           for (var i = 0; i < clusterFeatures.length; i++) {
-  
-              // this => clusterFeatCard
-              if (evt.currentTarget.id === _ProcessGeoJSON.getId(clusterFeatures[i])) {
-                 _RenderEngine.panToClusterPlot(clusterFeatures[i], {zoomLevel: _pollAVGSettingsValues().clusterMap.zoomValue});
-                 _RenderEngine.renderFeatPopup(clusterFeatures[i].properties, _TurfHelpers.getLngLat(clusterFeatures[i]));
-              };
-           };
-  
-           _ManipulateDOM.addRemoveClass(evt.currentTarget, 'selected');
-  
-        } catch (cardClickSeqErr) {
-           console.error(`cardClickSeqErr: ${cardClickSeqErr.message}`);
-        };
-     },
-   };
-
-})(GET_DOM_ELEMENTS());
-
-
-const DelegateImputsEvents = (dom => {
-
-   // FIXME > DON'T USE JQUERY
    // SETTINGS SIDEBAR TOGGLE
    $(document).ready(function () {
       $("#avg_settings_sidebar_toggle_btn").on("click", function () {
@@ -598,13 +628,14 @@ const DelegateImputsEvents = (dom => {
    // TODO > WIP
    // RESULTS SEARCH BOX EVENT HANDLER >> NEW jQuery SEARCH 
    if ($("#results_search_box")) {
+
       $("#results_search_box").on("change paste keyup", function() {
    
          var txt = $("#results_search_input").val();
    
          // COMPARE SEARCH TEXT & LISTING '.item'
          $(".result-item-title").each(function() {
-            if ( $(this).text().toUpperCase().indexOf(txt.toUpperCase()) != -1 ) {
+            if ($(this).text().toUpperCase().indexOf(txt.toUpperCase()) != -1 ) {
                $(this).show();
             } else {
                $(this).hide();

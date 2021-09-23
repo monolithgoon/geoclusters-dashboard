@@ -3,9 +3,17 @@
    display: none !important;
 }
 
-/* .show {
+.block-display {
    display: block !important;
-} */
+}
+
+.flex-display {
+   display: flex;
+}
+
+.dim-opacity {
+   opacity: 0.3;
+}
 
 
 /* BLUR */

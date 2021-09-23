@@ -333,6 +333,7 @@ input, button,
 
       .floating-pane .top-section > div > span:first-of-type {
          font-family: 'UberMove';
+         font-family: 'Google Sans', sans-serif;
       }
 
       .floating-pane .top-section > div > span:last-of-type {
@@ -361,6 +362,7 @@ input, button,
 
       .floating-pane .bottom-section > div > span:last-of-type {
          font-family: 'UberMove';
+         font-family: 'Google Sans', sans-serif;
          font-size: 1.1rem;
          color: darkolivegreen;
       }

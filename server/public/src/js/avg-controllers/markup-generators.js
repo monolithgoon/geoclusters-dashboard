@@ -136,16 +136,11 @@ export const _GenClusterModalMarkup = (() => {
 })();
 
 
-export const _GenerateClusterFeatMarkup = ((classList) => {
+export const _GenerateClusterFeatMarkup = (() => {
 
    try {
-      
-      const initContainerDiv = function() {
-         return _createCard(classList);
-      };
-
-      
-      const populateMarkup = function(props) {
+            
+      const populateCardMarkup = function(props) {
          const plotOwnerUrl = props.featureAdmin.admin1.photoURL;
          const HTMLMarkup = `
             <div class="card-content-wrapper">
@@ -181,13 +176,58 @@ export const _GenerateClusterFeatMarkup = ((classList) => {
          `;
          return HTMLMarkup;
       };
+
+      const populateCardDrawerMarkup = function(props) {
+         const HTMLMarkup = `
+            <section class="feat-card-bio-section">
+
+               <section class="section-1">
+                  <div><span>PHONE</span><span>08022242549</span></div>
+                  <div><span>AGE</span><span>56</span></div>
+               </section>
+
+               <section class="section-2">
+                  <div><span>ID TYPE</span><span>National Voters Card</span></div>
+                  <div><span>ID No.</span><span>2339887898877</span></div>
+               </section>
+
+               <section class="section-3">
+                  <div><span>ORIGIN</span><span>Oshimili South, Delta State</span></div>
+                  <div>
+                     <span>HOUSE ADDRESS</span
+                     ><span>466 Tudun Wada, Wawa, Niger State</span>
+                  </div>
+               </section>
+
+            </section>
+
+            <section class="feat-card-funding-section">
+               <section class="funding-section-1">
+                  <div><span>FUNDING</span><span>Legacy Funding</span></div>
+               </section>
+            </section>
+         `;
+         return HTMLMarkup;
+      };
    
       return {
    
          getClusterFeatDiv: async function(featureProps) {
-            const div = initContainerDiv();
-            div.innerHTML = populateMarkup(featureProps);
-            return div;
+            
+            const clusterFeatCardWrapper = _createDiv(["cluster-feature-wrapper"]);
+
+            // INIT. FEAT. CARD
+            const clusterFeatCard = _createCard(["cluster-feature-card"]);
+            clusterFeatCard.innerHTML = populateCardMarkup(featureProps);
+            
+            // INIT. FEAT. CARD DRAWER
+            const featCardDrawer = _createDiv(["cluster-feature-card-drawer"]);
+            featCardDrawer.innerHTML = populateCardDrawerMarkup(featureProps);
+
+            clusterFeatCardWrapper.appendChild(clusterFeatCard);
+            clusterFeatCardWrapper.appendChild(featCardDrawer);
+
+            return {clusterFeatCard, clusterFeatCardWrapper};
          },   
       };
       
@@ -195,7 +235,7 @@ export const _GenerateClusterFeatMarkup = ((classList) => {
       console.error(`featMarkupGenErr: ${featMarkupGenErr.message}`);
    };
 
-})(["cluster-feature-card"]);
+})();
 
 
 export const _getClusterFeatPopupMarkup = (props) => {

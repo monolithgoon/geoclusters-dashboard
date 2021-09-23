@@ -182,3 +182,10 @@ section.right-pane-container {
    flex-direction: column;
    align-items: flex-start;
 }
+
+.cluster-feature-wrapper {
+   width: 100%;
+   display: flex;
+   flex-direction: column;
+   position: relative;
+}
