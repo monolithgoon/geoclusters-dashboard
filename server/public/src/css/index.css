@@ -25,6 +25,7 @@
 	
 	/* APP GRIDS */
 	--app-grid-template-cols: 300px 240px 1.2fr 1.2fr 360px;
+	--app-grid-template-cols: 300px 240px 1.2fr 1.2fr 30vw;
 	--app-grid-template-rows: 0.15fr 2fr;
 	/* --app-grid-template-rows: 8vh 2fr; */
 	
@@ -346,7 +347,8 @@ line-height: 15px;
 		width: 100%;
 	} */
 	
-	.range-input-wrapper > .range-input {
+	input[type=range],
+	input.settings-range-input {
 		/* margin: 0 5px; */
 		-webkit-appearance: none;  /* Override default CSS styles */
 		appearance: none;
@@ -360,12 +362,12 @@ line-height: 15px;
 	}
 
 	/* Mouse-over effects */
-	.range-input:hover {
+	.settings-range-input:hover {
 		opacity: .8; /* Fully shown on mouse-over */
 	}
 
 	/* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
-	.range-input::-webkit-slider-thumb {
+	.settings-range-input::-webkit-slider-thumb {
 		-webkit-appearance: none; /* Override default look */
 		appearance: none;
 		width: 15px; /* Set a specific slider handle width */
@@ -378,7 +380,7 @@ line-height: 15px;
 		background: white;
 	}
 
-	.range-input::-moz-range-thumb {
+	.settings-range-input::-moz-range-thumb {
 		width: 15px; /* Set a specific slider handle width */
 		height: 15px; /* Slider handle height */
 		background: #04AA6D; /* Green background */

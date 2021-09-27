@@ -1541,8 +1541,10 @@ export const _RenderEngine = (function(avgBaseMap, clusterFeatsMap) {
          const gjCenterCoords = turf.coordAll(turf.centerOfMass(featColl))[0];
          const gjBounds = turf.bbox(featColl);
 
+         // PAN CLUSTER FEATS. MAP
          MapboxMaps.panToCoords(clusterFeatsMap, gjCenterCoords, gjBounds, {zoom:16, pitch:0, bearing:0, boundsPadding:0});
 
+         // PAN BASE MAP
          LeafletMaps.panFeatCenter(featColl, {map: avgBaseMap, zoomLevel});
          LeafletMaps.fitFeatBounds(featColl, {map: avgBaseMap});
       };

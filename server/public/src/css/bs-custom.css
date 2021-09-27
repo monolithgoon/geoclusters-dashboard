@@ -1,9 +1,8 @@
 /* INPUTS */
-.form-check-input[type=checkbox],
-input[type=radio],
+/* input[type=radio],
 input[type=checkbox] {
 	border-radius: 50% !important;
-}
+} */
 
 /* VERTICAL NAV SIDEBAR */
 .app-container .nav.flex-column {

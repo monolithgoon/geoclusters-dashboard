@@ -296,7 +296,7 @@ exports._getClusterFeatProps = (clusterFeature = _mandatoryParam(), {featIdx}={}
 	
 			const featureAdmin = Object.freeze({
 				admin1: Object.freeze({
-					id: evaluateObjProps(props, {}, "plot_owner_bvn") || evaluateObjProps(props, {}, "owner_id"), // REMOVE
+					id: evaluateObjProps(props, {}, "plot_owner_bvn") || evaluateObjProps(props, {}, "owner_id"), // REMOVE BVN REF. <<
 					titles: Object.freeze({
 						title1: 
 							evaluateObjProps(props, {}, 'owner_name') || 
@@ -305,7 +305,19 @@ exports._getClusterFeatProps = (clusterFeature = _mandatoryParam(), {featIdx}={}
 						title3: evaluateObjProps(props, {}, "plot_owner_last_name"),
 					}),
 					photoBase64: "",
-					photoURL: evaluateObjProps(props, {defaultReturn: "/assets/icons/icons8-person-48.png"}, "owner_photo_url")
+					photoURL: evaluateObjProps(props, {defaultReturn: "/assets/icons/icons8-person-48.png"}, "owner_photo_url"),
+					bio: {
+						age: "today",
+						idType: "passport",
+						idNo: "12345",
+						originAdmin1: "Nigeria",
+						originAdmin2: "Delta",
+						originAdmin3: "Ukwuani",
+					},
+					contact: {
+						phone: "09099929992",
+						baseAddress: "No. 1 Inter Bau Rd."
+					},
 				}),
 			});
 	

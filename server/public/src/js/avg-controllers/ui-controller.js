@@ -452,7 +452,9 @@ const DOMSequence = ((dom) => {
             
             // DIM OTHER CLUSTER FEATS.
             const siblingFeatWrappers = _ManipulateDOM.getSiblingElements(clusterFeatWrapper);
-            siblingFeatWrappers.forEach(sibling => sibling.classList.toggle("dim-opacity"));
+            siblingFeatWrappers.forEach(sibling => {
+               _ManipulateDOM.toggleClassList(sibling, "dim-opacity", "disable-click");
+            });
 
          } catch (cardClickSeqErr) {
             console.error(`cardClickSeqErr: ${cardClickSeqErr.message}`);
