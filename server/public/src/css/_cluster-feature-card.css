@@ -93,7 +93,7 @@
    padding-left: 3px;
    display: grid;
    grid-template-rows: 1fr;
-   grid-template-columns: 1fr .55fr;
+   grid-template-columns: 1fr .45fr;
    line-height: 1.5;
 }
 
