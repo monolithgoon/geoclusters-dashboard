@@ -137,7 +137,7 @@ async function cacheData() {
 
       for (const geoCluster of geoClustersData) {
          if (geoCluster && geoCluster.data) {
-            const geoClusterJSON = await returnNormalized(geoCluster.data.collection_data);
+            const geoClusterJSON = await returnNormalized(geoCluster.data.collection_docs);
             saveData(JSON.stringify(geoClusterJSON), geoCluster.data.collection_name);
          };
       };

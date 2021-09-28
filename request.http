@@ -103,14 +103,15 @@ Content-type: application/json
 {
    "plot_id": "zagari_kiri_kasama_1248331812521737_4",
    "node": 2, 
-   "fields":["NameOnCard", "Base64Image", "Email", "Gender", "DateOfBirth"]
+   "fields":["NameOnCard", "Base64Image", "Email", "Gender", "DateOfBirth", "PhoneNumber1", "Nin"]
 }
 
 
 ###
-# POST https://geoclusters.herokuapp.com/api/v2/geo-clusters/geo-cluster/ HTTP/1.1
+# POST https://geoclusters.herokuapp.com/api/v2/geo-clusters/geo-cluster/ HTTP/1.1g
 POST http://127.0.0.1:9090/api/v2/geo-clusters/geo-cluster/ HTTP/1.1
 Content-type: application/json
+
 
 {
    "properties": {
