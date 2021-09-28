@@ -131,7 +131,8 @@
    border: 2px solid black;
 
    display: grid !important;
-   grid-template-columns: 1fr 1.5fr;
+   /* REMOVE */
+   /* grid-template-columns: 1fr 1.5fr; */
 
    border-radius: 3px;
    -webkit-box-shadow: 0px 0px 0px 1px rgba(255,255,255,1);
@@ -255,6 +256,7 @@
       .plot-metadata-label {      
          display: grid !important;
          grid-template-columns: auto auto 50px;
+         grid-template-columns: minmax(min(60px), auto) auto 50px;
       }
 
       .metadata-label--turn-by-turn {
