@@ -154,7 +154,7 @@ export const _GenerateClusterFeatMarkup = (() => {
                <div class="card-text-wrapper">
                   <div class="card-text-top">
                      <div class="main-card-text">
-                        <span class="feat-admin1-title flex-center justify-start">${_.startCase(_joinWordsArray(Object.values(props.featureAdmin.admin1.titles)))}</span>
+                        <span class="feat-admin1-title flex-center justify-start">${_.startCase(_joinWordsArray(Object.values(props.featureAdmin.admin1.titles)).toLowerCase())}</span>
                         <span>${props.featCenterLng.toFixed(6)}°E • ${props.featCenterLat.toFixed(6)}°N</span>
                      </div>
                      <div class="card-pills">
@@ -178,17 +178,19 @@ export const _GenerateClusterFeatMarkup = (() => {
       };
 
       const populateCardDrawerMarkup = function(props) {
+         let adminAge = props.featureAdmin.admin1.bio.age;
+         adminAge = !isNaN(adminAge) ? adminAge.toFixed(0) : "Undef"
          const HTMLMarkup = `
             <section class="feat-card-bio-section">
 
                <section class="section-1">
-                  <div><span>PHONE</span><span>08022242549</span></div>
-                  <div><span>AGE</span><span>56</span></div>
+                  <div><span>PHONE</span><span>${props.featureAdmin.admin1.contact.phone}</span></div>
+                  <div><span>AGE</span><span>${(adminAge}</span></div>
                </section>
 
                <section class="section-2">
-                  <div><span>ID TYPE</span><span>National Voters Card</span></div>
-                  <div><span>ID No.</span><span>2339887898877</span></div>
+                  <div><span>ID TYPE</span><span>National Identity Number</span></div>
+                  <div><span>ID No.</span><span>${props.featureAdmin.admin1.bio.idNo}</span></div>
                </section>
 
                <section class="section-3">

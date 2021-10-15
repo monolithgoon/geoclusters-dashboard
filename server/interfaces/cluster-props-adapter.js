@@ -157,11 +157,15 @@ exports._GetClusterProps = (clusterFeatureCollection = _mandatoryParam()) => {
 			? TraverseObject.getFinalValue()
 			: TraverseObject.evaluateValue(props, "agc_id")
 			? TraverseObject.getFinalValue()
+			: TraverseObject.evaluateValue(props, "legacy_agc_id")
+			? TraverseObject.getFinalValue()
 			: null;
       
 		let clusterName = TraverseObject.evaluateValue(props, "geo_cluster_name")
 			? TraverseObject.getFinalValue()
 			: TraverseObject.evaluateValue(props, "agc_extended_name")
+			? TraverseObject.getFinalValue()
+			: TraverseObject.evaluateValue(props, "legacy_agc_name")
 			? TraverseObject.getFinalValue()
 			: null;
 
@@ -177,11 +181,15 @@ exports._GetClusterProps = (clusterFeatureCollection = _mandatoryParam()) => {
 
 		const clusterArea = TraverseObject.evaluateValue(props, "geo_cluster_details", "delineated_area")
 			? TraverseObject.getFinalValue()
+			: TraverseObject.evaluateValue(props, "legacy_agc_details", "delineated_area")
+			? TraverseObject.getFinalValue()
 			: TraverseObject.evaluateValue(props, "agc_area")
 			? TraverseObject.getFinalValue()
 			: 0;
 
 		const clusterUsedArea = TraverseObject.evaluateValue(props, "geo_cluster_details", "total_allocations_area")
+			? TraverseObject.getFinalValue()
+			: TraverseObject.evaluateValue(props, "legacy_agc_details", "total_allocations_area")
 			? TraverseObject.getFinalValue()
 			: TraverseObject.evaluateValue(props, "total_allocation")
 			? TraverseObject.getFinalValue()
@@ -197,20 +205,28 @@ exports._GetClusterProps = (clusterFeatureCollection = _mandatoryParam()) => {
 
 		let clusterAdminLvl1 = TraverseObject.evaluateValue(props, "geo_cluster_details", "country")
 			? TraverseObject.getFinalValue()
+			: TraverseObject.evaluateValue(props, "legacy_agc_details", "country")
+			? TraverseObject.getFinalValue()
 			: null;
 			clusterAdminLvl1 = _startcase(clusterAdminLvl1);
 
 		let clusterAdminLvl2 = TraverseObject.evaluateValue(props, "geo_cluster_details", "state")
+			? TraverseObject.getFinalValue()
+			: TraverseObject.evaluateValue(props, "legacy_agc_details", "state")
 			? TraverseObject.getFinalValue()
 			: null;
 			clusterAdminLvl2 = _startcase(clusterAdminLvl2);
 
 		let clusterAdminLvl3 = TraverseObject.evaluateValue(props, "geo_cluster_details", "lga")
 			? TraverseObject.getFinalValue()
+			: TraverseObject.evaluateValue(props, "legacy_agc_details", "lga")
+			? TraverseObject.getFinalValue()
 			: null;
 			clusterAdminLvl3 = _startcase(clusterAdminLvl3);
 
 		let clusterAdminLvl4 = TraverseObject.evaluateValue(props, "geo_cluster_details", "ward")
+			? TraverseObject.getFinalValue()
+			: TraverseObject.evaluateValue(props, "legacy_agc_details", "ward")
 			? TraverseObject.getFinalValue()
 			: null;
 			clusterAdminLvl4 = _startcase(clusterAdminLvl4);
@@ -228,6 +244,8 @@ exports._GetClusterProps = (clusterFeatureCollection = _mandatoryParam()) => {
 		let primaryCommodity = TraverseObject.evaluateValue(props, 'geo_cluster_details', 'primary_crop') 
 			? TraverseObject.getFinalValue()
 			: TraverseObject.evaluateValue(props, 'primary_crop')
+			? TraverseObject.getFinalValue()
+			: TraverseObject.evaluateValue(props, 'legacy_agc_details', "primary_crop")
 			? TraverseObject.getFinalValue()
 			: "Rice";
 			primaryCommodity = _startcase(primaryCommodity);
@@ -296,26 +314,44 @@ exports._getClusterFeatProps = (clusterFeature = _mandatoryParam(), {featIdx}={}
 	
 			const featureAdmin = Object.freeze({
 				admin1: Object.freeze({
-					id: evaluateObjProps(props, {}, "plot_owner_bvn") || evaluateObjProps(props, {}, "owner_id"), // REMOVE BVN REF. <<
+					id: 
+						evaluateObjProps(props, {}, "plot_owner_bvn") || // REMOVE BVN REF. <<
+						evaluateObjProps(props, {}, "farmer_bio_data", "farmer_id") ||
+						evaluateObjProps(props, {}, "owner_id") || 
+						"Undef.",
 					titles: Object.freeze({
 						title1: 
 							evaluateObjProps(props, {}, 'owner_name') || 
-							evaluateObjProps(props, {}, "plot_owner_first_name"),
+							evaluateObjProps(props, {}, "plot_owner_first_name") ||
+							evaluateObjProps(props, {}, "farmer_bio_data", "farmer_names"),
 						title2: evaluateObjProps(props, {}, "plot_owner_middle_name"),
 						title3: evaluateObjProps(props, {}, "plot_owner_last_name"),
 					}),
-					photoBase64: "",
-					photoURL: evaluateObjProps(props, {defaultReturn: "/assets/icons/icons8-person-48.png"}, "owner_photo_url"),
+					photoURL: 
+						evaluateObjProps(props, {}, "owner_photo_url") ||
+						evaluateObjProps(props, {}, "farmer_bio_data", "farmer_photo_url") ||
+						"/assets/icons/icons8-person-48.png",
 					bio: {
-						age: "today",
-						idType: "passport",
-						idNo: "12345",
+						age: 
+							evaluateObjProps(props, {}, "farmer_bio_data", "farmer_age") ||
+							"Udef.",
+						gender: 
+							evaluateObjProps(props, {}, "farmer_bio_data", "farmer_gender") ||
+							"Udef.",
+						idType: 
+							evaluateObjProps(props, {}, "farmer_bio_data", "farmer_id_document_type") || 
+							"Undef.",
+						idNo: 
+							evaluateObjProps(props, {}, "farmer_bio_data", "farmer_id_document_no") ||
+							"Undef.",
 						originAdmin1: "Nigeria",
 						originAdmin2: "Delta",
 						originAdmin3: "Ukwuani",
 					},
 					contact: {
-						phone: "09099929992",
+						phone:
+							evaluateObjProps(props, {}, "farmer_bio_data", "farmer_phone_number_1") ||
+							"Undef.",
 						baseAddress: "No. 1 Inter Bau Rd."
 					},
 				}),
@@ -323,7 +359,8 @@ exports._getClusterFeatProps = (clusterFeature = _mandatoryParam(), {featIdx}={}
 	
 			const featureArea = 
 				evaluateObjProps(props, {}, 'chunk_size') || 
-				evaluateObjProps(props, {}, "plot_owner_allocation_size");
+				evaluateObjProps(props, {}, "plot_owner_allocation_size") ||
+				evaluateObjProps(props, {}, "plot_size");
 	
 			let featCenterLat, featCenterLng;
 			if (clusterFeature.geometry) {

@@ -236,20 +236,40 @@ function combineObjArrays(...baseArrays) {
 
 function retreiveClustersData() {
 
-   const parcelizedClustersJSON = fs.readFileSync(path.resolve(`${__approotdir}/localdata/parcelized-agcs.json`), {encoding: 'utf8'});
-   const legacyClustersJSON = fs.readFileSync(path.resolve(`${__approotdir}/localdata/legacy-agcs.json`), {encoding: 'utf8'});
+   const cachedGeoClusterFiles = [
+      "parcelized-agcs.json",
+      // "legacy-agcs.json",
+      "processed-legacy-agcs.json"
+   ];
 
-   let parcelizedClusters, legacyClusters;
+   const GEO_CLUSTERS_OBJS = [];
+
+   for (const geoClusterFile of cachedGeoClusterFiles) {
+      let geoClusterJSON = fs.readFileSync(path.resolve(`${__approotdir}/localdata/${geoClusterFile}`), {encoding: 'utf8'});
+      let geoClusterObj = JSON.parse(geoClusterJSON);
+      GEO_CLUSTERS_OBJS.push(geoClusterObj);
+   };
+
+   // const parcelizedClustersJSON = fs.readFileSync(path.resolve(`${__approotdir}/localdata/parcelized-agcs.json`), {encoding: 'utf8'});
+   // const legacyClustersJSON = fs.readFileSync(path.resolve(`${__approotdir}/localdata/legacy-agcs.json`), {encoding: 'utf8'});
+   // const processedLegacyClustersJSON = fs.readFileSync(path.resolve(`${__approotdir}/localdata/processed-legacy-agcs.json`), {encoding: 'utf8'});
+
+   // let parcelizedClusters, legacyClusters, processedLegacyClusters;
    
-   if (parcelizedClustersJSON) {
-      parcelizedClusters = JSON.parse(parcelizedClustersJSON);
-   };
+   // if (parcelizedClustersJSON) {
+   //    parcelizedClusters = JSON.parse(parcelizedClustersJSON);
+   // };
 
-   if (legacyClustersJSON) {
-      legacyClusters = JSON.parse(legacyClustersJSON);
-   };
+   // if (legacyClustersJSON) {
+   //    legacyClusters = JSON.parse(legacyClustersJSON);
+   // };
+
+   // if (processedLegacyClustersJSON) {
+   //    processedLegacyClusters = JSON.parse(processedLegacyClustersJSON);
+   // };
       
-   const returnedClusters = combineObjArrays(parcelizedClusters, legacyClusters);
+   // const returnedClusters = combineObjArrays(parcelizedClusters, legacyClusters, processedLegacyClusters);
+   const returnedClusters = combineObjArrays(...GEO_CLUSTERS_OBJS);
 
    const clustersSummary = {
       totalNumClusters: returnedClusters.length,

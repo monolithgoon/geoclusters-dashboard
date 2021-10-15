@@ -111,9 +111,11 @@ async function returnNormalized(geoClusterArray) {
 async function getData() {
 
    const data = [];
+
    const resourceURLs = [
       `https://geoclusters.herokuapp.com/api/v1/parcelized-agcs/`, 
       `https://geoclusters.herokuapp.com/api/v2/legacy-agcs/`,
+      `https://geoclusters.herokuapp.com/api/v2/legacy-agcs/processed/`,
    ];
 
    for (const resourceURL of resourceURLs) {
@@ -133,7 +135,7 @@ async function cacheData() {
       
       const geoClustersData = await getData();
 
-      console.log(geoClustersData);
+      console.log({geoClustersData});
 
       for (const geoCluster of geoClustersData) {
          if (geoCluster && geoCluster.data) {

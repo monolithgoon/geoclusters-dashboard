@@ -29,16 +29,17 @@ export const APP_STATE = (function() {
       GEO_CLUSTER_API_HOST_LOCAL: `http://127.0.0.1:9090`,
       GEO_CLUSTER_API_HOST_HEROKU: `https://geoclusters.herokuapp.com`,
       GEO_CLUSTER_API_RESOURCE_PATHS: ["v2/legacy-agcs", "v1/parcelized-agcs", "v1/agcs"],
-      LEGACY_CLUSTER_QUERY_STR: `?fields=
-                                    properties.geo_cluster_details,
-                                    properties.geo_cluster_governance_structure,
-                                    properties.geo_cluster_name,
-                                    features.geometry,
-                                    features.properties.plot_id,
-                                    features.properties.plot_owner_allocation_size,
-                                    features.properties.plot_owner_first_name,
-                                    features.properties.plot_owner_last_name,
-                                    features.properties.plot_owner_gender`,
+      // REMOVE > DEPRC.
+      // LEGACY_CLUSTER_QUERY_STR: `?fields=
+      //                               properties.geo_cluster_details,
+      //                               properties.geo_cluster_governance_structure,
+      //                               properties.legacy_agc_name,
+      //                               features.geometry,
+      //                               features.properties.plot_id,
+      //                               features.properties.plot_owner_allocation_size,
+      //                               features.properties.plot_owner_first_name,
+      //                               features.properties.plot_owner_last_name,
+      //                               features.properties.plot_owner_gender`,
                                     
       CLUSTER_RESULT_DATA_ATTR_NAME: `geoclusterdatastream`,
 
