@@ -171,7 +171,7 @@ exports._GetClusterProps = (clusterFeatureCollection = _mandatoryParam()) => {
 
 			// clusterName = _startcase(clusterName.toLowerCase());
 			// clusterName = _capitalizeWords(clusterName, 'Agc', 'Pmro', 'Fct');
-			clusterName = _capitalizeWords(_startcase(clusterName.toLowerCase()), 'Agc', 'Pmro', 'Fct');
+			clusterName = _capitalizeWords(_startcase(clusterName.toLowerCase()), 'Agc', 'Pmro', 'Fct', "Nfgcs", "Ompcs");
 
 		const clusterFeatsNum = clusterFeatureCollection.features.length;
       
@@ -251,15 +251,15 @@ exports._GetClusterProps = (clusterFeatureCollection = _mandatoryParam()) => {
 			primaryCommodity = _startcase(primaryCommodity);
 
 		let clusterGovAdmin1 = Object.freeze({
-			adminTitle1: evaluateObjProps(props, {}, 'geo_cluster_governance_structure', 'president', 'first_name'),
-			adminTitle2: evaluateObjProps(props, {}, 'geo_cluster_governance_structure', 'president', 'middle_name'),
-			adminTitle3: evaluateObjProps(props, {}, 'geo_cluster_governance_structure', 'president', 'last_name'),
+			adminName1: evaluateObjProps(props, {}, 'geo_cluster_governance_structure', 'president', 'first_name'),
+			adminName2: evaluateObjProps(props, {}, 'geo_cluster_governance_structure', 'president', 'middle_name'),
+			adminName3: evaluateObjProps(props, {}, 'geo_cluster_governance_structure', 'president', 'last_name'),
 		});
 		
 		let clusterGovAdmin2 = Object.freeze({
-			adminTitle1: evaluateObjProps(props, {}, 'geo_cluster_governance_structure', 'vice_president', 'first_name'),
-			adminTitle2: evaluateObjProps(props, {}, 'geo_cluster_governance_structure', 'vice_president', 'middle_name'),
-			adminTitle3: evaluateObjProps(props, {}, 'geo_cluster_governance_structure', 'vice_president', 'last_name'),
+			adminName1: evaluateObjProps(props, {}, 'geo_cluster_governance_structure', 'vice_president', 'first_name'),
+			adminName2: evaluateObjProps(props, {}, 'geo_cluster_governance_structure', 'vice_president', 'middle_name'),
+			adminName3: evaluateObjProps(props, {}, 'geo_cluster_governance_structure', 'vice_president', 'last_name'),
 		});
 
 		return {
@@ -319,19 +319,20 @@ exports._getClusterFeatProps = (clusterFeature = _mandatoryParam(), {featIdx}={}
 						evaluateObjProps(props, {}, "farmer_bio_data", "farmer_id") ||
 						evaluateObjProps(props, {}, "owner_id") || 
 						"Undef.",
-					titles: Object.freeze({
-						title1: 
+					names: Object.freeze({
+						name1: 
 							evaluateObjProps(props, {}, 'owner_name') || 
-							evaluateObjProps(props, {}, "plot_owner_first_name") ||
-							evaluateObjProps(props, {}, "farmer_bio_data", "farmer_names"),
-						title2: evaluateObjProps(props, {}, "plot_owner_middle_name"),
-						title3: evaluateObjProps(props, {}, "plot_owner_last_name"),
+							evaluateObjProps(props, {}, "farmer_bio_data", "farmer_first_name"),
+						name2: evaluateObjProps(props, {}, "farmer_bio_data", "farmer_middle_name"),
+						name3: evaluateObjProps(props, {}, "farmer_bio_data", "farmer_last_name"),
 					}),
 					photoURL: 
 						evaluateObjProps(props, {}, "owner_photo_url") ||
 						evaluateObjProps(props, {}, "farmer_bio_data", "farmer_photo_url") ||
 						"/assets/icons/icons8-person-48.png",
-					bio: {
+					biometrics: {
+						names:
+							evaluateObjProps(props, {}, "farmer_bio_data", "farmer_names"),
 						age: 
 							evaluateObjProps(props, {}, "farmer_bio_data", "farmer_age") ||
 							"Udef.",
@@ -344,9 +345,9 @@ exports._getClusterFeatProps = (clusterFeature = _mandatoryParam(), {featIdx}={}
 						idNo: 
 							evaluateObjProps(props, {}, "farmer_bio_data", "farmer_id_document_no") ||
 							"Undef.",
-						originAdmin1: "Nigeria",
-						originAdmin2: "Delta",
-						originAdmin3: "Ukwuani",
+						originAdminLvl1: "Nigeria",
+						originAdminLvl2: "Delta",
+						originAdminLvl3: "Ukwuani",
 					},
 					contact: {
 						phone:

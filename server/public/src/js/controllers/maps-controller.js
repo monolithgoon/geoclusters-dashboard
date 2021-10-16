@@ -499,7 +499,7 @@ const LeafletMaps = (baseMap => {
             </div>
             <div class="metadata-label--owner-info__avg"> 
                <span> Plot-${featProps.featureIndex} </span>
-               <span> ${_.startCase(_joinWordsArray(Object.values(featProps.featureAdmin.admin1.titles)))} </span>
+               <span> ${_.startCase(_joinWordsArray(Object.values(featProps.featureAdmin.admin1.names)))} </span>
             </div>
             <div class="metadata-label--turn-by-turn" id="metadata_label_turn_by_turn">
                <a href="#" role="button" title="Plot boundary turn-by-turn directions" aria-label="Plot boundary turn-by-turn directions"></a>

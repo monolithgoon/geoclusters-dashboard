@@ -141,20 +141,32 @@ export const _GenerateClusterFeatMarkup = (() => {
    try {
             
       const populateCardMarkup = function(props) {
-         const plotOwnerUrl = props.featureAdmin.admin1.photoURL;
+
+         const plotAdminPhotoUrl = props.featureAdmin.admin1.photoURL;
+
+         // let admin1Names = _.startCase(_joinWordsArray(Object.values(props.featureAdmin.admin1.names)).toLowerCase());
+         let admin1Names = _joinWordsArray(Object.values(props.featureAdmin.admin1.names));
+         if (admin1Names) admin1Names = _.startCase(admin1Names.toLowerCase());
+         
+         // let admin1BiometricNames = _.startCase((props.featureAdmin.admin1.biometrics.names).toLowerCase());
+         let admin1BiometricNames = props.featureAdmin.admin1.biometrics.names;
+         if (admin1BiometricNames) admin1BiometricNames = _.startCase(admin1BiometricNames.toLowerCase());
+
+         const plotAdminNames = admin1BiometricNames || admin1Names;
+
          const HTMLMarkup = `
             <div class="card-content-wrapper">
                <div class="card-media-wrapper">
                   <div class="feat-admin-avatar">
                      <img
-                        src="${plotOwnerUrl || `/assets/icons/icons8-person-48.png`}"
+                        src="${plotAdminPhotoUrl || `/assets/icons/icons8-person-48.png`}"
                         alt="Plot Owner Avatar"/>
                   </div>
                </div>
                <div class="card-text-wrapper">
                   <div class="card-text-top">
                      <div class="main-card-text">
-                        <span class="feat-admin1-title flex-center justify-start">${_.startCase(_joinWordsArray(Object.values(props.featureAdmin.admin1.titles)).toLowerCase())}</span>
+                        <span class="feat-admin1-title flex-center justify-start">${plotAdminNames}</span>
                         <span>${props.featCenterLng.toFixed(6)}°E • ${props.featCenterLat.toFixed(6)}°N</span>
                      </div>
                      <div class="card-pills">
@@ -178,19 +190,21 @@ export const _GenerateClusterFeatMarkup = (() => {
       };
 
       const populateCardDrawerMarkup = function(props) {
-         let adminAge = props.featureAdmin.admin1.bio.age;
-         adminAge = !isNaN(adminAge) ? adminAge.toFixed(0) : "Undef"
+
+         let adminAge = props.featureAdmin.admin1.biometrics.age;
+         adminAge = !isNaN(adminAge) ? adminAge.toFixed(0) : "Undef";
+
          const HTMLMarkup = `
             <section class="feat-card-bio-section">
 
                <section class="section-1">
                   <div><span>PHONE</span><span>${props.featureAdmin.admin1.contact.phone}</span></div>
-                  <div><span>AGE</span><span>${(adminAge}</span></div>
+                  <div><span>AGE</span><span>${adminAge}</span></div>
                </section>
 
                <section class="section-2">
                   <div><span>ID TYPE</span><span>National Identity Number</span></div>
-                  <div><span>ID No.</span><span>${props.featureAdmin.admin1.bio.idNo}</span></div>
+                  <div><span>ID No.</span><span>${props.featureAdmin.admin1.biometrics.idNo}</span></div>
                </section>
 
                <section class="section-3">
@@ -251,7 +265,7 @@ export const _getClusterFeatPopupMarkup = (props) => {
             </div>
       
             <div class="mapboxgl-popup-text-wrapper">
-               <span class="mapboxgl-popup-title">${_.startCase(_joinWordsArray(Object.values(props.featureAdmin.admin1.titles)))}</span>
+               <span class="mapboxgl-popup-title">${_.startCase(_joinWordsArray(Object.values(props.featureAdmin.admin1.names)))}</span>
                <span>VASTID • ${props.featureID}</span>
                <span>Lat ${props.featCenterLat.toFixed(6)}°N Lng ${props.featCenterLng.toFixed(6)}°E </span>
             </div>      
