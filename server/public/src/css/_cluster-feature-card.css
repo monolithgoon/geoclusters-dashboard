@@ -155,17 +155,11 @@
 
 .card-text-bottom > div > span {
    padding: 1px 3px 0 3px;
-   max-width: 90px;
+   max-width: 120px;
    font-weight: light;
    white-space: nowrap;
    overflow: hidden;
    text-overflow: ellipsis;
-}
-
-#feat_card__feat_id {
-   max-width: 95px;
-   display: flex;
-   justify-content: flex-start;   
 }
 
 .card-text-bottom > div > span:first-child {

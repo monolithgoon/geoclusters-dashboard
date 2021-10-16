@@ -175,12 +175,12 @@ export const _GenerateClusterFeatMarkup = (() => {
                      </div>
                   </div>
                   <div class="card-text-bottom">
-                     <div class="flex-row-center">
+                     <div class="flex-row-start">
                         <span>FID</span><span>${`${(props.featureAdmin.admin1.id)}`.slice(0)}</span>
                      </div>
-                     <div class="flex-row-center">
+                     <div class="flex-row-start">
                         <span class="flex-row-center">VASTID</span>
-                        <span id="feat_card__feat_id" class="flex-row-center">${`${props.featureID}`.slice(0)}</span>
+                        <span id="feat_card__feat_id">${`${props.featureID}`.slice(0)}</span>
                      </div>
                   </div>
                </div>
