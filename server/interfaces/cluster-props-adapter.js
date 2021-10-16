@@ -333,8 +333,8 @@ exports._getClusterFeatProps = (clusterFeature = _mandatoryParam(), {featIdx}={}
 					biometrics: {
 						names:
 							evaluateObjProps(props, {}, "farmer_bio_data", "farmer_names"),
-						age: 
-							evaluateObjProps(props, {}, "farmer_bio_data", "farmer_age") ||
+						dob: 
+							evaluateObjProps(props, {}, "farmer_bio_data", "farmer_dob") ||
 							"Udef.",
 						gender: 
 							evaluateObjProps(props, {}, "farmer_bio_data", "farmer_gender") ||

@@ -191,7 +191,9 @@ export const _GenerateClusterFeatMarkup = (() => {
 
       const populateCardDrawerMarkup = function(props) {
 
-         let adminAge = props.featureAdmin.admin1.biometrics.age;
+         let adminDob = props.featureAdmin.admin1.biometrics.dob;
+         let adminAge;
+         if (adminDob && adminDob !== "") adminAge = (Date.now() - Date.parse(adminDob))/31556926000;
          adminAge = !isNaN(adminAge) ? adminAge.toFixed(0) : "Undef";
 
          const HTMLMarkup = `
