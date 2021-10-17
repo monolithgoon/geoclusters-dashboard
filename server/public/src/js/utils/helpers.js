@@ -17,14 +17,14 @@ export function _errorHandler(callback, errName) {
 };
 
 
-// FIXME> TEST THE OUTPUTS
+// FIXME > TEST THE OUTPUTS
 // CONCAT. STRINGS FROM ARRAY; SEPARATE BY SPACE
 export function _joinWordsArray(keywords, {inclQuotes=false, commaSeparated=false}={}) {
 	let concatArray;
    concatArray = keywords.map((keyword) => {
 		if (keyword) {
 			if (inclQuotes) return `"${keyword}"`
-			else return keyword;
+			else return keyword.trim();
 		} 
    });
 	return commaSeparated ? concatArray.join(",") : concatArray.join(" ");

@@ -43,8 +43,8 @@ export const APP_STATE = (function() {
                                     
       CLUSTER_RESULT_DATA_ATTR_NAME: `geoclusterdatastream`,
 
-      ADMIN_BOUNDS_GEOJSON_API_HOST: `http://127.0.0.1:1010`,
-      // ADMIN_BOUNDS_GEOJSON_API_HOST: `https://avgmap.herokuapp.com`,
+      // ADMIN_BOUNDS_GEOJSON_API_HOST: `http://127.0.0.1:1010`,
+      ADMIN_BOUNDS_GEOJSON_API_HOST: `https://avgmap.herokuapp.com`,
       // ADMIN_BOUNDS_GEOJSON_API_HOST: `https://avg-dashboard.herokuapp.com`,
 
       // ADMIN_BOUNDS_GEOJSON_API_RESOURCE_PATHS: [`v1/admin-bounds/nga-admin-bounds`],
