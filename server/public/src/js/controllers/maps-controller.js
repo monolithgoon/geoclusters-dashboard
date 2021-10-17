@@ -408,7 +408,7 @@ const LeafletMaps = (baseMap => {
       
             // featMarker = L.marker(featCenterLatLng);
             featMarker = L.circleMarker(featCenterLatLng, {
-               radius: 6,
+               radius: 4,
                weight: 2,
                opacity: 1,
                color: "white",
