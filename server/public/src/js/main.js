@@ -47,7 +47,25 @@ const InitApp = (() => {
       // FIXME > DOWNLOAD COLLS. IN RESPONSE TO DB. INSERTS
       renderLiveClusters: async (window) => {
          
-         // await _downloadDBCollections(window);
+         await _downloadDBCollections(window);
+
+         // const apiHost = APP_STATE.CONFIG_DEFAULTS.GEO_CLUSTER_API_HOST_LOCAL;
+         // const geoClusterResourcePaths = APP_STATE.CONFIG_DEFAULTS.GEO_CLUSTER_API_RESOURCE_PATHS;
+
+         // for (const geoClusterResourcePath of geoClusterResourcePaths) {
+         
+         //    // get the resource name
+         //    const dbCollectionName = geoClusterResourcePath.slice(geoClusterResourcePath.indexOf('/')+1);
+
+         //    // get the resource
+         //    let geoClusterResource;
+         //    geoClusterResource = await _getAPIResource(window, apiHost, geoClusterResourcePath);
+         //    console.log({geoClusterResource});
+
+         //    // SAVE THE RETURNED DATA
+         //    if (geoClusterResource) APP_STATE.saveDBCollection(dbCollectionName, geoClusterResource.data);
+
+         // };
 
          (function renderLiveClusters() {
          
@@ -81,11 +99,12 @@ const InitApp = (() => {
             const resourceName = adminBoundsResourcePath.slice(adminBoundsResourcePath.indexOf('/nga') + 1);
             console.log({resourceName});
 
+            // get the resource
             const adminBoundsResource = await _getAPIResource(window, apiHost, adminBoundsResourcePath);
             console.log({adminBoundsResource});
                            
             // SAVE THE RETURNED DATA
-            APP_STATE.saveDBCollection(resourceName, adminBoundsResource.data);
+            if (adminBoundsResource) APP_STATE.saveDBCollection(resourceName, adminBoundsResource.data);
 
             // RENDER ON MAP
             renderGeoPolRegions(resourceName, adminBoundsResource.data);

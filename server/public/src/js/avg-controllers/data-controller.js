@@ -77,7 +77,7 @@ export async function _getAPIResource(eventObj, resourceHost, resourcePath) {
 };
 
 
-// FIXME > MAKE THIS A GENERIC FUNCTION THAT ONLY RETURNS DATA FROM THE API AND NOTHING MORE
+// REMOVE > DEPRC.
 // DOWNLOAD & SAVE DB. COLLECTIONS
 export async function _downloadDBCollections(eventObj) {
 
@@ -93,7 +93,7 @@ export async function _downloadDBCollections(eventObj) {
             console.log(document.domain);
 
             return queryAPI.call(eventObj, window.fetch, 
-					APP_STATE.CONFIG_DEFAULTS.GEO_CLUSTER_API_HOST_HEROKU, 
+					APP_STATE.CONFIG_DEFAULTS.GEO_CLUSTER_API_HOST_LOCAL, 
 					geoClusterResourcePath, 
 					{});
          };
