@@ -49,7 +49,7 @@ const InitApp = (() => {
          
          await _downloadDBCollections(window);
 
-         // const apiHost = APP_STATE.CONFIG_DEFAULTS.GEO_CLUSTER_API_HOST_LOCAL;
+         // const apiHost = APP_STATE.CONFIG_DEFAULTS.GEO_CLUSTER_API_HOST;
          // const geoClusterResourcePaths = APP_STATE.CONFIG_DEFAULTS.GEO_CLUSTER_API_RESOURCE_PATHS;
 
          // for (const geoClusterResourcePath of geoClusterResourcePaths) {

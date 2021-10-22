@@ -93,7 +93,7 @@ export async function _downloadDBCollections(eventObj) {
             console.log(document.domain);
 
             return queryAPI.call(eventObj, window.fetch, 
-					APP_STATE.CONFIG_DEFAULTS.GEO_CLUSTER_API_HOST_LOCAL, 
+					APP_STATE.CONFIG_DEFAULTS.GEO_CLUSTER_API_HOST, 
 					geoClusterResourcePath, 
 					{});
          };
