@@ -1,21 +1,21 @@
 {
   "name": "avg-dashboard-ssr",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "NIRSAL AVG Dashboard - SSR Alpha",
-  "main": "express2.js",
+  "main": "express.js",
   "scripts": {
-    "deploy:open": "git push && git push heroku master && heroku open",
-    "deploy": "git add -A && git commit -m `stable-commit` && git push && git push heroku master",
-    "on": "heroku maintenance:on",
-    "off": "heroku maintenance:off",
     "start": "node server.js",
     "start:prod": "NODE_ENV=production && cd server && nodemon server.js",
-    "dev": "cd server && nodemon server.js --ignore localdata/",
-    "secure": "webpack --mode production && node obfuscate.js"
+    "dev": "cd server && nodemon server.js --ignore localdata/ --ignore public/dist/",
+    "secure": "webpack --mode production && node obfuscate.js",
+    "deploy": "git push && git push heroku master && heroku open",
+    "stable": "webpack --mode production && node obfuscate.js && git add -A && git commit -m `stable-commit` && git push && git push heroku master",
+    "on": "heroku maintenance:on",
+    "off": "heroku maintenance:off"
   },
   "nodemonConfig": {
     "ignore": [
-      "/localdata/*.json"
+      ["/localdata/*.json", "/public/dist/"]
     ]
   },
   "author": "Nduka Okpue",
@@ -50,6 +50,7 @@
     "xss-clean": "^0.1.1"
   },
   "devDependencies": {
+    "css-loader": "^6.4.0",
     "file-loader": "^6.2.0",
     "javascript-obfuscator": "^2.6.0",
     "nodemon": "^2.0.7",
