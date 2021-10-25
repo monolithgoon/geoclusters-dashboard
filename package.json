@@ -1,7 +1,7 @@
 {
   "name": "avg-dashboard-ssr",
   "version": "1.1.0",
-  "description": "NIRSAL AVG Dashboard - SSR Alpha",
+  "description": "NIRSAL AVG Dashboard - SSR Beta V1.1.0",
   "main": "express.js",
   "scripts": {
     "start": "node server.js",

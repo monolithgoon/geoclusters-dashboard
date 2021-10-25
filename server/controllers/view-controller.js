@@ -8,7 +8,7 @@ exports.renderAVGDashboard = catchAsync(async(req, res, next) => {
    console.log(chalk.success(`SUCCESSFULLY CALLED 'renderAVGDashboard' VIEW CONTROLLER FN. `));
       
       res.status(200).render('dashboard', {
-         title: "AVG Dashboard - SSR Alpha",
+         title: "AVG Dashboard - SSR Beta V1.0",
          user: "FieldDev Group",
          geoClusters: req.app.locals.returnedClusters,
       });
