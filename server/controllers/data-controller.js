@@ -237,9 +237,9 @@ function combineObjArrays(...baseArrays) {
 function retreiveClustersData() {
 
    const cachedGeoClusterFiles = [
+      "processed-legacy-agcs.json",
       "parcelized-agcs.json",
       // "legacy-agcs.json",
-      "processed-legacy-agcs.json"
    ];
 
    const GEO_CLUSTERS_OBJS = [];

@@ -337,6 +337,11 @@ button#results_scroll_top_button {
    letter-spacing: -0.2px;
    /* color: #333; */
    color: grey;
+
+   white-space: nowrap;
+   overflow: hidden;
+   text-overflow: ellipsis;
+   max-width: 250px;
 }
 
 .result-item > *,

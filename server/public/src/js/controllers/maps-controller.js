@@ -1814,7 +1814,7 @@ const AffectLeafletMarker = (() => {
    const clusterFeatsListCont = document.getElementById('cluster_feats_listing_body')
    var link = L.DomUtil.create('a', 'link', clusterFeatsListCont);
            
-   link.textContent = 'Cluster Plot Owner';
+   // link.textContent = 'Cluster Plot Owner';
    link.href = '#';
    
    var marker = new L.Marker([36.8370066107919, 10.059871561852127]).bindPopup('Popup').addTo(AVG_BASE_MAP);
