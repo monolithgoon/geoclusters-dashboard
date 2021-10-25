@@ -26,8 +26,8 @@ export const APP_STATE = (function() {
       LEAFLET_ADMIN_LEVEL_3_ZOOM: 16,
       LEAFLET_MAX_ZOOM: 18,
 
-      GEO_CLUSTER_API_HOST: `http://127.0.0.1:9090`,
-      // GEO_CLUSTER_API_HOST: `https://geoclusters.herokuapp.com`,
+      // GEO_CLUSTER_API_HOST: `http://127.0.0.1:9090`,
+      GEO_CLUSTER_API_HOST: `https://geoclusters.herokuapp.com`,
       GEO_CLUSTER_API_RESOURCE_PATHS: ["v2/legacy-agcs", "v1/parcelized-agcs", "v1/agcs"],
       // REMOVE > DEPRC.
       // LEGACY_CLUSTER_QUERY_STR: `?fields=
@@ -43,9 +43,9 @@ export const APP_STATE = (function() {
                                     
       CLUSTER_RESULT_DATA_ATTR_NAME: `geoclusterdatastream`,
 
-      ADMIN_BOUNDS_GEOJSON_API_HOST: `http://127.0.0.1:1010`,
+      // ADMIN_BOUNDS_GEOJSON_API_HOST: `http://127.0.0.1:1010`,
       // ADMIN_BOUNDS_GEOJSON_API_HOST: `https://avgmap.herokuapp.com`,
-      // ADMIN_BOUNDS_GEOJSON_API_HOST: `https://avg-dashboard.herokuapp.com`,
+      ADMIN_BOUNDS_GEOJSON_API_HOST: `https://avg-dashboard.herokuapp.com`,
 
       // ADMIN_BOUNDS_GEOJSON_API_RESOURCE_PATHS: [`v1/admin-bounds/nga-admin-bounds`],
       // ADMIN_BOUNDS_GEOJSON_API_RESOURCE_PATHS: [`v1/admin-bounds/nga-geo-pol-regions`, `v1/admin-bounds/nga-admin-bounds-lvl1`, `v1/admin-bounds/nga-admin-bounds-lvl2`, `v1/admin-bounds/nga-admin-bounds-lvl3`],
