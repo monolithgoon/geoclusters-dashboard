@@ -194,7 +194,7 @@ export const _GenerateClusterFeatMarkup = (() => {
          let adminDob = props.featureAdmin.admin1.biometrics.dob;
          let adminAge;
          if (adminDob && adminDob !== "") adminAge = (Date.now() - Date.parse(adminDob))/31556926000;
-         adminAge = !isNaN(adminAge) ? adminAge.toFixed(0) : "Undef";
+         adminAge = !isNaN(adminAge) ? adminAge.toFixed(0) : "-";
 
          const HTMLMarkup = `
             <section class="feat-card-bio-section">

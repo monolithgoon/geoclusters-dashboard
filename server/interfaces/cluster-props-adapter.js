@@ -153,13 +153,15 @@ exports._GetClusterProps = (clusterFeatureCollection = _mandatoryParam()) => {
       
 		const props = clusterFeatureCollection.properties;
 
-		const clusterID = TraverseObject.evaluateValue(props, "geo_cluster_id")
+		let clusterID = TraverseObject.evaluateValue(props, "geo_cluster_id")
 			? TraverseObject.getFinalValue()
 			: TraverseObject.evaluateValue(props, "agc_id")
 			? TraverseObject.getFinalValue()
 			: TraverseObject.evaluateValue(props, "legacy_agc_id")
 			? TraverseObject.getFinalValue()
 			: null;
+		
+			clusterID = clusterID ? clusterID.toUpperCase() : clusterID;
       
 		let clusterName = TraverseObject.evaluateValue(props, "geo_cluster_name")
 			? TraverseObject.getFinalValue()
@@ -171,7 +173,7 @@ exports._GetClusterProps = (clusterFeatureCollection = _mandatoryParam()) => {
 
 			// clusterName = _startcase(clusterName.toLowerCase());
 			// clusterName = _capitalizeWords(clusterName, 'Agc', 'Pmro', 'Fct');
-			clusterName = _capitalizeWords(_startcase(clusterName.toLowerCase()), 'Agc', 'Pmro', 'Fct', "Nfgcs", "Ompcs");
+			clusterName = clusterName ? _capitalizeWords(_startcase(clusterName.toLowerCase()), 'Agc', 'Pmro', 'Fct', "Nfgcs", "Ompcs") : clusterName;
 
 		const clusterFeatsNum = clusterFeatureCollection.features.length;
       
@@ -335,16 +337,16 @@ exports._getClusterFeatProps = (clusterFeature = _mandatoryParam(), {featIdx}={}
 							evaluateObjProps(props, {}, "farmer_bio_data", "farmer_names"),
 						dob: 
 							evaluateObjProps(props, {}, "farmer_bio_data", "farmer_dob") ||
-							"Udef.",
+							null,
 						gender: 
 							evaluateObjProps(props, {}, "farmer_bio_data", "farmer_gender") ||
-							"Udef.",
+							"-",
 						idType: 
 							evaluateObjProps(props, {}, "farmer_bio_data", "farmer_id_document_type") || 
-							"Undef.",
+							"-",
 						idNo: 
 							evaluateObjProps(props, {}, "farmer_bio_data", "farmer_id_document_no") ||
-							"Undef.",
+							"-",
 						originAdminLvl1: "Nigeria",
 						originAdminLvl2: "Delta",
 						originAdminLvl3: "Ukwuani",
@@ -352,7 +354,7 @@ exports._getClusterFeatProps = (clusterFeature = _mandatoryParam(), {featIdx}={}
 					contact: {
 						phone:
 							evaluateObjProps(props, {}, "farmer_bio_data", "farmer_phone_number_1") ||
-							"Undef.",
+							"-",
 						baseAddress: "No. 1 Inter Bau Rd."
 					},
 				}),
