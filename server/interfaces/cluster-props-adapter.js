@@ -359,6 +359,15 @@ exports._getClusterFeatProps = (clusterFeature = _mandatoryParam(), {featIdx}={}
 					},
 				}),
 			});
+
+			// COMPUTE ADMIN-1 AGE
+         let admin1Age;
+         let admin1Dob = featureAdmin.admin1.biometrics.dob;
+         if (admin1Dob && admin1Dob !== "") admin1Age = (Date.now() - Date.parse(admin1Dob))/31556926000;
+         admin1Age = !isNaN(admin1Age) ? admin1Age.toFixed(0) : "-";
+
+			// ASSIGN ADMIN-1 AGE
+			featureAdmin.admin1.biometrics["age"] = admin1Age;
 	
 			const featureArea = 
 				evaluateObjProps(props, {}, 'chunk_size') || 

@@ -191,22 +191,19 @@ export const _GenerateClusterFeatMarkup = (() => {
 
       const populateCardDrawerMarkup = function(props) {
 
-         let adminDob = props.featureAdmin.admin1.biometrics.dob;
-         let adminAge;
-         if (adminDob && adminDob !== "") adminAge = (Date.now() - Date.parse(adminDob))/31556926000;
-         adminAge = !isNaN(adminAge) ? adminAge.toFixed(0) : "-";
+         const admin1 = props.featureAdmin.admin1;
 
          const HTMLMarkup = `
             <section class="feat-card-bio-section">
 
                <section class="section-1">
-                  <div><span>PHONE</span><span>${props.featureAdmin.admin1.contact.phone}</span></div>
-                  <div><span>AGE</span><span>${adminAge}</span></div>
+                  <div><span>PHONE</span><span>${admin1.contact.phone}</span></div>
+                  <div><span>AGE</span><span>${admin1.biometrics.age}</span></div>
                </section>
 
                <section class="section-2">
                   <div><span>ID TYPE</span><span>National Identity Number</span></div>
-                  <div><span>ID No.</span><span>${props.featureAdmin.admin1.biometrics.idNo}</span></div>
+                  <div><span>ID No.</span><span>${admin1.biometrics.idNo}</span></div>
                </section>
 
                <section class="section-3">
