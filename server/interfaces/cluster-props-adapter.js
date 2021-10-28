@@ -1,7 +1,7 @@
 `use strict`;
 const turf = require('@turf/turf');
 const _startcase = require('lodash.startcase');
-const { _capitalizeWords, _getFeatCenter } = require('../utils/helpers.js');
+const { _capitalizeWords, _getFeatCenter, _joinWordsArray } = require('../utils/helpers.js');
 
 
 const _mandatoryParam = () => {
@@ -233,16 +233,12 @@ exports._GetClusterProps = (clusterFeatureCollection = _mandatoryParam()) => {
 			: null;
 			clusterAdminLvl4 = _startcase(clusterAdminLvl4);
 
-		const clusterLocation = _startcase(`${evaluateObjProps(props, {}, 'agc_location') || `${clusterAdminLvl4} ${clusterAdminLvl3} ${clusterAdminLvl2} ${clusterAdminLvl1}`}`);
+		const clusterLocation = _startcase(`${evaluateObjProps(props, {}, 'agc_location') || `${_joinWordsArray([clusterAdminLvl4, clusterAdminLvl3, clusterAdminLvl2, clusterAdminLvl1], {commaSeparated: true})}`}`);
 
 		const clusterRenderHash = evaluateObjProps(props, {}, 'preview_map_url_hash');
 		
 		const subdivideMetadata = evaluateObjProps(props, {}, 'parcelization_metadata');
 		
-		// REMOVE
-		// let primaryCommodity = evaluateObjProps(props, {}, 'geo_cluster_details', 'primary_crop');
-		// 	primaryCommodity = _startcase(primaryCommodity);
-
 		let primaryCommodity = TraverseObject.evaluateValue(props, 'geo_cluster_details', 'primary_crop') 
 			? TraverseObject.getFinalValue()
 			: TraverseObject.evaluateValue(props, 'primary_crop')
@@ -317,7 +313,6 @@ exports._getClusterFeatProps = (clusterFeature = _mandatoryParam(), {featIdx}={}
 			const featureAdmin = Object.freeze({
 				admin1: Object.freeze({
 					id: 
-						evaluateObjProps(props, {}, "plot_owner_bvn") || // REMOVE BVN REF. <<
 						evaluateObjProps(props, {}, "farmer_bio_data", "farmer_id") ||
 						evaluateObjProps(props, {}, "owner_id") || 
 						"Undef.",

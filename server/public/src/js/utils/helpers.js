@@ -25,7 +25,7 @@ export function _joinWordsArray(keywords, {inclQuotes=false, commaSeparated=fals
 		if (keyword) {
 			if (inclQuotes) return `"${keyword}"`
 			else return keyword.trim();
-		} 
+		};
    });
 	return commaSeparated ? concatArray.join(",") : concatArray.join(" ");
 };

@@ -52,6 +52,19 @@ exports._capitalizeWords = (baseStr, ...subStrings) => {
 };
 
 
+// CONCAT. STRINGS FROM ARRAY; SEPARATE BY SPACE
+exports._joinWordsArray = (keywords, {inclQuotes=false, commaSeparated=false}={}) => {
+	let concatArray;
+   concatArray = keywords.map((keyword) => {
+		if (keyword) {
+			if (inclQuotes) return `"${keyword}"`
+			else return keyword.trim();
+		};
+   });
+	return commaSeparated ? concatArray.join(",") : concatArray.join(" ");
+};
+
+
 // fix the coords in each feat. and return the featColl.
 repairFeatsCoords = (featureCollection) => {
 
