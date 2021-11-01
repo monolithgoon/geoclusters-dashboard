@@ -1782,7 +1782,7 @@ export const _RenderEngine = (function(avgBaseMap, clusterFeatsMap) {
 
             // FIXME > "renderCluster" IS A BAD NAME FOR WHAT THIS DOES
             _RenderEngine.renderCluster(featColl, {useBuffer, bufferAmt, bufferUnits, lineColor: "#feca57", lineWeight: 1.5, lineDashArray: "3"});
-            _RenderEngine.renderClusterPlots(featColl, {useBuffer, bufferAmt, bufferUnits});
+            // _RenderEngine.renderClusterPlots(featColl, {useBuffer, bufferAmt, bufferUnits});
             _RenderEngine.renderClusterPlotsLabels(featColl, {useBuffer, bufferUnits, bufferAmt, areaUnits});
 
             // REMOVE > DEPRC > ADDED VIA "zoomend"
