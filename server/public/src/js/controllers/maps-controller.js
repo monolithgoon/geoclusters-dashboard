@@ -1607,9 +1607,9 @@ export const _RenderEngine = (function(avgBaseMap, clusterFeatsMap) {
             };
          },
 
-         renderCluster: (gjFeatColl, {
-            useBuffer, 
-            bufferAmt, 
+         renderClusterOnBasemap: (gjFeatColl, {
+            useBuffer,
+            bufferAmt,
             bufferUnits, 
             lineColor, 
             lineWeight, 
@@ -1701,7 +1701,7 @@ export const _RenderEngine = (function(avgBaseMap, clusterFeatsMap) {
             };
          },
 
-         renderClusters: async (featureCollections, {useBuffer, bufferAmt, bufferUnits}={}) => {
+         populateClusters: async (featureCollections, {useBuffer, bufferAmt, bufferUnits}={}) => {
 
             const zoomLevel = LeafletMaps.getMapZoom();
             
@@ -1758,20 +1758,20 @@ export const _RenderEngine = (function(avgBaseMap, clusterFeatsMap) {
             };
          },
 
-         renderClusterPlots: (featColl, {useBuffer, bufferAmt, bufferUnits}) => {
+         renderClusterOnSidemap: (featColl, {useBuffer, bufferAmt, bufferUnits}) => {
             featColl.features.forEach((clusterPlot, idx) => {
                clusterPlot = getPresentationPoly(clusterPlot, {useBuffer, bufferAmt, bufferUnits});
                MapboxMaps.drawPolyFeat(clusterFeatsMap, clusterPlot, idx);
             });
          },
 
-         renderClusterPlotsLabels: (featColl, {useBuffer=false, bufferUnits, bufferAmt, areaUnits}) => {
+         renderBasemapClusterPlotsLabels: (featColl, {useBuffer=false, bufferUnits, bufferAmt, areaUnits}) => {
             featColl.features.forEach((clusterPlot, plotIdx) => {
                drawFeatLabel(clusterPlot, plotIdx, {useBuffer, bufferUnits, bufferAmt});
             });
          },
 
-         renderEverythingNow: (featColl, {baseMapZoomLvl=0, useBuffer=false, bufferUnits, bufferAmt, areaUnits}) => {
+         revealClusterDetail: (featColl, {baseMapZoomLvl=0, useBuffer=false, bufferUnits, bufferAmt, areaUnits}) => {
             
             console.log({featColl});
 
@@ -1780,10 +1780,9 @@ export const _RenderEngine = (function(avgBaseMap, clusterFeatsMap) {
             
             panToCluster(featColl, {zoomLevel: baseMapZoomLvl});
 
-            // FIXME > "renderCluster" IS A BAD NAME FOR WHAT THIS DOES
-            _RenderEngine.renderCluster(featColl, {useBuffer, bufferAmt, bufferUnits, lineColor: "#feca57", lineWeight: 1.5, lineDashArray: "3"});
-            // _RenderEngine.renderClusterPlots(featColl, {useBuffer, bufferAmt, bufferUnits});
-            _RenderEngine.renderClusterPlotsLabels(featColl, {useBuffer, bufferUnits, bufferAmt, areaUnits});
+            _RenderEngine.renderClusterOnBasemap(featColl, {useBuffer, bufferAmt, bufferUnits, lineColor: "#feca57", lineWeight: 1.5, lineDashArray: "3"});
+            _RenderEngine.renderBasemapClusterPlotsLabels(featColl, {useBuffer, bufferUnits, bufferAmt, areaUnits});
+            _RenderEngine.renderClusterOnSidemap(featColl, {useBuffer, bufferAmt, bufferUnits});
 
             // REMOVE > DEPRC > ADDED VIA "zoomend"
             // // GET LAYER GROUP(S)

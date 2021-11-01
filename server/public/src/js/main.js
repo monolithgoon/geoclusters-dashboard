@@ -21,7 +21,7 @@ const InitApp = (() => {
    async function renderClustersData (featCollArray) {
       if (featCollArray && featCollArray.length > 0) { 
          // RENDER CLUSTERS' DATA ON BASE MAP
-         await _RenderEngine.renderClusters(featCollArray, {
+         await _RenderEngine.populateClusters(featCollArray, {
             useBuffer: _pollAVGSettingsValues().bufferFeatsChk ,
             bufferUnits: _pollAVGSettingsValues().distanceUnits,
             bufferAmt: APP_STATE.CONFIG_DEFAULTS.RENDERED_PLOT_BUFFER,
