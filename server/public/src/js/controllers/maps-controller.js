@@ -1565,11 +1565,6 @@ export const _RenderEngine = (function(avgBaseMap, clusterFeatsMap) {
             console.error(`panClusterMapErr: ${panClusterMapErr.message}`);
          };
       };
-
-      const drawFeatLabel = (gjFeatPoly, polyIdx, {useBuffer, bufferUnits, bufferAmt, areaUnits}) => {
-         gjFeatPoly = getPresentationPoly(gjFeatPoly, {useBuffer, bufferAmt, bufferUnits});
-         MapboxMaps.drawFeatPolyLabel(clusterFeatsMap, gjFeatPoly, polyIdx, {areaUnits});
-      }
          
       return {
 
@@ -1599,27 +1594,6 @@ export const _RenderEngine = (function(avgBaseMap, clusterFeatsMap) {
             lineOpacity, 
             lineDashArray
          } = {}) => {
-
-            // render feats. on base map            
-            for (let idx = 0; idx < gjFeatColl.features.length; idx++) {
-               const gjFeature = gjFeatColl.features[idx];
-               LeafletMaps.drawFeature(gjFeature, {useBuffer, bufferAmt, bufferUnits, lineColor, lineWeight, lineOpacity, lineDashArray});
-            };
-         },
-
-         renderClusterOnBasemap: (gjFeatColl, {
-            useBuffer,
-            bufferAmt,
-            bufferUnits, 
-            lineColor, 
-            lineWeight, 
-            lineOpacity, 
-            lineDashArray
-         } = {}) => {
-
-            // REMOVE
-            // render cluster plots outlines on the plots map
-            // MapboxMaps.drawFeatFeatColl(gjFeatColl, {map: clusterFeatsMap});
 
             // render feats. on base map            
             for (let idx = 0; idx < gjFeatColl.features.length; idx++) {
@@ -1701,7 +1675,7 @@ export const _RenderEngine = (function(avgBaseMap, clusterFeatsMap) {
             };
          },
 
-         populateClusters: async (featureCollections, {useBuffer, bufferAmt, bufferUnits}={}) => {
+         populateClustersOnBasemap: async (featureCollections, {useBuffer, bufferAmt, bufferUnits}={}) => {
 
             const zoomLevel = LeafletMaps.getMapZoom();
             
@@ -1758,20 +1732,52 @@ export const _RenderEngine = (function(avgBaseMap, clusterFeatsMap) {
             };
          },
 
-         renderClusterOnSidemap: (featColl, {useBuffer, bufferAmt, bufferUnits}) => {
-            featColl.features.forEach((clusterPlot, idx) => {
-               clusterPlot = getPresentationPoly(clusterPlot, {useBuffer, bufferAmt, bufferUnits});
-               MapboxMaps.drawPolyFeat(clusterFeatsMap, clusterPlot, idx);
-            });
+         renderClusterPlotsOnBasemap: (gjFeatColl, {
+            useBuffer,
+            bufferAmt,
+            bufferUnits, 
+            lineColor, 
+            lineWeight, 
+            lineOpacity, 
+            lineDashArray
+         } = {}) => {
+
+            // REMOVE
+            // render cluster plots outlines on the plots map
+            // MapboxMaps.drawFeatFeatColl(gjFeatColl, {map: clusterFeatsMap});
+
+            // render feats. on base map            
+            for (let idx = 0; idx < gjFeatColl.features.length; idx++) {
+               const gjFeature = gjFeatColl.features[idx];
+               LeafletMaps.drawFeature(gjFeature, {useBuffer, bufferAmt, bufferUnits, lineColor, lineWeight, lineOpacity, lineDashArray});
+            };
          },
 
-         renderBasemapClusterPlotsLabels: (featColl, {useBuffer=false, bufferUnits, bufferAmt, areaUnits}) => {
-            featColl.features.forEach((clusterPlot, plotIdx) => {
-               drawFeatLabel(clusterPlot, plotIdx, {useBuffer, bufferUnits, bufferAmt});
-            });
+         renderClusterPlotsOnSidemap: (featColl, {useBuffer, bufferAmt, bufferUnits}) => {
+            if (featColl.features) {
+               for (let idx = 0; idx < featColl.features.length; idx++) {
+                  let clusterPlotFeat = featColl.features[idx];
+                  // clusterPlotFeat = getPresentationPoly(clusterPlotFeat, {useBuffer, bufferAmt, bufferUnits});
+                  MapboxMaps.drawPolyFeat(clusterFeatsMap, clusterPlotFeat, idx);
+               };
+            } else {
+               console.log(`There are no features to render.`);
+            };
          },
 
-         revealClusterDetail: (featColl, {baseMapZoomLvl=0, useBuffer=false, bufferUnits, bufferAmt, areaUnits}) => {
+         renderSidemapClusterPlotsLabels: (featColl, {useBuffer=false, bufferUnits, bufferAmt, areaUnits}) => {
+            if (featColl.features) {
+               for (let idx = 0; idx < featColl.features.length; idx++) {
+                  let clusterPlotFeat = featColl.features[idx];
+                  clusterPlotFeat = getPresentationPoly(clusterPlotFeat, {useBuffer, bufferAmt, bufferUnits});
+                  MapboxMaps.drawFeatPolyLabel(clusterFeatsMap, clusterPlotFeat, polyIdx, {areaUnits});      
+               };
+            } else {
+               console.log(`There are no features for which to render labels.`);
+            };
+         },
+
+         renderClusterOnMaps: (featColl, {baseMapZoomLvl=0, useBuffer=false, bufferUnits, bufferAmt, areaUnits}) => {
             
             console.log({featColl});
 
@@ -1780,9 +1786,9 @@ export const _RenderEngine = (function(avgBaseMap, clusterFeatsMap) {
             
             panToCluster(featColl, {zoomLevel: baseMapZoomLvl});
 
-            _RenderEngine.renderClusterOnBasemap(featColl, {useBuffer, bufferAmt, bufferUnits, lineColor: "#feca57", lineWeight: 1.5, lineDashArray: "3"});
-            _RenderEngine.renderBasemapClusterPlotsLabels(featColl, {useBuffer, bufferUnits, bufferAmt, areaUnits});
-            _RenderEngine.renderClusterOnSidemap(featColl, {useBuffer, bufferAmt, bufferUnits});
+            // _RenderEngine.renderClusterPlotsOnBasemap(featColl, {useBuffer, bufferAmt, bufferUnits, lineColor: "#feca57", lineWeight: 1.5, lineDashArray: "3"});
+            // _RenderEngine.renderSidemapClusterPlotsLabels(featColl, {useBuffer, bufferUnits, bufferAmt, areaUnits});
+            _RenderEngine.renderClusterPlotsOnSidemap(featColl, {useBuffer, bufferAmt, bufferUnits});
 
             // REMOVE > DEPRC > ADDED VIA "zoomend"
             // // GET LAYER GROUP(S)

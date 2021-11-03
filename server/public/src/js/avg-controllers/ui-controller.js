@@ -397,7 +397,7 @@ const DOMSequence = ((dom) => {
             _PopulateDOM.clusterFeatsSidebar(clusterGeoJSON);
             
             // 2.
-            _RenderEngine.revealClusterDetail(clusterGeoJSON, 
+            _RenderEngine.renderClusterOnMaps(clusterGeoJSON, 
                {
                   baseMapZoomLvl: APP_STATE.CONFIG_DEFAULTS.LEAFLET_ADMIN_LEVEL_3_ZOOM,
                   useBuffer: _pollAVGSettingsValues().bufferFeatsChk, 
@@ -682,7 +682,7 @@ const DelegatePreloadedDOMElementsEvents = (dom => {
       radios.forEach(radio => {
          radio.addEventListener(`change`, async (e) => {
             if (APP_STATE.retreiveLastRenderedGJ()) {
-               _RenderEngine.renderBasemapClusterPlotsLabels(APP_STATE.retreiveLastRenderedGJ(), 
+               _RenderEngine.renderSidemapClusterPlotsLabels(APP_STATE.retreiveLastRenderedGJ(), 
                   {
                      useBuffer: _pollAVGSettingsValues().bufferFeatsChk,
                      bufferUnits: _pollAVGSettingsValues().distanceUnits,
@@ -704,8 +704,8 @@ const DelegatePreloadedDOMElementsEvents = (dom => {
             console.log(APP_STATE.retreiveLastRenderedGJ());
             if (APP_STATE.retreiveLastRenderedGJ()) {
                console.log(`FUCK MIKE LINDEL`)
-               // _RenderEngine.renderClusterOnSidemap(APP_STATE.retreiveLastRenderedGJ(),
-               _RenderEngine.revealClusterDetail(APP_STATE.retreiveLastRenderedGJ(),
+               // _RenderEngine.renderClusterPlotsOnSidemap(APP_STATE.retreiveLastRenderedGJ(),
+               _RenderEngine.renderClusterOnMaps(APP_STATE.retreiveLastRenderedGJ(),
                   {
                      useBuffer: _pollAVGSettingsValues().bufferFeatsChk,
                      bufferUnits: _pollAVGSettingsValues().distanceUnits,
