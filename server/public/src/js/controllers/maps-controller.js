@@ -1787,8 +1787,8 @@ export const _RenderEngine = (function(avgBaseMap, clusterFeatsMap) {
             panToCluster(featColl, {zoomLevel: baseMapZoomLvl});
 
             // _RenderEngine.renderClusterPlotsOnBasemap(featColl, {useBuffer, bufferAmt, bufferUnits, lineColor: "#feca57", lineWeight: 1.5, lineDashArray: "3"});
+            // _RenderEngine.renderClusterPlotsOnSidemap(featColl, {useBuffer, bufferAmt, bufferUnits});
             // _RenderEngine.renderSidemapClusterPlotsLabels(featColl, {useBuffer, bufferUnits, bufferAmt, areaUnits});
-            _RenderEngine.renderClusterPlotsOnSidemap(featColl, {useBuffer, bufferAmt, bufferUnits});
 
             // REMOVE > DEPRC > ADDED VIA "zoomend"
             // // GET LAYER GROUP(S)
