@@ -294,7 +294,7 @@ exports.getClustersSummary = catchAsync(async(req, res, next) => {
 }, `getClustersSummaryErr`);
 
 
-exports.getClustersData = catchAsync(async(req, res, next) => {
+exports.getCachedGeoClustersData = catchAsync(async(req, res, next) => {
    
    const returnedClusters = retreiveClustersData().returnedClusters;
       

@@ -108,7 +108,7 @@ async function returnNormalized(geoClusterArray) {
 };
 
 
-async function getData() {
+async function getAPIData() {
 
    const data = [];
 
@@ -133,7 +133,7 @@ async function cacheData() {
 
    try {
       
-      const geoClustersData = await getData();
+      const geoClustersData = await getAPIData();
 
       console.log({geoClustersData});
 

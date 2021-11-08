@@ -44,15 +44,15 @@ export const _MonitorExecution = (function(dom) {
 
 	return {
 
-		execute: async function(callback) {
+		execute: async function(callbackFn) {
 						
 			ShowActivity.activityStart(dom.appActivityIndWrapper, dom.appActivityInd);
 	
-         console.log(`%c This funciton [${callback}] is executing ..`, `background-color: lightgrey; color: blue;`);
+         console.log(`%c This funciton [${callbackFn}] is executing ..`, `background-color: lightgrey; color: blue;`);
 
 			let exeStart = window.performance.now();
 
-			returnedData = await callback();
+			returnedData = await callbackFn();
 
 			let exeEnd = window.performance.now();
 

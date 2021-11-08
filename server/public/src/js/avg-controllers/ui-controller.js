@@ -28,6 +28,30 @@ export const _ManipulateDOM = (() => {
 			};
 		},
 
+      addClass: (element, ...styleClasses) => {
+         try {
+            if (element && element.nodeType === 1 ) {
+               styleClasses.forEach(styleClass => {
+                  element.classList.add(styleClass);
+               });   
+            };
+         } catch (addClassErr) {
+            console.error(`addClassErr: ${addClassErr.message}`);
+         };
+      },
+
+      removeClass: (element, ...styleClasses) => {
+         try {
+            if (element && element.nodeType === 1 ) {
+               styleClasses.forEach(styleClass => {
+                  element.classList.remove(styleClass);
+               });   
+            };
+         } catch (removeClassErr) {
+            console.error(`removeClassErr: ${removeClassErr.message}`);
+         };
+      },
+
 		addRemoveClass: (element, classList) => {
 			try {
 				const activeItem = document.getElementsByClassName(`${classList}`);
@@ -37,12 +61,6 @@ export const _ManipulateDOM = (() => {
 				element.classList.add(`${classList}`);
 			} catch (addRemoveClassErr) {
 				console.error(`addRemoveClassErr: ${addRemoveClassErr.message}`)
-			};
-		},
-
-		removeClass: (element, styleClass) => {
-			if (element && element.nodeType === 1 ) {
-				element.classList.remove(styleClass);
 			};
 		},
 
@@ -391,6 +409,12 @@ const DOMSequence = ((dom) => {
             
             // 1.
             _PopulateDOM.clusterDetailsModal(dom.resultModalDiv, clusterGeoJSON);
+
+            // 1a. switch focus of panel's tabs
+            _ManipulateDOM.removeClass(dom.clusterInsightsTabBtn, "active");
+            _ManipulateDOM.removeClass(dom.clusterInsightsTabPane, "active");
+            _ManipulateDOM.addClass(dom.clusterDetailsTabBtn, "active");
+            _ManipulateDOM.addClass(dom.clusterDetailsTabPane, "active");
       
             // 1b.
             // render cluster feature cards.

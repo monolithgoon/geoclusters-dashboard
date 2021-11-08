@@ -716,14 +716,14 @@ block dashboard
                     // NAV TABS
                     ul#myTab.nav.nav-tabs.nav-fill(role='tablist' style='padding: 3px 3px 0 3px')
                       li.nav-item(role='presentation')
-                        button#agc_insights_tab.nav-link.ripplelink(data-bs-toggle='tab' data-bs-target='#agc_insights_tab_pane' type='button' role='tab' aria-controls='agc_insights_tab_content' aria-selected='true') AGC Insights
+                        button#geo_cluster_insights_tab_btn.nav-link.active.ripplelink(data-bs-toggle='tab' data-bs-target='#geo_cluster_insights_tab_pane' type='button' role='tab' aria-controls='geo_cluster_insights_tab_pane' aria-selected='false') AGC Insights
                       li.nav-item(role='presentation')
-                        button#profile-tab.nav-link.active.ripplelink(data-bs-toggle='tab' data-bs-target='#cluster_details_tab_pane' type='button' role='tab' aria-controls='profile' aria-selected='false') AGC Details
+                        button#geo_cluster_details_tab_btn.nav-link.ripplelink(data-bs-toggle='tab' data-bs-target='#geo_cluster_details_tab_pane' type='button' role='tab' aria-controls='geo_cluster_details_tab_pane' aria-selected='true') AGC Details
 
                     // TAB PANES
                     .tab-content(style='padding: 3px; padding-bottom: 0;')
 
-                      #agc_insights_tab_pane.tab-pane.agc-insights-tab-pane(role='tabpanel' aria-labelledby='agc_insights_tab')
+                      #geo_cluster_insights_tab_pane.geo-cluster-insights-tab-pane.tab-pane.active(role='tabpanel' aria-labelledby='geo_cluster_insights_tab_btn')
                         // BS CAROUSEL
                         #carouselExampleIndicators.carousel.slide.carousel-fade(data-bs-ride='carousel')
                           .carousel-indicators
@@ -744,7 +744,7 @@ block dashboard
                             span.carousel-control-next-icon(aria-hidden='true')
                             span.visually-hidden Next
 
-                      #cluster_details_tab_pane.tab-pane.cluster-details-tab-pane.active(role='tabpanel' aria-labelledby='profile-tab')
+                      #geo_cluster_details_tab_pane.geo-cluster-details-tab-pane.tab-pane(role='tabpanel' aria-labelledby='geo_cluster_details_tab_btn')
 
                         #parcelization_map_container
                           .map-overlay

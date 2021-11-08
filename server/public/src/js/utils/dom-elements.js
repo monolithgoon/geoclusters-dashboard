@@ -10,7 +10,12 @@ export function GET_DOM_ELEMENTS() {
    const appActivityIndWrapper = document.querySelector(`.app-activity-indicator-wrapper`);
    const appActivityInd = document.querySelector(`.app-activity-indicator`);
 
+   // PANE ELEMENTS
    const paneResizeBtns = document.querySelectorAll(`.pane-resize-btn`);
+   const clusterInsightsTabBtn = document.getElementById(`geo_cluster_insights_tab_btn`);
+   const clusterInsightsTabPane = document.getElementById(`geo_cluster_insights_tab_pane`);
+   const clusterDetailsTabBtn = document.getElementById(`geo_cluster_details_tab_btn`);
+   const clusterDetailsTabPane = document.getElementById(`geo_cluster_details_tab_pane`);
 
    // CLUSTER RESULTS
    const resultsCountDiv = document.getElementById('results_count');
@@ -66,6 +71,11 @@ export function GET_DOM_ELEMENTS() {
       clusterMapZoomRange,
 
       paneResizeBtns,
+      clusterInsightsTabBtn,
+      clusterInsightsTabPane,
+      clusterDetailsTabBtn,
+      clusterDetailsTabPane,
+
 
       resultsCountDiv,
       resultsStatus,

@@ -1170,7 +1170,7 @@ const MapboxMaps = ((plotsMap) => {
       },
 
       // GJ. POLY RENDER FUNCTION
-      drawPolyFeat: (mapboxMap, polygon, featureIdx) => {
+      drawGJPolygon: async (mapboxMap, polygon, featureIdx) => {
 
          try {
 
@@ -1189,7 +1189,7 @@ const MapboxMaps = ((plotsMap) => {
                MapboxMaps.addLayer(mapboxMap, polygonFillLayer);
                
                // ADD INTERACTION TO THE FILL LAYER
-               MapboxFillLayerHandler.interaction(mapboxMap, polygonFillLayer);
+               MapboxFillLayerHandler.addInteraction(mapboxMap, polygonFillLayer);
                   
                // SAVE THE LAYERS
                MapboxLayersController.saveLayers(polygonOutlineLayer);
@@ -1205,16 +1205,16 @@ const MapboxMaps = ((plotsMap) => {
       },
 
       // RENDER LABELS @ CENTER OF POLYGONS
-      drawFeatPolyLabel: (mapboxMap, polygon, featureIdx, {areaUnits=`hectares`}) => {
+      drawGJPolygonLabel: async (mapboxMap, polygon, featureIdx, {areaUnits=`hectares`}) => {
 
          try {
             
-            const plotIndex = featureIdx + 1;   
+            const labelIdx = featureIdx + 1;   
             const plotArea = _TurfHelpers.calcPolyArea(polygon, {units: areaUnits});
             const labelText = `${plotArea.toFixed(0)} ${areaUnits}`;
             const labelPosition = turf.centerOfMass(polygon);
             
-            const labelLayer = getMapboxLabelLayer({labelIdx: plotIndex, labelText, labelPosition});
+            const labelLayer = getMapboxLabelLayer({labelIdx: labelIdx, labelText, labelPosition});
          
             MapboxMaps.addLayer(mapboxMap, labelLayer);
          
@@ -1516,7 +1516,7 @@ const MapboxFillLayerHandler = ((leafletModalMap)=>{
       };
 
       return {
-         interaction: (map, fillLayer) => {
+         addInteraction: (map, fillLayer) => {
             layerClick(map, fillLayer);
             layerMouseIn(map, fillLayer);
             layerMouseOut(map, fillLayer);
@@ -1536,17 +1536,29 @@ export const _RenderEngine = (function(avgBaseMap, clusterFeatsMap) {
    try {
 
       // pan map to entire cluster
-      const panToCluster = (featColl, {zoomLevel}) => {
+      const panToCluster = async (featColl, {zoomLevel}) => {
 
+         console.time()
+         
          const gjCenterCoords = turf.coordAll(turf.centerOfMass(featColl))[0];
          const gjBounds = turf.bbox(featColl);
 
+         // PAN BASE MAP
+         // LeafletMaps.panFeatCenter(featColl, {map: avgBaseMap, zoomLevel});
+         // LeafletMaps.fitFeatBounds(featColl, {map: avgBaseMap});
+
          // PAN CLUSTER FEATS. MAP
          MapboxMaps.panToCoords(clusterFeatsMap, gjCenterCoords, gjBounds, {zoom:16, pitch:0, bearing:0, boundsPadding:0});
+         
+         console.timeEnd()
+      };
 
-         // PAN BASE MAP
-         LeafletMaps.panFeatCenter(featColl, {map: avgBaseMap, zoomLevel});
-         LeafletMaps.fitFeatBounds(featColl, {map: avgBaseMap});
+      const basemapPanToCluster = async (featColl, {zoomLevel}) => {
+         
+      };
+
+      const sidemapPanToCluster = async (featColl, {zoomLevel}) => {
+         
       };
       
       // pan to a single cluster feat.
@@ -1753,42 +1765,43 @@ export const _RenderEngine = (function(avgBaseMap, clusterFeatsMap) {
             };
          },
 
-         renderClusterPlotsOnSidemap: (featColl, {useBuffer, bufferAmt, bufferUnits}) => {
+         renderClusterPlotsOnSidemap: async (featColl, {useBuffer, bufferAmt, bufferUnits}) => {
             if (featColl.features) {
                for (let idx = 0; idx < featColl.features.length; idx++) {
                   let clusterPlotFeat = featColl.features[idx];
                   // clusterPlotFeat = getPresentationPoly(clusterPlotFeat, {useBuffer, bufferAmt, bufferUnits});
-                  MapboxMaps.drawPolyFeat(clusterFeatsMap, clusterPlotFeat, idx);
+                  await MapboxMaps.drawGJPolygon(clusterFeatsMap, clusterPlotFeat, idx);
                };
             } else {
                console.log(`There are no features to render.`);
             };
          },
 
-         renderSidemapClusterPlotsLabels: (featColl, {useBuffer=false, bufferUnits, bufferAmt, areaUnits}) => {
+         renderSidemapClusterPlotsLabels: async (featColl, {useBuffer=false, bufferUnits, bufferAmt, areaUnits}) => {
             if (featColl.features) {
                for (let idx = 0; idx < featColl.features.length; idx++) {
                   let clusterPlotFeat = featColl.features[idx];
-                  clusterPlotFeat = getPresentationPoly(clusterPlotFeat, {useBuffer, bufferAmt, bufferUnits});
-                  MapboxMaps.drawFeatPolyLabel(clusterFeatsMap, clusterPlotFeat, polyIdx, {areaUnits});      
+                  // clusterPlotFeat = getPresentationPoly(clusterPlotFeat, {useBuffer, bufferAmt, bufferUnits});
+                  // await MapboxMaps.drawGJPolygonLabel(clusterFeatsMap, clusterPlotFeat, polyIdx, {areaUnits});      
+                  await MapboxMaps.drawGJPolygonLabel(clusterFeatsMap, clusterPlotFeat, idx, {areaUnits});      
                };
             } else {
                console.log(`There are no features for which to render labels.`);
             };
          },
 
-         renderClusterOnMaps: (featColl, {baseMapZoomLvl=0, useBuffer=false, bufferUnits, bufferAmt, areaUnits}) => {
-            
+         renderClusterOnMaps: async (featColl, {baseMapZoomLvl=0, useBuffer=false, bufferUnits, bufferAmt, areaUnits}) => {
+                        
             console.log({featColl});
 
             // fire custom fn.
             clusterFeatsMap.fire('closeAllPopups');
             
-            panToCluster(featColl, {zoomLevel: baseMapZoomLvl});
+            await panToCluster(featColl, {zoomLevel: baseMapZoomLvl});
 
-            // _RenderEngine.renderClusterPlotsOnBasemap(featColl, {useBuffer, bufferAmt, bufferUnits, lineColor: "#feca57", lineWeight: 1.5, lineDashArray: "3"});
-            // _RenderEngine.renderClusterPlotsOnSidemap(featColl, {useBuffer, bufferAmt, bufferUnits});
-            // _RenderEngine.renderSidemapClusterPlotsLabels(featColl, {useBuffer, bufferUnits, bufferAmt, areaUnits});
+            _RenderEngine.renderClusterPlotsOnBasemap(featColl, {useBuffer, bufferAmt, bufferUnits, lineColor: "#feca57", lineWeight: 1.5, lineDashArray: "3"});
+            await _RenderEngine.renderClusterPlotsOnSidemap(featColl, {useBuffer, bufferAmt, bufferUnits});
+            await _RenderEngine.renderSidemapClusterPlotsLabels(featColl, {useBuffer, bufferUnits, bufferAmt, areaUnits});
 
             // REMOVE > DEPRC > ADDED VIA "zoomend"
             // // GET LAYER GROUP(S)

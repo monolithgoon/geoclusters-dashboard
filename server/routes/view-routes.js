@@ -22,7 +22,7 @@ router.route("/dashboard")
 	.get(
 		authController.protectRoute,
 		authController.restrictTo(`manager`, `admin`),
-		dataController.getClustersData,
+		dataController.getCachedGeoClustersData,
 		viewsController.renderAVGDashboard
 	);
 
