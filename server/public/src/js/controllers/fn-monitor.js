@@ -61,10 +61,17 @@ export const _MonitorExecution = (function(dom) {
 			ShowActivity.activityEnd(dom.appActivityIndWrapper, dom.appActivityInd);
 		},
 
-		getExecutionTime: function() {
+      getExecutionTime: function() {
          console.log(`%c The fn. executed in: ${((executionMs)/1000).toFixed(2)} seconds`, `background-color: yellow; color: blue;`);
-			return executionMs;
-		},
+         return executionMs;
+      },
+
+      measureExecution: async function(callbackFn) {
+         console.log(this)
+         console.log({callbackFn})
+         _MonitorExecution.execute(callbackFn);
+         _MonitorExecution.getExecutionTime();
+      },
 
 		getData: function() {
 			return returnedData;

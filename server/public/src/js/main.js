@@ -47,7 +47,6 @@ const InitApp = (() => {
       // FIXME > DOWNLOAD COLLS. IN RESPONSE TO DB. INSERTS
       renderLiveClusters: async (window) => {
          
-         // TODO
          // await _downloadDBCollections(window);
 
          // const apiHost = APP_STATE.CONFIG_DEFAULTS.GEO_CLUSTER_API_HOST;
