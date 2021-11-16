@@ -26,8 +26,8 @@ export const APP_STATE = (function() {
       LEAFLET_ADMIN_LEVEL_3_ZOOM: 16,
       LEAFLET_MAX_ZOOM: 18,
 
-      GEO_CLUSTER_API_HOST: `http://127.0.0.1:9090`,
-      // GEO_CLUSTER_API_HOST: `https://geoclusters.herokuapp.com`,
+      // GEO_CLUSTER_API_HOST: `http://127.0.0.1:9090`,
+      GEO_CLUSTER_API_HOST: `https://geoclusters.herokuapp.com`,
       GEO_CLUSTER_API_RESOURCE_PATHS: ["v2/legacy-agcs", "v1/parcelized-agcs", "v1/agcs"],
       // REMOVE > DEPRC.
       // LEGACY_CLUSTER_QUERY_STR: `?fields=
@@ -41,6 +41,7 @@ export const APP_STATE = (function() {
       //                               features.properties.plot_owner_last_name,
       //                               features.properties.plot_owner_gender`,
                                     
+      // DATA ATTRIBUTE THAT STORES CLUSTER GEOJSON DATA FROM THE VIEW CONTROLLER
       CLUSTER_RESULT_DATA_ATTR_NAME: `geoclusterdatastream`,
 
       ADMIN_BOUNDS_GEOJSON_API_HOST: `http://127.0.0.1:1010`,
