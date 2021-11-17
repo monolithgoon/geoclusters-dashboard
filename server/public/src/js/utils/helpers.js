@@ -1,6 +1,13 @@
 `use strict`
 
 
+export const _delayExecution = async (durationMs) => {
+   return new Promise((resolve, reject) => {
+      setTimeout(() => resolve(), durationMs);
+   });
+};
+
+
 export const _mandatoryParam = () => {
 	throw new Error(`Parameter is required.`);
 };

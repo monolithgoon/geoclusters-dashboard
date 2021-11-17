@@ -4,7 +4,7 @@ import { _getClusterFeatPopupMarkup, _GenerateClusterFeatMarkup } from "../avg-c
 import { _ManipulateDOM, _pollAVGSettingsValues } from "../avg-controllers/ui-controller.js";
 import { _MonitorExecution } from "../controllers/fn-monitor.js";
 import { LAYER_COLORS } from "../utils/mapbox-layer-colors.js";
-import { _TurfHelpers, _getBufferedPolygon, _ProcessGeoJSON, _GeometryMath, _getUsableGeometry, _mandatoryParam, _joinWordsArray } from "../utils/helpers.js";
+import { _TurfHelpers, _getBufferedPolygon, _ProcessGeoJSON, _GeometryMath, _getUsableGeometry, _mandatoryParam, _joinWordsArray, _delayExecution } from "../utils/helpers.js";
 
 
 const LLayerGroupController = ((leafletBaseMap, leafletModalMap)=>{
@@ -59,7 +59,7 @@ const LLayerGroupController = ((leafletBaseMap, leafletModalMap)=>{
 })(AVG_BASE_MAP, FEAT_DETAIL_MAP);
 
 
-const LeafletMapsSetup = ((baseMap, featDetailMap)=>{
+const LeafletMapsSetup = ((baseMap, featDetailMap) => {
 
    const { googleStreets, googleHybrid, osmStd, osmBW, mapboxOutdoors, bingMapsArial } = _getTileLayers();
    
@@ -124,7 +124,7 @@ const LeafletMapsSetup = ((baseMap, featDetailMap)=>{
    
    baseMap.on("zoomend", function() {
 
-      switchTileLayers(baseMap);
+      // switchTileLayers(baseMap);
 
       const zoomLevel = LeafletMaps.getMapZoom();
       console.log({zoomLevel});
@@ -164,7 +164,7 @@ const LeafletMapsSetup = ((baseMap, featDetailMap)=>{
 
             // TODO > RENDER ONLY LAYER GROUPS IN MAP VIEW BOUNDS
 
-            if (!map.hasLayer(lgObj.layer_group)) lgObj.layer_group.addTo(map);
+            // if (!map.hasLayer(lgObj.layer_group)) lgObj.layer_group.addTo(map);
 
             if(map.hasLayer(lgObj.layer_group) && lgObj.visibility_rank > currVisRank) map.removeLayer(lgObj.layer_group);
          };
@@ -541,15 +541,29 @@ const LeafletMaps = (baseMap => {
       saveMarkerGroup: (markers) => {
          MARKER_GROUPS.push(markers)
       },
-      panToPoint: (gjPointFeat, {map=baseMap, zoomLevel}) => {
+      panToPointFeat: async (gjPointFeat, {map=baseMap, zoomLevel}) => {
          const leafletGJLayer = L.geoJson();
          leafletGJLayer.addData(gjPointFeat);
          map.flyTo(leafletGJLayer.getBounds().getCenter(), zoomLevel);
          // map.setView(leafletGJLayer.getBounds().getCenter(), zoomLevel);
+
       },
-      panFeatCenter: (geoJSON, {map=baseMap, zoomLevel}) => {
-         const featCenter = turf.centerOfMass(geoJSON); // FIXME
-         LeafletMaps.panToPoint(featCenter, {map, zoomLevel});
+      panToCoords: async (gjPointCoords, {map=baseMap, zoomLevel}) => {
+         // map.flyTo(gjPointCoords, zoomLevel, {
+         //    animate: true,
+         // });
+         map.flyTo(gjPointCoords, zoomLevel);
+      },
+      getFeatCoords: async (geoJSONFeat) => {
+         const leafletGJLayer = L.geoJson();
+         leafletGJLayer.addData(geoJSONFeat);
+         return leafletGJLayer.getBounds().getCenter();
+      },
+      panFeatCenter: async (geoJSON, {map=baseMap, zoomLevel}) => {
+         const turfCOMFeat = turf.centerOfMass(geoJSON); // FIXME
+         // await LeafletMaps.panToPointFeat(turfCOMFeat, {map, zoomLevel}); // REMOVE > DEPRC.
+         const featPointCoords = await LeafletMaps.getFeatCoords(turfCOMFeat);
+         await LeafletMaps.panToCoords(featPointCoords, {map, zoomLevel});
       },
       fitFeatBounds: (geoJSON, {map=baseMap}) => {
          const leafletGJLayer = L.geoJson(geoJSON);
@@ -1536,29 +1550,11 @@ const MapboxFillLayerHandler = ((leafletModalMap)=>{
 export const _RenderEngine = (function(avgBaseMap, clusterFeatsMap) {
 
    try {
-
-      // REMOVE
-      // pan map to entire cluster
-      const panToCluster = async (featColl, {zoomLevel}) => {
-
-         
-         const gjCenterCoords = turf.coordAll(turf.centerOfMass(featColl))[0];
-         const gjBounds = turf.bbox(featColl);
-         
-         // PAN BASE MAP
-         LeafletMaps.panFeatCenter(featColl, {map: avgBaseMap, zoomLevel});
-         LeafletMaps.fitFeatBounds(featColl, {map: avgBaseMap});
-         
-         // PAN CLUSTER FEATS. MAP
-         MapboxMaps.panToCoords(clusterFeatsMap, gjCenterCoords, gjBounds, {zoom:16, pitch:0, bearing:0, boundsPadding:0});
-         
-      };
       
-      // TODO > WIP
+      // PAN BASE MAP TO FEAT. COLL.
       const basemapPanToCluster = async (featColl, {zoomLevel}) => {
          console.time("panBasemap")
-         // PAN BASE MAP
-         LeafletMaps.panFeatCenter(featColl, {map: avgBaseMap, zoomLevel});
+         await LeafletMaps.panFeatCenter(featColl, {map: avgBaseMap, zoomLevel});
          console.timeEnd("panBasemap")
       };
       
@@ -1568,12 +1564,11 @@ export const _RenderEngine = (function(avgBaseMap, clusterFeatsMap) {
          console.timeEnd("fitClusterBounds")
       };
       
-      // TODO > WIP
+      // PAN CLUSTER FEATS. MAP TO FEAT. COLL.
       const sidemapPanToCluster = async (featColl) => {
          console.time("panSidemap")
          const gjCenterCoords = turf.coordAll(turf.centerOfMass(featColl))[0];
          const gjBounds = turf.bbox(featColl);
-         // PAN CLUSTER FEATS. MAP
          MapboxMaps.panToCoords(clusterFeatsMap, gjCenterCoords, gjBounds, {zoom:16, pitch:0, bearing:0, boundsPadding:0});
          console.timeEnd("panSidemap")
       };
@@ -1761,7 +1756,7 @@ export const _RenderEngine = (function(avgBaseMap, clusterFeatsMap) {
             };
          },
 
-         renderClusterPlotsOnBasemap: (gjFeatColl, {
+         renderClusterPlotsOnBasemap: async (gjFeatColl, {
             useBuffer,
             bufferAmt,
             bufferUnits, 
@@ -1771,6 +1766,8 @@ export const _RenderEngine = (function(avgBaseMap, clusterFeatsMap) {
             lineDashArray
          } = {}) => {
 
+            console.time("renderClusterPlots")
+            
             // REMOVE
             // render cluster plots outlines on the plots map
             // MapboxMaps.drawFeatFeatColl(gjFeatColl, {map: clusterFeatsMap});
@@ -1780,6 +1777,8 @@ export const _RenderEngine = (function(avgBaseMap, clusterFeatsMap) {
                const gjFeature = gjFeatColl.features[idx];
                LeafletMaps.drawFeature(gjFeature, {useBuffer, bufferAmt, bufferUnits, lineColor, lineWeight, lineOpacity, lineDashArray});
             };
+
+            console.timeEnd("renderClusterPlots")
          },
 
          renderClusterPlotsOnSidemap: async (featColl, {useBuffer, bufferAmt, bufferUnits}) => {
@@ -1807,35 +1806,27 @@ export const _RenderEngine = (function(avgBaseMap, clusterFeatsMap) {
             };
          },
 
-         renderClusterOnMaps: async (featColl, {baseMapZoomLvl=0, useBuffer=false, bufferUnits, bufferAmt, areaUnits}) => {
+         renderClusterOnMaps: (featColl, {baseMapZoomLvl=0, useBuffer=false, bufferUnits, bufferAmt, areaUnits}) => {
                         
             console.log({featColl});
 
-            // fire custom fn.
+            // fire custom MAPBOX fn.
             clusterFeatsMap.fire('closeAllPopups');
             
-            // await panToCluster(featColl, {zoomLevel: baseMapZoomLvl}); // REMOVE
-            await sidemapPanToCluster(featColl);
-            
-            // SANDBOX
-            const measureFn = () => {
-               return basemapPanToCluster(featColl, {zoomLevel: baseMapZoomLvl})
-            };
-
-            setTimeout(async ()=>{
-               // await _MonitorExecution.measureExecution(measureFn);
-               // await _MonitorExecution.measureExecution(basemapPanToCluster.bind(null, featColl, {zoomLevel: baseMapZoomLvl}))
+            (async () => {
+               await sidemapPanToCluster(featColl);
+               // await _delayExecution(9000);
                await _MonitorExecution.measureExecution(()=>basemapPanToCluster(featColl, {zoomLevel: baseMapZoomLvl}));
-            }, 8000)
+               // await _delayExecution(10000);
+               await _MonitorExecution.measureExecution(()=>basemapFitCluster(featColl, {zoomLevel: baseMapZoomLvl}));
+               // await _delayExecution(12000);
+               await _RenderEngine.renderClusterPlotsOnBasemap(featColl, {useBuffer, bufferAmt, bufferUnits, lineColor: "#feca57", lineWeight: 1.5, lineDashArray: "3"});
+            })();
 
-            // await basemapFitCluster(featColl, {zoomLevel: baseMapZoomLvl})
-            // setTimeout(async ()=>{
-            //    await _MonitorExecution.measureExecution(()=>basemapFitCluster(featColl, {zoomLevel: baseMapZoomLvl}));
-            // }, 9000)
-
-            // _RenderEngine.renderClusterPlotsOnBasemap(featColl, {useBuffer, bufferAmt, bufferUnits, lineColor: "#feca57", lineWeight: 1.5, lineDashArray: "3"});
-            await _RenderEngine.renderClusterPlotsOnSidemap(featColl, {useBuffer, bufferAmt, bufferUnits});
-            await _RenderEngine.renderSidemapClusterPlotsLabels(featColl, {useBuffer, bufferUnits, bufferAmt, areaUnits});
+            (async () => {
+               await _RenderEngine.renderClusterPlotsOnSidemap(featColl, {useBuffer, bufferAmt, bufferUnits});
+               await _RenderEngine.renderSidemapClusterPlotsLabels(featColl, {useBuffer, bufferUnits, bufferAmt, areaUnits});
+            })();
 
             // REMOVE > DEPRC > ADDED VIA "zoomend"
             // // GET LAYER GROUP(S)
