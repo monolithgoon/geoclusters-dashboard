@@ -124,21 +124,6 @@ const LeafletMapsSetup = ((baseMap, featDetailMap) => {
             break;
       };
    };
-
-   // REMOVE > NONESENSE
-   // baseMap.on("zoomstart", function() {
-
-   //    const layerGroupsObjs = LLayerGroupController.returnLayerGroupObjs({});
-
-   //    console.log({layerGroupsObjs})
-
-   //    for (let idx = 0; idx < layerGroupsObjs.length; idx++) {
-
-   //       const lgObj = layerGroupsObjs[idx];
-
-   //       if (baseMap.hasLayer(lgObj.layer_group)) baseMap.removeLayer(lgObj.layer_group);
-   //    };
-   // });
    
    baseMap.on("zoomend", function() {
 
@@ -186,14 +171,17 @@ const LeafletMapsSetup = ((baseMap, featDetailMap) => {
 
             const layerGroup = lgObj.layer_group;
 
+            console.log({lgObj})
+
             // RENDER ONLY LAYER GROUPS IN MAP VIEW BOUNDS
             // console.log(LeafletMaps.getLayersInView());
             
+            // FIXME > NOT COMPLETELY WORKING AS INTENDED
             if (!map.hasLayer(layerGroup)) {
 
                // compare the bounds of the layer group to the map bounds;
                // only add layer groups that are within bounds of the current map view
-               if (map.getBounds().contains(LeafletMaps.getLayerGroupLatLng(layerGroup))) {
+               if (map.getBounds().contains(LeafletMaps.getLayerGroupCenterLatLng(layerGroup))) {
 
                   layerGroup.addTo(map);
 
@@ -205,6 +193,7 @@ const LeafletMapsSetup = ((baseMap, featDetailMap) => {
                if (lgObj.visibility_rank > currVisRank) map.removeLayer(layerGroup);
             };            
             
+            // REMOVE
             // if (!map.hasLayer(layerGroup)) layerGroup.addTo(map);
 
             // if (map.hasLayer(layerGroup) && lgObj.visibility_rank > currVisRank) map.removeLayer(layerGroup);
@@ -512,7 +501,7 @@ const LeafletMaps = (baseMap => {
       getMapZoom: (map=baseMap) => {
          return map.getZoom();
       },
-      getLayerGroupLatLng: (lg) => {
+      getLayerGroupCenterLatLng: (lg) => {
          const lgLayers = lg.getLayers();
 
          const featGroup = L.featureGroup(lgLayers); // convert to feat. group in order taccess getBounds() mtd.
