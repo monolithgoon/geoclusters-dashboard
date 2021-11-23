@@ -16,6 +16,7 @@ const LLayerGroupController = ((leafletBaseMap, leafletModalMap)=>{
    const LAYER_GROUP_OBJS = [];
 
    return {
+
       initLayerGroup: (layerGroupId, {visibilityRank=3}) => {
          const layerGroupObj = {
             "layer_group_id": layerGroupId,
@@ -25,7 +26,8 @@ const LLayerGroupController = ((leafletBaseMap, leafletModalMap)=>{
          LAYER_GROUP_OBJS.push(layerGroupObj);
          return layerGroupObj.layer_group;
       },
-      returnLayerGroupObjs: ({layerGroupId, visibilityRank}) => {
+
+      returnLayerGroupObjs: ({layerGroupId=undefined, visibilityRank=undefined}) => {
 
          console.log({LAYER_GROUP_OBJS});
 
@@ -48,6 +50,7 @@ const LLayerGroupController = ((leafletBaseMap, leafletModalMap)=>{
          };
          return lgObjects;
       },
+
       getLayerGroups: () => {
          return {
             baseMapLayerGroup,
@@ -121,14 +124,30 @@ const LeafletMapsSetup = ((baseMap, featDetailMap) => {
             break;
       };
    };
+
+   // REMOVE > NONESENSE
+   // baseMap.on("zoomstart", function() {
+
+   //    const layerGroupsObjs = LLayerGroupController.returnLayerGroupObjs({});
+
+   //    console.log({layerGroupsObjs})
+
+   //    for (let idx = 0; idx < layerGroupsObjs.length; idx++) {
+
+   //       const lgObj = layerGroupsObjs[idx];
+
+   //       if (baseMap.hasLayer(lgObj.layer_group)) baseMap.removeLayer(lgObj.layer_group);
+   //    };
+   // });
    
    baseMap.on("zoomend", function() {
 
-      // switchTileLayers(baseMap);
+      switchTileLayers(baseMap);
 
       const zoomLevel = LeafletMaps.getMapZoom();
       console.log({zoomLevel});
 
+      // FIXME > MOVE SOME PLACE ELSE
       const zoomVisibilityRank = (function getVisibilityRank(zoomLevel) {
          let visRank;
          switch (true) {
@@ -153,20 +172,48 @@ const LeafletMapsSetup = ((baseMap, featDetailMap) => {
          return visRank;
       })(zoomLevel);
       
+      // ADD LAYER GROUPS BASED ON ZOOM LEVEL && CORRESPONDING VIS. RANK
       (function addLayerGroups(map, currVisRank) {
 
          console.log({currVisRank})
 
-         const layerGroupsObjs = LLayerGroupController.returnLayerGroupObjs({currVisRank});
+         // const layerGroupsObjs = LLayerGroupController.returnLayerGroupObjs({currVisRank});
+         const layerGroupsObjs = LLayerGroupController.returnLayerGroupObjs({});
 
          for (let idx = 0; idx < layerGroupsObjs.length; idx++) {
+
             const lgObj = layerGroupsObjs[idx];
 
-            // TODO > RENDER ONLY LAYER GROUPS IN MAP VIEW BOUNDS
+            const layerGroup = lgObj.layer_group;
 
-            // if (!map.hasLayer(lgObj.layer_group)) lgObj.layer_group.addTo(map);
+            // RENDER ONLY LAYER GROUPS IN MAP VIEW BOUNDS
+            // console.log(LeafletMaps.getLayersInView());
+            
+            if (!map.hasLayer(layerGroup)) {
 
-            if(map.hasLayer(lgObj.layer_group) && lgObj.visibility_rank > currVisRank) map.removeLayer(lgObj.layer_group);
+               // compare the bounds of the layer group to the map bounds;
+               // only add layer groups that are within bounds of the current map view
+               if (map.getBounds().contains(LeafletMaps.getLayerGroupLatLng(layerGroup))) {
+
+                  layerGroup.addTo(map);
+
+                  console.log("evaluating")
+                  
+                  if (map.hasLayer(layerGroup) && lgObj.visibility_rank > currVisRank) map.removeLayer(layerGroup);
+               };
+            } else {
+               if (lgObj.visibility_rank > currVisRank) map.removeLayer(layerGroup);
+            };            
+            
+            // if (!map.hasLayer(layerGroup)) layerGroup.addTo(map);
+
+            // if (map.hasLayer(layerGroup) && lgObj.visibility_rank > currVisRank) map.removeLayer(layerGroup);
+            // if (map.hasLayer(layerGroup) && lgObj.visibility_rank > currVisRank) {
+            //    map.removeLayer(layerGroup);
+            //    console.log("HERE!!!")
+            // } else {
+            //    // layerGroup.addTo(map);
+            // };
          };
          
       })(baseMap, zoomVisibilityRank);
@@ -465,6 +512,27 @@ const LeafletMaps = (baseMap => {
       getMapZoom: (map=baseMap) => {
          return map.getZoom();
       },
+      getLayerGroupLatLng: (lg) => {
+         const lgLayers = lg.getLayers();
+
+         const featGroup = L.featureGroup(lgLayers); // convert to feat. group in order taccess getBounds() mtd.
+
+         const lgLatLng = featGroup.getBounds().getCenter();
+
+         return lgLatLng;
+      },
+      getLayersInView: (map=baseMap) => {
+         const visibleLayers = [];
+            map.eachLayer(function(layer) {
+               if (layer instanceof L.layerGroup) {
+                  console.log({layer})
+                  if (map.getBounds().contains(layer.getLatLng())) {
+                     visibleLayers.push(layer);
+                  };
+               };
+            });
+         return visibleLayers;
+      },
       getClusterPropsMarkup: (clusterProps) => {
 
          try {
@@ -512,7 +580,7 @@ const LeafletMaps = (baseMap => {
       } catch (HTMLMarkupErr) {
          console.error(`HTMLMarkupErr: ${HTMLMarkupErr.message}`);
       };
-   },
+      },
       createHTMLMarker: (props, latLngPosition, styleClass, {draggable=true}) => {
          const HTMLMarker = L.marker(latLngPosition, {
             draggable: draggable,
@@ -549,10 +617,11 @@ const LeafletMaps = (baseMap => {
 
       },
       panToCoords: async (gjPointCoords, {map=baseMap, zoomLevel}) => {
-         // map.flyTo(gjPointCoords, zoomLevel, {
-         //    animate: true,
-         // });
-         map.flyTo(gjPointCoords, zoomLevel);
+         map.flyTo(gjPointCoords, zoomLevel, {
+            animate: true,
+            duration: 8.5,
+         });
+         // map.flyTo(gjPointCoords, zoomLevel);
       },
       getFeatCoords: async (geoJSONFeat) => {
          const leafletGJLayer = L.geoJson();
@@ -617,7 +686,6 @@ const LeafletMaps = (baseMap => {
             featCenter,
          };
       },
-
       drawFeature: (gjFeature, {featLayerGroup=baseMapLayerGroup, useBuffer, bufferAmt, bufferUnits, lineColor, lineWeight, lineOpacity, lineDashArray}) => {
 
          try {
@@ -1829,12 +1897,18 @@ export const _RenderEngine = (function(avgBaseMap, clusterFeatsMap) {
             })();
 
             // REMOVE > DEPRC > ADDED VIA "zoomend"
-            // // GET LAYER GROUP(S)
-            // // const layerGroups = LLayerGroupController.returnLayerGroupObjs({layerGroupId: featColl.properties.clusterID});
-            // const layerGroups = LLayerGroupController.returnLayerGroupObjs({layerGroupId: featColl.properties.clusterID, visibilityRank: 4});
+            // GET LAYER GROUP(S)
+            // const clusterLayerGroupObjs = [];
+            // const layerGroupObjs = LLayerGroupController.returnLayerGroupObjs({layerGroupId: featColl.properties.clusterID, visibilityRank: 4});
+            const layerGroupObjs = LLayerGroupController.returnLayerGroupObjs({layerGroupId: featColl.properties.clusterID});
+            console.log({layerGroupObjs})
+            // for (let visRank = 0; visRank < 6; visRank++) {
+            //    clusterLayerGroupObjs.push(LLayerGroupController.returnLayerGroupObjs({layerGroupId: featColl.properties.clusterID, visibilityRank: visRank}));               
+            // };
 
-            // // ADD TO MAP
-            // layerGroups.forEach(lg => {if (lg) lg.layer_group.addTo(avgBaseMap)});
+            // ADD TO MAP
+            layerGroupObjs.forEach(lg => {if (lg && lg.layer_group) lg.layer_group.addTo(avgBaseMap)});
+            // clusterLayerGroupObjs.forEach(lg => {if (lg) lg.layer_group.addTo(avgBaseMap)});
          },
       };
 

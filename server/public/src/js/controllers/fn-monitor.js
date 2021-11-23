@@ -67,7 +67,6 @@ export const _MonitorExecution = (function(dom) {
       },
 
       measureExecution: async function(callbackFn) {
-         console.log({callbackFn})
          _MonitorExecution.execute(callbackFn);
          _MonitorExecution.getExecutionTime();
       },
