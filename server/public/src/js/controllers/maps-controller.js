@@ -171,8 +171,6 @@ const LeafletMapsSetup = ((baseMap, featDetailMap) => {
 
             const layerGroup = lgObj.layer_group;
 
-            console.log({lgObj})
-
             // RENDER ONLY LAYER GROUPS IN MAP VIEW BOUNDS
             // console.log(LeafletMaps.getLayersInView());
             

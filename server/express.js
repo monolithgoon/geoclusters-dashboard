@@ -117,6 +117,7 @@ const adminBoundsRouter = require("./routes/admin-bounds-routes.js");
 EXPRESS_SERVER.use("/", viewRouter);
 EXPRESS_SERVER.use("/api/v1/users/", userRouter);
 EXPRESS_SERVER.use("/api/v1/admin-bounds/", adminBoundsRouter);
+EXPRESS_SERVER.use("/api/v1/webhook/", webhookRouter);
 
 
 // GLOBAL ERROR HANDLING M.WARE

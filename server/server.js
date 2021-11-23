@@ -21,6 +21,7 @@ async function startServer() {
 		process.exit(1);
 	});
 
+	// DOWNLOAD AND SAVE GEO CLUSTER DATA OFFLINE
 	await cacheAPIData();
 };
 

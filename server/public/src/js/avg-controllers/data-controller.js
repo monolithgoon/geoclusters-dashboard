@@ -51,8 +51,6 @@ export async function _getAPIResource(eventObj, resourceHost, resourcePath) {
 
 	try {
 
-		// for (const resourcePath of APP_STATE.CONFIG_DEFAULTS.ADMIN_BOUNDS_GEOJSON_API_RESOURCE_PATHS) {
-
 			const apiDataQuery = function() {
 
 				console.log(document.domain);
@@ -69,7 +67,6 @@ export async function _getAPIResource(eventObj, resourceHost, resourcePath) {
 			_MonitorExecution.getExecutionTime();
 			
 			return _MonitorExecution.getData();
-		// };
 
 	} catch (getAPIResourceErr) {
 			console.error(`getAPIResourceErr: ${getAPIResourceErr.message}`)
