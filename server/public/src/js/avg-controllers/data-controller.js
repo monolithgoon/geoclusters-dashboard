@@ -25,7 +25,7 @@ async function queryAPI(fetch, apiHost, apiResourcePath, {queryString}) {
 
 	queryString = queryString ? queryString : queryString = "";
 
-	console.log(`%c ${this.currentTarget} is getting latest data from API`, `background-color: lightgrey; color: blue;`);
+	console.log(`%c ${this.target} is getting latest data from API`, `background-color: lightgrey; color: blue;`);
 
 	try {
 		
@@ -114,7 +114,7 @@ export async function _downloadGeoClusterCollections(eventObj) {
          // SAVE THE RETURNED DATA
 			if (_MonitorExecution.getData()) APP_STATE.cacheDBCollection(dbCollectionName,  _MonitorExecution.getData());
 			
-         console.log(...APP_STATE.returnCachedDBCollections());
+         // console.log(...APP_STATE.returnCachedDBCollections());
       };
 		
 		return true;
