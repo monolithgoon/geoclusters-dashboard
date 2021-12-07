@@ -21,13 +21,16 @@ export function _retreiveClusterGJDatasets() {
 };
 
 
-async function queryAPI(fetch, apiHost, apiResourcePath, {queryString=``}) {
+async function queryAPI(fetch, apiHost, apiResourcePath, {queryString}) {
+
+	queryString = queryString ? queryString : queryString = "";
 
 	console.log(`%c ${this.currentTarget} is getting latest data from API`, `background-color: lightgrey; color: blue;`);
 
 	try {
 		
-		const apiResponse = await fetch(`${apiHost}/api/${apiResourcePath}/${queryString}`);
+		// const apiResponse = await fetch(`${apiHost}/api/${apiResourcePath}/${queryString}`);
+		const apiResponse = await fetch(`${apiHost}/${apiResourcePath}/${queryString}`);
 		const data = await apiResponse.json();
 
 		if (!data) { throw new Error(`Endpoint did not respond; check your connection`); }
@@ -47,26 +50,29 @@ async function queryAPI(fetch, apiHost, apiResourcePath, {queryString=``}) {
 };
 
 
-export async function _getAPIResource(eventObj, resourceHost, resourcePath) {
-
+export async function _getAPIResource(eventObj, resourceHost, resourcePath, {queryString}) {	
+	
 	try {
 
-			const apiDataQuery = function() {
+		queryString = queryString ? queryString : queryString = "";
 
-				console.log(document.domain);
+		const apiDataQuery = function() {
 
-					return queryAPI.call(eventObj, window.fetch, 
-						resourceHost, 
-						resourcePath, 
-						{});
-			};
+			console.log(document.domain);
 
-			// EXECUTE THE API CALL
-			await _MonitorExecution.execute(apiDataQuery);
+				return queryAPI.call(eventObj, window.fetch, 
+					resourceHost, 
+					resourcePath, 
+					{queryString});
+		};
 
-			_MonitorExecution.getExecutionTime();
-			
-			return _MonitorExecution.getData();
+		// EXECUTE THE API CALL
+		await _MonitorExecution.execute(apiDataQuery);
+
+		// GET MEASURE OF HOW LONG IT TOOK
+		_MonitorExecution.getExecutionTime();
+		
+		return _MonitorExecution.getData();
 
 	} catch (getAPIResourceErr) {
 			console.error(`getAPIResourceErr: ${getAPIResourceErr.message}`)
@@ -74,13 +80,15 @@ export async function _getAPIResource(eventObj, resourceHost, resourcePath) {
 };
 
 
-// REMOVE > DEPRC.
 // DOWNLOAD & SAVE DB. COLLECTIONS
-export async function _downloadDBCollections(eventObj) {
+export async function _downloadGeoClusterCollections(eventObj) {
 
    try {
+
+		const apiHost = APP_STATE.CONFIG_DEFAULTS.GEO_CLUSTER_API_HOST;
+		const geoClusterResourcePaths = APP_STATE.CONFIG_DEFAULTS.GEO_CLUSTER_API_RESOURCE_PATHS;
       
-      for (const geoClusterResourcePath of APP_STATE.CONFIG_DEFAULTS.GEO_CLUSTER_API_RESOURCE_PATHS) {
+      for (const geoClusterResourcePath of geoClusterResourcePaths) {
          
          // const dbQueryStr = APP_STATE.CONFIG_DEFAULTS.LEGACY_CLUSTER_QUERY_STR;
          
@@ -89,8 +97,8 @@ export async function _downloadDBCollections(eventObj) {
 
             console.log(document.domain);
 
-            return queryAPI.call(eventObj, window.fetch, 
-					APP_STATE.CONFIG_DEFAULTS.GEO_CLUSTER_API_HOST, 
+            return queryAPI.call(eventObj, window.fetch,
+					apiHost, 
 					geoClusterResourcePath, 
 					{});
          };
@@ -104,13 +112,13 @@ export async function _downloadDBCollections(eventObj) {
          const dbCollectionName = geoClusterResourcePath.slice(geoClusterResourcePath.indexOf('/')+1);
          
          // SAVE THE RETURNED DATA
-         APP_STATE.saveDBCollection(dbCollectionName, _MonitorExecution.getData());
-
-         // console.info(_MonitorExecution.getData());
-
-         console.log(...APP_STATE.returnDBCollections());
+			if (_MonitorExecution.getData()) APP_STATE.cacheDBCollection(dbCollectionName,  _MonitorExecution.getData());
+			
+         console.log(...APP_STATE.returnCachedDBCollections());
       };
-
+		
+		return true;
+		
    } catch (getDBCollErr) {
       console.error(`getDBCollErr: ${getDBCollErr}`);
    };

@@ -1,6 +1,6 @@
 `use strict`;
-import { _downloadDBCollections, _retreiveClusterGJDatasets, _getAPIResource } from "./avg-controllers/data-controller.js";
-import { _TraverseObject } from "./utils/helpers.js";
+import { _downloadGeoClusterCollections, _retreiveClusterGJDatasets, _getAPIResource } from "./avg-controllers/data-controller.js";
+import { _Arrays, _TraverseObject } from "./utils/helpers.js";
 import { _pollAVGSettingsValues, _PopulateDOM } from "./avg-controllers/ui-controller.js";
 import { APP_STATE } from "./avg-controllers/state-controller.js";
 import { _RenderEngine } from "./controllers/maps-controller.js";
@@ -13,12 +13,12 @@ const InitApp = (() => {
    // nothing here;
    function renderGeoPolRegions(resourceName, featColl) {
       if (resourceName === `nga-geo-pol-regions` && featColl) {
-         _RenderEngine.renderFeatColl(featColl, {useBuffer: false, lineColor: "#BDC581", lineWeight: 0.8});
+         _RenderEngine.renderFeatColl(featColl, {useBuffer: false, lineColor: "#BDC581", lineWeight: 1.1});
       };
    };
 
    //
-   async function renderClustersData (featCollArray) {
+   async function renderClustersCollection (featCollArray) {
       if (featCollArray && featCollArray.length > 0) { 
          // RENDER CLUSTERS' DATA ON BASE MAP
          await _RenderEngine.populateClustersOnBasemap(featCollArray, {
@@ -29,47 +29,130 @@ const InitApp = (() => {
       };
    };
 
+   function cacheNewGeoClusters(featCollArr) {
+      for (let idx = 0; idx < featCollArr.length; idx++) {
+         const featColl = featCollArr[idx];
+         let cachedGeoClusters = _TraverseObject.evaluateValue(APP_STATE.returnCachedDBCollection("cached-geo-clusters"), "data");
+         
+      }
+   };
+
+   
    return {
 
-      retreiveCachedClusters: async () => {
-
+      cachePreloadedGeoClusters: async () => {
          // GET CLUSTERS' DATA
          const { geoClusters } = _retreiveClusterGJDatasets();
-         // const geoClusters = _TraverseObject.evaluateValue(APP_STATE.returnDBCollection("geo-clusters"), "data");
 
-         APP_STATE.saveDBCollection(`geo-clusters`, [...geoClusters]);
-
-         // RENDER ON MAP
-         await renderClustersData(geoClusters);
+         APP_STATE.cacheDBCollection(`cached-geo-clusters`, [...geoClusters]);
       },
 
-      // GET FRESH DATA FROM DB.
-      // FIXME > DOWNLOAD COLLS. IN RESPONSE TO DB. INSERTS
-      renderLiveClusters: async (window) => {
+      renderCachedGeoClusters: async () => {
+
+         // GET CLUSTERS' DATA
+         const geoClustersArr = _TraverseObject.evaluateValue(APP_STATE.returnCachedDBCollection("cached-geo-clusters"), "data");
+
+         // RENDER ON MAP
+         await renderClustersCollection(geoClustersArr);
+      },
+
+      getNewGeoClusters: async (window) => {
+
+         // DOWNLOAD FRESH GEOCLUSTER METADATA FROM THE DB && SAVE TO APP STATE;
+         if (await _downloadGeoClusterCollections(window)) {
+
+            let newGeoClusterIds = [], newGeoClusters = [];
+
+            // GET ALL PRE-LOADED CLUSTERS IN APP CACHE
+            const cachedGeoClusters = _TraverseObject.evaluateValue(APP_STATE.returnCachedDBCollection("cached-geo-clusters"), "data");
+            
+            // GET IDS FOR ALL CLUSTERS IN APP CACHE
+            const cachedGeoClusterIds = [];
+
+            for (let idx = 0; idx < cachedGeoClusters.length; idx++) {
+               let cachedClusterId = cachedGeoClusters[idx].properties.clusterID;
+               if (cachedClusterId) {
+                  cachedClusterId = cachedClusterId.toLowerCase();
+                  cachedGeoClusterIds.push(cachedClusterId);
+               };
+            };
+
+            // GET ALL CLUSTERS CURR. IN DB
+            const dbParcelizedClustersMetadata = _TraverseObject.evaluateValue(APP_STATE.returnCachedDBCollection("v1/parcelized-agcs/metadata"), "data");
+
+            // GET IDS FOR ALL CLUSTERS CURR. IN DB
+            let dbGeoClusterIds = [];
+
+            if (dbParcelizedClustersMetadata && dbParcelizedClustersMetadata.data) {
+               
+               dbGeoClusterIds.push(...dbParcelizedClustersMetadata.data.collection_metadata.ids);
+               
+               // REMOVE
+               dbGeoClusterIds.push("ASB00123OSH");
+               dbGeoClusterIds.push("AGCABI000010");
+               dbGeoClusterIds.push("AGCABI000010");
+            };
+
+            // REMOVE
+            console.log({cachedGeoClusterIds})
+            console.log({dbGeoClusterIds})
+
+            // COMPARE BOTH ARRAYS OF IDS; RETREIVE GEOJSON FOR NEW CLUSTER IDS
+            if (dbGeoClusterIds.length > 0) {
+               
+               newGeoClusterIds = _Arrays.containsAllChk(cachedGeoClusterIds, dbGeoClusterIds).missingElements;
+   
+               console.log({newGeoClusterIds});
+            };
+
+            if (newGeoClusterIds.length > 0) {
+   
+               for (let idx = 0; idx < newGeoClusterIds.length; idx++) {
+                  const newGeoClusterId = newGeoClusterIds[idx];
+                  const resourcePath = `${APP_STATE.CONFIG_DEFAULTS.PARCELIZED_CLUSTER_API_RESOURCE_PATH}`
+                  const queryString = `?${newGeoClusterId}`;
+                  const apiHost = APP_STATE.CONFIG_DEFAULTS.GEO_CLUSTER_API_HOST;
+                  const APIResponse = await _getAPIResource(window, apiHost, resourcePath, {queryString})
+                  let newGeoClusterGeoJSON = null;
+                  if (APIResponse) {
+                     if (APIResponse.status === "success") {
+                        if (APIResponse.data) {
+                           newGeoClusterGeoJSON = APIResponse.data.parcelizedAgcData;
+                           console.log({newGeoClusterGeoJSON})
+                           newGeoClusters.push(newGeoClusterGeoJSON);
+                        };
+                     }
+                  }
+               };
+            };
+
+            return newGeoClusters.length > 0 ? newGeoClusters : null;
+         };
+
+         // RETURN NULL IF _downloadGeoClusterCollections FAILS
+         return null;
+      },
+
+      updateCachedGeoClusters: (collectionName, featCollArr) => {
+         // get the cached collection
+         const geoClustersArr = _TraverseObject.evaluateValue(APP_STATE.returnCachedDBCollection(collectionName), "data");
+         // add new data
+         for (const featColl of featCollArr) {
+            if (featColl.properties.clusterID) geoClustersArr.push(...featColl);
+         };
+         // delete it from the collections array
+         APP_STATE.deleteCachedDBCollection(collectionName);
+         // re-insert the updated version
+         APP_STATE.cacheDBCollection(collectionName, geoClustersArr);
+      },
+
+      // TODO > WIP > RENDER NEWLY PARCELIZED CLUSTERS
+      // RENDER NEW GEO CLUSTERS ADDED TO THE DB.
+      renderLiveGeoClusters: async (featCollArr) => {
          
-         await _downloadDBCollections(window);
-
-         // const apiHost = APP_STATE.CONFIG_DEFAULTS.GEO_CLUSTER_API_HOST;
-         // const geoClusterResourcePaths = APP_STATE.CONFIG_DEFAULTS.GEO_CLUSTER_API_RESOURCE_PATHS;
-
-         // for (const geoClusterResourcePath of geoClusterResourcePaths) {
+         (function renderLiveGeoClusters() {
          
-         //    // get the resource name
-         //    const dbCollectionName = geoClusterResourcePath.slice(geoClusterResourcePath.indexOf('/')+1);
-
-         //    // get the resource
-         //    let geoClusterResource;
-         //    geoClusterResource = await _getAPIResource(window, apiHost, geoClusterResourcePath);
-         //    console.log({geoClusterResource});
-
-         //    // SAVE THE RETURNED DATA
-         //    if (geoClusterResource) APP_STATE.saveDBCollection(dbCollectionName, geoClusterResource.data);
-
-         // };
-
-         (function renderLiveClusters() {
-         
-            const legacyClustersColl = _TraverseObject.evaluateValue(APP_STATE.returnDBCollection("legacy-agcs"), "data");
+            const legacyClustersColl = _TraverseObject.evaluateValue(APP_STATE.returnCachedDBCollection("v1/legacy-agcs"), "data");
             
             console.log({legacyClustersColl});
       
@@ -88,7 +171,7 @@ const InitApp = (() => {
       },
 
       // GET ADMIN BOUNDS GEOJSON
-      retreiveAdminBoundsGJ: async (window) => {
+      renderAdminBounds: async (window) => {
 
          const apiHost = APP_STATE.CONFIG_DEFAULTS.ADMIN_BOUNDS_GEOJSON_API_HOST;
          const adminBoundsAPIResourcePaths = APP_STATE.CONFIG_DEFAULTS.ADMIN_BOUNDS_GEOJSON_API_RESOURCE_PATHS;
@@ -100,14 +183,18 @@ const InitApp = (() => {
             console.log({resourceName});
 
             // get the resource
-            const adminBoundsResource = await _getAPIResource(window, apiHost, adminBoundsResourcePath);
+            const adminBoundsResource = await _getAPIResource(window, apiHost, adminBoundsResourcePath, {});
             console.log({adminBoundsResource});
                            
-            // SAVE THE RETURNED DATA
-            if (adminBoundsResource) APP_STATE.saveDBCollection(resourceName, adminBoundsResource.data);
+            if (adminBoundsResource && adminBoundsResource.data) {
+               
+               // SAVE THE RETURNED DATA
+               APP_STATE.cacheDBCollection(resourceName, adminBoundsResource.data);
 
-            // RENDER ON MAP
-            renderGeoPolRegions(resourceName, adminBoundsResource.data);
+               // RENDER ON MAP
+               renderGeoPolRegions(resourceName, adminBoundsResource.data);
+            };
+
          };
       },
    };
@@ -121,12 +208,43 @@ const InitApp = (() => {
       // save the UI default settings
       APP_STATE.saveDefaultSettings(_pollAVGSettingsValues());
 
-      await InitApp.retreiveCachedClusters();
+      await InitApp.cachePreloadedGeoClusters();
 
-      await InitApp.retreiveAdminBoundsGJ(windowObj);
+      await InitApp.renderCachedGeoClusters();
+
+      await InitApp.renderAdminBounds(windowObj);
+            
+      // NESTED, RECURSIVE setTimeouts THAT LOOPS INDEFINITELY @ 10s INTERVALS
+      (function autoDownloadWorker() {
+         
+         let delay = 10000;
+
+         setTimeout(async function request() {
+
+            const newGeoClustersArr = await InitApp.getNewGeoClusters(windowObj);
+
+            // SAVE THE NEWLY RETREIVED GEOJSON TO APP CACHE
+            if (newGeoClustersArr && newGeoClustersArr.length > 0) {
+               InitApp.updateCachedGeoClusters("cached-geo-clusters", newGeoClustersArr);
+               // await InitApp.renderLiveGeoClusters(newGeoClustersArr);
+            };
+
+            if (!newGeoClustersArr) delay *= 2;
+
+            setTimeout(request, delay);
+
+         }, delay);
+
+      })();
+
+   });
+})();
+
+
+(() => {
+
+   window.addEventListener(`DOMContentLoaded`, async (windowObj) => {
       
-      await InitApp.renderLiveClusters(windowObj);
-
       // SANDBOX
       //    document.body.addEventListener('click', e => {
       //       if (e.target.matches("[data-bs-target]")) {
@@ -140,5 +258,4 @@ const InitApp = (() => {
       //    // init. the client side router
       //    _clientSideRouter();
    });
-
 })();

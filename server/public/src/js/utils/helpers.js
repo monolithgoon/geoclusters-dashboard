@@ -732,3 +732,64 @@ export const _ProcessGeoJSON = (()=>{
 		},
 	};
 })();
+
+
+export const _Arrays = (()=>{
+
+	return {
+		
+		// ARR1. CONTAINS SOME ELEMENTS OF ARR2
+		containsSomeChk: (baseArr, targetArr) => {
+			targetArr.some(targetArrEl => baseArr.indexOf(targetArrEl) >= 0);
+		},
+
+		// containsAllChk: (baseArr, targetArr) => {
+		//    return targetArr.every(targetElement => baseArr.includes(targetElement));
+		// },
+		// ARR1. CONTAINS ALL ELEMENTS OF ARR2.
+		containsAllChk: (baseArr, targetArr) => {
+			const missingElements = []; 
+			const allMatchChk = targetArr.every(targetElement => baseArr.includes(targetElement));
+			if (!allMatchChk) {
+				targetArr.forEach(targetElement => {
+					const targetElementChk = baseArr.includes(targetElement);
+					if (!targetElementChk) missingElements.push(targetElement);
+				});
+			};
+			return {
+				allMatchChk, 
+				missingElements,
+			};
+		},
+
+		identicalChk: (arr1, arr2) => {
+			const len1 = arr1.length;
+			if (len1 !== arr2.length) return false; // LENGTHS NOT EQUAL
+			let idx = len1;
+			while (idx--) {
+				if (arr1[idx] !== arr2[idx]) return false;
+			};
+			return true;
+		},
+
+		// CHECK BOTH ARRAYS ARE IDENTICAL; CHECK NESTD ARRAYS RECURSIVELY
+		deepIdenticalChk: (baseArr, targetArr, {isStrict}) => {
+			// TODO > CONVERT FROM Array.prototype TO NORMAL FN.
+			Array.prototype.compare = function (array, isStrict) {
+				if (!array) return false;
+				if (arguments.length === 1) isStrict = true;
+				if (this.length !== array.length) return false;
+				for (let idx = 0; idx < this.length; idx++) {
+					const thisCurrElememnt = this[idx];
+					// CHK FOR & COMPARE NESTED ARRAYS
+					if (thisCurrElememnt instanceof Array && array[idx] instanceof Array) {
+						if (!thisCurrElememnt.compare(array[idx], isStrict)) return false;
+					}
+					else if (isStrict && thisCurrElememnt !== array[idx]) return false;
+					else if (!isStrict) return this.sort().compare(array.sort(), true);
+				};
+				return true;
+			};
+		},
+	};
+})();

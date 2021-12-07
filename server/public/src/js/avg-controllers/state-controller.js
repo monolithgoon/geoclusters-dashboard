@@ -29,7 +29,9 @@ export const APP_STATE = (function() {
 
       // GEO_CLUSTER_API_HOST: `http://127.0.0.1:9090`,
       GEO_CLUSTER_API_HOST: `https://geoclusters.herokuapp.com`,
-      GEO_CLUSTER_API_RESOURCE_PATHS: ["v2/legacy-agcs", "v1/parcelized-agcs", "v1/agcs"],
+      // GEO_CLUSTER_API_RESOURCE_PATHS: ["api/v2/legacy-agcs", "api/v1/parcelized-agcs", "api/v1/agcs", "api/v2/geo-clusters"],
+      GEO_CLUSTER_API_RESOURCE_PATHS: ["api/v1/parcelized-agcs", "api/v1/parcelized-agcs/metadata"],
+      PARCELIZED_CLUSTER_API_RESOURCE_PATH: `api/v1/parcelized-agcs/parcelized-agc`,
       // REMOVE > DEPRC.
       // LEGACY_CLUSTER_QUERY_STR: `?fields=
       //                               properties.geo_cluster_details,
@@ -49,26 +51,24 @@ export const APP_STATE = (function() {
       // ADMIN_BOUNDS_GEOJSON_API_HOST: `https://avgmap.herokuapp.com`,
       // ADMIN_BOUNDS_GEOJSON_API_HOST: `https://avg-dashboard.herokuapp.com`,
 
-      // ADMIN_BOUNDS_GEOJSON_API_RESOURCE_PATHS: [`v1/admin-bounds/nga-admin-bounds`],
-      // ADMIN_BOUNDS_GEOJSON_API_RESOURCE_PATHS: [`v1/admin-bounds/nga-geo-pol-regions`, `v1/admin-bounds/nga-admin-bounds-lvl1`, `v1/admin-bounds/nga-admin-bounds-lvl2`, `v1/admin-bounds/nga-admin-bounds-lvl3`],
-      ADMIN_BOUNDS_GEOJSON_API_RESOURCE_PATHS: [`v1/admin-bounds/nga-geo-pol-regions`, `v1/admin-bounds/nga-admin-bounds-lvl1`, `v1/admin-bounds/nga-admin-bounds-lvl2`],
+      // ADMIN_BOUNDS_GEOJSON_API_RESOURCE_PATHS: [`api/v1/admin-bounds/nga-admin-bounds`],
+      // ADMIN_BOUNDS_GEOJSON_API_RESOURCE_PATHS: [`api/v1/admin-bounds/nga-geo-pol-regions`, `api/v1/admin-bounds/nga-admin-bounds-lvl1`, `api/v1/admin-bounds/nga-admin-bounds-lvl2`, `api/v1/admin-bounds/nga-admin-bounds-lvl3`],
+      ADMIN_BOUNDS_GEOJSON_API_RESOURCE_PATHS: [`api/v1/admin-bounds/nga-geo-pol-regions`, `api/v1/admin-bounds/nga-admin-bounds-lvl1`, `api/v1/admin-bounds/nga-admin-bounds-lvl2`],
    });
 
    // keep track of sidebar settings
    let defaultSettings = {};
    let currentSettings = {};
 
-   // instantiate an object that holds a db. collection 
+   // instantiate an object to holds a db. collection 
    const DATA_STORE = {
       name: ``,
       data: {},
    };
    
-   // hold all the collections & their data
-   const DB_COLLECTIONS = [];
-   
-   // 
-   
+   // hold all the database collections & their data
+   let CACHED_DB_COLLECTIONS = [];
+      
    // keep track of the GJ. that was just rendered
    const renderedGeoJSONArray = [];
    let currRenderedGeoJSON;
@@ -90,21 +90,41 @@ export const APP_STATE = (function() {
          return currentSettings;
       },
 
-      saveDBCollection: function(collectionName, json) {
+      cacheDBCollection: function(collectionName, data) {
          const newCollection = Object.create(DATA_STORE);
          newCollection.name = collectionName;
-         newCollection.data = json;
-         DB_COLLECTIONS.push(newCollection);
+         newCollection.data = data;
+         
+         // REMOVE > MOVE TO findUpdateCachedDBCollection() FN. BELOW
+         CACHED_DB_COLLECTIONS = CACHED_DB_COLLECTIONS.filter(collection => collection.name !== collectionName);
+
+         CACHED_DB_COLLECTIONS.push(newCollection);
       },
 
-      returnDBCollections: function() {
-         return DB_COLLECTIONS;
+      returnCachedDBCollections: function() {
+         return CACHED_DB_COLLECTIONS;
       },
 
-      returnDBCollection: function(collectionName) {
-         const dbCollection = DB_COLLECTIONS.find(collection => collection.name === collectionName);
-         console.log({dbCollection})
-         return dbCollection;
+      returnCachedDBCollection: function(collectionName) {
+         const cachedDBCollection = CACHED_DB_COLLECTIONS.find(collection => collection.name === collectionName);
+         // console.log({cachedDBCollection})
+         return cachedDBCollection;
+      },
+
+      // TODO
+      findUpdateCachedDBCollection: (collectionName, data) => {
+
+         // 0. Make sure data is not null
+         
+         // 1. check if collection with same name already exists in cache
+         
+         // 2. check if new data is better? than old data
+
+         // 3. replace the data in cache
+      },
+
+      deleteCachedDBCollection: (collectionName) => {
+         CACHED_DB_COLLECTIONS = CACHED_DB_COLLECTIONS.filter(collection => collection.name !== collectionName);
       },
 
       saveRenderedGeojson: function(geoJSON) {

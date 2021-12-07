@@ -40,7 +40,7 @@ const ShowActivity = (()=>{
 // CALC. TIME TO EXE. A FN. && DISPLAY INDICATOR
 export const _MonitorExecution = (function(dom) {
 
-	let returnedData, executionMs;
+	let returnedData=null, executionMs;
 
 	return {
 
