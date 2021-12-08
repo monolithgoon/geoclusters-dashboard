@@ -202,7 +202,7 @@ const InitApp = (() => {
 
             if (newGeoClustersArr && newGeoClustersArr.length > 0) {
 
-               // reset the interval delay when new clusters are being added..
+               // reset the interval delay when new CLUSTER(S) ARE FOUND..
                intervalDelay = initDelay;
                
                // SAVE THE NEWLY RETREIVED GEOJSON TO APP CACHE
@@ -212,6 +212,7 @@ const InitApp = (() => {
                // await renderLiveGeoClusters(newGeoClustersArr);
             };
 
+            // PROGRESSIVELY INCREASE THE INTERVAL IF NO NEW CLUSTERS ARE BEING FOUND
             if (newGeoClustersArr && newGeoClustersArr.length === 0) intervalDelay += 500;
 
             // DOUBLE THE INTERVAL BETWEEN setTimeouts IF 1ST CALL FAILED TO EXECUTE COMPLTELY

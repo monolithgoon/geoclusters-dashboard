@@ -1786,7 +1786,8 @@ export const _RenderEngine = (function(avgBaseMap, clusterFeatsMap) {
                      // 1. render featColl. poly
                      // TODO > ADJUST BUFFER BY CLUSTER SIZE
 
-                     const clusterPolygon = await _RenderEngine.getClusterPoly(featColl, {useBuffer: true, bufferAmt: 0.01, bufferUnits})
+                     let clusterPolygon;
+                     // clusterPolygon = await _RenderEngine.getClusterPoly(featColl, {useBuffer: true, bufferAmt: 0.01, bufferUnits})
 
                      if (clusterPolygon) _RenderEngine.renderClusterPoly(clusterPolygon, {bufferUnits});
 
