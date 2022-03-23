@@ -41,10 +41,10 @@ POST http://127.0.0.1:1010/api/v1/users/signup HTTP/1.1
 content-type: application/json
 
 {
-   "user_first_name": "Bruce Willie",
-   "user_last_name": "Okpue",
-   "user_role": "user",
-   "user_email": "a.willie@gmail.com",
+   "user_first_name": "John",
+   "user_last_name": "S.",
+   "user_role": "admin",
+   "user_email": "sandbox@avg-dashboard.com",
    "user_password": "jungleFever",
    "user_password_confirm": "jungleFever"
 }

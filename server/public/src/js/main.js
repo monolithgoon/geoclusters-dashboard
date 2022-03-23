@@ -140,7 +140,7 @@ const InitApp = (() => {
                clusterTitleClickHandler(currClusterTitleDivs);
             };
          };
-      })();      
+      })();
    };
    
    return {

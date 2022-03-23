@@ -1785,7 +1785,6 @@ export const _RenderEngine = (function(avgBaseMap, clusterFeatsMap) {
 
                      // 1. render featColl. poly
                      // TODO > ADJUST BUFFER BY CLUSTER SIZE
-
                      let clusterPolygon;
                      // clusterPolygon = await _RenderEngine.getClusterPoly(featColl, {useBuffer: true, bufferAmt: 0.01, bufferUnits})
 
@@ -1806,7 +1805,7 @@ export const _RenderEngine = (function(avgBaseMap, clusterFeatsMap) {
                      LeafletMaps.saveMarkerGroup(featCollMarkers);
                      await LeafletMaps.renderMarkerCluster(featCollMarkers, {map: avgBaseMap})
                   } else {
-                     console.warn(`...no cluster plots' markers to render`)
+                     console.warn(`...no cluster plots' markers to render`);
                   };
                };
             };

@@ -134,7 +134,7 @@ export const APP_STATE = (function() {
             renderedGeoJSONArray.push(geoJSON);
             currRenderedGeoJSON = geoJSON;
             console.log({currRenderedGeoJSON});
-         }
+         };
       },
       retreiveRenderedGJArray: function() {
          return renderedGeoJSONArray;
@@ -150,6 +150,6 @@ export const APP_STATE = (function() {
       },
       getRenderedGeoJSON: () => {
          return currRenderedGeoJSON;
-      }
+      },
    };
 })();

@@ -9,7 +9,7 @@
     "dev": "cd server && nodemon server.js --ignore localdata/ --ignore public/dist/",
     "secure": "webpack --mode production && node obfuscate.js",
     "deploy": "git push && git push heroku master && heroku open",
-    "stable": "webpack --mode production && node obfuscate.js && git add -A && git commit -m `stable-commit` && git push && git push heroku master",
+    "deploy:prod": "webpack --mode production && node obfuscate.js && git add -A && git commit -m `stable-commit` && git push && git push heroku master",
     "on": "heroku maintenance:on",
     "off": "heroku maintenance:off"
   },

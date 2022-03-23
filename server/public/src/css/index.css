@@ -93,9 +93,9 @@ body, html {
 	-webkit-box-sizing:border-box;
 	-moz-box-sizing:border-box;
 	box-sizing:border-box;
-	-webkit-font-smoothing:antialiased;
+	/* -webkit-font-smoothing:antialiased;
 	-moz-font-smoothing:antialiased;
-	-o-font-smoothing:antialiased;
+	-o-font-smoothing:antialiased; */
 	text-rendering:optimizeLegibility;
 	scroll-behavior: smooth;
 }
@@ -170,6 +170,7 @@ text-align: center;
 line-height: 15px;
 }
 
+/* MAIN DASHBOARD MAP */
 #avg_base_map_container {
 	position: absolute;
 	top: 0;

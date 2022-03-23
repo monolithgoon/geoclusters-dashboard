@@ -691,7 +691,7 @@ export const _ProcessGeoJSON = (()=>{
 			return presentationPolygon;
 		},
 
-		getFeatCollPoly: (featColl, {useBuffer, bufferAmt, bufferUnits}={}) => {
+		 getFeatCollPoly: (featColl, {useBuffer, bufferAmt, bufferUnits}={}) => {
 			
 			try {
 
