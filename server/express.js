@@ -11,7 +11,6 @@ const bodyParser = require("body-parser"); // get the contents OF request.body
 const cookieParser = require('cookie-parser');
 const compression = require("compression"); // server response compression
 const chalk = require('./utils/chalk-messages.js');
-const ServerError = require('./utils/app-error.js');
 const globalErrorHandler = require("./controllers/error-controller.js");
 
 

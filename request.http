@@ -24,6 +24,19 @@ content-type: application/json
 }
 
 ###
+POST https://avgmap.herokuapp.com/api/v1/users/signup HTTP/1.1
+content-type: application/json
+
+{
+   "user_first_name": "Bello",
+   "user_last_name": "Umar",
+   "user_role": "admin",
+   "user_email": "embee.umar@gmail.com",
+   "user_password": "$419Captain",
+   "user_password_confirm": "$419Captain"
+}
+
+###
 POST http://127.0.0.1:1010/api/v1/users/signup HTTP/1.1
 content-type: application/json
 
@@ -37,14 +50,15 @@ content-type: application/json
 }
 
 ###
-POST http://127.0.0.1:1010/api/v1/users/signup HTTP/1.1
+# POST http://127.0.0.1:1010/api/v1/users/signup HTTP/1.1
+POST https://avg-dashboard.herokuapp.com/api/v1/users/signup HTTP/1.1
 content-type: application/json
 
 {
-   "user_first_name": "John",
-   "user_last_name": "S.",
+   "user_first_name": "Guest",
+   "user_last_name": "User",
    "user_role": "admin",
-   "user_email": "sandbox@avg-dashboard.com",
+   "user_email": "guest@avg-dashboard.com",
    "user_password": "jungleFever",
    "user_password_confirm": "jungleFever"
 }

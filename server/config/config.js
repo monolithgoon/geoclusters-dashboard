@@ -18,7 +18,7 @@ if (process.env.NODE_ENV === `development`) {
 
 module.exports = Object.freeze({
 	
-	nodeEnv: process.env_NODE_ENV,
+	nodeEnv: process.env.NODE_ENV,
 
 	port: parseInt(process.env.PORT, 10) || 8080,
 
@@ -26,7 +26,7 @@ module.exports = Object.freeze({
 
 	jwtSecret: process.env.JWT_SECRET,
 	jwtAlgorithm: process.env.JWT_ALGO,
-	jwtExpiresIn: process.env.JWT_EXPIRES_IN,
+	jwtExpiresIn: process.env.JWT_EXPIRES_IN,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
 	jwtCookieExpiresIn:process.env.JWT_COOKIE_EXPIRES_IN,
 
 	// emails: {

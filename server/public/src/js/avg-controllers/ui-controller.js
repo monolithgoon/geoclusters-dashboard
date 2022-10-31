@@ -303,7 +303,7 @@ function getAppSettingsInputs() {
 };
 
 
-// GET SETTINGS VALUES
+// GET CURRENT SETTINGS STATE / VALUES
 export const _pollAVGSettingsValues = () => {
 
    try {
@@ -362,9 +362,10 @@ export const _PollAppSettings = ((dom) => {
 
 
 
-const DOMSequence = ((dom) => {
+// FUNCTIONS THAT COORDINATE WHAT HAPPENS WHEN DOM ELEMENTS IN THE SIDEBARS ARE CLICKED
+const DOMSequence = ((domElements) => {
 
-   // RESULT TITLE MAIN PARENT SEQ.
+   // CLUSTER TITLE MAIN PARENT SEQ.
    function clickedResultContainerSeq(resultItemDiv, otherResultItems) {
       
       // scroll the result into view
@@ -408,13 +409,13 @@ const DOMSequence = ((dom) => {
          if (clusterGeoJSON) {
             
             // 1.
-            _PopulateDOM.clusterDetailsModal(dom.resultModalDiv, clusterGeoJSON);
+            _PopulateDOM.clusterDetailsModal(domElements.resultModalDiv, clusterGeoJSON);
 
             // 1a. switch focus of panel's tabs
-            _ManipulateDOM.removeClass(dom.clusterInsightsTabBtn, "active");
-            _ManipulateDOM.removeClass(dom.clusterInsightsTabPane, "active");
-            _ManipulateDOM.addClass(dom.clusterDetailsTabBtn, "active");
-            _ManipulateDOM.addClass(dom.clusterDetailsTabPane, "active");
+            _ManipulateDOM.removeClass(domElements.clusterInsightsTabBtn, "active");
+            _ManipulateDOM.removeClass(domElements.clusterInsightsTabPane, "active");
+            _ManipulateDOM.addClass(domElements.clusterDetailsTabBtn, "active");
+            _ManipulateDOM.addClass(domElements.clusterDetailsTabPane, "active");
       
             // 1b.
             // render cluster feature cards.

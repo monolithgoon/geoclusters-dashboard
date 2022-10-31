@@ -80,6 +80,7 @@ function validateGeoJSON(geoJSON) {
 };
 
 
+// FLATTEN THE PROPS. OF THE GEOJSON
 async function returnNormalized(geoClusterArray) {
 
    try {

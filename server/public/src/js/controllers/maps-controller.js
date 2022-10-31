@@ -1783,14 +1783,15 @@ export const _RenderEngine = (function(avgBaseMap, clusterFeatsMap) {
 
                   if (featColl.features.length > 0) {
 
-                     // 1. render featColl. poly
+                     // 1. generate a polygon for the farm cluster featColl.
                      // TODO > ADJUST BUFFER BY CLUSTER SIZE
                      let clusterPolygon;
                      // clusterPolygon = await _RenderEngine.getClusterPoly(featColl, {useBuffer: true, bufferAmt: 0.01, bufferUnits})
 
+                     // 2. render featColl. polygon for the farm cluster
                      if (clusterPolygon) _RenderEngine.renderClusterPoly(clusterPolygon, {bufferUnits});
 
-                     // 2. render feats. & feats. markers
+                     // 3. render cluster feats. & feats. markers
                      for (let idy = 0; idy < featColl.features.length; idy++) {
                         const feature = featColl.features[idy];
                         // allFeatures.push(feature);
@@ -1800,7 +1801,7 @@ export const _RenderEngine = (function(avgBaseMap, clusterFeatsMap) {
                      };
                   };
 
-                  // 3. render  marker clusters
+                  // 4. render  marker clusters
                   if (featCollMarkers.length > 0) {
                      LeafletMaps.saveMarkerGroup(featCollMarkers);
                      await LeafletMaps.renderMarkerCluster(featCollMarkers, {map: avgBaseMap})

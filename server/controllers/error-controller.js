@@ -6,6 +6,7 @@ const ServerError = require("../utils/app-error.js");
 const chalk = require("../utils/chalk-messages.js");
 
 
+// // SIMPLE ERROR CONTROLLER
 // module.exports = (err, req, res, next) => {
 // 	// console.log(err.stack);
 // 	console.log(err.name);
@@ -73,7 +74,7 @@ const sendErrorDev = (err, req, res) => {
 
 const sendErrorProd = (err, req, res) => {
 
-	if (req.originalUrl.startsWith("/api")) {
+	if (req.originalUrl.startsWith("/api")) {3
 
 		// Operational, trusted error: send message to client
 		if (err.isOperational) {
