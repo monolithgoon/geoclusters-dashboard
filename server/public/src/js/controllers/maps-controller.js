@@ -1786,7 +1786,7 @@ export const _RenderEngine = (function(avgBaseMap, clusterFeatsMap) {
                      // 1. generate a polygon for the farm cluster featColl.
                      // TODO > ADJUST BUFFER BY CLUSTER SIZE
                      let clusterPolygon;
-                     // clusterPolygon = await _RenderEngine.getClusterPoly(featColl, {useBuffer: true, bufferAmt: 0.01, bufferUnits})
+                     clusterPolygon = await _RenderEngine.getClusterPoly(featColl, {useBuffer: true, bufferAmt: 0.01, bufferUnits})
 
                      // 2. render featColl. polygon for the farm cluster
                      if (clusterPolygon) _RenderEngine.renderClusterPoly(clusterPolygon, {bufferUnits});
