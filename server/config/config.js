@@ -13,13 +13,6 @@ if (process.env.NODE_ENV === `development`) {
 		// this error should crash the whole process
 		throw new Error(chalk.fail(`Couldn't find .env file. ${envConfig.error}`));
 	}
-} else {
-	const envConfig = dotenv.config({ path: path.resolve(__dirname, `../config.env`) }); // IMPORTANT > CONFIGURE ENV. VARIABLES BEFORE YOU CALL THE APP
-
-	if (envConfig.error) {
-		// this error should crash the whole process
-		throw new Error(chalk.fail(`Couldn't find .env file. ${envConfig.error}`));
-	}
 }
 
 module.exports = Object.freeze({
