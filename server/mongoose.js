@@ -7,7 +7,7 @@ async function DB_CONNECT() {
 
    try {
 
-      console.log(chalk.working('Connecting to the remote Atlas DB...'));
+      console.log(chalk.working('Connecting to the remote MongoDB Atlas DB...'));
 
       const database = appConfig.databaseURL.replace(`<PASSWORD>`, process.env.ATLAS_DB_PASSOWRD) // REPLACE THE PLACEHOLDER TEXT IN THE CONNECTION STRING
    

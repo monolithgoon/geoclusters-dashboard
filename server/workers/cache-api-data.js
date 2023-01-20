@@ -6,6 +6,7 @@ const axios = require("axios");
 const gjv = require('geojson-validation');
 const { _GetClusterProps, _getClusterFeatProps } = require('../interfaces/cluster-props-adapter.js');
 const { _sanitizeFeatCollCoords } = require('../utils/helpers.js');
+const GEOCLUSTER_API_URLS = require("../utils/constants/geocluster-api-urls.js")
 
 
 // REPORT SAVED FILE STATS.
@@ -109,15 +110,9 @@ async function returnNormalized(geoClusterArray) {
 };
 
 
-async function getAPIData() {
+async function getAPIData(resourceURLs) {
 
    const data = [];
-
-   const resourceURLs = [
-      `https://geoclusters.herokuapp.com/api/v1/parcelized-agcs/`, 
-      `https://geoclusters.herokuapp.com/api/v2/legacy-agcs/`,
-      `https://geoclusters.herokuapp.com/api/v2/legacy-agcs/processed/`,
-   ];
 
    for (const resourceURL of resourceURLs) {
       const collectionData = await getDBCollection(resourceURL);
@@ -134,7 +129,7 @@ async function cacheData() {
 
    try {
       
-      const geoClustersData = await getAPIData();
+      const geoClustersData = await getAPIData(GEOCLUSTER_API_URLS.AWS);
 
       console.log({geoClustersData});
 
