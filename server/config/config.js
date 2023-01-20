@@ -7,7 +7,7 @@ process.env.NODE_ENV = process.env.NODE_ENV || "development";
 
 // LOAD THE .env VARIABLES INTO process.env
 if (process.env.NODE_ENV === `development`) {
-	const envConfig = dotenv.config({ path: path.resolve(__dirname, `../default.env`) }); // IMPORTANT > CONFIGURE ENV. VARIABLES BEFORE YOU CALL THE APP
+	const envConfig = dotenv.config({ path: path.resolve(__dirname, `../development.env`) }); // IMPORTANT > CONFIGURE ENV. VARIABLES BEFORE YOU CALL THE APP
 
 	if (envConfig.error) {
 		// this error should crash the whole process
