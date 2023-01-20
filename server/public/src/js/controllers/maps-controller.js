@@ -1366,6 +1366,7 @@ const MapboxMaps = ((plotsMap) => {
 })(CLUSTER_PLOTS_MAP);
 
 
+// OPEN A LEAFLET MAP IN A MODAL WHEN PLOTS MAP FILL LAYER IS CLICKED
 const MapboxFillLayerHandler = ((leafletModalMap)=>{
 
    const baseMapLayerGroup = LLayerGroupController.getLayerGroups().baseMapLayerGroup;
