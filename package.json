@@ -4,8 +4,8 @@
   "description": "NIRSAL AVG Dashboard - SSR Beta V1.1.0",
   "main": "express.js",
   "scripts": {
-    "start": "cd server && node server.js",
-    "start:prod": "NODE_ENV=production && cd server && nodemon server.js",
+    "start": "webpack --mode production && node obfuscate.js && cd server && node server.js",
+    "start:prod": "set NODE_ENV=production && webpack --mode production && node obfuscate.js && cd server && node server.js",
     "dev": "cd server && nodemon server.js --ignore localdata/ --ignore public/dist/",
     "secure": "webpack --mode production && node obfuscate.js",
     "deploy": "git push && git push heroku master && heroku open",
@@ -15,7 +15,10 @@
   },
   "nodemonConfig": {
     "ignore": [
-      ["/localdata/*.json", "/public/dist/"]
+      [
+        "/localdata/*.json",
+        "/public/dist/"
+      ]
     ]
   },
   "author": "Nduka Okpue",

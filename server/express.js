@@ -74,7 +74,7 @@ EXPRESS_SERVER.use(cookieParser());
 
 // 6. REQ. LOGGING IN DEV. OR PROD. MODE
 if (process.env.NODE_ENV === "development") {
-	console.log(chalk.interaction(`THE NODE EVIRONMENT IS CURRENTLY IN: [ ${process.env.NODE_ENV} ] MODE `));
+	console.log(chalk.interaction(`EXPRESS_SERVER.use(morgan()) IS LOGGING IN: [ ${process.env.NODE_ENV} ] MODE `));
 	EXPRESS_SERVER.use(morgan("dev"));
 };
 

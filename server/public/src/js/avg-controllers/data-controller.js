@@ -125,7 +125,7 @@ export async function _downloadGeoClusterCollections(eventObj) {
 };
 
 
-// REMOVE > DEPRC.
+// REMOVE > DEPRECATED
 export async function APIHTTPRequest(queryString) {
 
 	console.log(`%c ${JSON.stringify(queryString)}`, `background-color: yellow`);

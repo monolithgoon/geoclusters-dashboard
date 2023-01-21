@@ -10,4 +10,5 @@ const GEOCLUSTER_API_URLS = {
 		`http://18.213.158.252:8443/api/v2/legacy-agcs/processed/`,
 	],
 };
+
 module.exports = GEOCLUSTER_API_URLS;
