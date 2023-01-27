@@ -2,4 +2,4 @@
 require ('../css/index.css');
 
 // JAVASCRIPT
-require ('./main.js');
+require ('./dashboard.js');

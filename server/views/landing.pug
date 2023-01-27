@@ -1,4 +1,4 @@
-extends base
+extends landing-index
 
 block append landing-page-head-scripts
   script(src="https://unpkg.com/axios/dist/axios.min.js")
@@ -78,28 +78,32 @@ block landing-page
         p &copy; 
           script.
             document.write(new Date().getFullYear())
-          span  NIRSAL PLC. 
+          span#app_client_name_span
           span All Rights Reserved.
         nav
           a(href='#') Terms
           a(href='#') Privacy
           a(href='#') Security
 
-  #landing_page_map_cont
+  #landing_page_map_container
 
   script(type='module').
 
     //- import { MAPBOX_TOKEN } from "/src/js/config/maps-config.js";
+    import ATTRIBUTION from "/src/js/constants/attribution.js"
 
     (function() {
 
-      //- Get the documentElement (<html>) to display the page in fullscreen
-      var elem = document.documentElement;
+      //- 
+      document.getElementById("app_client_name_span").innerText = ` ${ATTRIBUTION.APP_CLIENT_NAME} `;
 
-      //- View in fullscreen
+      //- Get the "documentElement" (<html>) in order to display the page in fullscreen
+
+      const docElem = document.documentElement;
+
       function openFullScreen() {
-        if (elem.requestFullscreen) {
-          elem.requestFullscreen()
+        if (docElem.requestFullscreen) {
+          docElem.requestFullscreen()
             .then(function() {
               // element has entered fullscreen mode successfully
               console.log('in fs')
@@ -107,13 +111,13 @@ block landing-page
             .catch(function(error) {
               // element could not enter fullscreen mode
             });
-        } else if (elem.webkitRequestFullscreen) { /* Safari */
-          elem.webkitRequestFullscreen();
-        } else if (elem.msRequestFullscreen) { /* IE11 */
-          elem.msRequestFullscreen();
+        } else if (docElem.webkitRequestFullscreen) { /* Safari */
+          docElem.webkitRequestFullscreen();
+        } else if (docElem.msRequestFullscreen) { /* IE11 */
+          docElem.msRequestFullscreen();
         };
 
-        //- REMOVE THE CLICK LIST. AFTER 2 SECONDS
+        //- REMOVE THE CLICK LISTENER AFTER 2 SECONDS
         if (!window.screenTop && !window.screenY) {
           console.log('Browser is in fullscreen');
           setTimeout(()=>{
@@ -122,17 +126,21 @@ block landing-page
         };        
       };
 
+
       //- INIT. LANDING PAGE MAP
+
       mapboxgl.accessToken = `pk.eyJ1IjoibW9ub2xpdGhnb29uIiwiYSI6ImNrN3B1MnNjaDBhNTczcHFkdmJ0aHR6dWEifQ.O0mHuJ2wKNqKz3E_BIsnog`;
+
       const LANDING_PAGE_MAP = new mapboxgl.Map({
-        attribution: `FieldDev Group`,
-        container: `landing_page_map_cont`,
+        attribution: ATTRIBUTION.APP_DEVELOPER_NAME,
+        container: `landing_page_map_container`,
         style: `mapbox://styles/monolithgoon/ckqat05ss033418qmildmyau2`,
         center: [6.3, 7.9],
         pitch: 59,
         bearing: -2,
         zoom: 6.2,
 
+        //- 3D ELEVATION MAP SHOWING CLUSTER IN YOLA, NIGERIA
         //- center: [11.65872, 10.30595],
         //- center: [12.63872, 10.30595],
         //- pitch: 70,
@@ -140,6 +148,7 @@ block landing-page
         //- zoom: 11.88,
         //- zoom: 12.4,
       });
+
 
       LANDING_PAGE_MAP.on(`load`, function() {
 
@@ -169,6 +178,8 @@ block landing-page
       //- ADD ZOOM & NAV. CONTROLS
       LANDING_PAGE_MAP.addControl(new mapboxgl.NavigationControl());
 
+
+      //- GET LOGIN "FORM" DOM INPUTS
       const loginEmailInput = document.getElementById("login_email_input");
       const loginPasswordInput = document.getElementById("login_password_input");
       const loginNextBtn = document.getElementById("login_next_btn");
@@ -176,14 +187,17 @@ block landing-page
       const loginSubmitBtn = document.getElementById("login_submit_btn");
       const loginSubmitBtnTxt = document.getElementById("login_submit_btn_txt");
 
-      const appActivityInd = document.querySelector(`.app-activity-indicator`);
 
-      //- DELEGATION
+      //- EVENT(S) DELEGATION
 
-      //- CLICK PAGE FOR FULL SCREEN
+
+      //- 1. CLICK ANYWHERE ON PAGE FOR FULL SCREEN
       document.addEventListener('click', openFullScreen);
 
+
+      //- 2. USER ENTERS EMAIL ADDRESS
       if (loginEmailInput) {
+
         loginEmailInput.addEventListener('keyup', e => {
 
           openFullScreen();
@@ -197,6 +211,8 @@ block landing-page
         });
       };
 
+
+      //- 3. USER ENTERS PASSWORD
       if (loginPasswordInput) {
         loginPasswordInput.addEventListener('keyup', e => {
           const isValid = loginPasswordInput.checkValidity();
@@ -208,7 +224,8 @@ block landing-page
         });
       };
 
-      //- LOGIN BTNS. BEH.
+
+      //- 4. USER CLICKS NEXT BUTTON
       if (loginNextBtn) {
 
         loginNextBtn.addEventListener('click', e => {
@@ -225,6 +242,8 @@ block landing-page
         });
       };
 
+
+      //- 5. USER CLICKS BACK BUTTON
       if (loginBackBtn) {
 
         loginBackBtn.addEventListener('click', e => {
@@ -244,7 +263,11 @@ block landing-page
         });
       };
 
+
+      //- 6. USER CLICKS SUBMIT BUTTON
       if(loginSubmitBtn) {
+
+        const appActivityInd = document.querySelector(`.app-activity-indicator`);
 
         loginSubmitBtn.addEventListener('click', e => {
           

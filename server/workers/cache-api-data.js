@@ -6,7 +6,7 @@ const axios = require("axios");
 const gjv = require('geojson-validation');
 const { _GetClusterProps, _getClusterFeatProps } = require('../interfaces/cluster-props-adapter.js');
 const { _sanitizeFeatCollCoords } = require('../utils/helpers.js');
-const GEOCLUSTER_API_URLS = require("../utils/constants/geocluster-api-urls.js")
+const GEOCLUSTER_API_URLS = require("../constants/geocluster-api-urls.js")
 
 
 // REPORT SAVED FILE STATS.
