@@ -12,7 +12,7 @@ const sendEmail = require('../services/email.js');
 const signJWT = payloadId => {
    // TODO > check for .env VARS.
    return jwt.sign({id: payloadId}, APP_CONFIG.jwtSecret, {
-      expiresIn: APP_CONFIG.jwtExpiresIn,
+      expiresIn: APP_CONFIG.jwtExpiresInDays,
    });
 };
 
@@ -22,12 +22,12 @@ const createSendToken = (currentUser, statusCode, response) => {
    // IMPLEMENT JWT => PAYLOAD (=> id: newUser._id) + SECRET
    const jWebToken = signJWT(currentUser._id);
    const cookieOptions = {
-      expires: new Date(Date.now() * APP_CONFIG.jwtExpiresIn * 24 * 60 * 60 * 1000), // convert from days to milliseconds
+      expires: new Date(Date.now() * APP_CONFIG.jwtExpiresInDays * 24 * 60 * 60 * 1000), // convert from days to milliseconds
       httpOnly: true, // cookie cannot be accessed or modified by the browser
    };
 
    // SET COOKIE 'secure' OPTION to 'true' ONLY IN PROD. MODE TO ENSURE IT IS SENT ONLY VIA ENCRYPTED CONN.
-   if (process.env.NODE_ENV === `production`) cookieOptions.secure = true;
+   // if (process.env.NODE_ENV === `production`) cookieOptions.secure = true;
 
    // ATTACH A COOKIE TO THE RES. OBJ.
    response.cookie(`jwtcookie`, jWebToken, cookieOptions);

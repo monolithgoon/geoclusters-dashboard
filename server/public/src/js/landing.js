@@ -1,6 +1,6 @@
 `use strict`
 // import { displayMap } from "./mapbox";
-import { login, logout } from "./controllers/authentication.js";
+import { login, logout } from "./controllers/authenticate.js
 // import { updateSettings } from "./updateSettings";
 
 

@@ -84,6 +84,7 @@ EXPRESS_SERVER.use((request, response, next) => {
 
 	request.requestTime = new Date().toISOString();
 
+	console.log(chalk.console("REQUEST HEADERS"))
 	console.log(request.headers);
 
 	// console.log(JSON.stringify(request.cookies));

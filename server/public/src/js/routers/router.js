@@ -1,3 +1,4 @@
+// REMOVE > NEVER IMPLEMENTED
 export const _navigateTo = url => {
    history.pushState(null, null, url);
    _clientSideRouter();
