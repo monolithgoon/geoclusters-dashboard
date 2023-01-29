@@ -86,6 +86,18 @@ export const _ExecutionMeasureFn = (function() {
 
 
 // TRAVERSE AN OBJECT USING AN ARRAY OF OBJ. PROPS.
+// This code is a utility function that allows you to evaluate values from an object based on an array of keys.
+
+// _TraverseObject object:
+// This object evaluates the value of an object based on the properties in the array, and returns the final value. If the evaluation fails, it returns null.
+// It also provides a method to retrieve the final value of the evaluation.
+
+// evaluateValue:
+// This method takes in an array of object properties and uses them to traverse the object. It uses a for loop to access each property one by one, starting from the first property in the array.
+// The method returns the final value of the object after traversal, or null if the evaluation fails.
+
+// getFinalValue:
+// This method returns the final value of the evaluation performed by the evaluateValue method.
 export const _TraverseObject = (() => {
 
 	let finalValue;

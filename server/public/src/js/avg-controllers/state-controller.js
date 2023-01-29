@@ -1,4 +1,5 @@
 `use strict`
+import API_URLS from "../constants/api-urls.js";
 
 
 export const APP_STATE = (function() {
@@ -11,7 +12,6 @@ export const APP_STATE = (function() {
       
       // TODO > MOVE THESE TO SETTINGS INPUTS
       PLOTS_MAP: {
-         // ZOOM: 15,
          ZOOM: 12,
          PITCH: 50,
          BEARING: 10,
@@ -24,36 +24,21 @@ export const APP_STATE = (function() {
       LEAFLET_ADMIN_LEVEL_1_ZOOM: 9,
       LEAFLET_ADMIN_LEVEL_2_ZOOM: 12,
       LEAFLET_ADMIN_LEVEL_3_ZOOM: 15.5,
-      // LEAFLET_ADMIN_LEVEL_3_ZOOM: 16,
       LEAFLET_MAX_ZOOM: 18,
 
-      // GEO_CLUSTER_API_HOST: `http://127.0.0.1:9090`,
-      GEO_CLUSTER_API_HOST: `https://geoclusters.herokuapp.com`,
+      GEO_CLUSTER_API_HOST: API_URLS.GEOCLUSTERS.HOST.LOCAL,
+
       // GEO_CLUSTER_API_RESOURCE_PATHS: ["api/v2/legacy-agcs", "api/v1/parcelized-agcs", "api/v1/agcs", "api/v2/geo-clusters"],
-      GEO_CLUSTER_API_RESOURCE_PATHS: ["api/v1/parcelized-agcs", "api/v1/parcelized-agcs/metadata"],
-      PARCELIZED_CLUSTER_API_RESOURCE_PATH: `api/v1/parcelized-agcs/parcelized-agc`,
-      // REMOVE > DEPRC.
-      // LEGACY_CLUSTER_QUERY_STR: `?fields=
-      //                               properties.geo_cluster_details,
-      //                               properties.geo_cluster_governance_structure,
-      //                               properties.legacy_agc_name,
-      //                               features.geometry,
-      //                               features.properties.plot_id,
-      //                               features.properties.plot_owner_allocation_size,
-      //                               features.properties.plot_owner_first_name,
-      //                               features.properties.plot_owner_last_name,
-      //                               features.properties.plot_owner_gender`,
+      GEO_CLUSTER_API_RESOURCE_PATHS: API_URLS.GEOCLUSTERS.RESOURCE_PATHS.PARCELIZED_CLUSTERS,
+
+      PARCELIZED_CLUSTER_API_RESOURCE_PATH: API_URLS.GEOCLUSTERS.RESOURCE_PATHS.PARCELIZED_CLUSTER,
                                     
       // DATA ATTRIBUTE THAT STORES CLUSTER GEOJSON DATA FROM THE VIEW CONTROLLER
       CLUSTER_RESULT_DATA_ATTR_NAME: `geoclusterdatastream`,
 
-      ADMIN_BOUNDS_GEOJSON_API_HOST: `http://127.0.0.1:1010`,
-      // ADMIN_BOUNDS_GEOJSON_API_HOST: `https://avgmap.herokuapp.com`,
-      // ADMIN_BOUNDS_GEOJSON_API_HOST: `https://avg-dashboard.herokuapp.com`,
+      ADMIN_BOUNDS_GEOJSON_API_HOST: API_URLS.ADMIN_BOUNDS.HOST.LOCAL,
 
-      // ADMIN_BOUNDS_GEOJSON_API_RESOURCE_PATHS: [`api/v1/admin-bounds/nga-admin-bounds`],
-      // ADMIN_BOUNDS_GEOJSON_API_RESOURCE_PATHS: [`api/v1/admin-bounds/nga-geo-pol-regions`, `api/v1/admin-bounds/nga-admin-bounds-lvl1`, `api/v1/admin-bounds/nga-admin-bounds-lvl2`, `api/v1/admin-bounds/nga-admin-bounds-lvl3`],
-      ADMIN_BOUNDS_GEOJSON_API_RESOURCE_PATHS: [`api/v1/admin-bounds/nga-geo-pol-regions`, `api/v1/admin-bounds/nga-admin-bounds-lvl1`, `api/v1/admin-bounds/nga-admin-bounds-lvl2`],
+      ADMIN_BOUNDS_GEOJSON_API_RESOURCE_PATHS: API_URLS.ADMIN_BOUNDS.RESOURCE_PATHS,
    });
 
    // keep track of sidebar settings
