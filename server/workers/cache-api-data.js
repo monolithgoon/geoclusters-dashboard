@@ -34,8 +34,6 @@ function saveData(data, collectionName) {
 async function getDBCollection(url, apiAccessToken) {
 
    console.log(chalk.console2(`AXIOS getting data from [ ${url} ]`));
-
-   // const baseURL = process.env.NODE_ENV === `development` ? `http://127.0.0.1:9090/` : `https://geoclusters.herokuapp.com`;
    
 	try {
       
