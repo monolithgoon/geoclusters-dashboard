@@ -1,4 +1,6 @@
 /* eslint-disable */
+`use-strict`
+import DURATION from "../constants/duration.js";
 
 export const hideAlert = () => {
     const el = document.querySelector('.login-alert');
@@ -13,5 +15,5 @@ export const showAlert = (type, message) => {
         </div>
     `;
     document.querySelector('.login-alert-wrapper').insertAdjacentHTML('afterbegin', markup);
-    window.setTimeout(hideAlert, 8000);
+    window.setTimeout(hideAlert, DURATION.LOGIN_MESSAGE_DELAY);
 };
