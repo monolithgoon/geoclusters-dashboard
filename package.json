@@ -5,13 +5,13 @@
   "main": "express.js",
   "scripts": {
     "start": "cd server && node server.js",
+    "start:prod": "set NODE_ENV=production && webpack --mode production && node obfuscate.js && cd server && node server.js",
     "dev": "cd server && nodemon server.js --ignore localdata/ --ignore public/dist/",
     "build": "webpack --mode production",
     "secure": "node obfuscate.js",
     "build:secure": "npm-run-all -s build secure",
     "deploy": "git push && git push heroku master && heroku open",
-    "deploy:prod": "set NODE_ENV=production && webpack --mode production && node obfuscate.js && git add -A && git commit -m `stable-commit` && git push && git push heroku master",
-    "stable": "git add -A && git commit -m `stable-commit`",
+    "deploy:prod": "webpack --mode production && node obfuscate.js && git add -A && git commit -m `stable-commit` && git push && git push heroku master",
     "on": "heroku maintenance:on",
     "off": "heroku maintenance:off"
   },

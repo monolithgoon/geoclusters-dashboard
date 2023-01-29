@@ -154,7 +154,6 @@ exports.protectRoute = catchAsync(async(req, res, next) => {
    
    // 3. Verify if the the user trying to access the route still exists
    const currentUser = await USER_MODEL.findById(decodedToken.id);
-   console.log("<< HERE 3>>")
    if (!currentUser) { return next(new ServerError(`The user that owns those login credentials no longer exists.`, 401, `protectRouteFn.`))};
    
    // 4. Throw err if user changed their password after the token was issued
