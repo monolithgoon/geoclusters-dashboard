@@ -25,7 +25,7 @@ module.exports = Object.freeze({
 	jwtSecret: process.env.JWT_SECRET,
 	jwtAlgorithm: process.env.JWT_ALGO,
 	jwtExpiresInDays: process.env.JWT_EXPIRES_IN_DAYS,
-	jwtCookieExpiresIn: process.env.JWT_COOKIE_EXPIRES_IN_DAYS,
+	jwtCookieExpiresInDays: process.env.JWT_COOKIE_EXPIRES_IN_DAYS,
 
 	// emails: {
 	// 	apiKey: process.env.MAILGUN_API_KEY,

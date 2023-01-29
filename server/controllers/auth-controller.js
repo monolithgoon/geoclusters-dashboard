@@ -18,16 +18,18 @@ const signJWT = payloadId => {
 
 
 const createSendToken = (currentUser, statusCode, response) => {
+   console.log(chalk.highlight("HERE"))
 
    // IMPLEMENT JWT => PAYLOAD (=> id: newUser._id) + SECRET
    const jWebToken = signJWT(currentUser._id);
+   console.log(APP_CONFIG.jwtExpiresInDays)
    const cookieOptions = {
       expires: new Date(Date.now() * APP_CONFIG.jwtExpiresInDays * 24 * 60 * 60 * 1000), // convert from days to milliseconds
       httpOnly: true, // cookie cannot be accessed or modified by the browser
    };
 
    // SET COOKIE 'secure' OPTION to 'true' ONLY IN PROD. MODE TO ENSURE IT IS SENT ONLY VIA ENCRYPTED CONN.
-   // if (process.env.NODE_ENV === `production`) cookieOptions.secure = true;
+   if (process.env.NODE_ENV === `production`) cookieOptions.secure = true;
 
    // ATTACH A COOKIE TO THE RES. OBJ.
    response.cookie(`jwtcookie`, jWebToken, cookieOptions);
@@ -127,11 +129,11 @@ exports.login = catchAsync(async (req, res, next) => {
 
 // PROTECT ROUTES CONTROLLER FN.
 exports.protectRoute = catchAsync(async(req, res, next) => {
-
+   
    let headerToken;
-
+   
    // 1. Try to get the JWT token from the req. header OR 
-      // from the cookie attached in "createSendToken" fn.
+   // from the cookie attached in "createSendToken" fn.
    if (req.headers.authorization && req.headers.authorization.startsWith(`Bearer`)) {
       headerToken = req.headers.authorization.split(' ')[1];
    } else if (req.cookies.jwtcookie) {
@@ -142,21 +144,27 @@ exports.protectRoute = catchAsync(async(req, res, next) => {
    if (!headerToken) {
       return next(new ServerError(`Unauthorized. You must be signed in to access this resource.`, 401, `protectRouteFn.`));
    };
-
+   
    // 2. Verify the token's signature
+   console.log("<< HERE 2>>")
+   console.log({headerToken})
+   console.log(APP_CONFIG.jwtSecret)
    const decodedToken = await promisify(jwt.verify)(headerToken, APP_CONFIG.jwtSecret);
-   // console.log({decodedToken})
-
+   console.log({decodedToken})
+   
    // 3. Verify if the the user trying to access the route still exists
    const currentUser = await USER_MODEL.findById(decodedToken.id);
+   console.log("<< HERE 3>>")
    if (!currentUser) { return next(new ServerError(`The user that owns those login credentials no longer exists.`, 401, `protectRouteFn.`))};
-
+   
    // 4. Throw err if user changed their password after the token was issued
    if (currentUser.checkPasswordChanged(decodedToken.iat)) {
+      console.log("<< HERE 4>>")
       return next(new ServerError(`User recently changed their password. Please login again.`, 401, `protectRouteFn.`));
    };
-
+   
    // 5. store the user on the req. obj for future use
+   console.log("<< HERE 5>>")
    req.user = currentUser;
 
    // 6. grant access to protected route

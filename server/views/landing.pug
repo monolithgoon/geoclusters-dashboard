@@ -192,7 +192,7 @@ block landing-page
 
 
       //- 1. CLICK ANYWHERE ON PAGE FOR FULL SCREEN
-      document.addEventListener('click', openFullScreen);
+      //- document.addEventListener('click', openFullScreen);
 
 
       //- 2. USER ENTERS EMAIL ADDRESS
@@ -200,7 +200,7 @@ block landing-page
 
         loginEmailInput.addEventListener('keyup', e => {
 
-          openFullScreen();
+          //- openFullScreen();
           
           const isValid = loginEmailInput.checkValidity();
           if (isValid) {
