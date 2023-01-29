@@ -104,6 +104,8 @@ export const _TraverseObject = (() => {
 
 	return {
 
+		// This method evaluates the final value of an object being traversed with an array of properties.
+		// The method takes in a rest parameter 'args' that contains the array of object properties.
 		evaluateValue: function thisFunction(...args) {
 			// console.log(thisFunction)
 
@@ -111,13 +113,20 @@ export const _TraverseObject = (() => {
 
 			try {
 
+				// The 'tempValue' variable is assigned the first element of the 'keys' array.
+				// This value will be used to traverse the object.
 				let tempValue = keys[0];
 
+				// The for loop iterates over the 'keys' array and sets the value of 'tempValue' 
+				// to the next property in the object being traversed.
+				// The loop stops one iteration before the end of the 'keys' array to avoid accessing 
+				// an undefined property.
 				for (let idx = 0; idx < keys.length - 1; idx++) {
 					tempValue = tempValue[keys[idx + 1]];
                // console.log({tempValue});
 				};
 
+				// The 'finalValue' variable is assigned the value of 'tempValue', which is the final evaluated value of the object.
 				finalValue = tempValue;
             // console.log({finalValue});
             
@@ -132,6 +141,7 @@ export const _TraverseObject = (() => {
 
 		getFinalValue: function() {
                   
+			// This line of code returns the final evaluated value of the object.
 			return finalValue;
 		},
 	};
