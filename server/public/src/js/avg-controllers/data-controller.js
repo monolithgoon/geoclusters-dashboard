@@ -29,7 +29,6 @@ async function queryAPI(fetch, apiHost, apiResourcePath, {queryString}) {
 
 	try {
 		
-		// const apiResponse = await fetch(`${apiHost}/api/${apiResourcePath}/${queryString}`);
 		const apiResponse = await fetch(`${apiHost}/${apiResourcePath}/${queryString}`);
 		const data = await apiResponse.json();
 
