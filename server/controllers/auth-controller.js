@@ -17,12 +17,26 @@ const signJWT = payloadId => {
 };
 
 
+/** This fn. creates and sends a JSON Web Token (JWT) as a cookie to the client.
+It takes 3 parameters: `currentUser`, `statusCode`, and `response`. 
+The funciton performs the following steps: 
+1. Generates a JWT with `currentUser._id` as the payload using the `signJWT` fn. 
+2. Defines the `cookieOptions` object with the `expires` property set to the current date plus the number 
+   of days specified in `APP_CONFIG.jwtExpiresInDays` converted to milliseconds. 
+   The `httpOnly` property is set to `true` to make the cookie only accessible via the HTTP protocol and not by client-side JavaScript, thus helping prevent tampering or unauthorized access to the cookie data.
+3. The `secure` option of the cookie is set to `true` only in the production environment to ensure that 
+   the cookie is sent only via encrypted connections. 
+4. Attaches the JWT to the response object as a cookie with the name "jwtcookie". 
+5. Hides the user password by setting `currentUser.user_password` to `undefined`. 
+6. Sends a JSON response to the client with a `status` of "success", the generated JWT, and the user data 
+   with the password removed. The `statusCode` parameter is used to set the HTTP status code of the response.
+ */
 const createSendToken = (currentUser, statusCode, response) => {
 
    // IMPLEMENT JWT => PAYLOAD (=> id: newUser._id) + SECRET
    const jWebToken = signJWT(currentUser._id);
    const cookieOptions = {
-      expires: new Date(Date.now() * APP_CONFIG.jwtExpiresInDays * 24 * 60 * 60 * 1000), // convert from days to milliseconds
+      expires: new Date(Date.now() + APP_CONFIG.jwtExpiresInDays * 24 * 60 * 60 * 1000), // convert from days to milliseconds
       httpOnly: true, // cookie cannot be accessed or modified by the browser
    };
 
