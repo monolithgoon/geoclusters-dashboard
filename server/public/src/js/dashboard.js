@@ -28,6 +28,7 @@ import { APP_STATE } from "./avg-controllers/state-controller.js";
 import { _RenderEngine } from "./controllers/maps-controller.js";
 import { _clientSideRouter } from "./routers/router.js";
 import { GET_DOM_ELEMENTS } from "./utils/dom-elements.js";
+import DURATION from "./constants/duration.js";
 
 const InitApp = (() => {
 	// nothing here;
@@ -55,7 +56,6 @@ const InitApp = (() => {
 
 // This function retrieves new GeoCluster metadata from a database. 
 // It does this by downloading fresh GeoCluster metadata from the database and saving it to the application state.
-
 // It then compares the GeoCluster metadata that is already in the app cache with the current metadata in the database. 
 // The function returns an array of new GeoClusters for which the GeoJSON has not been downloaded yet. 
 // If the function is successful, it returns the array of new GeoClusters. 
@@ -143,25 +143,33 @@ const InitApp = (() => {
 		return null;
 	};
 
+
+	// The code implements a function that updates a cached collection of geo-clusters stored in the APP_STATE.
 	const updateCachedGeoClusters = (collectionName, featCollArr) => {
-		// get the cached collection
+
+		// Retrieve the cached geo-cluster collection
 		const geoClustersArr = _TraverseObject.evaluateValue(
 			APP_STATE.returnCachedDBCollection(collectionName),
 			"data"
 		);
+
 		// add new data
 		for (const featColl of featCollArr) {
 			if (featColl.properties.clusterID) geoClustersArr.push(...featColl);
-		}
+		};
+
 		// delete it from the collections array
 		APP_STATE.deleteCachedDBCollection(collectionName);
+
 		// re-insert the updated version
 		APP_STATE.cacheDBCollection(collectionName, geoClustersArr);
 	};
 
+
 	// TODO > WIP > RENDER NEWLY PARCELIZED CLUSTERS
 	// RENDER NEW GEO CLUSTERS ADDED TO THE DB.
 	const renderLiveGeoClusters = async (featCollArr) => {
+		
 		(function renderLiveGeoClusters() {
 			const legacyClustersColl = _TraverseObject.evaluateValue(
 				APP_STATE.returnCachedDBCollection("v1/legacy-agcs"),
@@ -184,15 +192,22 @@ const InitApp = (() => {
 	};
 
 	return {
+
+		
+		// THIS APP'S BACKEND COMBINES BOTH NEWLY PARCELIZED AND LEGACY CLUSTERS INTO A VARIABLE CALLED "geoClusters" 
+		// THIS VARIABLE WAS SENT TO THE DOM VIA server/controllers/view-controller.js, 
+		// IT WAS "STORED" IN A DOM ELEMENT WITH DATASET ATTRIBUTE = "geoclusters" WITH ID = "geo_clusters_dataset"
+		// THIS FUNCTION STORES THAT DATA IN THE FRONT-END "APP_STATE" OBJECT
 		cachePreloadedGeoClusters: async () => {
-			// GET CLUSTERS' DATA
+
 			const { geoClusters } = _retreiveClusterGJDatasets();
 
 			APP_STATE.cacheDBCollection(`cached-geo-clusters`, [...geoClusters]);
 		},
 
 		renderCachedGeoClusters: async () => {
-			// GET CLUSTERS' DATA
+
+			// GET THE CACHED GEOCLUSTERS DATA FROM APP_STATE
 			const geoClustersArr = _TraverseObject.evaluateValue(
 				APP_STATE.returnCachedDBCollection("cached-geo-clusters"),
 				"data"
@@ -234,31 +249,46 @@ const InitApp = (() => {
 			}
 		},
 
-		// NESTED, RECURSIVE setTimeouts THAT LOOPS INDEFINITELY @ 30s INTERVALS
+		// NESTED, RECURSIVE setTimeouts THAT LOOPS INDEFINITELY @ PRE-SET INTERVALS
 		autoUpdateWorker: async (window) => {
-			let initDelay = 30000;
+
+			let initDelay = DURATION.GEOCLUSTERS_DATA_QUERY_INTERVAL;
 
 			let intervalDelay = initDelay;
 
 			setTimeout(async function request() {
+
+				// get the new geo clusters from the data source
 				const newGeoClustersArr = await getNewGeoClusters(window);
 
+				// if there are new geo clusters
 				if (newGeoClustersArr && newGeoClustersArr.length > 0) {
-					// reset the interval delay when new CLUSTER(S) ARE FOUND..
+
+					// reset the interval delay when new geoclusters are found
 					intervalDelay = initDelay;
 
-					// SAVE THE NEWLY RETREIVED GEOJSON TO APP CACHE
+					// SAVE THE NEWLY RETREIVED GEOJSON TO APP_STATE OBJECT / CACHE
 					updateCachedGeoClusters("cached-geo-clusters", newGeoClustersArr);
 
 					// RENDER THE NEW CLUSTERS
 					// await renderLiveGeoClusters(newGeoClustersArr);
 				}
 
-				// PROGRESSIVELY INCREASE THE INTERVAL IF NO NEW CLUSTERS ARE BEING FOUND
-				if (newGeoClustersArr && newGeoClustersArr.length === 0) intervalDelay += 500;
+				// PROGRESSIVELY INCREASE THE INTERVAL IF NO NEW CLUSTERS ARE BEING FOUND..
 
-				// DOUBLE THE INTERVAL BETWEEN setTimeouts IF 1ST CALL FAILED TO EXECUTE COMPLTELY
-				if (!newGeoClustersArr) intervalDelay *= 2;
+				// if there are no new geo clusters
+				if (newGeoClustersArr && newGeoClustersArr.length === 0) {
+					// increment the interval delay
+					intervalDelay += DURATION.DATA_QUERY_INCREMENT;
+				}
+
+				// DOUBLE THE INTERVAL BETWEEN setTimeouts IF 1ST CALL FAILED TO EXECUTE COMPLTELY..
+				
+				// if the request failed to complete
+				if (!newGeoClustersArr) {
+					// double the interval delay
+					intervalDelay *= 2;
+				}
 
 				console.log({ intervalDelay });
 
@@ -270,17 +300,20 @@ const InitApp = (() => {
 })();
 
 (() => {
+
 	window.addEventListener(`DOMContentLoaded`, async (windowObj) => {
-		// save the UI default settings
-		APP_STATE.saveDefaultSettings(_pollAVGSettingsValues());
 
-		await InitApp.cachePreloadedGeoClusters();
+	// save the UI default settings
+	APP_STATE.saveDefaultSettings(_pollAVGSettingsValues());
 
-		await InitApp.renderCachedGeoClusters();
+	await InitApp.cachePreloadedGeoClusters();
 
-		await InitApp.renderAdminBounds(windowObj);
+	await InitApp.renderCachedGeoClusters();
 
-		await InitApp.autoUpdateWorker(windowObj);
+	await InitApp.renderAdminBounds(windowObj);
+
+	await InitApp.autoUpdateWorker(windowObj);
+
 	});
 })();
 

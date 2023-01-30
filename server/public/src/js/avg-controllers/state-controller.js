@@ -46,7 +46,7 @@ export const APP_STATE = (function() {
    let defaultSettings = {};
    let currentSettings = {};
 
-   // instantiate an object to holds a db. collection 
+   // instantiate an object to holds a db. geoclusters collection 
    const DATA_STORE = {
       name: ``,
       data: {},

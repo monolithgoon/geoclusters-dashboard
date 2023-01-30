@@ -531,6 +531,7 @@ export const _PopulateDOM = ((dom) => {
       
             // CREATE NEW RESULT DIVS FOR EACH LEGACY CLUSTER
             if (dbCollection) {
+               console.log({dbCollection})
             
                for (let idx = 0; idx < dbCollection.length; idx++) {
       
