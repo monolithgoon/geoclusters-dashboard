@@ -507,22 +507,25 @@ export const _PopulateDOM = ((dom) => {
 		// TODO > THIS SHOULD FIRE ON FILTER INPUT CHANGES
 		clusterResultsSidebar: ({ dbCollection }) => {
 			try {
-				// CREATE NEW RESULT DIVS FOR EACH LEGACY CLUSTER
+
+				// CREATE NEW RESULT DIVS FOR EACH GEOCLUSTER
 				if (dbCollection) {
+
 					console.log({ dbCollection });
 
 					for (let idx = 0; idx < dbCollection.length; idx++) {
-						let clusterGeoJSON = dbCollection[idx];
+            
+						let geoClusterGeoJSON = dbCollection[idx];
 
 						// 2.
 						const clusterResultDiv =
-							_GenerateClusterMarkup.getClusterResultDiv(clusterGeoJSON);
+							_GenerateClusterMarkup.getClusterResultDiv(geoClusterGeoJSON);
 
 						// 2a.
 						_ManipulateDOM.populateDataset(
 							clusterResultDiv,
 							APP_STATE.CONFIG_DEFAULTS.CLUSTER_RESULT_DATA_ATTR_NAME,
-							JSON.stringify(clusterGeoJSON)
+							JSON.stringify(geoClusterGeoJSON)
 						);
 
 						// append result item div to sidebar

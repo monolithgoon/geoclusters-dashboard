@@ -29,7 +29,7 @@ export const APP_STATE = (function() {
       GEOCLUSTERS_API_HOST: API_URLS.GEOCLUSTERS.HOST.AWS,
 
       // GEOCLUSTERS_API_RESOURCE_PATHS: ["api/v2/legacy-agcs", "api/v1/parcelized-agcs", "api/v1/agcs", "api/v2/geo-clusters"],
-      GEOCLUSTERS_API_RESOURCE_PATHS: API_URLS.GEOCLUSTERS.RESOURCE_PATHS.PARCELIZED_CLUSTERS,
+      PARCELIZED_CLUSTERS_RESOURCE_PATHS: API_URLS.GEOCLUSTERS.RESOURCE_PATHS.PARCELIZED_CLUSTERS,
 
       // TO GET A SINGLE PARCELIZED CLUSTER BY CLUSTER ID
       PARCELIZED_CLUSTER_API_RESOURCE_PATH: API_URLS.GEOCLUSTERS.RESOURCE_PATHS.PARCELIZED_CLUSTER,
@@ -46,7 +46,13 @@ export const APP_STATE = (function() {
    let defaultSettings = {};
    let currentSettings = {};
 
-   // instantiate an object to holds a db. geoclusters collection 
+   
+   /**
+      This code instantiates an object literal named `DATA_STORE` with two properties: 
+      a string property `name` to represent the name of the database collection, initialized as an empty string, 
+      and an object property `data` to hold the data for the collection, initialized as an empty object. 
+      The purpose of `DATA_STORE` is to act as a placeholder for a "geoclusters" collection from the backend.
+   */
    const DATA_STORE = {
       name: ``,
       data: {},
@@ -76,6 +82,15 @@ export const APP_STATE = (function() {
          return currentSettings;
       },
 
+
+      /**
+         This code defines a function named `cacheDBCollection` that takes two arguments: 
+         `collectionName` and `data`. The function creates a new object, `newCollection`, 
+         using `DATA_STORE` as its prototype. The `name` property of `newCollection` is 
+         set to `collectionName` and the `data` property is set to `data`. This function 
+         is likely used to cache a database collection by creating a new object with the 
+         given collection name and data, and setting it as the prototype of `DATA_STORE`.
+      */
       cacheDBCollection: function(collectionName, data) {
          const newCollection = Object.create(DATA_STORE);
          newCollection.name = collectionName;
@@ -85,6 +100,8 @@ export const APP_STATE = (function() {
          CACHED_DB_COLLECTIONS = CACHED_DB_COLLECTIONS.filter(collection => collection.name !== collectionName);
 
          CACHED_DB_COLLECTIONS.push(newCollection);
+         
+         console.log({CACHED_DB_COLLECTIONS})
       },
 
       returnCachedDBCollections: function() {
