@@ -69,29 +69,36 @@ export async function _getAPIResource(eventObj, resourceHost, resourcePath, { qu
 	}
 }
 
-// DOWNLOAD & SAVE DB. COLLECTIONS
-export async function _downloadParcelizedClusters(eventObj) {
-
+/**
+	This function downloads and saves parcelized cluster data from a remote API. 
+	The function loops through each resource path defined in APP_STATE.CONFIG_DEFAULTS.PARCELIZED_CLUSTERS_RESOURCE_PATHS 
+	and performs an API call for each resource path using queryAPI.call function. 
+	The execution time of each API call is monitored and recorded using the _MonitorExecution object. 
+	If the API call returns data, it is saved using the APP_STATE.cacheDBCollection function. 
+	The function returns true on success or false if there is an error during the process.
+ */
+export async function _downloadAndSaveParcelizedClusters(eventObj) {
 	try {
+		// constants
 		const apiHost = APP_STATE.CONFIG_DEFAULTS.GEOCLUSTERS_API_HOST;
 		const resourcePaths = APP_STATE.CONFIG_DEFAULTS.PARCELIZED_CLUSTERS_RESOURCE_PATHS;
 
+		// loop thru. each resource path
 		for (const resourcePath of resourcePaths) {
 			// const dbQueryStr = APP_STATE.CONFIG_DEFAULTS.LEGACY_CLUSTER_QUERY_STR;
 
-			// create an intermediate "pipeline"?? fn.
+			// Create a pipeline function for the API call
 			const apiDataQuery = function () {
-				console.log(document.domain);
-
 				return queryAPI.call(eventObj, window.fetch, apiHost, resourcePath, {});
 			};
 
-			// EXECUTE THE API CALL
+			// execute the API call
 			await _MonitorExecution.execute(apiDataQuery);
 
+			// get the execution time
 			_MonitorExecution.getExecutionTime();
 
-			// get the resource name
+			// get the resource name from the resource path
 			const dbCollectionName = resourcePath.slice(resourcePath.indexOf("/") + 1);
 
 			// SAVE THE RETURNED DATA
@@ -102,7 +109,6 @@ export async function _downloadParcelizedClusters(eventObj) {
 		}
 
 		return true;
-
 	} catch (downloadParcelizedClustersErr) {
 		console.error(`downloadParcelizedClustersErr: ${downloadParcelizedClustersErr}`);
 		return false;

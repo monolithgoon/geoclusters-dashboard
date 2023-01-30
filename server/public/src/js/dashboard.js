@@ -18,7 +18,7 @@
 
 `use strict`;
 import {
-	_downloadParcelizedClusters,
+	_downloadAndSaveParcelizedClusters,
 	_retreiveClusterGJDatasets,
 	_getAPIResource,
 } from "./avg-controllers/data-controller.js";
@@ -63,9 +63,9 @@ const InitApp = (() => {
 	const getNewlyParcelizedClusters = async (window) => {
 		
 		// Download the latest GeoCluster metadata from the database and save it to the app state
-		const response = await _downloadParcelizedClusters(window);
+		const response = await _downloadAndSaveParcelizedClusters(window);
 
-		// Return empty [] if _downloadParcelizedClusters fails
+		// Return empty [] if _downloadAndSaveParcelizedClusters fails
 		if (!response) return [];
 
 		// Array to store the IDs of the new GeoClusters
