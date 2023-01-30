@@ -52,6 +52,15 @@ const InitApp = (() => {
 		}
 	}
 
+
+// This function retrieves new GeoCluster metadata from a database. 
+// It does this by downloading fresh GeoCluster metadata from the database and saving it to the application state.
+
+// It then compares the GeoCluster metadata that is already in the app cache with the current metadata in the database. 
+// The function returns an array of new GeoClusters for which the GeoJSON has not been downloaded yet. 
+// If the function is successful, it returns the array of new GeoClusters. 
+// If it is not successful, it returns an empty array.
+
 	const getNewGeoClusters = async (window) => {
 		// DOWNLOAD FRESH GEOCLUSTER METADATA FROM THE DB && SAVE TO APP STATE;
 		if (await _downloadGeoClusterCollections(window)) {
@@ -87,9 +96,6 @@ const InitApp = (() => {
 			if (dbParcelizedClustersMetadata && dbParcelizedClustersMetadata.data) {
 				dbGeoClusterIds.push(...dbParcelizedClustersMetadata.data.collection_metadata.ids);
 
-				// REMOVE
-				// dbGeoClusterIds.push("ASB00123OSH");
-				// dbGeoClusterIds.push("AGCABI000010");
 			}
 
 			// REMOVE
@@ -113,7 +119,7 @@ const InitApp = (() => {
 					const newGeoClusterId = newGeoClusterIds[idx];
 					const resourcePath = `${APP_STATE.CONFIG_DEFAULTS.PARCELIZED_CLUSTER_API_RESOURCE_PATH}`;
 					const queryString = `?${newGeoClusterId}`;
-					const apiHost = APP_STATE.CONFIG_DEFAULTS.GEO_CLUSTER_API_HOST;
+					const apiHost = APP_STATE.CONFIG_DEFAULTS.GEOCLUSTERS_API_HOST;
 					const APIResponse = await _getAPIResource(window, apiHost, resourcePath, {
 						queryString,
 					});
