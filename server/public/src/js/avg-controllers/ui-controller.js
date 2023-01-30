@@ -507,34 +507,33 @@ export const _PopulateDOM = ((dom) => {
 		// TODO > THIS SHOULD FIRE ON FILTER INPUT CHANGES
 		clusterResultsSidebar: ({ dbCollection }) => {
 			try {
-
-				// CREATE NEW RESULT DIVS FOR EACH GEOCLUSTER
-				if (dbCollection) {
-
+				// CHECK IF dbCollection IS NOT EMPTY
+				if (dbCollection.length) {
+					// LOG THE dbCollection
 					console.log({ dbCollection });
 
-					for (let idx = 0; idx < dbCollection.length; idx++) {
-            
-						let geoClusterGeoJSON = dbCollection[idx];
-
-						// 2.
+					// CREATE NEW DIVS FOR EACH GEOCLUSTER
+					dbCollection.map((geoClusterGeoJSON) => {
+						
+						// GET THE CLUSTER RESULT DIV
 						const clusterResultDiv =
 							_GenerateClusterMarkup.getClusterResultDiv(geoClusterGeoJSON);
 
-						// 2a.
+						// Hydrate the dataset for the geocluster record div
+						// This dataset will be read when the geocluster needs to be rendered on the mini-map in the right sidebar
 						_ManipulateDOM.populateDataset(
 							clusterResultDiv,
 							APP_STATE.CONFIG_DEFAULTS.CLUSTER_RESULT_DATA_ATTR_NAME,
 							JSON.stringify(geoClusterGeoJSON)
 						);
 
-						// append result item div to sidebar
+						// APPEND RESULT ITEM DIV TO THE SIDEBAR
 						_ManipulateDOM.appendList(dom.resultsListWrapper, clusterResultDiv);
 						_ManipulateDOM.appendList(
 							dom.resultsListWrapper,
-							_ManipulateDOM.createDiv(`h-divider-grey-100`, "fuck-chicken")
+							_ManipulateDOM.createDiv(`h-divider-grey-100`)
 						);
-					}
+					});
 				}
 			} catch (clustersSidebarErr) {
 				console.error(`clustersSidebarErr: ${clustersSidebarErr}`);
