@@ -179,13 +179,14 @@ block landing-page
       LANDING_PAGE_MAP.addControl(new mapboxgl.NavigationControl());
 
 
-      //- GET LOGIN "FORM" DOM INPUTS
+      //- GET LOGIN FORM DOM ELEMENTS
       const loginEmailInput = document.getElementById("login_email_input");
       const loginPasswordInput = document.getElementById("login_password_input");
       const loginNextBtn = document.getElementById("login_next_btn");
       const loginBackBtn = document.getElementById("login_back_btn");
       const loginSubmitBtn = document.getElementById("login_submit_btn");
       const loginSubmitBtnTxt = document.getElementById("login_submit_btn_txt");
+      const appActivityInd = document.querySelector(`.app-activity-indicator`);
 
 
       //- EVENT(S) DELEGATION
@@ -198,9 +199,7 @@ block landing-page
       //- 2. USER ENTERS EMAIL ADDRESS
       if (loginEmailInput) {
 
-        loginEmailInput.addEventListener('keyup', e => {
-
-          //- openFullScreen();
+        loginEmailInput.addEventListener('keyup', event => {
           
           const isValid = loginEmailInput.checkValidity();
           if (isValid) {
@@ -214,8 +213,13 @@ block landing-page
 
       //- 3. USER ENTERS PASSWORD
       if (loginPasswordInput) {
+
         loginPasswordInput.addEventListener('keyup', e => {
+
+          //- openFullScreen();
+
           const isValid = loginPasswordInput.checkValidity();
+
           if (isValid) {
             loginSubmitBtn.disabled = false;
           } else {
@@ -236,6 +240,7 @@ block landing-page
           document.getElementById("password_question").style.display = 'block';
           document.getElementById("email_form_group").style.display = 'none';
           e.target.style.display = "none";
+          document.getElementById("login_password_input").focus();
           document.getElementById("password_form_group").style.display = 'block';
           document.getElementById("login_back_btn").style.display = 'block';
           document.getElementById("login_submit_btn").style.display = 'block';
@@ -262,19 +267,25 @@ block landing-page
           loginSubmitBtn.style.display = 'none';
         });
       };
-
+      
 
       //- 6. USER CLICKS SUBMIT BUTTON
       if(loginSubmitBtn) {
 
-        const appActivityInd = document.querySelector(`.app-activity-indicator`);
-
+        // Handle the click event on the login submit button
         loginSubmitBtn.addEventListener('click', e => {
           
-          loginSubmitBtnTxt.innerText = ``;
-          loginSubmitBtn.style.backgroundColor = `transparent`;
-          loginSubmitBtn.style.border = `none`;
-          appActivityInd.classList.add(`spinner-border`, `text-dark`, `spinner-border-sm`);
+        // Remove the text inside the login submit button
+        loginSubmitBtnTxt.innerText = ``;
+        
+        // Remove the background color of the login submit button
+        loginSubmitBtn.style.backgroundColor = `transparent`;
+        
+        // Remove the border of the login submit button
+        loginSubmitBtn.style.border = `none`;
+        
+        // Add the classes to show the spinner activity indicator
+        appActivityInd.classList.add(`spinner-border`, `text-dark`, `spinner-border-sm`);
         });
       };
     })();
