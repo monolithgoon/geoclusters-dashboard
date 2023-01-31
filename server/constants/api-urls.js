@@ -11,19 +11,6 @@ const API_URLS = {
 			`api/v2/legacy-agcs/processed/`,
 		],
 	},
-	ADMIN_BOUNDS: {
-		HOST: {
-			LOCAL: `http://127.0.0.1:9090`,
-			HEROKU: `https://geoclusters.herokuapp.com`,
-			AWS: `http://54.225.80.233:9090`,
-		},
-		RESOURCE_PATHS: [
-			`api/v1/admin-bounds/nga-geo-pol-regions`,
-			`api/v1/admin-bounds/nga-admin-bounds-lvl1`,
-			`api/v1/admin-bounds/nga-admin-bounds-lvl2`,
-			`api/v1/admin-bounds/nga-admin-bounds-lvl3`,
-		],
-	},
 };
 
 module.exports = API_URLS;
