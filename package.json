@@ -10,6 +10,7 @@
     "build": "webpack --mode production",
     "secure": "node obfuscate.js",
     "build:secure": "npm-run-all -s build secure",
+    "build:secure:dev": "npm-run-all -s build secure dev",
     "deploy": "git push && git push heroku master && heroku open",
     "deploy:prod": "webpack --mode production && node obfuscate.js && git add -A && git commit -m `stable-commit` && git push && git push heroku master",
     "on": "heroku maintenance:on",
