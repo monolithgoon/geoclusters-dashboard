@@ -1,4 +1,3 @@
-console.log(process.env)
 const API_URLS = Object.freeze({
 	GEOCLUSTERS: {
 		HOST: {

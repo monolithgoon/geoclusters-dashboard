@@ -3,6 +3,7 @@ const turf = require("@turf/turf");
 const fs = require('fs');
 const fsPromises = require('fs').promises;
 const path = require('path');
+const NGA_GEO_POL_REGIONS = require("../constants/nga-geo-pol-regions.js");
 const catchAsync = require('../utils/catch-async.js');
 const chalk = require("../utils/chalk-messages.js");
 
@@ -119,52 +120,61 @@ const ProcessFiles = ((root) => {
          };
       },      
 
+      /*
+         This fn. creates a GeoJSON Feature Collection of 6 geographical and political regions in Nigeria. 
+         Each Feature represents a geo. pol. region. It does this by combining the GeoJSON of each state of that pol. region
+
+         The function performs the following operations:
+         1. Retrieves the contents of a GeoJSON file `nga-state-admin-bounds.geojson` using the `retreiveFilesData` method from the `ProcessFiles` module.
+         2. Parses the retrieved data into a GeoJSON Feature Collection using the `parseString` method.
+         3. Iterates over the properties of the `NGA_GEO_POL_REGIONS` object and performs the following operations for each region:
+            a. Filters the features of the `ngaAdmiinBoundsLvl1FeatColl` Feature Collection to find the ones that correspond to the states in the region.
+            b. Unites the found features into a single Feature using the `turf.union` method.
+            c. Adds properties to the resulting Feature indicating the region name and the names of the states in the region.
+            d. Adds the Feature to the `geoPolRegionsGJ` Feature Collection.
+         4. Writes the `geoPolRegionsGJ` Feature Collection to a file `nga-geo-pol-regions.geojson`. The path to the file is constructed using the `path.resolve` method and the current working directory.
+      */
       getNGAGeoPolRegions: async () => {
 
+         // Get a GeoJSON Feat. Collection for all the states in Nigeria
          const ngaAdmiinBoundsLvl1FeatColl = await parseString(await ProcessFiles.retreiveFilesData([`nga-state-admin-bounds.geojson`]));
          
          const geoPolRegionsGJ = {
             "type": "FeatureCollection",                                                                                         
             "features": [],
          };    
-         
-         const geoPolRegions = {
-            northCentral: ["Benue", "Federal Capital Territory", "Kogi", "Kwara", "Nasarawa", "Niger", "Plateau"],
-            northEast: ["Adamawa", "Bauchi", "Borno", "Gombe", "Taraba", "Yobe"],
-            northWest: ["Kaduna", "Katsina", "Kano", "Kebbi", "Sokoto", "Jigawa", "Zamfara"],
-            southEast: ["Abia", "Anambra", "Ebonyi", "Enugu", "Imo"],
-            south: ["Akwa Ibom", "Bayelsa", "Cross River", "Delta", "Edo", "Rivers"],
-            southWest: ["Ekiti", "Lagos", "Osun", "Ondo", "Ogun", "Oyo"],
-         };
-         
-         Object.keys(geoPolRegions).forEach((key, idx) => {
+                  
+         // Object.keys(geoPolRegions).forEach((key, idx) => {
+         Object.keys(NGA_GEO_POL_REGIONS).forEach((key, idx) => {
 
-            const stateFeats = [];
+            // Initialize an array to store the GeoJSON Feature corresponding to each state in the region
+            const statesGeoJSONFeats = [];
 
-            const region = geoPolRegions[key];
+            // Get the regions's states array
+            const regionStates = NGA_GEO_POL_REGIONS[key];
 
-            region.forEach(state => {
+            regionStates.forEach(state => {
 
-               // search stateAdminBounds;
+               // Search for the GeoJSON Feature corresponding to the state in the ngaAdmiinBoundsLvl1FeatColl Feature Collection
                const matchingStateFeat = ngaAdmiinBoundsLvl1FeatColl.features.filter(adminBoundFeat => adminBoundFeat.properties.admin1Name === state);
 
-               // populate feat. colls. array;
-               stateFeats.push(matchingStateFeat[0]);
+               // Combine each matched state's GeoJSON into an array
+               statesGeoJSONFeats.push(matchingStateFeat[0]);
             });
 
-            // unite feat. colls.
-            const regionGJ = turf.union(...stateFeats);
+            // Unite the Features in the statesGeoJSONFeats array into a single Feature
+            const regionGeoJSON = turf.union(...statesGeoJSONFeats);
             
-            // derive properties
-            regionGJ.properties = {
+            // Add properties to the regionGJ Feature indicating the region name and the names of the states in the region
+            regionGeoJSON.properties = {
                "regionName": key,
-               "admin1Names": geoPolRegions[key],
+               "admin1Names": NGA_GEO_POL_REGIONS[key],
             };
             
-            console.log({regionGJ});
+            console.log({regionGeoJSON});
 
-            // return united feats.
-            geoPolRegionsGJ.features.push(regionGJ)
+            // Add the regionGJ Feature to the geoPolRegionsGJ Feature Collection
+            geoPolRegionsGJ.features.push(regionGeoJSON)
          });
          
          // save to file
@@ -205,7 +215,7 @@ exports.getAdminBoundsLvl3GeoJSON = catchAsync((async(req, res, next) => {
 }), `getAdminBoundsLvl3Err`);
 
 
-exports.getGeoPolRegions = catchAsync((async(req, res, next) => {
+exports.getGeoPolRegionsGeoJSON = catchAsync((async(req, res, next) => {
    const ngaGeoPolRegionsGJ = await parseString(await ProcessFiles.retreiveFilesData([`nga-geo-pol-regions.geojson`]));
    res.status(200).json({
       status: `success`,
