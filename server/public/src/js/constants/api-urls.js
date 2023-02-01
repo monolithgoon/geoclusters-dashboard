@@ -12,6 +12,8 @@ const API_URLS = Object.freeze({
 	},
 	ADMIN_BOUNDS: {
 		HOST: {
+			// the admin bounds API is served from this app's own backend
+			SELF: window.location.origin,
 			LOCAL: `http://127.0.0.1:9090`,
 			HEROKU: `https://geoclusters.herokuapp.com`,
 			AWS: `http://54.225.80.233:9090`,

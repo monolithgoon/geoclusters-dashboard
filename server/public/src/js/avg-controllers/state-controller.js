@@ -4,6 +4,9 @@ import API_URLS from "../constants/api-urls.js";
 
 export const APP_STATE = (function() {
 
+   const rootURL = window.location.origin;
+   console.log({rootURL});
+   
    // GLOBAL VARS.
    const CONFIG_DEFAULTS = Object.freeze({
       
@@ -37,7 +40,7 @@ export const APP_STATE = (function() {
       // DATA ATTRIBUTE THAT STORES CLUSTER GEOJSON DATA FROM THE VIEW CONTROLLER
       CLUSTER_RESULT_DATA_ATTR_NAME: `geoclusterdatastream`,
 
-      ADMIN_BOUNDS_GEOJSON_API_HOST: API_URLS.ADMIN_BOUNDS.HOST.AWS,
+      ADMIN_BOUNDS_GEOJSON_API_HOST: API_URLS.ADMIN_BOUNDS.HOST.SELF,
 
       ADMIN_BOUNDS_GEOJSON_API_RESOURCE_PATHS: API_URLS.ADMIN_BOUNDS.RESOURCE_PATHS,
    });
