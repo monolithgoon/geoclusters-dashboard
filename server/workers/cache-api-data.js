@@ -10,6 +10,8 @@ const {
 } = require("../interfaces/cluster-props-adapter.js");
 const { _sanitizeFeatCollCoords } = require("../utils/helpers.js");
 const API_URLS = require("../constants/api-urls.js");
+const config = require("../config/config.js");
+
 
 // REPORT SAVED FILE STATS.
 function reportFileStats(file) {
@@ -18,6 +20,7 @@ function reportFileStats(file) {
 	const fileMBSize = fileByteSize / (1024 * 1024);
 	console.log(chalk.success(`File saved was ${fileMBSize.toFixed(2)} MB`));
 }
+
 
 // SAVE RETURNED DB. DATA TO DISK
 function saveData(data, collectionName) {
@@ -34,6 +37,7 @@ function saveData(data, collectionName) {
 }
 
 async function getDBCollection(url, apiAccessToken) {
+
 	console.log(chalk.console2(`AXIOS getting data from [ ${url} ]`));
 
 	try {
@@ -65,6 +69,7 @@ async function getDBCollection(url, apiAccessToken) {
 		console.error(chalk.fail(`axiosError: ${axiosError.message}`));
 	}
 }
+
 
 // TODO > VALIDATE GeoJSON
 function validateGeoJSON(geoJSON) {
@@ -101,6 +106,7 @@ async function returnNormalized(geoClusterArray) {
 	}
 }
 
+
 async function getAPIData(apiHost, resourcePaths) {
 	const data = [];
 
@@ -112,16 +118,17 @@ async function getAPIData(apiHost, resourcePaths) {
 	return data;
 }
 
+
 // ASYNCHRONOUSLY DOWNLOAD DATA FROM THE GEOCLUSTER API, AND SAVE TO DISK
 // THIS ACTION IS PERFORMED WHEN THE SERVER LOADS UP INITIALLY
 // THIS DATA IS READ FROM DISK & PASSED FROM THE /server/data-controller TO THE /server/view-controler
 // IT IS MADE AVAILABLE AS AN OBJECT IN THE APP VIA THE /server/view-controller
 async function cacheData() {
-	console.log(chalk.working(`Dowloading DB. collections to local-storage...`));
 
 	try {
 		const geoClustersData = await getAPIData(
-			API_URLS.GEOCLUSTERS.HOST.AWS,
+			// API_URLS.GEOCLUSTERS.HOST.AWS,
+			config.geoclustersHostUrl,
 			API_URLS.GEOCLUSTERS.RESOURCE_PATHS
 		);
 

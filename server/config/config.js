@@ -16,7 +16,10 @@ if (process.env.NODE_ENV === `development`) {
 }
 
 module.exports = Object.freeze({
+	
 	nodeEnv: process.env.NODE_ENV,
+
+	geoclustersHostUrl: process.env.GEOCLUSTERS_HOST_URL,
 
 	port: parseInt(process.env.PORT, 10) || 8080,
 
