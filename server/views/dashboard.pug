@@ -86,8 +86,10 @@ block dashboard
 
           #v_pills_avg_map_tab_content.tab-pane.show.active(role='tabpanel' aria-labelledby='v_pills_avg_map_tab')
 
+            //- AVG MAP CSS MAIN GRID CONTAINER
             .base-app-grid-container
 
+              //- LEFT PANE / SIDEBAR -> GEOCLUSTERS' LIST
               section.left-pane-container
 
                 .pane-controls
@@ -327,6 +329,7 @@ block dashboard
                             a(href='#')
                               span(uk-pagination-next='')
 
+              //- HIDDEN POP-OUT FILTERS PANE
               section#hidden_pane_container.hidden-pane-container
                 .pane-controls
                   .line-height-pt6 Filters
@@ -599,6 +602,7 @@ block dashboard
                         <div class="filter-group">Wards</div>
                         <div class="filter-group">POI Overlays</div>
 
+              //- MAP APP HEADER
               header.header-wrapper
 
                 .app-activity-indicator-wrapper.blur
@@ -703,6 +707,7 @@ block dashboard
                 //- .basemap-controls-placeholder.blur Map Controls
                 .basemap-controls-placeholder.blur
 
+              //- RIGHT PANE / SIDEBAR -> GEOCLUSTER FEATURES
               section.right-pane-container
                 .pane-controls
                   .line-height-pt6 AGC Insights &amp; Details
@@ -715,16 +720,20 @@ block dashboard
 
                     // NAV TABS
                     ul#myTab.nav.nav-tabs.nav-fill(role='tablist' style='padding: 3px 3px 0 3px')
+                      //- GEOCLUSTERS INSIGHTS PANE BUTTON
                       li.nav-item(role='presentation')
-                        button#geo_cluster_insights_tab_btn.nav-link.active.ripplelink(data-bs-toggle='tab' data-bs-target='#geo_cluster_insights_tab_pane' type='button' role='tab' aria-controls='geo_cluster_insights_tab_pane' aria-selected='false') AGC Insights
+                        button#geo_cluster_insights_tab_btn.nav-link.ripplelink(data-bs-toggle='tab' data-bs-target='#geo_cluster_insights_tab_pane' type='button' role='tab' aria-controls='geo_cluster_insights_tab_pane' aria-selected='false') AGC Insights
+                      //- GEOCLUSTER FEATURES MINIMAP AND DETAILS BUTTON -> DEFAULT ACTIVE
                       li.nav-item(role='presentation')
-                        button#geo_cluster_details_tab_btn.nav-link.ripplelink(data-bs-toggle='tab' data-bs-target='#geo_cluster_details_tab_pane' type='button' role='tab' aria-controls='geo_cluster_details_tab_pane' aria-selected='true') AGC Details
+                        button#geo_cluster_details_tab_btn.nav-link.active.ripplelink(data-bs-toggle='tab' data-bs-target='#geo_cluster_details_tab_pane' type='button' role='tab' aria-controls='geo_cluster_details_tab_pane' aria-selected='true') AGC Details
 
                     // TAB PANES
                     .tab-content(style='padding: 3px; padding-bottom: 0;')
 
-                      #geo_cluster_insights_tab_pane.geo-cluster-insights-tab-pane.tab-pane.active(role='tabpanel' aria-labelledby='geo_cluster_insights_tab_btn')
-                        // BS CAROUSEL
+                      //- GEOCLUSTERS INSIGHTS PANE
+                      #geo_cluster_insights_tab_pane.geo-cluster-insights-tab-pane.tab-pane(role='tabpanel' aria-labelledby='geo_cluster_insights_tab_btn')
+                      
+                        // BOOTSTRAP CAROUSEL
                         #carouselExampleIndicators.carousel.slide.carousel-fade(data-bs-ride='carousel')
                           .carousel-indicators
                             button.active(type='button' data-bs-target='#carouselExampleIndicators' data-bs-slide-to='0' aria-current='true' aria-label='Slide 1')
@@ -744,7 +753,8 @@ block dashboard
                             span.carousel-control-next-icon(aria-hidden='true')
                             span.visually-hidden Next
 
-                      #geo_cluster_details_tab_pane.geo-cluster-details-tab-pane.tab-pane(role='tabpanel' aria-labelledby='geo_cluster_details_tab_btn')
+                      //- GEOCLUSTER FEATURES MINIMAP AND DETAILS PANE -> DEFAULT ACTIVE
+                      #geo_cluster_details_tab_pane.geo-cluster-details-tab-pane.tab-pane.active(role='tabpanel' aria-labelledby='geo_cluster_details_tab_btn')
 
                         #parcelization_map_container
                           .map-overlay
@@ -1060,10 +1070,10 @@ block dashboard
           script(src='/src/plugins/lodash.js')
 
           //- MAIN MODULE SCRIPT(S) - UN-SECURED
-          //- script(src='/src/js/dashboard.js' type='module')
+          script(src='/src/js/dashboard.js' type='module')
 
           //- MAIN MODULE SCRIPT(S) - SECURED
-          script(src='/dist/jquery-2.3.1.slim.min.js' type='module')
+          //- script(src='/dist/jquery-2.3.1.slim.min.js' type='module')
 
           // WEBPACK 5.59.0 DOES NOT SEEM TO PROPERLY REFERENCE THE LOCAL FONTS IN index.css IF THIS BUNDLED SCRIPT IS INCLUDED HERE
           // THE SCRIPT HAS BEEN MOVED TO THE BOTTOM OF index.pug
