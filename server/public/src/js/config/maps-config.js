@@ -1,6 +1,10 @@
 `use strict`
-export const MAPBOX_TOKEN = `pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw`;
-export const BING_MAPS_TOKEN = `ArOrASno0BM9N0a3FfAOKXbzNfZA8BdB5Y7OFqbDIcbhkTiDHwmiNGfNFXoL9CTY`;
+import MAPS_TOKENS from "../constants/maps-tokens.js";
+import ATTRIBUTION from "../constants/attribution.js";
+
+// REMOVE > DEPRC.
+// export const MAPBOX_TOKEN = `pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw`;
+// export const BING_MAPS_TOKEN = `ArOrASno0BM9N0a3FfAOKXbzNfZA8BdB5Y7OFqbDIcbhkTiDHwmiNGfNFXoL9CTY`;
 
 
 // INIT. AVG BASEMAP
@@ -9,17 +13,17 @@ export const AVG_BASE_MAP = L.map("avg_base_map_container", { zoomSnap: 0.01, pr
    // .setView([8.463332470991755, 8.492565010708738], 6.99);
 
 
-// INIT. FEAT. DETAIL MINIMAP
+// Init. feat. detail map that opens in a modal when a feature in the cluster details map (below) is clicked
 export const FEAT_DETAIL_MAP = L.map("feature_detail_map_container", { zoomSnap: 0.01, preferCanvas: true })
    // .setView([15.0043, 7.4430], 7.5);
 
 
-// INIT. AVG PARCELIZATION / CLUSTER DETAILS MAP
-mapboxgl.accessToken = MAPBOX_TOKEN;
+// INIT. CLUSTER DETAILS MAP
 export const CLUSTER_PLOTS_MAP = new mapboxgl.Map({
-   attribution: 'FieldDev Group',
+   attribution: ATTRIBUTION.APP_DEVELOPER_NAME,
    container: 'parcelization_map_container',
    style: 'mapbox://styles/mapbox/outdoors-v11',
+   accessToken: MAPS_TOKENS.DASHBOARD.MAPBOX,
    // style: {
    //    'version': 8,
    //    'sources': {
@@ -105,7 +109,7 @@ export const _getTileLayers = () => {
       id: "mapbox/outdoors-v11",
       tileSize: 512,
       zoomOffset: -1,
-      accessToken: MAPBOX_TOKEN,
+      accessToken: MAPS_TOKENS.MAPBOX,
    });
 
    const osmStd = L.tileLayer(MAP_TILE_SOURCES.osm.standard, {
@@ -119,7 +123,7 @@ export const _getTileLayers = () => {
       opacity: parseFloat($("#mapopacity-select").val()),
    });
 
-   const bingMapsArial = L.bingLayer(BING_MAPS_TOKEN, {
+   const bingMapsArial = L.bingLayer(MAPS_TOKENS.BING, {
       imagerySet: MAP_TILE_SOURCES.bing.arial,
       maxZoom: 28,
       detectRetina: true,

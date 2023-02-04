@@ -27,16 +27,19 @@ if (mapBox) {
 // 1. USER LOGIN => EMAIL + PASSWORD SUBMIT
 if (loginForm) {
 
+	const email = document.getElementById("login_email_input").value;
+	const password = document.getElementById("login_password_input").value;
+	const loginSubmitBtn = document.getElementById(`login_submit_btn`);
+	const loginSubmitBtnTxt = document.getElementById(`login_submit_btn_txt`);		
+	const appActivityInd = document.querySelector(`.app-activity-indicator`);
+	const userPasswordInput = document.getElementById("login_password_input");
+
 	loginForm.addEventListener("submit", async (e) => {
 
 		e.preventDefault();
 
-		const email = document.getElementById("login_email_input").value;
-		const password = document.getElementById("login_password_input").value;
-		const loginSubmitBtn = document.getElementById(`login_submit_btn`);
-		const loginSubmitBtnTxt = document.getElementById(`login_submit_btn_txt`);		
-		const appActivityInd = document.querySelector(`.app-activity-indicator`);
-		const userPasswordInput = document.getElementById("login_password_input");
+		// CLEAR THE PASSWORD TEXT
+		userPasswordInput.innterText = ``;
 		
 		// DISABLE THE SUBMIT BUTTON BY DEFAULT
 		loginSubmitBtn.disabled = true;
@@ -52,7 +55,7 @@ if (loginForm) {
 			appActivityInd.classList.remove(`spinner-border`, `text-dark`, `spinner-border-sm`);
 		} else {
 			// LOGIN SUCCESS
-			userPasswordInput.innterText = ``;
+			// userPasswordInput.innterText = ``;
 			userPasswordInput.disabled = true;
 			loginSubmitBtn.disabled = true;
 			loginSubmitBtn.style.backgroundColor = `lightgrey`;

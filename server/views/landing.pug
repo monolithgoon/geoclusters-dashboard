@@ -89,7 +89,9 @@ block landing-page
 
   script(type='module').
 
-    //- import { MAPBOX_TOKEN } from "/src/js/config/maps-config.js";
+    `use strict`
+
+    import MAPS_TOKENS from "/src/js/constants/maps-tokens.js";
     import ATTRIBUTION from "/src/js/constants/attribution.js"
 
     (function() {
@@ -97,9 +99,12 @@ block landing-page
       //- 
       document.getElementById("app_client_name_span").innerText = ` ${ATTRIBUTION.APP_CLIENT_NAME} `;
 
-      //- Get the "documentElement" (<html>) in order to display the page in fullscreen
 
+      //- Get the "documentElement" (<html>) in order to display the page in fullscreen
       const docElem = document.documentElement;
+
+
+      //- FN. FORCES PAGE INTO FULL SCREEN MODE
 
       function openFullScreen() {
         if (docElem.requestFullscreen) {
@@ -129,18 +134,18 @@ block landing-page
 
       //- INIT. LANDING PAGE MAP
 
-      mapboxgl.accessToken = `pk.eyJ1IjoibW9ub2xpdGhnb29uIiwiYSI6ImNrN3B1MnNjaDBhNTczcHFkdmJ0aHR6dWEifQ.O0mHuJ2wKNqKz3E_BIsnog`;
-
       const LANDING_PAGE_MAP = new mapboxgl.Map({
         attribution: ATTRIBUTION.APP_DEVELOPER_NAME,
         container: `landing_page_map_container`,
         style: `mapbox://styles/monolithgoon/ckqat05ss033418qmildmyau2`,
+        accessToken: MAPS_TOKENS.LANDING_PAGE.MAPBOX,
         center: [6.3, 7.9],
         pitch: 59,
         bearing: -2,
-        zoom: 6.2,
+        zoom: 6.5,
 
         //- 3D ELEVATION MAP SHOWING CLUSTER IN YOLA, NIGERIA
+
         //- center: [11.65872, 10.30595],
         //- center: [12.63872, 10.30595],
         //- pitch: 70,
@@ -148,7 +153,6 @@ block landing-page
         //- zoom: 11.88,
         //- zoom: 12.4,
       });
-
 
       LANDING_PAGE_MAP.on(`load`, function() {
 
