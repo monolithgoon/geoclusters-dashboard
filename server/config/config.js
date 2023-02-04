@@ -11,11 +11,15 @@ if (process.env.NODE_ENV === `development`) {
 
 	if (envConfig.error) {
 		// this error should crash the whole process
-		throw new Error(chalk.fail(`Couldn't find .env file. ${envConfig.error}`));
+		throw new Error(chalk.fail(`Couldn't find a .env file. ${envConfig.error}`));
 	}
 }
 
 module.exports = Object.freeze({
+	
+	appDeveloper: process.env.APP_DEVELOPER,
+	appTitle: process.env.APP_TITLE,
+	appOwner: process.env.APP_OWNER,
 	
 	nodeEnv: process.env.NODE_ENV,
 
@@ -37,10 +41,10 @@ module.exports = Object.freeze({
 	// },
 
 	emails: {
-		mailHost: process.env.MAIL_HOST,
-		mailPort: process.env.MAIL_PORT,
-		mailUser: process.env.MAIL_USERNAME,
-		mailPass: process.env.MAIL_PASSWORD,
+		mailHost: process.env.EMAIL_HOST,
+		mailPort: process.env.MAILTRAP_PORT,
+		mailUser: process.env.MAILTRAP_USERNAME,
+		mailPass: process.env.MAILTRAP_PASSWORD,
 	},
 
 	cloud: {

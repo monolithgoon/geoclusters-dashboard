@@ -40,8 +40,6 @@ if (loginForm) {
 		
 		// DISABLE THE SUBMIT BUTTON BY DEFAULT
 		loginSubmitBtn.disabled = true;
-		// userPasswordInput.innterText = ``;
-		// userPasswordInput.disabled = true;
 
 		if (!(await login(email, password))) {
 			// LOGIN FAIL

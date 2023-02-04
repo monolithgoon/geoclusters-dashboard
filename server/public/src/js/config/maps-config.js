@@ -1,6 +1,5 @@
 `use strict`
-import MAPS_TOKENS from "../constants/maps-tokens.js";
-import MAPS_TILES_SOURCES from "../constants/maps-tile-sources.js"
+import MAPS_API_TOKENS from "../constants/maps-api-tokens.js";
 import ATTRIBUTION from "../constants/attribution.js";
 
 
@@ -20,7 +19,7 @@ export const CLUSTER_PLOTS_MAP = new mapboxgl.Map({
    attribution: ATTRIBUTION.APP_DEVELOPER_NAME,
    container: 'parcelization_map_container',
    style: 'mapbox://styles/mapbox/outdoors-v11',
-   accessToken: MAPS_TOKENS.DASHBOARD.MAPBOX,
+   accessToken: MAPS_API_TOKENS.DASHBOARD.MAPBOX,
    // REMOVE > DEPRECATED
    // style: {
    //    'version': 8,
@@ -50,55 +49,3 @@ export const CLUSTER_PLOTS_MAP = new mapboxgl.Map({
    bearing: 10, // bearing in degrees
    zoom: 8,
 });
-
-   
-export const _getTileLayers = () => {
-
-   const googleStreets = L.tileLayer(MAPS_TILES_SOURCES.GOOGLE.STREETS, {
-      maxZoom: 28,
-      subdomains:['mt0','mt1','mt2','mt3'],
-   });
-
-   const googleHybrid = L.tileLayer(MAPS_TILES_SOURCES.GOOGLE.HYBRID, {
-      maxZoom: 28,
-      subdomains:['mt0','mt1','mt2','mt3'],
-   });
-
-   const mapboxOutdoors =  L.tileLayer(MAPS_TILES_SOURCES.MAPBOX, {
-      attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-      maxZoom: 18,
-      id: "mapbox/outdoors-v11",
-      tileSize: 512,
-      zoomOffset: -1,
-      accessToken: MAPS_TOKENS.MAPBOX,
-   });
-
-   const osmStd = L.tileLayer(MAPS_TILES_SOURCES.OSM.STANDARD, {
-      maxZoom: 18,
-      optimize: true,
-      attribution: 'Nduka Okpue &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-   });
-
-   const osmBW = L.tileLayer(MAPS_TILES_SOURCES.OSM.BW, {
-      attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-      opacity: parseFloat($("#mapopacity-select").val()),
-   });
-
-   const bingMapsArial = L.bingLayer(MAPS_TOKENS.BING, {
-      imagerySet: MAPS_TILES_SOURCES.BING.ARIAL,
-      maxZoom: 28,
-      detectRetina: true,
-      retinaDpi: 'd2',
-      mapLayer: "TrafficFlow",
-      attribution: '&copy; FieldDev Group'
-   });
-
-   return {
-      googleStreets,
-      googleHybrid,
-      mapboxOutdoors,
-      osmStd,
-      osmBW,
-      bingMapsArial,
-   };
-};

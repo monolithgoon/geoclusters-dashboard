@@ -7,7 +7,6 @@ const USER_MODEL = require("../models/user-model.js");
 const catchAsync = require("../utils/catch-async.js");
 const ServerError = require("../utils/app-error.js");
 const sendEmail = require("../services/email.js");
-const config = require("../config/config.js");
 
 const signJWT = (payloadId) => {
 	// TODO > check for .env VARS.

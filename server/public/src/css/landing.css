@@ -141,13 +141,13 @@ input, button,
 }
 
 .form--input {
+   width: 100%;
    padding: .3rem .5rem;
    display: block;
    font-family: inherit;
    font-size: 0.8rem;
    color: inherit;
    border: none;
-   width: 100%;
    background-color: #f2f2f2;
    border-top: 1px solid transparent;
    border-bottom: 1px solid lightgrey;

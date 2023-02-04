@@ -91,7 +91,7 @@ block landing-page
 
     `use strict`
 
-    import MAPS_TOKENS from "/src/js/constants/maps-tokens.js";
+    import MAPS_API_TOKENS from "/src/js/constants/maps-api-tokens.js";
     import ATTRIBUTION from "/src/js/constants/attribution.js"
 
     (function() {
@@ -138,7 +138,7 @@ block landing-page
         attribution: ATTRIBUTION.APP_DEVELOPER_NAME,
         container: `landing_page_map_container`,
         style: `mapbox://styles/monolithgoon/ckqat05ss033418qmildmyau2`,
-        accessToken: MAPS_TOKENS.LANDING_PAGE.MAPBOX,
+        accessToken: MAPS_API_TOKENS.LANDING_PAGE.MAPBOX,
         center: [6.3, 7.9],
         pitch: 59,
         bearing: -2,

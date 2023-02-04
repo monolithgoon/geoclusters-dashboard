@@ -1,5 +1,6 @@
 `use strict`
-import { AVG_BASE_MAP, CLUSTER_PLOTS_MAP, FEAT_DETAIL_MAP, _getTileLayers } from "../config/maps-config.js";
+import { AVG_BASE_MAP, CLUSTER_PLOTS_MAP, FEAT_DETAIL_MAP } from "../config/maps-config.js";
+import LEAFLET_TILE_LAYERS from "../config/leaflet-tile-layers.js"
 import { _getClusterFeatPopupMarkup, _GenerateClusterFeatMarkup } from "../avg-controllers/markup-generators.js";
 import { _ManipulateDOM, _pollAVGSettingsValues } from "../avg-controllers/ui-controller.js";
 import { _MonitorExecution } from "../controllers/fn-monitor.js";
@@ -64,7 +65,7 @@ const LLayerGroupController = ((leafletBaseMap, leafletModalMap)=>{
 
 const LeafletMapsSetup = ((baseMap, featDetailMap) => {
 
-   const { googleStreets, googleHybrid, osmStd, osmBW, mapboxOutdoors, bingMapsArial } = _getTileLayers();
+   const { googleStreets, googleHybrid, osmStd, osmBW, mapboxOutdoors, bingMapsArial } = LEAFLET_TILE_LAYERS;
    
    // baseMap.on('load', function() {
       baseMap.addLayer(googleHybrid);
@@ -86,44 +87,55 @@ const LeafletMapsSetup = ((baseMap, featDetailMap) => {
       });
    };
 
-   function switchTileLayers(map) {
+   
+/** 
+ This is used to switch between different tile layers (map styles) based on the zoom level of the map.
+ */
+function switchTileLayers(map) {
 
-      const mapZoom = map.getZoom();
-   
-      switch (true) {
-   
-         case mapZoom < 9.5:
-            map.addLayer(googleHybrid);
-            removeTileLayers(map, {keepLayer: googleHybrid});
-            break
-         
-         case mapZoom > 9.5 && mapZoom < 11.5:
-            map.addLayer(googleStreets);
-            removeTileLayers(map, {keepLayer: googleStreets});
-            break;
-   
-         case mapZoom > 11.5 && mapZoom < 13:
-            map.addLayer(osmStd);
-            removeTileLayers(map, {keepLayer: osmStd});
+   // Get the current zoom level of the map
+   const currMapZoom = map.getZoom();
 
-            break;
-   
-         case mapZoom > 13 && mapZoom < 18:
-            map.addLayer(bingMapsArial); // or => bingMapsArial.addTo(map);
-            removeTileLayers(map, {keepLayer: bingMapsArial});
-            break;
-      
-         case mapZoom > 18:
-            map.addLayer(googleHybrid); // or => googleHybrid.addTo(map);
-            removeTileLayers(map, {keepLayer: googleHybrid});
-            break;
-      
-         default:
-            removeTileLayers(map, {});
-            googleHybrid.addTo(map);
-            break;
-      };
+   // Switch statement to add the appropriate layer to the map based on the zoom level
+   switch (true) {
+
+      // If the zoom level is less than 9.5, add the "googleHybrid" layer and remove all other layers
+      case currMapZoom < 9.5:
+         map.addLayer(googleHybrid);
+         removeTileLayers(map, {keepLayer: googleHybrid});
+         break
+
+      // If the zoom level is between 9.5 and 11.5, add the "googleStreets" layer and remove all other layers
+      case currMapZoom > 9.5 && currMapZoom < 11.5:
+         map.addLayer(googleStreets);
+         removeTileLayers(map, {keepLayer: googleStreets});
+         break;
+
+      // If the zoom level is between 11.5 and 13, add the "osmStd" layer and remove all other layers
+      case currMapZoom > 11.5 && currMapZoom < 13:
+         map.addLayer(osmStd);
+         removeTileLayers(map, {keepLayer: osmStd});
+         break;
+
+      // If the zoom level is between 13 and 18, add the "bingMapsArial" layer and remove all other layers
+      case currMapZoom > 13 && currMapZoom < 18:
+         map.addLayer(bingMapsArial); // or => bingMapsArial.addTo(map);
+         removeTileLayers(map, {keepLayer: bingMapsArial});
+         break;
+
+      // If the zoom level is greater than 18, add the "googleHybrid" layer and remove all other layers
+      case currMapZoom > 18:
+         map.addLayer(googleHybrid); // or => googleHybrid.addTo(map);
+         removeTileLayers(map, {keepLayer: googleHybrid});
+         break;
+
+      // If there is no matching zoom level, remove all layers and add the googleHybrid layer
+      default:
+         removeTileLayers(map, {});
+         googleHybrid.addTo(map);
+         break;
    };
+};
    
    baseMap.on("zoomend", function() {
 
@@ -157,7 +169,7 @@ const LeafletMapsSetup = ((baseMap, featDetailMap) => {
          return visRank;
       })(zoomLevel);
       
-      // ADD LAYER GROUPS BASED ON ZOOM LEVEL && CORRESPONDING VIS. RANK
+      // ADD VARIOUS LAYER GROUPS BASED ON ZOOM LEVEL && CORRESPONDING VIS. RANK
       (function addLayerGroups(map, currVisRank) {
 
          console.log({currVisRank})
