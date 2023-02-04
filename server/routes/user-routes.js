@@ -8,6 +8,7 @@ const authController = require('../controllers/auth-controller.js')
 // USER AUTHENTICATION FUNCTIONS
 router.post('/signup', authController.signup)
 router.post('/login', authController.login)
+router.get('/logout', authController.protectRoute, authController.logout)
 
 
 // USER MGMT. FUNCTIONS

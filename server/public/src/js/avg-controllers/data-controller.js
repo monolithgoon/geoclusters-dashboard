@@ -1,5 +1,5 @@
 `use strict`;
-import { GET_DOM_ELEMENTS } from "../utils/dom-elements.js";
+import { GET_DOM_ELEMENTS } from "../utils/get-dom-elements.js";
 import { _ManipulateDOM } from "./ui-controller.js";
 import { _MonitorExecution } from "../controllers/fn-monitor.js";
 import { APP_STATE } from "./state-controller.js";

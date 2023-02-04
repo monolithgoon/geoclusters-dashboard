@@ -14,7 +14,7 @@ import {
 	_GenClusterModalMarkup,
 } from "./markup-generators.js";
 import { _clientSideRouter, _navigateTo } from "../routers/router.js";
-import { GET_DOM_ELEMENTS } from "../utils/dom-elements.js";
+import { GET_DOM_ELEMENTS } from "../utils/get-dom-elements.js";
 
 export const _ManipulateDOM = (() => {
 	return {

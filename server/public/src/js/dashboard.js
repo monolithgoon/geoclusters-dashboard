@@ -13,7 +13,7 @@
  *
  * 3. renderAdminBounds - RENDERS GEOJSON POLYGON ADMIN BOUNDS FOR THE GEO-POL REGIONS OF NIGERIA
  *
- * 4. autoUpdateWorker - updateCachedGeoClusters
+ * 4. fireAutoUpdateWorker - updateCachedGeoClusters
  */
 
 `use strict`;
@@ -27,11 +27,13 @@ import { _pollAVGSettingsValues, _PopulateDOM } from "./avg-controllers/ui-contr
 import { APP_STATE } from "./avg-controllers/state-controller.js";
 import { _RenderEngine } from "./controllers/maps-controller.js";
 import { _clientSideRouter } from "./routers/router.js";
-import { GET_DOM_ELEMENTS } from "./utils/dom-elements.js";
+import { GET_DOM_ELEMENTS } from "./utils/get-dom-elements.js";
 import DURATION from "./constants/duration.js";
+import { logout } from "./controllers/user-login.js";
 
-const InitApp = (() => {
-	// nothing here;
+const initDashboardApp = (() => {
+
+	// 
 	function renderGeoPolRegions(resourceName, featColl) {
 		if (resourceName === `nga-geo-pol-regions` && featColl) {
 			_RenderEngine.renderFeatColl(featColl, {
@@ -42,6 +44,7 @@ const InitApp = (() => {
 		}
 	}
 
+	// 
 	async function renderClustersCollection(featCollArray) {
 		if (featCollArray && featCollArray.length > 0) {
 			// RENDER CLUSTERS' DATA ON BASE MAP
@@ -242,7 +245,8 @@ const InitApp = (() => {
 		},
 
 		// NESTED, RECURSIVE setTimeouts THAT LOOPS INDEFINITELY @ PRE-SET INTERVALS
-		autoUpdateWorker: async (window) => {
+		fireAutoUpdateWorker: async (window) => {
+
 			let initDelay = DURATION.GEOCLUSTERS_DATA_QUERY_INTERVAL;
 
 			let intervalDelay = initDelay;
@@ -286,26 +290,37 @@ const InitApp = (() => {
 				setTimeout(request, intervalDelay);
 			}, intervalDelay);
 		},
+
+		// 
+		addDOMListeners: () => {
+
+			// logout btn. listener
+			GET_DOM_ELEMENTS().logoutBtn.addEventListener("click", logout);
+		}
 	};
 })();
 
 (() => {
 	window.addEventListener(`DOMContentLoaded`, async (windowObj) => {
-		// save the UI default settings
+
+		// save the default UI settings into the APP_STATE object
 		APP_STATE.saveDefaultSettings(_pollAVGSettingsValues());
 
-		await InitApp.cachePreloadedGeoClusters();
+		initDashboardApp.addDOMListeners();
 
-		await InitApp.renderCachedGeoClusters();
+		await initDashboardApp.cachePreloadedGeoClusters();
 
-		await InitApp.renderAdminBounds(windowObj);
+		await initDashboardApp.renderCachedGeoClusters();
 
-		await InitApp.autoUpdateWorker(windowObj);
+		await initDashboardApp.renderAdminBounds(windowObj);
+
+		await initDashboardApp.fireAutoUpdateWorker(windowObj);
 	});
 })();
 
 (() => {
 	window.addEventListener(`DOMContentLoaded`, async (windowObj) => {
+
 		// SANDBOX
 		//    document.body.addEventListener('click', e => {
 		//       if (e.target.matches("[data-bs-target]")) {
@@ -317,5 +332,6 @@ const InitApp = (() => {
 		// SANDBOX
 		//    // init. the client side router
 		//    _clientSideRouter();
+		
 	});
 })();

@@ -1,4 +1,9 @@
 `use strict`
+/** 
+ * This funciton gets elements of the DOM
+ * It was made a function instead of an object becasuse some imput values (like the dashboard settings inputs) will change rather frequently
+ * It needs to be a fn. because new geocluster result divs are being added after initial load
+ */
 export function GET_DOM_ELEMENTS() {
 
    // BUTTONS

@@ -1,6 +1,6 @@
 `use strict`
 import { _ManipulateDOM } from "../avg-controllers/ui-controller.js";
-import { GET_DOM_ELEMENTS } from "../utils/dom-elements.js";
+import { GET_DOM_ELEMENTS } from "../utils/get-dom-elements.js";
 
 
 // ACTIVATE THE DIV THAT DISPLAYS APP BACKGROUND ACTIVITY

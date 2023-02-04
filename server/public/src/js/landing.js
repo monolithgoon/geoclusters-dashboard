@@ -36,16 +36,24 @@ if (loginForm) {
 		const loginSubmitBtn = document.getElementById(`login_submit_btn`);
 		const loginSubmitBtnTxt = document.getElementById(`login_submit_btn_txt`);		
 		const appActivityInd = document.querySelector(`.app-activity-indicator`);
+		const userPasswordInput = document.getElementById("login_password_input");
 		
+		// DISABLE THE SUBMIT BUTTON BY DEFAULT
 		loginSubmitBtn.disabled = true;
+		userPasswordInput.innterText = ``;
+		userPasswordInput.disabled = true;
 
 		if (!(await login(email, password))) {
+			// LOGIN FAIL
 			loginSubmitBtn.style.backgroundColor = `#0d6efd`;
 			loginSubmitBtn.style.color = `#fff`;
 			loginSubmitBtn.style.border = `1px solid #0d6efd`;
 			loginSubmitBtnTxt.innerText = `Submit`;
 			appActivityInd.classList.remove(`spinner-border`, `text-dark`, `spinner-border-sm`);
 		} else {
+			// LOGIN SUCCESS
+			userPasswordInput.innterText = ``;
+			userPasswordInput.disabled = true;
 			loginSubmitBtn.disabled = true;
 			loginSubmitBtn.style.backgroundColor = `lightgrey`;
 			loginSubmitBtn.style.color = `#333`;
