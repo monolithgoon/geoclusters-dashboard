@@ -1,10 +1,7 @@
 `use strict`
 import MAPS_TOKENS from "../constants/maps-tokens.js";
+import MAPS_TILES_SOURCES from "../constants/maps-tile-sources.js"
 import ATTRIBUTION from "../constants/attribution.js";
-
-// REMOVE > DEPRC.
-// export const MAPBOX_TOKEN = `pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw`;
-// export const BING_MAPS_TOKEN = `ArOrASno0BM9N0a3FfAOKXbzNfZA8BdB5Y7OFqbDIcbhkTiDHwmiNGfNFXoL9CTY`;
 
 
 // INIT. AVG BASEMAP
@@ -24,6 +21,7 @@ export const CLUSTER_PLOTS_MAP = new mapboxgl.Map({
    container: 'parcelization_map_container',
    style: 'mapbox://styles/mapbox/outdoors-v11',
    accessToken: MAPS_TOKENS.DASHBOARD.MAPBOX,
+   // REMOVE > DEPRECATED
    // style: {
    //    'version': 8,
    //    'sources': {
@@ -53,57 +51,20 @@ export const CLUSTER_PLOTS_MAP = new mapboxgl.Map({
    zoom: 8,
 });
 
-
-const MAP_TILE_SOURCES = Object.freeze({
-
-   google: Object.freeze({
-      streets: 'http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
-      hybrid: 'http://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}',
-      satellite: 'http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', 
-      terrain: 'http://{s}.google.com/vt/lyrs=p&x={x}&y={y}&z={z}'
-   }),
-
-   osm: {
-      standard: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-      bw: "http://{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png",
-      // humanitarian: "http://b.tile.openstreetmap.fr/hot/${z}/${x}/${y}.png" // CORS ERROR
-   },
-
-   bing: {
-      road:"RoadOnDemand",
-      arial: "AerialWithLabels",
-      birdsEye: "BirdseyeWithLabels"
-   },
-
-   ersi : {
-      ErsiStandard : "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
-      ErsiTransportation : "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer/tile/{z}/{y}/{x}",
-      // ErsiTerrain : "https://server.arcgisonline.com/ArcGIS/rest/services/World_Terrain_Base/MapServer/tile/{z}/{y}/{x}",
-      // ErsiTopoWorld : "http://services.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}"
-   },
-
-   stamenToner: "http://a.tile.stamen.com/toner/${z}/${x}/${y}.png", // CORS ERROR
-   stamenWatercolor: "http://c.tile.stamen.com/watercolor/${z}/${x}/${y}.jpg", // CORS ERROR
-
-   cartoLight: "https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png",
-   cartoDark: "https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png",
-   mapbox: "https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}",
-});
-
    
 export const _getTileLayers = () => {
 
-   const googleStreets = L.tileLayer(MAP_TILE_SOURCES.google.streets, {
+   const googleStreets = L.tileLayer(MAPS_TILES_SOURCES.GOOGLE.STREETS, {
       maxZoom: 28,
       subdomains:['mt0','mt1','mt2','mt3'],
    });
 
-   const googleHybrid = L.tileLayer(MAP_TILE_SOURCES.google.hybrid, {
+   const googleHybrid = L.tileLayer(MAPS_TILES_SOURCES.GOOGLE.HYBRID, {
       maxZoom: 28,
       subdomains:['mt0','mt1','mt2','mt3'],
    });
 
-   const mapboxOutdoors =  L.tileLayer(MAP_TILE_SOURCES.mapbox, {
+   const mapboxOutdoors =  L.tileLayer(MAPS_TILES_SOURCES.MAPBOX, {
       attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
       maxZoom: 18,
       id: "mapbox/outdoors-v11",
@@ -112,19 +73,19 @@ export const _getTileLayers = () => {
       accessToken: MAPS_TOKENS.MAPBOX,
    });
 
-   const osmStd = L.tileLayer(MAP_TILE_SOURCES.osm.standard, {
+   const osmStd = L.tileLayer(MAPS_TILES_SOURCES.OSM.STANDARD, {
       maxZoom: 18,
       optimize: true,
       attribution: 'Nduka Okpue &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
    });
 
-   const osmBW = L.tileLayer(MAP_TILE_SOURCES.osm.bw, {
+   const osmBW = L.tileLayer(MAPS_TILES_SOURCES.OSM.BW, {
       attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
       opacity: parseFloat($("#mapopacity-select").val()),
    });
 
    const bingMapsArial = L.bingLayer(MAPS_TOKENS.BING, {
-      imagerySet: MAP_TILE_SOURCES.bing.arial,
+      imagerySet: MAPS_TILES_SOURCES.BING.ARIAL,
       maxZoom: 28,
       detectRetina: true,
       retinaDpi: 'd2',
