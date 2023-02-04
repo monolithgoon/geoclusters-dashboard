@@ -6,6 +6,7 @@ const path = require('path');
 const NGA_GEO_POL_REGIONS = require("../constants/nga-geo-pol-regions.js");
 const catchAsync = require('../utils/catch-async.js');
 const chalk = require("../utils/chalk-messages.js");
+const { _formatNumByThousand } = require("../utils/helpers.js");
 
 
 const parseString = async str => {
@@ -282,14 +283,16 @@ function retreiveClustersData() {
    const returnedClusters = combineObjArrays(...GEO_CLUSTERS_OBJS);
 
    const clustersSummary = {
-      totalNumClusters: returnedClusters.length,
+      totalNumClusters: _formatNumByThousand(returnedClusters.length),
       totalNumFeatures: (()=>{
+         let featsCount = 0;
          const featsCounts = [];
          for (let idx = 0; idx < returnedClusters.length; idx++) {
             const cluster = returnedClusters[idx];
             featsCounts.push(cluster.features.length);
          }
-         return featsCount = featsCounts.reduce((sum, featCount) => sum + featCount);
+         featsCount = _formatNumByThousand(featsCounts.reduce((sum, featCount) => sum + featCount));
+         return featsCount;
       })(),
    };
          

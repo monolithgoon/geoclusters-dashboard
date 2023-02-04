@@ -52,6 +52,11 @@ exports._capitalizeWords = (baseStr, ...subStrings) => {
 };
 
 
+exports._formatNumByThousand = (number) => {
+	return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};
+
+
 // CONCAT. STRINGS FROM ARRAY; SEPARATE BY SPACE
 exports._joinWordsArray = (keywords, {inclQuotes=false, commaSeparated=false}={}) => {
 	let concatArray;
