@@ -3,6 +3,7 @@ import { GET_DOM_ELEMENTS } from "../utils/get-dom-elements.js";
 import { _ManipulateDOM } from "./ui-controller.js";
 import { _MonitorExecution } from "../controllers/fn-monitor.js";
 import { APP_STATE } from "./state-controller.js";
+import DEFAULT_APP_SETTINGS from "../constants/default-app-settings.js"
 
 export function _retreiveClusterGJDatasets() {
 	try {
@@ -71,7 +72,7 @@ export async function _getAPIResource(eventObj, resourceHost, resourcePath, { qu
 
 /**
 	This function downloads and saves parcelized cluster data from a remote API. 
-	The function loops through each resource path defined in APP_STATE.CONFIG_DEFAULTS.PARCELIZED_CLUSTERS_RESOURCE_PATHS 
+	The function loops through each resource path defined in DEFAULT_APP_SETTINGS.PARCELIZED_CLUSTERS_RESOURCE_PATHS 
 	and performs an API call for each resource path using queryAPI.call function. 
 	The execution time of each API call is monitored and recorded using the _MonitorExecution object. 
 	If the API call returns data, it is saved using the APP_STATE.cacheDBCollection function. 
@@ -80,12 +81,12 @@ export async function _getAPIResource(eventObj, resourceHost, resourcePath, { qu
 export async function _downloadAndSaveParcelizedClusters(eventObj) {
 	try {
 		// constants
-		const apiHost = APP_STATE.CONFIG_DEFAULTS.GEOCLUSTERS_API_HOST;
-		const resourcePaths = APP_STATE.CONFIG_DEFAULTS.PARCELIZED_CLUSTERS_RESOURCE_PATHS;
+		const apiHost = DEFAULT_APP_SETTINGS.GEOCLUSTERS_API_HOST;
+		const resourcePaths = DEFAULT_APP_SETTINGS.PARCELIZED_CLUSTERS_RESOURCE_PATHS;
 
 		// loop thru. each resource path
 		for (const resourcePath of resourcePaths) {
-			// const dbQueryStr = APP_STATE.CONFIG_DEFAULTS.LEGACY_CLUSTER_QUERY_STR;
+			// const dbQueryStr = DEFAULT_APP_SETTINGS.LEGACY_CLUSTER_QUERY_STR;
 
 			// Create a pipeline function for the API call
 			const apiDataQuery = function () {

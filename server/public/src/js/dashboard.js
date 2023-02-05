@@ -30,6 +30,7 @@ import { _clientSideRouter } from "./routers/router.js";
 import { GET_DOM_ELEMENTS } from "./utils/get-dom-elements.js";
 import DURATION from "./constants/duration.js";
 import { logout } from "./controllers/user-login.js";
+import DEFAULT_APP_SETTINGS from "./constants/default-app-settings.js";
 
 const initDashboardApp = (() => {
 
@@ -51,7 +52,7 @@ const initDashboardApp = (() => {
 			await _RenderEngine.populateClustersOnBasemap(featCollArray, {
 				useBuffer: _pollAVGSettingsValues().bufferFeatsChk,
 				bufferUnits: _pollAVGSettingsValues().distanceUnits,
-				bufferAmt: APP_STATE.CONFIG_DEFAULTS.RENDERED_PLOT_BUFFER,
+				bufferAmt: DEFAULT_APP_SETTINGS.PARCELIZED_CLUSTER_PLOTS_BUFFER,
 			});
 		}
 	}
@@ -123,9 +124,9 @@ const initDashboardApp = (() => {
 		if (newGeoClusterIds.length > 0) {
 			for (let idx = 0; idx < newGeoClusterIds.length; idx++) {
 				const newGeoClusterId = newGeoClusterIds[idx];
-				const resourcePath = `${APP_STATE.CONFIG_DEFAULTS.PARCELIZED_CLUSTER_API_RESOURCE_PATH}`;
+				const resourcePath = `${DEFAULT_APP_SETTINGS.PARCELIZED_CLUSTER_API_RESOURCE_PATH}`;
 				const queryString = `?${newGeoClusterId}`;
-				const apiHost = APP_STATE.CONFIG_DEFAULTS.GEOCLUSTERS_API_HOST;
+				const apiHost = DEFAULT_APP_SETTINGS.GEOCLUSTERS_API_HOST;
 				// Get the API response for the new GeoCluster GeoJSON data
 				const APIResponse = await _getAPIResource(window, apiHost, resourcePath, {
 					queryString,
@@ -214,9 +215,9 @@ const initDashboardApp = (() => {
 
 		// GET & RENDER ADMIN BOUNDS GEOJSON
 		renderAdminBounds: async (window) => {
-			const apiHost = APP_STATE.CONFIG_DEFAULTS.ADMIN_BOUNDS_GEOJSON_API_HOST;
+			const apiHost = DEFAULT_APP_SETTINGS.ADMIN_BOUNDS_GEOJSON_API_HOST;
 			const adminBoundsAPIResourcePaths =
-				APP_STATE.CONFIG_DEFAULTS.ADMIN_BOUNDS_GEOJSON_API_RESOURCE_PATHS;
+				DEFAULT_APP_SETTINGS.ADMIN_BOUNDS_GEOJSON_API_RESOURCE_PATHS;
 
 			for (const adminBoundsResourcePath of adminBoundsAPIResourcePaths) {
 				// get the resource name

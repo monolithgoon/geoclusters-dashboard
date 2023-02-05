@@ -15,6 +15,7 @@ import {
 } from "./markup-generators.js";
 import { _clientSideRouter, _navigateTo } from "../routers/router.js";
 import { GET_DOM_ELEMENTS } from "../utils/get-dom-elements.js";
+import DEFAULT_APP_SETTINGS from "../constants/default-app-settings.js";
 
 export const _ManipulateDOM = (() => {
 	return {
@@ -409,10 +410,10 @@ const DOMSequence = ((domElements) => {
 
 				// 2.
 				_RenderEngine.renderClusterOnMaps(clusterGeoJSON, {
-					baseMapZoomLvl: APP_STATE.CONFIG_DEFAULTS.LEAFLET_ADMIN_LEVEL_3_ZOOM,
+					baseMapZoomLvl: DEFAULT_APP_SETTINGS.LEAFLET_ADMIN_LEVEL_3_ZOOM,
 					useBuffer: _pollAVGSettingsValues().bufferFeatsChk,
 					bufferUnits: _pollAVGSettingsValues().distanceUnits,
-					bufferAmt: APP_STATE.CONFIG_DEFAULTS.RENDERED_PLOT_BUFFER,
+					bufferAmt: DEFAULT_APP_SETTINGS.PARCELIZED_CLUSTER_PLOTS_BUFFER,
 					areaUnits: _pollAVGSettingsValues().areaUnits,
 				});
 
@@ -523,7 +524,7 @@ export const _PopulateDOM = ((dom) => {
 						// This dataset will be read when the geocluster needs to be rendered on the mini-map in the right sidebar
 						_ManipulateDOM.populateDataset(
 							clusterResultDiv,
-							APP_STATE.CONFIG_DEFAULTS.CLUSTER_RESULT_DATA_ATTR_NAME,
+							DEFAULT_APP_SETTINGS.GEOCLUSTER_RECORD_DATA_ATTR_NAME,
 							JSON.stringify(geoClusterGeoJSON)
 						);
 
@@ -689,7 +690,7 @@ const DelegatePreloadedDOMElementsEvents = ((dom) => {
 					_RenderEngine.renderSidemapClusterPlotsLabels(APP_STATE.retreiveLastRenderedGJ(), {
 						useBuffer: _pollAVGSettingsValues().bufferFeatsChk,
 						bufferUnits: _pollAVGSettingsValues().distanceUnits,
-						bufferAmt: APP_STATE.CONFIG_DEFAULTS.RENDERED_PLOT_BUFFER,
+						bufferAmt: DEFAULT_APP_SETTINGS.PARCELIZED_CLUSTER_PLOTS_BUFFER,
 						areaUnits: _pollAVGSettingsValues().areaUnits,
 					});
 				}
@@ -710,7 +711,7 @@ const DelegatePreloadedDOMElementsEvents = ((dom) => {
 					_RenderEngine.renderClusterOnMaps(APP_STATE.retreiveLastRenderedGJ(), {
 						useBuffer: _pollAVGSettingsValues().bufferFeatsChk,
 						bufferUnits: _pollAVGSettingsValues().distanceUnits,
-						bufferAmt: APP_STATE.CONFIG_DEFAULTS.RENDERED_PLOT_BUFFER,
+						bufferAmt: DEFAULT_APP_SETTINGS.PARCELIZED_CLUSTER_PLOTS_BUFFER,
 						areaUnits: _pollAVGSettingsValues().areaUnits,
 					});
 				}
