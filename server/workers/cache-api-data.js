@@ -36,6 +36,7 @@ function saveData(data, collectionName) {
 	});
 }
 
+
 async function getDBCollection(url, apiAccessToken) {
 
 	console.log(chalk.console2(`AXIOS getting data from [ ${url} ]`));
@@ -120,7 +121,7 @@ async function getAPIData(apiHost, resourcePaths) {
 
 
 // ASYNCHRONOUSLY DOWNLOAD DATA FROM THE GEOCLUSTER API, AND SAVE TO DISK
-// THIS ACTION IS PERFORMED WHEN THE SERVER LOADS UP INITIALLY
+// THIS ACTION IS PERFORMED ONLY **ONCE**WHEN THE SERVER LOADS UP INITIALLY
 // THIS DATA IS READ FROM DISK & PASSED FROM THE /server/data-controller TO THE /server/view-controler
 // IT IS MADE AVAILABLE AS AN OBJECT IN THE APP VIA THE /server/view-controller
 async function cacheData() {

@@ -3,6 +3,7 @@ const turf = require("@turf/turf");
 const fs = require('fs');
 const fsPromises = require('fs').promises;
 const path = require('path');
+const { default: CACHED_FILE_NAMES } = require("../constants/cached-file-names.js");
 const NGA_GEO_POL_REGIONS = require("../constants/nga-geo-pol-regions.js");
 const catchAsync = require('../utils/catch-async.js');
 const chalk = require("../utils/chalk-messages.js");
@@ -245,43 +246,27 @@ function combineObjArrays(...baseArrays) {
 };
 
 
+/** 
+ * This function retreives geoclusters that have been downloaded from the database, 
+ * prorcessed, convered to .json, and saved to disk by `server/workers/cache-api-data.js`
+ * The files are cached in `server/localdata`
+ * The exact file names correspond to the names of the collections in the database
+ */
 function retreiveClustersData() {
 
-   const cachedGeoClusterFiles = [
-      "parcelized-agcs.json",
-      // "legacy-agcs.json",
-      "processed-legacy-agcs.json",
-   ];
+   const GEOCLUSTERS_DATA = [];
 
-   const GEO_CLUSTERS_OBJS = [];
-
-   for (const geoClusterFile of cachedGeoClusterFiles) {
-      let geoClusterJSON = fs.readFileSync(path.resolve(`${__approotdir}/localdata/${geoClusterFile}`), {encoding: 'utf8'});
+   // Loop through the list of cached files and read the data, parse it and push it to the GEOCLUSTERS_DATA array
+   for (const fileName of CACHED_FILE_NAMES) {
+      let geoClusterJSON = fs.readFileSync(path.resolve(`${__approotdir}/localdata/${fileName}`), {encoding: 'utf8'});
       let geoClusterObj = JSON.parse(geoClusterJSON);
-      GEO_CLUSTERS_OBJS.push(geoClusterObj);
+      GEOCLUSTERS_DATA.push(geoClusterObj);
    };
-
-   // const parcelizedClustersJSON = fs.readFileSync(path.resolve(`${__approotdir}/localdata/parcelized-agcs.json`), {encoding: 'utf8'});
-   // const legacyClustersJSON = fs.readFileSync(path.resolve(`${__approotdir}/localdata/legacy-agcs.json`), {encoding: 'utf8'});
-   // const processedLegacyClustersJSON = fs.readFileSync(path.resolve(`${__approotdir}/localdata/processed-legacy-agcs.json`), {encoding: 'utf8'});
-
-   // let parcelizedClusters, legacyClusters, processedLegacyClusters;
-   
-   // if (parcelizedClustersJSON) {
-   //    parcelizedClusters = JSON.parse(parcelizedClustersJSON);
-   // };
-
-   // if (legacyClustersJSON) {
-   //    legacyClusters = JSON.parse(legacyClustersJSON);
-   // };
-
-   // if (processedLegacyClustersJSON) {
-   //    processedLegacyClusters = JSON.parse(processedLegacyClustersJSON);
-   // };
       
-   // const returnedClusters = combineObjArrays(parcelizedClusters, legacyClusters, processedLegacyClusters);
-   const returnedClusters = combineObjArrays(...GEO_CLUSTERS_OBJS);
+   // Combine the JSON for all the returned clusters into a single object
+   const returnedClusters = combineObjArrays(...GEOCLUSTERS_DATA);
 
+   // Create a summary of the returned clusters
    const clustersSummary = {
       totalNumClusters: _formatNumByThousand(returnedClusters.length),
       totalNumFeatures: (()=>{
@@ -296,6 +281,7 @@ function retreiveClustersData() {
       })(),
    };
          
+   // Return the combined data and the clusters summary
    return {returnedClusters, clustersSummary};
 };
 
