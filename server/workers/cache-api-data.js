@@ -134,10 +134,8 @@ async function cacheData() {
 		);
 
 		console.log({ geoClustersData });
-		console.log(geoClustersData.data)
 
 		for (const geoCluster of geoClustersData) {
-			console.log(geocluster)
 			if (geoCluster && geoCluster.data) {
 				const geoClusterJSON = await returnNormalized(geoCluster.data.collection_docs);
 				saveData(JSON.stringify(geoClusterJSON), geoCluster.data.collection_name);
