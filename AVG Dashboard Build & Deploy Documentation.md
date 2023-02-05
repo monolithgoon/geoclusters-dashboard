@@ -52,6 +52,77 @@ cd /apps
 cd /avg-dashboard
 ```
 
+## Parcelized AGCs API Response Envelope
+
+`/api/v1/parcelized-agcs/`
+
+This endpoint returns data for AGCs that were processed through the Land Parcelization API
+
+```bash
+const response = {
+
+   status: "success",
+
+   requested_at: request.requestTime,
+
+   num_parcelized_agcs: returnedAGCData.length,
+
+   // additional information related to the API response
+   data: {
+
+     // parcelized AGCs
+     parcelized_agcs: returnedAGCData,
+
+     // parcelized AGCs (repeat)
+     collection_docs: returnedAGCData,
+
+     // string representing name of the collection
+     collection_name: `parcelized-agcs`,
+
+     // number of parcelized AGC docs.
+     docs_count: returnedAGCData.length,
+   },
+};
+
+```
+
+## Parcelized AGCs Metadata API Response Envelope
+
+`/api/v1/parcelized-agcs/metadata`
+
+This endpoint returns only METADATA for AGCs that were processed through the Land Parcelization API
+
+```bash
+const response = {
+
+   status: "success",
+
+   requested_at: request.requestTime,
+
+   data: {
+
+     collection_metadata: {
+
+        // array of unique ids of the parcelized AGCs in the collection
+        ids: parcelizedAgcIds,
+
+        // integer indicating the number of parcelized AGC docs.
+        docs_count: parcelizedAgcs.length,
+
+        // string representing the name of the collection
+        collection_name: `parcelized-agcs`,
+     },
+   },
+};
+```
+
+## Processed Legacy AGCs API Response Envelope
+
+`api/v2/legacy-agcs/processed/`
+
+This endpoint returns mappable legacy AGCs that were recovered from NIRSAL'S funded AGC `.csv` files
+These processed legacy AGCs are appended with farmer biometric data.
+
 ## Constants
 
 ### Backend
@@ -103,17 +174,17 @@ cd /avg-dashboard
 
    To get a Mapbox GL JS API token, you can follow these steps:
 
-   - Go to the Mapbox [website](https://www.mapbox.com/)
-   - Create a free account or sign in if you already have one
-   - Go to the Access Tokens [page](https://account.mapbox.com/access-tokens/)
-   - Generate a new access token and give it a descriptive name
+   -  Go to the Mapbox [website](https://www.mapbox.com/)
+   -  Create a free account or sign in if you already have one
+   -  Go to the Access Tokens [page](https://account.mapbox.com/access-tokens/)
+   -  Generate a new access token and give it a descriptive name
 
    To get a Bing Maps token, you can follow these steps:
 
-   - Go to the Bing Maps Dev Center [website](https://www.bingmapsportal.com/)
-   - Create a free account or sign in if you already have one
-   - Go to the My Account [page](https://www.bingmapsportal.com/Application)
-   - Create- a new Bing Maps key and give it a descriptive name
+   -  Go to the Bing Maps Dev Center [website](https://www.bingmapsportal.com/)
+   -  Create a free account or sign in if you already have one
+   -  Go to the My Account [page](https://www.bingmapsportal.com/Application)
+   -  Create- a new Bing Maps key and give it a descriptive name
 
 ## Environment Variables
 

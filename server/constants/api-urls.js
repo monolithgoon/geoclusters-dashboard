@@ -7,7 +7,7 @@ const API_URLS = {
 		},
 		RESOURCE_PATHS: [
 			`api/v1/parcelized-agcs/`,
-			`api/v2/legacy-agcs/`,
+			// `api/v2/legacy-agcs/`,
 			`api/v2/legacy-agcs/processed/`,
 		],
 	},
