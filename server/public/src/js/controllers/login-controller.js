@@ -1,6 +1,6 @@
 import ALERT_MESSAGES from "../constants/alert-messages.js";
 import DURATION from "../constants/duration.js";
-import { showAlert } from "./alerts.js";
+import { showAlert } from "./alerts-controller.js";
 
 export const login = async (email, password) => {
 	try {

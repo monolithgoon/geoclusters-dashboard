@@ -1,9 +1,9 @@
 `use strict`
 import { AVG_BASE_MAP, CLUSTER_PLOTS_MAP, FEAT_DETAIL_MAP } from "../config/maps-config.js";
 import LEAFLET_TILE_LAYERS from "../config/leaflet-tile-layers.js"
-import { _getClusterFeatPopupMarkup, _GenerateClusterFeatMarkup } from "../avg-controllers/markup-generators.js";
-import { _ManipulateDOM, _pollAVGSettingsValues } from "../avg-controllers/ui-controller.js";
-import { _MonitorExecution } from "../controllers/fn-monitor.js";
+import { _getClusterFeatPopupMarkup, _GenerateClusterFeatMarkup } from "../utils/markup-generators.js";
+import { _ManipulateDOM, _pollAVGSettingsValues } from "./ui-controller.js";
+import { _MonitorExecution } from "../utils/fn-monitor.js";
 import { LAYER_COLORS } from "../utils/mapbox-layer-colors.js";
 import { _TurfHelpers, _getBufferedPolygon, _ProcessGeoJSON, _GeometryMath, _getUsableGeometry, _mandatoryParam, _joinWordsArray, _delayExecution } from "../utils/helpers.js";
 

@@ -25,11 +25,11 @@ import {
 import { _Arrays, _TraverseObject } from "./utils/helpers.js";
 import { _pollAVGSettingsValues, _PopulateDOM } from "./avg-controllers/ui-controller.js";
 import { APP_STATE } from "./avg-controllers/state-controller.js";
-import { _RenderEngine } from "./controllers/maps-controller.js";
+import { _RenderEngine } from "./avg-controllers/maps-controller.js";
 import { _clientSideRouter } from "./routers/router.js";
 import { GET_DOM_ELEMENTS } from "./utils/get-dom-elements.js";
 import DURATION from "./constants/duration.js";
-import { logout } from "./controllers/user-login.js";
+import { logout } from "./controllers/login-controller.js";
 import DEFAULT_APP_SETTINGS from "./constants/default-app-settings.js";
 
 const initDashboardApp = (() => {

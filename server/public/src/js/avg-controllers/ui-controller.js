@@ -6,13 +6,13 @@ import {
 	_TurfHelpers,
 } from "../utils/helpers.js";
 import { _sanitizeFeatCollCoords, _ProcessGeoJSON, _getBufferedPolygon } from "../utils/helpers.js";
-import { _RenderEngine } from "../controllers/maps-controller.js";
+import { _RenderEngine } from "./maps-controller.js";
 import { APP_STATE } from "./state-controller.js";
 import {
 	_GenerateClusterFeatMarkup,
 	_GenerateClusterMarkup,
 	_GenClusterModalMarkup,
-} from "./markup-generators.js";
+} from "../utils/markup-generators.js";
 import { _clientSideRouter, _navigateTo } from "../routers/router.js";
 import { GET_DOM_ELEMENTS } from "../utils/get-dom-elements.js";
 import DEFAULT_APP_SETTINGS from "../constants/default-app-settings.js";

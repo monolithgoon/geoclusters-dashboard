@@ -1,7 +1,7 @@
 `use strict`;
 import { GET_DOM_ELEMENTS } from "../utils/get-dom-elements.js";
 import { _ManipulateDOM } from "./ui-controller.js";
-import { _MonitorExecution } from "../controllers/fn-monitor.js";
+import { _MonitorExecution } from "../utils/fn-monitor.js";
 import { APP_STATE } from "./state-controller.js";
 import DEFAULT_APP_SETTINGS from "../constants/default-app-settings.js"
 

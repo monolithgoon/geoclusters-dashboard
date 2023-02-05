@@ -1,4 +1,4 @@
-import { _createCard, _createDiv, _joinWordsArray } from "../utils/helpers.js";
+import { _createCard, _createDiv, _joinWordsArray } from "./helpers.js";
 
 
 export const _GenerateClusterMarkup = ((classList) => {
