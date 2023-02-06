@@ -71,14 +71,21 @@ export const _ManipulateDOM = (() => {
 			}
 		},
 
+		/**
+		 * toggleInnerText is a function that switches the inner text of an element between two texts.
+		 * @param {Element} element - The HTML element whose inner text will be modified.
+		 * @param {string} text1 - The first text to switch to.
+		 * @param {string} text2 - The second text to switch to.
+		 */
 		toggleInnerText: (element, text1, text2) => {
+			// Check if the element exists
 			if (element) {
-				console.log({ element });
-				console.log(element.innerText)
-				console.log({ text1 });
-				console.log({ text2 });
-				if (element.innerText === text1) element.innerText = text2;
-				if (element.innerText === text2) element.innerText = text1;
+				// Check if the element's inner text is equal to text1
+				if (element.innerText === text1) {
+					element.innerText = text2;
+				} else {
+					element.innerText = text1;
+				}
 			}
 		},
 
@@ -95,11 +102,18 @@ export const _ManipulateDOM = (() => {
 			}
 		},
 
+		/**
+		 * togleBlockElement is a function that toggles the display style of an HTML element between "block" and "none".
+		 * @param {Element} element - The HTML element whose display style will be modified.
+		 */
 		togleBlockElement: (element) => {
+			// Check if the display style of the element is not "block"
 			if (element.style.display !== `block`) {
 				element.style.display = `block`;
+				// Check if the display style of the element is "block"
 			} else if (element.style.display === `block`) {
 				element.style.display = `none`;
+				// Check if the display style of the element is "none"
 			} else if (element.style.display === `none`) {
 				element.style.display = `block`;
 			}
@@ -117,33 +131,56 @@ export const _ManipulateDOM = (() => {
 			element.style.display = `none`;
 		},
 
-		// RETREIVE DATA (FROM BACKEND) VIA HTML DATASET ATTRIBUTE
+		/**
+		 * getDataset is a function that retrieves data from an HTML element's dataset attribute.
+		 * This data came originally from the backend, and was passed to the frontend via PUG 
+		 * @param {Element} div - The HTML element whose dataset attribute will be accessed.
+		 * @return {Object|null} Returns the data stored in the dataset attribute as an object, or null if the dataset attribute is not found.
+		 * 
+		 The shape of the div.dataset object is a DOMStringMap.
+		 A DOMStringMap is an object that maps data attributes (HTML data-* attributes) on an HTML element to properties. 
+		 It is a JavaScript object that provides access to the data attributes on an element in a convenient, property-like manner.
+		 In other words, div.dataset returns an object that contains key-value pairs, where each key represents the name of a data attribute (without the "data-" prefix), and the corresponding value is the value of that data attribute.
+			
+		 For example, if the HTML element has a data attribute like this:
+
+		 <div id="myDiv" data-product-id="123456"></div>
+
+		 Then `div.dataset` would return an object like this:
+					{
+						productId: "123456"
+					}
+		*/
+
 		getDataset: (div) => {
 			try {
-				const divDataset = div.dataset; // this returns: DOMStringMap => {[dataAttrName], [data]}
+				// Get the dataset attribute from the div element
+				const divDataset = div.dataset;
 
+				// If the dataset attribute is not found, return null
 				if (!divDataset) return null;
 
-				// MTD. 1
-				// TODO > NOT TESTED
+				// Method 1 (NOT USED): Convert the DOMStringMap to an object
 				const DOMStringMapToObject = function (dataset) {
+					// Use reduce to convert the DOMStringMap to an object
 					return Object.keys(dataset).reduce((object, key) => {
+						// Add each key-value pair to the object
 						object[key] = dataset[key];
 						return object;
 					}, {});
 				};
 
-				// MTD. 2
+				// Method 2: Loop through the properties of the DOMStringMap
 				for (const d in divDataset) {
-					// console.log(d, divDataset[d])
-
+					// Get the data attribute name and its value
 					const dataAttrName = d;
-
 					const dataStream = divDataset[dataAttrName];
 
+					// Return the value of the first data attribute found
 					return dataStream;
 				}
 			} catch (getDataStreamErr) {
+				// Log an error if an exception occurs
 				console.error(`getDataStreamErr: ${getDataStreamErr}`);
 			}
 		},
@@ -490,7 +527,6 @@ export const _PopulateDOM = ((dom) => {
 	return {
 		// open modal for clicked cluster
 		clusterDetailsModal: (modalDiv, featureCollection) => {
-
 			modalDiv.innerHTML = ``;
 
 			const clusterProps = featureCollection.properties;
@@ -519,7 +555,6 @@ export const _PopulateDOM = ((dom) => {
 
 					// CREATE NEW DIVS FOR EACH GEOCLUSTER
 					dbCollection.map((geoClusterGeoJSON) => {
-						
 						// GET THE CLUSTER RESULT DIV
 						const clusterResultDiv =
 							_GenerateClusterMarkup.getClusterResultDiv(geoClusterGeoJSON);
@@ -554,7 +589,7 @@ export const _PopulateDOM = ((dom) => {
 					const clusterFeatures = clusterFeatColl.features;
 
 					const listingWrapper = dom.featsListingDiv;
-					
+
 					// remove prev. rendered feats.
 					listingWrapper.innerHTML = ``;
 
@@ -591,7 +626,6 @@ export const _PopulateDOM = ((dom) => {
 })(GET_DOM_ELEMENTS());
 
 const DelegatePreloadedDOMElementsEvents = ((dom) => {
-	
 	// SANDBOX
 	$("#test_feat_card").on("click", function (evt) {
 		const cardDrawer = _ManipulateDOM.getSiblingElements(evt.currentTarget)[0];
@@ -732,7 +766,7 @@ const DelegatePreloadedDOMElementsEvents = ((dom) => {
 	if (dom.paneResizeBtns) {
 		dom.paneResizeBtns.forEach((btn) =>
 			btn.addEventListener(`click`, () => {
-				console.log("button clicked")
+				console.log("button clicked");
 				_ManipulateDOM.toggleInnerText(btn, "Expand", "Collapse");
 			})
 		);
