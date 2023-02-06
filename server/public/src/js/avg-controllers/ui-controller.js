@@ -71,11 +71,14 @@ export const _ManipulateDOM = (() => {
 			}
 		},
 
-		toggleInnerHTML: (element, text1, text2) => {
+		toggleInnerText: (element, text1, text2) => {
 			if (element) {
 				console.log({ element });
-				if (element.innerHTML === text1) element.innerHTML = text2;
-				if (element.innerHTML === text2) element.innerHTML = text1;
+				console.log(element.innerText)
+				console.log({ text1 });
+				console.log({ text2 });
+				if (element.innerText === text1) element.innerText = text2;
+				if (element.innerText === text2) element.innerText = text1;
 			}
 		},
 
@@ -487,6 +490,7 @@ export const _PopulateDOM = ((dom) => {
 	return {
 		// open modal for clicked cluster
 		clusterDetailsModal: (modalDiv, featureCollection) => {
+
 			modalDiv.innerHTML = ``;
 
 			const clusterProps = featureCollection.properties;
@@ -549,8 +553,9 @@ export const _PopulateDOM = ((dom) => {
 					// get the features
 					const clusterFeatures = clusterFeatColl.features;
 
-					// remove prev. rendered feats.
 					const listingWrapper = dom.featsListingDiv;
+					
+					// remove prev. rendered feats.
 					listingWrapper.innerHTML = ``;
 
 					// 2.
@@ -586,6 +591,7 @@ export const _PopulateDOM = ((dom) => {
 })(GET_DOM_ELEMENTS());
 
 const DelegatePreloadedDOMElementsEvents = ((dom) => {
+	
 	// SANDBOX
 	$("#test_feat_card").on("click", function (evt) {
 		const cardDrawer = _ManipulateDOM.getSiblingElements(evt.currentTarget)[0];
@@ -653,6 +659,7 @@ const DelegatePreloadedDOMElementsEvents = ((dom) => {
 		});
 	}
 
+	// SHOW SCROLL TO TOP BTN. ON GEOCLUSTER RECORDS LIST
 	if (dom.clusterResultsBody) {
 		const resultsBody = dom.clusterResultsBody;
 		const filterBtn = dom.resultsFilterBtn;
@@ -674,6 +681,7 @@ const DelegatePreloadedDOMElementsEvents = ((dom) => {
 		});
 	}
 
+	// SCROLL TO TOP ON CLICK
 	if (dom.resultsScrollTopBtn) {
 		dom.resultsScrollTopBtn.addEventListener("click", () => {
 			const resultsBody = dom.clusterResultsBody;
@@ -719,11 +727,13 @@ const DelegatePreloadedDOMElementsEvents = ((dom) => {
 		});
 	}
 
+	// CHANGE INNER TEXT OF PANE RESIZE BTNS.
 	console.log(dom.paneResizeBtns);
 	if (dom.paneResizeBtns) {
 		dom.paneResizeBtns.forEach((btn) =>
 			btn.addEventListener(`click`, () => {
-				_ManipulateDOM.toggleInnerHTML(btn, "Expand", "Collapse");
+				console.log("button clicked")
+				_ManipulateDOM.toggleInnerText(btn, "Expand", "Collapse");
 			})
 		);
 	}
