@@ -105,7 +105,6 @@ block landing-page
 
 
       //- FN. FORCES PAGE INTO FULL SCREEN MODE
-
       function openFullScreen() {
         if (docElem.requestFullscreen) {
           docElem.requestFullscreen()
@@ -197,7 +196,7 @@ block landing-page
 
 
       //- 1. CLICK ANYWHERE ON PAGE FOR FULL SCREEN
-      //- document.addEventListener('click', openFullScreen);
+      document.addEventListener('click', openFullScreen);
 
 
       //- 2. USER ENTERS EMAIL ADDRESS
@@ -220,7 +219,7 @@ block landing-page
 
         loginPasswordInput.addEventListener('keyup', e => {
 
-          //- openFullScreen();
+          openFullScreen();
 
           const isValid = loginPasswordInput.checkValidity();
 
