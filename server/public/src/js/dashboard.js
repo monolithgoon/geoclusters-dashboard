@@ -300,7 +300,7 @@ const initDashboardApp = (() => {
 			GET_DOM_ELEMENTS().logoutBtn.addEventListener("click", logout);
 
 			//- Click anywhere on page fo fullscreen
-      document.addEventListener('click', _openFullScreen);
+      // document.addEventListener('click', _openFullScreen);
 		}
 	};
 })();
