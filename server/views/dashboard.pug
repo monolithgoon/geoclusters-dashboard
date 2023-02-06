@@ -95,7 +95,9 @@ block dashboard
                 .pane-controls
                   .pane-info-text.flex-1.flex-row-center
                     span#results_status(role='status')
-                    span#results_count.results-count= `${geoClusters.length} AGCs`
+                    span#results_count.results-count= `${geoClusters.length} Clusters`
+                    span —
+                    span#features_count= `${totalNumFeatures} Farmers`
 
                   //- button.btn.btn-outline-primary.btn-sm.pane-resize-btn(title='Show or Hide Sidebar' data-bs-toggle="collapse" data-bs-target="#left_pane_content" aria-label='Show or hide sidebar' aria-haspopup='true' tabindex='0') Resize
 
@@ -105,7 +107,7 @@ block dashboard
                       //- label(for='search_input')
                       //-   span
                       //-     img(src='https://img.icons8.com/android/24/000000/search.png')
-                      input(type='search' placeholder='Search AGCs, locations or farmers' aria-label='search input' id="search_input")
+                      input(type='search' placeholder='Search clusters or locations' aria-label='search input' id="search_input")
                       .search-action
                         //- button.btn.btn-outline(type='button' title='Clear Search' aria-label='Clear search' aria-haspopup='true' tabindex='0') X
                         //- button.btn.btn-outline-primary.btn-sm(type='button' title='Search Go' aria-label='Search go' aria-haspopup='true' tabindex='0')
@@ -720,7 +722,7 @@ block dashboard
               //- RIGHT PANE / SIDEBAR -> GEOCLUSTER FEATURES
               section.right-pane-container
                 .pane-controls
-                  .pane-info-text.line-height-pt6 AGC Insights &amp; Details
+                  .pane-info-text.line-height-pt6 Overview &amp; Cluster Plots
                   button.btn.btn-outline-primary.btn-sm.pane-resize-btn(type='button' data-bs-toggle='collapse' data-bs-target='#right_pane_content' aria-expanded='false' aria-controls='right_pane_content') COLLAPSE
 
                 #right_pane_content.right-pane-content.show
@@ -731,10 +733,10 @@ block dashboard
                     ul#myTab.nav.nav-tabs.nav-fill(role='tablist' style='padding: 3px 3px 0 3px')
                       //- GEOCLUSTERS INSIGHTS PANE BUTTON
                       li.nav-item(role='presentation')
-                        button#geo_cluster_insights_tab_btn.nav-link.ripplelink(data-bs-toggle='tab' data-bs-target='#geo_cluster_insights_tab_pane' type='button' role='tab' aria-controls='geo_cluster_insights_tab_pane' aria-selected='false') AGC Insights
+                        button#geo_cluster_insights_tab_btn.nav-link.ripplelink(data-bs-toggle='tab' data-bs-target='#geo_cluster_insights_tab_pane' type='button' role='tab' aria-controls='geo_cluster_insights_tab_pane' aria-selected='false') Clusters Overview
                       //- GEOCLUSTER FEATURES MINIMAP AND DETAILS BUTTON -> DEFAULT ACTIVE
                       li.nav-item(role='presentation')
-                        button#geo_cluster_details_tab_btn.nav-link.active.ripplelink(data-bs-toggle='tab' data-bs-target='#geo_cluster_details_tab_pane' type='button' role='tab' aria-controls='geo_cluster_details_tab_pane' aria-selected='true') AGC Details
+                        button#geo_cluster_details_tab_btn.nav-link.active.ripplelink(data-bs-toggle='tab' data-bs-target='#geo_cluster_details_tab_pane' type='button' role='tab' aria-controls='geo_cluster_details_tab_pane' aria-selected='true') Cluster Plots
 
                     // TAB PANES
                     .tab-content(style='padding: 3px; padding-bottom: 0;')

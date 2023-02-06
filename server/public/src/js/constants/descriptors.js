@@ -1,0 +1,7 @@
+`use strict`
+const DESCRIPTORS = {
+  GEOCLUSTER_DESCRIPTION: `agc`,
+  GEOCLUSTER_FEATURE_DESCRIPTION: `farmer`
+}
+
+export default DESCRIPTORS

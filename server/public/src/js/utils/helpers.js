@@ -167,6 +167,21 @@ export const _capitalizePropValues = (obj) => {
 };
 
 
+// Fn. akes a string and a number, and returns the pluralized string if the number is greater than 1:
+export function _pluralizeString(string, num) {
+  if (num > 1) {
+    return num + " " + string + "s";
+  }
+  return num + " " + string;
+}
+
+
+// capitalize the first letter of a string
+export function _capitalizeFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+
 // get element states
 export function _getCheckedRadio(radioGroup) {
 

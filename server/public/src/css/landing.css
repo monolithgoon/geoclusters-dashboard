@@ -181,8 +181,7 @@ input, button,
    padding: .35rem .6rem;
    border: 1px solid #0d6efd;
    background-color: #0d6efd;
-   border: 1px solid #0d6efdde;
-   border: none;
+   border: 1px solid var(--btn-fill-rest);
    background-color: var(--btn-fill-rest);
    color: white;
    cursor: pointer;

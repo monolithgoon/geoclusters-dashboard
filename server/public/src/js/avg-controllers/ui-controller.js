@@ -461,8 +461,8 @@ const DOMSequence = ((domElements) => {
 			const clusterGeoJSON = JSON.parse(_ManipulateDOM.getDataset(resultContainerDiv));
 
 			// TODO > VALIDATE GJ. HERE
-			if (_isValidGeoJSON(clusterGeoJSON)) {
-			// if (clusterGeoJSON) {
+			// if (_isValidGeoJSON(clusterGeoJSON)) {
+			if (clusterGeoJSON) {
 
 				// 1. populate the cluster detail modal @ top of left sidebar
 				_PopulateDOM.clusterDetailsModal(domElements.resultModalDiv, clusterGeoJSON);

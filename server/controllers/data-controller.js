@@ -295,9 +295,11 @@ exports.getClustersSummary = catchAsync(async(req, res, next) => {
 
 exports.getCachedGeoClustersData = catchAsync(async(req, res, next) => {
    
-   const returnedClusters = retreiveClustersData().returnedClusters;
+   // const returnedClusters = retreiveClustersData().returnedClusters;
+   const { returnedClusters, clustersSummary } = retreiveClustersData();
       
    req.app.locals.returnedClusters = returnedClusters;
+   req.app.locals.clustersSummary = clustersSummary;
 
    next();
    

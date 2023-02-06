@@ -28,6 +28,7 @@ exports.renderAVGDashboard = catchAsync(async(req, res, next) => {
          developer: APP_CONFIG.appDeveloper,
          user: APP_CONFIG.appOwner,
          geoClusters: req.app.locals.returnedClusters,
+         totalNumFeatures: req.app.locals.clustersSummary.totalNumFeatures,
       });
 
       next();

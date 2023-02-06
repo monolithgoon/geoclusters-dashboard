@@ -288,9 +288,9 @@ line-height: 15px;
 	}
 	
 	.btn.pane-resize-btn {
-		font-size: 0.65rem !important;
+		font-size: 0.7rem !important;
 		letter-spacing: -0.4px;
-		width: 65px; /* sets a fixed width of 100px */
+		width: 70px; /* sets a fixed width of 100px */
 		overflow: hidden; /* hides any overflowing text */
 		text-overflow: ellipsis; /* adds an ellipsis to indicate truncated text */
 		white-space: nowrap; /* prevents text from wrapping to a new line */

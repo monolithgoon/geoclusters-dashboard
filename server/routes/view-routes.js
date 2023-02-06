@@ -13,12 +13,12 @@ router.get("/",
 router.get("/landing",
 	dataController.getClustersSummary,
 	viewsController.renderLandingPage
-);
-
-// affixes the currently logged-in user to res.locals
-router.use(authController.isLoggedIn);
-
-router.route("/dashboard")
+	);
+	
+	// affixes the currently logged-in user to res.locals
+	router.use(authController.isLoggedIn);
+	
+	router.route("/dashboard")
 	.get(
 		authController.protectRoute,
 		authController.restrictTo(`manager`, `admin`),
