@@ -31,6 +31,7 @@ import { GET_DOM_ELEMENTS } from "./utils/get-dom-elements.js";
 import DURATION from "./constants/duration.js";
 import { logout } from "./controllers/login-controller.js";
 import DEFAULT_APP_SETTINGS from "./constants/default-app-settings.js";
+import _openFullScreen from "./utils/open-full-screen.js";
 
 const initDashboardApp = (() => {
 
@@ -297,10 +298,14 @@ const initDashboardApp = (() => {
 
 			// logout btn. listener
 			GET_DOM_ELEMENTS().logoutBtn.addEventListener("click", logout);
+
+			//- Click anywhere on page fo fullscreen
+      document.addEventListener('click', _openFullScreen);
 		}
 	};
 })();
 
+// RUN DASHBOARD APP STARTUP FUNCTIONS
 (() => {
 	window.addEventListener(`DOMContentLoaded`, async (windowObj) => {
 
@@ -319,6 +324,7 @@ const initDashboardApp = (() => {
 	});
 })();
 
+// REMOVE > DEPRECATED
 (() => {
 	window.addEventListener(`DOMContentLoaded`, async (windowObj) => {
 
