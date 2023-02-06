@@ -60,8 +60,30 @@ header.header-wrapper {
    border: 1px solid orange;
 } */
 
+#topbar_user_drop .account-user-name {
+   font-size: 0.85rem;
+   letter-spacing: -0.4px
+}
+
 #topbar_user_drop span {
    padding: 0 2.5px;
+}
+
+
+#navbarNav ul.dropdown-menu li {
+/* li.nav-item.user-nav-item ul.dropdown-menu > li { */
+   padding: 0;
+}
+
+li.nav-item.user-nav-item ul.dropdown-menu li > a.dropdown-item {
+   padding-top: 5px;
+   padding-bottom: 5px;
+}
+
+li.nav-item.user-nav-item ul.dropdown-menu li > a.dropdown-item > span {
+   font-size: 0.75rem;
+   font-weight: bold;
+   letter-spacing: -0.3px;
 }
 
 #topbar_user_drop > span:last-of-type {

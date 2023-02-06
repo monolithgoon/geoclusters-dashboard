@@ -89,6 +89,7 @@ body, html {
 	width: 100%;
 	height: 100%;
 	font-family: "Shadows Into Light Two";
+	font-family: "IBM Plex Sans", sans-serif;
 	font-size: 1rem;
 	-webkit-box-sizing:border-box;
 	-moz-box-sizing:border-box;
@@ -251,7 +252,11 @@ line-height: 15px;
 		/* box-shadow: 0 1px 2px rgb(0 0 0 / 15%); */
 		border-bottom: 1px solid var(--grey-line-50);
 	}
+
+
+	/* SIDEBAR PANE CONTROLS */
 			
+	
 	.pane-controls {
 		padding-left: 10px;
 		display: flex;
@@ -292,12 +297,15 @@ line-height: 15px;
 		justify-content: center;
 	}
 
+
+	/* DASHBOARD SETTINGS SIDEBAR */
+
+
 	.avg-settings-sidebar-container {
 		font-size: var(--header-text-font-size);
 		position: absolute;
 		top: 0px;
 		right: 0px;
-
 	}
 	
 	#avg_settings_sidebar {
@@ -337,6 +345,13 @@ line-height: 15px;
 		background: #dfe4ea;
 		overflow-y: scroll;
 	}
+	
+	.settings-sidebar-header, 
+	.settings-sidebar-body {
+		font-size: 0.8rem;
+		letter-spacing: -0.4px;
+		font-weight: bold;
+		}
 
 	.settings-sidebar-body .form-check input {
 		font-size: 0.8rem;

@@ -342,12 +342,12 @@ block dashboard
                   .filter-controls-wrapper
                     ul.list-unstyled.components
                       li
-                        a.dropdown-toggle.ripplelink(href='#farm_prog_submenu' data-toggle='collapse' aria-expanded='false') &#xF33D; Intervention Programmes
+                        a.dropdown-toggle.ripplelink(href='#farm_prog_submenu' data-toggle='collapse' aria-expanded='false') &#xF33D; Intervention Programs
                         ul#farm_prog_submenu.list-unstyled.filters-submenu
                           li
                             a.dropdown-item.ripplelink(href='#')
                               .form-check.form-switch
-                                label.form-check-label(for='all_prog_chk') All Programmes
+                                label.form-check-label(for='all_prog_chk') All Programs
                                 input#all_prog_chk.form-check-input.results-filter-checkbox.master-checkbox(type='checkbox' checked='' disabled aria-disabled='true')
                           li
                             hr.dropdown-divider
@@ -602,12 +602,14 @@ block dashboard
                         <div class="filter-group">Wards</div>
                         <div class="filter-group">POI Overlays</div>
 
-              //- MAP APP HEADER
+              //- AVG MAP APP HEADER WRAPPER
               header.header-wrapper
 
+                //- POP-OUT ACTIVITY INDICATOR
                 .app-activity-indicator-wrapper.blur
                   .app-activity-indicator
 
+                //- AVG MAP APP HEADER
                 .navbar__container.flex-1
 
                   .hide-on-small.flex-row-center-btw
@@ -624,16 +626,23 @@ block dashboard
                       span.navbar-toggler-icon
 
                     #navbarNav.collapse.navbar-collapse
+
                       ul.navbar-nav
+
+                        //- LANGUAGE SELECTOR 
                         //- li.nav-item.active
-                        //- //-   a.nav-link.ripplelink(href='#') Language 
+                        //-   a.nav-link.ripplelink(href='#') Language 
                         //- button#avg_settings_sidebar_toggle_btn.nav-link.btn.btn-sm.text-sidebar(type='button' title='AVG Map Language') en
+
+                        //- DASHBOARD SETTINGS BUTTON
                         li.nav-item
                           button#avg_settings_sidebar_toggle_btn.nav-link.btn.btn-sm.text-sidebar.pos-relative(type='button' title='AVG Map Settings')
                             img(src="https://img.icons8.com/wired/24/000000/settings.png")
-                            //- img(src="https://img.icons8.com/material-outlined/24/000000/sorting-options.png")
+                            //- img(src="https://img.icons8.com/windows/28/000000/horizontal-settings-mixer--v1.png")
                             //- span.notification-badge.red-badge.tiny-badge
                             //- span
+
+                        //- LOGGED-IN USER DROP DOWN
                         if loggedInUser
                           li.nav-item.user-nav-item
                             .dropdown
@@ -653,6 +662,7 @@ block dashboard
                                     i.mdi.mdi-logout.me-1
                                     span Logout
 
+                //- REMOVE > DEPRECATED > UNUSED
                 //- ul.list-unstyled.topbar-menu.mb-0(role="navigation")
 
                 //-   li.dropdown.notification-list
@@ -753,9 +763,10 @@ block dashboard
                             span.carousel-control-next-icon(aria-hidden='true')
                             span.visually-hidden Next
 
-                      //- GEOCLUSTER FEATURES MINIMAP AND DETAILS PANE -> DEFAULT ACTIVE
+                      //- GEOCLUSTER FEATURES / SUB-PLOTS MINIMAP AND DETAILS PANE -> DEFAULT ACTIVE
                       #geo_cluster_details_tab_pane.geo-cluster-details-tab-pane.tab-pane.active(role='tabpanel' aria-labelledby='geo_cluster_details_tab_btn')
 
+                        //- GEOCLUSTER FEATURES / SUB-PLOTS MAP
                         #parcelization_map_container
                           .map-overlay
                             a(role='button' href='https://agcfarmlands.herokuapp.com/private/parcelized-agc/?AGCBEN000005' target='_blank' rel='noopener noreferrer')
@@ -763,6 +774,7 @@ block dashboard
                                 //- img(src='https://img.icons8.com/material-sharp/18/000000/external-link.png')
                                 img(src='https://img.icons8.com/small/18/000000/external-link.png')
 
+                        //- GEOCLUSTER SUMMARY
                         .cluster-summary.flex-col-center
                           .wrapper.flex-1
                             div.pad-tb5p
@@ -781,6 +793,7 @@ block dashboard
                               span UNUSED LAND
                               span#cluster_unused_area -
 
+                        //- GEOCLUSTER FEATURES LIST
                         #cluster_features_listing.cluster-features-listing
 
                           .cluster-features-listing-header
@@ -826,7 +839,7 @@ block dashboard
                                   .card-text-wrapper
                                     .card-text-top
                                       .main-card-text
-                                        span Bello Jubril Kasim
+                                        span Bello Jubril Jubrin
                                         span 4.40435&deg;E 12.034462&deg;N
                                       .card-pills
                                         span.flex-row-center Plot 20
@@ -946,10 +959,11 @@ block dashboard
                     .modal-body
                       #feature_detail_map_container
 
+            //- DASHBOARD SETTINGS POP-OUT SIDEBAR
             .avg-settings-sidebar-container
               #avg_settings_sidebar.avg-settings-sidebar-content
                 .settings-sidebar-header
-                  span AVG Settings
+                  span Dashboard Settings
                   span
                     button#settings_sidebar_close_btn.btn-close(type="button" aria-label="Close")
                 .settings-sidebar-body
@@ -965,15 +979,16 @@ block dashboard
                     br
                   fieldset
                     legend Base Map Tile Provider
-                    .form-check.form-check-inline
-                      label.form-check-label(for='inlineRadio1') OSM
-                      input#inlineRadio1.form-check-input.base-map-tile-radio(type='radio' name='baseMapTileRadio' value='osm' checked)
-                    .form-check.form-check-inline
-                      label.form-check-label(for='inlineRadio2') Google
-                      input#inlineRadio2.form-check-input.base-map-tile-radio(type='radio' name='baseMapTileRadio' value='google')
-                    .form-check.form-check-inline
-                      label.form-check-label(for='inlineRadio3') Bing
-                      input#inlineRadio3.form-check-input.base-map-tile-radio(type='radio' name='baseMapTileRadio' value='bing')
+                    .form-input-group
+                      .form-check.form-check-inline
+                        label.form-check-label(for='inlineRadio1') OSM
+                        input#inlineRadio1.form-check-input.base-map-tile-radio(type='radio' name='baseMapTileRadio' value='osm' checked)
+                      .form-check.form-check-inline
+                        label.form-check-label(for='inlineRadio2') Google
+                        input#inlineRadio2.form-check-input.base-map-tile-radio(type='radio' name='baseMapTileRadio' value='google')
+                      .form-check.form-check-inline
+                        label.form-check-label(for='inlineRadio3') Bing
+                        input#inlineRadio3.form-check-input.base-map-tile-radio(type='radio' name='baseMapTileRadio' value='bing')
                   br
                   fieldset
                     legend Cluster Plots Map Tile Styles
