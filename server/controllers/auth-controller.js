@@ -38,7 +38,7 @@ const createSendToken = (currentUser, statusCode, response) => {
 	};
 
 	// SET COOKIE 'secure' OPTION to 'true' ONLY IN PROD. MODE TO ENSURE IT IS SENT ONLY VIA ENCRYPTED CONN.
-	if (process.env.NODE_ENV === `production`) cookieOptions.secure = true;
+	// if (process.env.NODE_ENV === `production`) cookieOptions.secure = true;
 
 	// ATTACH A COOKIE TO THE RES. OBJ.
 	response.cookie(`jwtcookie`, jWebToken, cookieOptions);
