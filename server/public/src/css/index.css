@@ -40,6 +40,7 @@
 	--btn-fill-rest: #0078D4;
 	--btn-fill-hover: #006CBE;
 	--btn-fill-active: #1683D8;
+	--btn-fill-active: #0d6efd;
 
 	/* FONT SIZES */
 	--pt3r-font: 0.3rem;
@@ -56,6 +57,7 @@
 	--cluster-feature-card-header-text: 0.75rem;
 	/* --cluster-feature-card-detail-text: 0.54rem; */
 	--cluster-feature-card-detail-text: 0.6rem;
+	--sidebar-nav-tab-font-size: 0.65rem;
 
 	/* Z-INDEXES */
 	--z-idx-2: 500;
@@ -255,8 +257,12 @@ line-height: 15px;
 
 
 	/* SIDEBAR PANE CONTROLS */
+
+
+	.pane-info-text {
+		font-weight: bold
+	}
 			
-	
 	.pane-controls {
 		padding-left: 10px;
 		display: flex;
@@ -267,12 +273,13 @@ line-height: 15px;
 		font-size: var(--pane-controls-font-size);
 		cursor: pointer;
 		height: min-content;
+		height: 28px;
 		
 		/* opacity: 0.7; */
 		background-color: whitesmoke;
 
 		/* REMOVE */
-		border-bottom: 1px dotted grey;
+		/* border-bottom: 1px dotted grey; */
 	}
 
 	.pane-controls:hover {
@@ -281,12 +288,18 @@ line-height: 15px;
 	}
 	
 	.btn.pane-resize-btn {
-		font-size: 0.6rem !important;
-		letter-spacing: -0.5px;
-		width: 60px; /* sets a fixed width of 100px */
+		font-size: 0.65rem !important;
+		letter-spacing: -0.4px;
+		width: 65px; /* sets a fixed width of 100px */
 		overflow: hidden; /* hides any overflowing text */
 		text-overflow: ellipsis; /* adds an ellipsis to indicate truncated text */
 		white-space: nowrap; /* prevents text from wrapping to a new line */
+		height: 100%;
+		color: white;
+		background-color: 0d6efdde;
+		background-color: var(--btn-fill-rest);
+		border: none;
+		font-weight: 500;
 	}
 
 	/* FIXME */

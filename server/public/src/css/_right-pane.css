@@ -52,6 +52,9 @@ section.right-pane-container {
 
 .right-pane-content-body button.nav-link {
    background-color: #0000000D;
+   height: 25px;
+   font-size: var(--sidebar-nav-tab-font-size);
+   font-weight: bold;
 }
 
 .tab-content .tab-pane {

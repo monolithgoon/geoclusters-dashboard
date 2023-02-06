@@ -1838,7 +1838,7 @@ export const _RenderEngine = (function(avgBaseMap, clusterFeatsMap) {
             console.time("renderClusterPlots")
             
             // REMOVE
-            // render cluster plots outlines on the plots map
+            // render cluster plots outlines on the cluster plots mini-map
             // MapboxMaps.drawFeatFeatColl(gjFeatColl, {map: clusterFeatsMap});
 
             // render feats. on base map            

@@ -56,7 +56,7 @@ const TraverseObject = (() => {
 
 
 // WEAK GEOJSON VALIDATION FUNCTIONS
-const CheckGeoJSON = (()=>{
+const TurfGeoJSONCheck = (()=>{
 
 	return {
 
@@ -142,12 +142,12 @@ exports._GetClusterProps = (clusterFeatureCollection = _mandatoryParam()) => {
 	try {
 		
 		// FIXME > REMOVE TO OUTSIDE CONTEXT
-		if (!CheckGeoJSON.isValidFeatColl(clusterFeatureCollection)) {
+		if (!TurfGeoJSONCheck.isValidFeatColl(clusterFeatureCollection)) {
 			throw new Error(`The supplied GeoJSON is not a valid FeatureCollection`);
 		};
       
 		// FIXME > REMOVE TO OUTSIDE CONTEXT
-		if (!CheckGeoJSON.hasItirableFeats(clusterFeatureCollection.features)) {
+		if (!TurfGeoJSONCheck.hasItirableFeats(clusterFeatureCollection.features)) {
 			throw new Error(`The supplied FeatureCollection does not have itirable Features`);
 		};
       

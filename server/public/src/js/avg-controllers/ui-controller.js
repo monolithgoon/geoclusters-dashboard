@@ -16,6 +16,7 @@ import {
 import { _clientSideRouter, _navigateTo } from "../routers/router.js";
 import { GET_DOM_ELEMENTS } from "../utils/get-dom-elements.js";
 import DEFAULT_APP_SETTINGS from "../constants/default-app-settings.js";
+import _isValidGeoJSON from "../utils/validate-geojson.js";
 
 export const _ManipulateDOM = (() => {
 	return {
@@ -366,6 +367,7 @@ export const _pollAVGSettingsValues = () => {
 		console.error(`pollAppSettingsErr: ${pollAppSettingsErr.message}`);
 	}
 };
+
 export const _PollAppSettings = ((dom) => {
 	// settings 'keys'
 	const baseMapKey = _getCheckedRadio(dom.baseMapRadios).radioValue;
@@ -394,8 +396,16 @@ export const _PollAppSettings = ((dom) => {
 
 // FUNCTIONS THAT COORDINATE WHAT HAPPENS WHEN DOM ELEMENTS IN THE SIDEBARS ARE CLICKED
 const DOMSequence = ((domElements) => {
-	// CLUSTER TITLE MAIN PARENT SEQ.
-	function clickedResultContainerSeq(resultItemDiv, otherResultItems) {
+
+	/**
+		This function defines the behavior when a geocluster result container div is clicked.
+		It performs the following actions:
+		Scrolls the result item div into view with a smooth animation
+		Removes the "is-active" class from other result items
+		Adds or removes the "is-active" class from the clicked result item div depending on its current class list
+	*/
+	function clickedResultContainerBehavior(resultItemDiv, otherResultItems) {
+
 		// scroll the result into view
 		resultItemDiv.scrollIntoView({
 			behavior: `smooth`,
@@ -415,7 +425,21 @@ const DOMSequence = ((domElements) => {
 	}
 
 	return {
+
+	/**
+		* clusterTitleClickSeq is a function that gets called when a cluster title is clicked on.
+		* 
+		* It performs the following actions:
+		* 1. Populate the cluster details modal with the cluster's GeoJSON data
+		* 2. Renders the cluster on the maps with the specified options: baseMapZoomLvl, bufferFeatsChk, distanceUnits, bufferAmt, areaUnits
+		* 3. Saves the rendered GeoJSON to the DATA_STORE in APP_STATE
+		* 4. Calls the clickedResultContainerBehavior function, passing in the main parent container and its sibling elements
+		* 
+		* @param {Object} evtObj - The event object from the click event on the cluster title
+		* 
+		*/
 		clusterTitleClickSeq: (evtObj) => {
+
 			evtObj.preventDefault();
 
 			// REMOVE
@@ -430,25 +454,29 @@ const DOMSequence = ((domElements) => {
 			// get the siblings of the main parent container
 			const adjacentResultDivs = _ManipulateDOM.getSiblingElements(resultContainerDiv);
 
-			// get the geojson for that result
+			// add effects to the adjacent divs
+			clickedResultContainerBehavior(resultContainerDiv, adjacentResultDivs);
+
+			// get the geojson for that cluster title
 			const clusterGeoJSON = JSON.parse(_ManipulateDOM.getDataset(resultContainerDiv));
 
 			// TODO > VALIDATE GJ. HERE
-			if (clusterGeoJSON) {
-				// 1.
+			if (_isValidGeoJSON(clusterGeoJSON)) {
+			// if (clusterGeoJSON) {
+
+				// 1. populate the cluster detail modal @ top of left sidebar
 				_PopulateDOM.clusterDetailsModal(domElements.resultModalDiv, clusterGeoJSON);
 
-				// 1a. switch focus of panel's tabs
+				// 2. switch focus of right sidebar's tabs
 				_ManipulateDOM.removeClass(domElements.clusterInsightsTabBtn, "active");
 				_ManipulateDOM.removeClass(domElements.clusterInsightsTabPane, "active");
 				_ManipulateDOM.addClass(domElements.clusterDetailsTabBtn, "active");
 				_ManipulateDOM.addClass(domElements.clusterDetailsTabPane, "active");
 
-				// 1b.
-				// render cluster feature cards.
+				// 3. render cluster feature cards.
 				_PopulateDOM.clusterFeatsSidebar(clusterGeoJSON);
 
-				// 2.
+				// 4. render it on both basemap and cluster plots map
 				_RenderEngine.renderClusterOnMaps(clusterGeoJSON, {
 					baseMapZoomLvl: DEFAULT_APP_SETTINGS.LEAFLET_ADMIN_LEVEL_3_ZOOM,
 					useBuffer: _pollAVGSettingsValues().bufferFeatsChk,
@@ -457,11 +485,11 @@ const DOMSequence = ((domElements) => {
 					areaUnits: _pollAVGSettingsValues().areaUnits,
 				});
 
-				// 2b.
+				// 5. remember the geojson of the currently clicked cluster
 				APP_STATE.saveRenderedGeojson(clusterGeoJSON);
 
-				// 3.
-				clickedResultContainerSeq(resultContainerDiv, adjacentResultDivs);
+				// 6.
+				// clickedResultContainerBehavior(resultContainerDiv, adjacentResultDivs);
 			}
 		},
 
@@ -766,8 +794,7 @@ const DelegatePreloadedDOMElementsEvents = ((dom) => {
 	if (dom.paneResizeBtns) {
 		dom.paneResizeBtns.forEach((btn) =>
 			btn.addEventListener(`click`, () => {
-				console.log("button clicked");
-				_ManipulateDOM.toggleInnerText(btn, "Expand", "Collapse");
+				_ManipulateDOM.toggleInnerText(btn, "EXPAND", "COLLAPSE");
 			})
 		);
 	}

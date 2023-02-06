@@ -93,7 +93,7 @@ block dashboard
               section.left-pane-container
 
                 .pane-controls
-                  .pane-status-text.flex-1.flex-row-center
+                  .pane-info-text.flex-1.flex-row-center
                     span#results_status(role='status')
                     span#results_count.results-count= `${geoClusters.length} AGCs`
 
@@ -332,9 +332,9 @@ block dashboard
               //- HIDDEN POP-OUT FILTERS PANE
               //- section#hidden_pane_container.hidden-pane-container
                 .pane-controls
-                  .line-height-pt6 Filters
+                  .pane-info-text.line-height-pt6 Filters
                   button.btn.btn-outline-primary.btn-sm.pane-resize-btn(type='button' data-bs-toggle='collapse' data-bs-target='#hidden_pane_content' aria-expanded='false' aria-controls='hidden_pane_content')
-                    | Resize
+                    | EXPAND
                   //- button.btn.btn-outline-danger.btn-sm(type='button' data-bs-toggle='collapse' data-bs-target='#collapseExample' aria-expanded='false' aria-controls='collapseExample')
                   //-   | Close
                   button.btn-close(type="button" aria-label="Close")
@@ -720,8 +720,8 @@ block dashboard
               //- RIGHT PANE / SIDEBAR -> GEOCLUSTER FEATURES
               section.right-pane-container
                 .pane-controls
-                  .line-height-pt6 AGC Insights &amp; Details
-                  button.btn.btn-outline-primary.btn-sm.pane-resize-btn(type='button' data-bs-toggle='collapse' data-bs-target='#right_pane_content' aria-expanded='false' aria-controls='right_pane_content') Collapse
+                  .pane-info-text.line-height-pt6 AGC Insights &amp; Details
+                  button.btn.btn-outline-primary.btn-sm.pane-resize-btn(type='button' data-bs-toggle='collapse' data-bs-target='#right_pane_content' aria-expanded='false' aria-controls='right_pane_content') COLLAPSE
 
                 #right_pane_content.right-pane-content.show
 
