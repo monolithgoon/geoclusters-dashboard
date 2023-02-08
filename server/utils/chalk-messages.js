@@ -32,6 +32,7 @@ const consoleGy = chalk.grey.bgBlack.bold
 const result = chalk.yellowBright.bgCyan.bold
 // const result = chalk.blueBright.bgCyanBright.bold
 const working = chalk.blueBright.bgGrey.bold
+const workingY = chalk.yellowBright.bgGrey.bold
 const interaction = chalk.blue.bgWhiteBright.bold
 // const running = chalk.blue.bgCyanBright.bold
 const running = chalk.blue.bgGreenBright.bold
@@ -52,6 +53,7 @@ module.exports = {
    consoleGy,
    result,
    working,
+   workingY,
    interaction,
    running,
    running,

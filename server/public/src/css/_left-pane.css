@@ -65,7 +65,7 @@ section.left-pane-container a:hover {
 .search-input-group input[type="search"]::-webkit-input-placeholder,
 .search-input-group input[type="search"]::placeholder {
    padding-left: 10px;
-   color: red;
+   /* color: red; */
 }
 
 .left-pane-content .search-action {
