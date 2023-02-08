@@ -187,6 +187,8 @@ block landing-page
       if (loginEmailInput) {
 
         loginEmailInput.addEventListener('keyup', event => {
+
+          //- _openFullScreen();
           
           const isValid = loginEmailInput.checkValidity();
           if (isValid) {
@@ -202,8 +204,6 @@ block landing-page
       if (loginPasswordInput) {
 
         loginPasswordInput.addEventListener('keyup', e => {
-
-          _openFullScreen();
 
           const isValid = loginPasswordInput.checkValidity();
 
