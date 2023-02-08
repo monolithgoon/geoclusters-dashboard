@@ -37,6 +37,19 @@ content-type: application/json
 }
 
 ###
+POST http://avgmap.nirsaltechnologies.com/api/v1/users/signup HTTP/1.1
+content-type: application/json
+
+{
+   "user_first_name": "Emmanuel",
+   "user_last_name": "Yusuf",
+   "user_role": "admin",
+   "user_email": "emmanuel@koala-technology.com",
+   "user_password": "$firstC@ptain",
+   "user_password_confirm": "$firstC@ptain"
+}
+
+###
 POST http://127.0.0.1:1010/api/v1/users/signup HTTP/1.1
 content-type: application/json
 
