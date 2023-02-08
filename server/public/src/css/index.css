@@ -355,6 +355,8 @@ line-height: 15px;
 		justify-content: space-between;
 		align-items: center;
 		background-color: white;
+
+		height: 45px;
 	}
 
 	.settings-sidebar-body {

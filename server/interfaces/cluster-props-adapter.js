@@ -283,8 +283,8 @@ exports._GetClusterFeatProps = (clusterFeature = _mandatoryParam(), {featIdx}={}
 
 			// Mtd. 2 -> Using the better evaluateObjProps interface
 			const featureID = 
-				evaluateObjProps(props, {}, "chunk_idx") ||
-				evaluateObjProps(props, {}, "plot_idx") || 
+				evaluateObjProps(props, {}, "chunk_id") ||
+				evaluateObjProps(props, {}, "plot_id") || 
 				null
 	
 			const featureIndex = featIdx + 1;		

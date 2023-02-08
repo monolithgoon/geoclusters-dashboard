@@ -10,6 +10,7 @@ header.header-wrapper {
    z-index: var(--z4);
 
    font-family: 'Roboto', sans-serif;
+   height: 45px;
 }
 
 .navbar__container {
@@ -41,9 +42,11 @@ header.header-wrapper {
    background-color: orangered;
    background-color: #f39c12;
    background-color: #ffc107;
-   width: 45px;
    transition: all ease-out .3s;
    opacity: 1;
+   
+   width: 45px;
+   width: 50px;
 }
 
 .navbar-nav > li.nav-item > a {
@@ -113,8 +116,8 @@ li.nav-item.user-nav-item ul.dropdown-menu li > a.dropdown-item > span {
 	}
 
 	#navbarNav ul li {
-      /* padding: 0 25px; */
       padding: 0 10px;
+      padding: 0 30px 0px 0px;
 	}
 
 	#navbarNav {
