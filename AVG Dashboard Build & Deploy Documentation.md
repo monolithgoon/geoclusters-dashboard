@@ -141,6 +141,16 @@ These processed legacy AGCs are appended with farmer biometric data.
 
 2. `server/constants/nga-geo-pol-regions.js`
 
+3. `server/constants/words-to-capitalize
+
+   ```bash
+   /**
+    * Const that contains a list of words in the retreived geocluster name/title
+    * that need to be capitalized after the cluster is imported from the DB
+    */
+   const CAPITALIZE_THESE_WORDS = ['Agc', 'Pmro', 'Fct', "Nfgcs", "Ompcs", "Mpcs"];
+   ```
+
 ### Frontend
 
 `server/public/js/src/constants`

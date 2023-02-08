@@ -79,7 +79,7 @@ const ProcessFiles = ((root) => {
             .then(gjFileNames => {
                gjFileNames = gjFileNames.filter(isGeoJSONFile);
                gjFileNames.forEach(gjFileName => console.log({gjFileName}));
-               // console.log(chalk.console(JSON.stringify({gjFileNames})));
+               // console.log(chalk.consoleB(JSON.stringify({gjFileNames})));
                return Promise.all(gjFileNames.map(gjFileName => {
                   return getFileData(gjFileName, filesDirectory);
                }))

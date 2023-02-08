@@ -549,43 +549,6 @@ export function _getUsableGeometry(geoJSON) {
 	};
 };
 
-// fix the coords in each feat. and return the featColl.
-export function _repairFeatsCoords (featureCollection) {
-
-if (featureCollection) {
-
-	const featuresArray = featureCollection.features;
-						
-	for (let idx = 0; idx < featuresArray.length; idx++) {
-		// get a feat.
-		const feature = featuresArray[idx];
-		// get its coords.
-		const featCoords = feature.geometry.coordinates[0];
-		// loop thru its coords.
-		for (let idxy = 0; idxy < featCoords.length; idxy++) {
-			// get a coord. [lat, lng] array
-			const polyCoord = featCoords[idxy];
-			// convert both coords. to integers
-			feature.geometry.coordinates[0][idxy] = [+polyCoord[0], +polyCoord[1]]
-		};         
-	};
-
-	featureCollection.features = featuresArray;
-
-	return featureCollection;
-
-} else {
-	return null;
-};
-};
-
-
-// LOOP THRU EACH FEAT. AND CONVERT STRING COORDS. TO INTEGERS
-export function _sanitizeFeatCollCoords(featureCollection = _mandatoryParam()) {
-let modFeatureCollection = _repairFeatsCoords(_ProcessGeoJSON.hasInvalidFeatsCoords(_ProcessGeoJSON.isValidFeatColl(featureCollection)))
-return modFeatureCollection ? modFeatureCollection : featureCollection;
-};
-
 
 // HACK > REMOVES THE "TAILS"  FROM THE CHUNKS
 // SOMETIMES, BUFFERING A POLYGON DEFORMS IT
@@ -637,56 +600,6 @@ if(gjPolygon) {
 export const _ProcessGeoJSON = (()=>{
 
 	return {
-
-		isValidPolygon: function(geoJSON) {
-			try {
-				if (turf.area(geoJSON)) return true;
-				return false;			
-			} catch (GeoJSONCheckErr) {
-				console.error(`GeoJSONCheckErr: ${GeoJSONCheckErr.message}`)
-			};
-		},
-
-		isValidFeatColl: function(geoJSON=_mandatoryParam()) {
-			if (geoJSON) {
-				if (turf.getType(geoJSON) === `FeatureCollection`) return geoJSON;
-				return false;
-			};
-		},
-
-		hasItirableFeats: function(featsArray) {
-			if (Array.isArray(featsArray)) { return featsArray };
-			return false;
-		},
-
-		isValidFeat: function(geoJSON = _mandatoryParam()) {
-			try {				
-				if (turf.getType(geoJSON) === `Feature`) return geoJSON
-				else throw new Error(`The supplied GeoJSON is not a valid Feature`);
-			} catch (invalidFeatErr) {
-				console.error(`invalidFeatErr: ${invalidFeatErr.message}`)
-				return false;
-			};
-		},
-
-		isValidFeatOrColl: function(geoJSON = _mandatoryParam()) {
-			if (
-				turf.getType(geoJSON) === `Feature` ||
-				turf.getType(geoJSON) === `FeatureCollection`
-				) return geoJSON;
-			return false;
-		},
-
-		// CHECK IF featColl. has feats. with coords. that can be rendered
-		hasInvalidFeatsCoords: function(featureCollection = _mandatoryParam()) {
-			try {
-				turf.centerOfMass(featureCollection);
-				return null;
-			} catch (validFeatCoordsErr) {
-				console.error(`%c validFeatCoordsErr: The feat. coll. has feats. with invalid coords. [turf-error: ${validFeatCoordsErr.message} ]`, `color: red; background: lightgrey;`)
-				return featureCollection;
-			};
-		},
 
 		getId: (geoJSON) => {
 			try {

@@ -5,7 +5,7 @@ import {
 	_stringifyPropValues,
 	_TurfHelpers,
 } from "../utils/helpers.js";
-import { _sanitizeFeatCollCoords, _ProcessGeoJSON, _getBufferedPolygon } from "../utils/helpers.js";
+import { _ProcessGeoJSON, _getBufferedPolygon } from "../utils/helpers.js";
 import { _RenderEngine } from "./maps-controller.js";
 import { APP_STATE } from "./state-controller.js";
 import {
@@ -460,9 +460,10 @@ const DOMSequence = ((domElements) => {
 			// get the geojson for that cluster title
 			const clusterGeoJSON = JSON.parse(_ManipulateDOM.getDataset(resultContainerDiv));
 
-			// TODO > VALIDATE GJ. HERE
-			// if (_isValidGeoJSON(clusterGeoJSON)) {
-			if (clusterGeoJSON) {
+			/** 
+			 * Verify that the GeoJSON comming from the DOM is legit
+			*/
+			if (_isValidGeoJSON(clusterGeoJSON)) {
 
 				// 1. populate the cluster detail modal @ top of left sidebar
 				_PopulateDOM.clusterDetailsModal(domElements.resultModalDiv, clusterGeoJSON);
@@ -501,6 +502,7 @@ const DOMSequence = ((domElements) => {
 		 * 4. Highlight listing in sidebar (and remove highlight for all other listings)
 		 **/
 		featCardClickSeq: (clusterFeatures, evt) => {
+
 			const clickedCard = evt.currentTarget;
 
 			try {

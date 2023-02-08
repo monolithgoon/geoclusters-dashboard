@@ -3,43 +3,67 @@ const fs = require("fs");
 const path = require("path");
 const chalk = require("../utils/chalk-messages.js");
 const axios = require("axios");
+const turf = require("@turf/turf");
 const gjv = require("geojson-validation");
 const {
 	_GetClusterProps,
-	_getClusterFeatProps,
+	_GetClusterFeatProps,
 } = require("../interfaces/cluster-props-adapter.js");
 const { _sanitizeFeatCollCoords } = require("../utils/helpers.js");
 const API_URLS = require("../constants/api-urls.js");
 const config = require("../config/config.js");
 
 
-// REPORT SAVED FILE STATS.
-function reportFileStats(file) {
-	const fileStats = fs.statSync(`${file}`);
+/**
+ * Reports the statistics of a saved file.
+ * @param {string} filePath - The path of the saved file.
+ */
+function reportFileStats(filePath) {
+	
+	// Getting the stats of the saved file
+	const fileStats = fs.statSync(`${filePath}`);
+
+	// Calculating the file size in bytes
 	const fileByteSize = fileStats.size;
+
+	// Calculating the file size in MB
 	const fileMBSize = fileByteSize / (1024 * 1024);
-	console.log(chalk.success(`File saved was ${fileMBSize.toFixed(2)} MB`));
-}
+
+	// Logging the file statistics
+	console.log(chalk.success(`File was saved -> [ ${path.basename(filePath)} ] -> ${fileMBSize.toFixed(2)} MB`));
+};
 
 
-// SAVE RETURNED DB. DATA TO DISK
+/**
+ * Saves the returned data from the database to disk.
+ * @param {string} data - The data to be saved.
+ * @param {string} collectionName - The name of the database collection.
+ */
 function saveData(data, collectionName) {
-	console.log(chalk.working(`SAVING DB. COLLECTION [ ${collectionName} ] TO LOCAL STORAGE ..`));
+
+	console.log(chalk.working(`Saving database collection [ ${collectionName} ] to local storage ..`));
+	
+	// Defining the file path where the data will be saved
 	const filePath = path.resolve(`${__approotdir}/localdata/${collectionName}.json`);
+	
+	// Writing the data to the specified file path
 	fs.writeFile(filePath, data, (saveDataErr) => {
+		// If there is an error in saving the data
 		if (saveDataErr) {
+			// Throwing an error with a descriptive message
 			throw new Error(
 				chalk.highlight(`Failed to save DB. data to disk.. ${saveDataErr.message}`)
 			);
 		}
+		// If the data was saved successfully
 		reportFileStats(filePath);
 	});
-}
+};
 
 
 async function getDBCollection(url, apiAccessToken) {
 
-	console.log(chalk.console2(`AXIOS getting data from [ ${url} ]`));
+	console.log(chalk.consoleGy(`AXIOS retreiving data from [ ${url} ]`));
 
 	try {
 		const axiosRequest = axios({
@@ -60,90 +84,149 @@ async function getDBCollection(url, apiAccessToken) {
 		const apiResponse = await axiosRequest;
 		const collectionData = apiResponse.data;
 
+		// REMOVE > UN-USED
 		// CREATE A TIME STAMP STRING TO APPEND TO THE FILE NAME
 		let requestTimeStr = new Date(Date.parse(apiResponse.data.requested_at)).toISOString();
 		requestTimeStr = requestTimeStr.replace(/:/g, ".");
 		requestTimeStr = requestTimeStr.replace(/T/g, "-T");
 
 		return collectionData;
+
 	} catch (axiosError) {
 		console.error(chalk.fail(`axiosError: ${axiosError.message}`));
+		return null;
 	}
 }
 
 
+// REMOVE > UN-USED 
 // TODO > VALIDATE GeoJSON
 function validateGeoJSON(geoJSON) {
 	if (!gjv.valid(geoJSON)) {
 		console.log(chalk.warningStrong("Invalid GeoJSON"));
+		return false;
 	}
 
 	// const trace = gjv.isFeatureCollection(geoJSON, true);
-	// console.log(chalk.console(trace))
+	// console.log(chalk.consoleY(trace))
 }
 
-// FLATTEN THE PROPS. OF THE GEOJSON
-async function returnNormalized(geoClusterArray) {
+/**
+ * This function is used to flatten / normalize the properties of the a geocluster's GeoJSON.
+ * It takes an array of geoclusters' GeoJSON as input, validates the format of the FeatureCollection,
+ * checks if it contains iterable features, sanitizes the coordinates,
+ * extracts the properties of the cluster and features, and finally returns a normalized array of GeoJSON for each cluster.
+ *
+ * @param {Array} geoclustersArray - An array of GeoJSON clusters to be normalized.
+ * @returns {Array} normalizedClusters - An array of normalized GeoJSON clusters.
+ */
+function returnNormalized(geoclustersArray) {
+
 	try {
+
 		const normalizedClusters = [];
 
-		if (geoClusterArray) {
-			for (let clusterGeoJSON of geoClusterArray) {
-				clusterGeoJSON = _sanitizeFeatCollCoords(clusterGeoJSON);
-				const clusterProps = _GetClusterProps(clusterGeoJSON);
-				clusterGeoJSON.properties = clusterProps;
-				for (let idx = 0; idx < clusterGeoJSON.features.length; idx++) {
-					const clusterFeature = clusterGeoJSON.features[idx];
-					const clusterFeatProps = _getClusterFeatProps(clusterFeature, { featIdx: idx });
+		if (geoclustersArray) {
+
+			for (let geoclusterGeoJSON of geoclustersArray) {
+
+				// Check if the supplied GeoJSON is a valid FeatureCollection
+				if (turf.getType(geoclusterGeoJSON) !== `FeatureCollection`) {
+					throw new Error(`The supplied GeoJSON is not a valid FeatureCollection`);
+				}
+
+				// Check if the FeatureCollection contains iterable features
+				if (!Array.isArray(geoclusterGeoJSON.features)) {
+					throw new Error(`The supplied FeatureCollection does not have itirable Features`);
+				};
+
+				// SANDBOX
+				// if (!gjv.valid(geoclusterGeoJSON)) {
+				// 	throw new Error(`Invalid GeoJSON`)
+				// }
+
+				// Sanitize the coordinates of the FeatureCollection
+				geoclusterGeoJSON = _sanitizeFeatCollCoords(geoclusterGeoJSON);
+
+				// Extract properties of the cluster
+				const clusterProps = _GetClusterProps(geoclusterGeoJSON);
+				geoclusterGeoJSON.properties = clusterProps;
+
+				// Extract properties of each feature in the cluster
+				for (let idx = 0; idx < geoclusterGeoJSON.features.length; idx++) {
+					const clusterFeature = geoclusterGeoJSON.features[idx];
+					const clusterFeatProps = _GetClusterFeatProps(clusterFeature, { featIdx: idx });
 					clusterFeature.properties = clusterFeatProps;
 				}
-				// console.log(chalk.console((Object.values(clusterGeoJSON))));
-				normalizedClusters.push(clusterGeoJSON);
+
+				normalizedClusters.push(geoclusterGeoJSON);
 			}
 		}
 		return normalizedClusters;
 	} catch (normalizePropsErr) {
 		console.error(chalk.fail(`normalizePropsErr: ${normalizePropsErr}`));
+		return null;
 	}
 }
 
 
-async function getAPIData(apiHost, resourcePaths) {
-	const data = [];
+/**
+ * Gets collections from an API.
+ * @param {string} apiHost - The host URL of the API.
+ * @param {Array} resourcePaths - An array of resource paths for the API.
+ * @return {Array} The collected data from the API.
+ */
+async function getAPICollections(apiHost, resourcePaths) {
 
+	// Initializing an array to store the collected data
+	const data = [];
+	
+	// Looping through the resource paths
 	for (const resourcePath of resourcePaths) {
+
+		// Getting the data for each collection
 		const collectionData = await getDBCollection(`${apiHost}/${resourcePath}`);
+		
+		// If the data exists, push it to the data array
 		if (collectionData) data.push(collectionData);
 	}
-
+	
+	// Returning the collected data
 	return data;
 }
 
 
-// ASYNCHRONOUSLY DOWNLOAD DATA FROM THE GEOCLUSTER API, AND SAVE TO DISK
-// THIS ACTION IS PERFORMED ONLY **ONCE**WHEN THE SERVER LOADS UP INITIALLY
-// THIS DATA IS READ FROM DISK & PASSED FROM THE /server/data-controller TO THE /server/view-controler
-// IT IS MADE AVAILABLE AS AN OBJECT IN THE APP VIA THE /server/view-controller
-async function cacheData() {
+/** 
+ * 
+ * Asynchronously download data from the geoclusters API, and save locally to disk in server/localdata
+ * This action is performed only **once** when the server loads up initially
+ * This action is neccessary in order to avoid expensive API calls on paage load, 
+ * and to instantly hydrate the DOM with server-side data
+ * The cached data is read from disk, and passed to the /server/view-controller via the server/data-controller
+ * The data is then made available as an object in the dashboard app using PUG variables
+ * 
+ */
+async function cacheAPIData() {
 
 	try {
-		const geoClustersData = await getAPIData(
-			// API_URLS.GEOCLUSTERS.HOST.AWS,
+		const apiCollections = await getAPICollections(
 			config.geoclustersHostUrl,
 			API_URLS.GEOCLUSTERS.RESOURCE_PATHS
 		);
 
-		console.log({ geoClustersData });
+		console.log({ apiCollections });
 
-		for (const geoCluster of geoClustersData) {
-			if (geoCluster && geoCluster.data) {
-				const geoClusterJSON = await returnNormalized(geoCluster.data.collection_docs);
-				saveData(JSON.stringify(geoClusterJSON), geoCluster.data.collection_name);
+		for (const geoclusterCollection of apiCollections) {
+			if (geoclusterCollection && geoclusterCollection.data) {
+				const collectionJSON = returnNormalized(geoclusterCollection.data.collection_docs);
+				if (collectionJSON) {
+					saveData(JSON.stringify(collectionJSON), geoclusterCollection.data.collection_name);
+				}
 			}
 		}
-	} catch (cacheDataErr) {
-		console.error(chalk.fail(`cacheDataErr: ${cacheDataErr.message}`));
+	} catch (cacheAPIDataErr) {
+		console.error(chalk.fail(`cacheAPIDataErr: ${cacheAPIDataErr.message}`));
 	}
 }
 
-module.exports = cacheData;
+module.exports = cacheAPIData;

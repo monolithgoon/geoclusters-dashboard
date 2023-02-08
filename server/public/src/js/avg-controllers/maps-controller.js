@@ -1333,7 +1333,7 @@ const MapboxMaps = ((plotsMap) => {
          try {
 
             // RENDER ONLY FEATS. OR FEAT. COLLS.
-            if (map && _ProcessGeoJSON.isValidFeatOrColl(featOrFeatColl)) {
+            if (map) {
          
                // CALC. SOME METADATA
                const gjUniqueID = featOrFeatColl._id;

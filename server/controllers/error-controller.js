@@ -42,7 +42,7 @@ const handleValidationErrorDB = (err) => {
 };
 
 
-const handleJWTError = () => new ServerError("Invalid token. Please login again. Also, check if your connection is secure.", 401);
+const handleJWTError = () => new ServerError("Invalid token. Please login again. Check if your connection is secure.", 401);
 
 
 const handleJWTExpiredError = () =>

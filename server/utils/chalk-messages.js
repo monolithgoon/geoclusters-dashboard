@@ -25,8 +25,10 @@ const chalk = require('chalk')
 // }
 
 const highlight = chalk.blue.bgYellowBright.bold
-const console = chalk.yellowBright.bgBlack.bold
-const console2 = chalk.blueBright.bgBlack.bold
+const consoleY = chalk.yellowBright.bgBlack.bold
+const consoleB = chalk.blueBright.bgBlack.bold
+const consoleG = chalk.green.bgBlack.bold
+const consoleGy = chalk.grey.bgBlack.bold
 const result = chalk.yellowBright.bgCyan.bold
 // const result = chalk.blueBright.bgCyanBright.bold
 const working = chalk.blueBright.bgGrey.bold
@@ -44,8 +46,10 @@ const warningStrong  = chalk.redBright.bgYellow.bold
 
 module.exports = {
    highlight,
-   console,
-   console2,
+   consoleY,
+   consoleB,
+   consoleG,
+   consoleGy,
    result,
    working,
    interaction,

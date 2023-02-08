@@ -1,6 +1,6 @@
 `use strict`;
-const turf = require('@turf/turf');
 const _startcase = require('lodash.startcase');
+const CAPITALIZE_THESE_WORDS = require('../constants/words-to-capitalize.js');
 const { _capitalizeWords, _getFeatCenter, _joinWordsArray } = require('../utils/helpers.js');
 
 
@@ -55,76 +55,41 @@ const TraverseObject = (() => {
 })();
 
 
-// WEAK GEOJSON VALIDATION FUNCTIONS
-const TurfGeoJSONCheck = (()=>{
+/**
+ * This fn. is used to safely access nested properties within an object. 
+ * If the specified properties exist and have a value, their value is returned. 
+ * If not, the default value of `null` is returned.
+ * 
+ * @param {Object} baseProp - The base property to start evaluation from.
+ * @param {any} options.defaultReturn - The value to be returned if the evaluation is not successful.
+ * @param {Array} otherProps - An array of properties to be evaluated.
+ * @returns {any} - The result of the evaluation.
+ * 
+ * 
+ * EXAMPLE: 
+ * const data = {
+		user: {
+			name: "John Doe",
+			age: 30,
+			address: {
+				street: "123 Main St",
+				city: "Anytown",
+				state: "CA",
+				zip: "12345"
+			}
+		}
+};
+ * const zip = evaluateObjProps(data, {}, "user", "address", "zip"); // Output: "12345"
 
-	return {
-
-		isValidPolygon: function(geoJSON) {
-			try {
-				if (turf.area(geoJSON)) return true;
-				return false;			
-			} catch (GeoJSONCheckErr) {
-				console.error(`GeoJSONCheckErr: ${GeoJSONCheckErr.message}`)
-			};
-		},
-
-		isValidFeatColl: function(geoJSON=_mandatoryParam()) {
-			if (geoJSON) {
-				if (turf.getType(geoJSON) === `FeatureCollection`) return geoJSON;
-				return false;
-			};
-		},
-
-		hasItirableFeats: function(featsArray) {
-			if (Array.isArray(featsArray)) { return featsArray };
-			return false;
-		},
-
-		isValidFeat: function(geoJSON = _mandatoryParam()) {
-			try {				
-				if (turf.getType(geoJSON) === `Feature`) return geoJSON
-				else throw new Error(`The supplied GeoJSON is not a valid Feature`);
-			} catch (invalidFeatErr) {
-				console.error(`invalidFeatErr: ${invalidFeatErr.message}`)
-				return false;
-			};
-		},
-
-		isValidFeatOrColl: function(geoJSON = _mandatoryParam()) {
-			if (
-				turf.getType(geoJSON) === `Feature` ||
-				turf.getType(geoJSON) === `FeatureCollection`
-				) return geoJSON;
-			return false;
-		},
-
-		// CHECK IF featColl. has feats. with coords. that can be rendered
-		hasInvalidFeatsCoords: function(featureCollection = mandatoryParam()) {
-			try {
-				turf.centerOfMass(featureCollection);
-				return null;
-			} catch (validFeatCoordsErr) {
-				console.error(`%c validFeatCoordsErr: The feat. coll. has feats. with invalid coords. [turf-error: ${validFeatCoordsErr.message} ]`, `color: red; background: lightgrey;`)
-				return featureCollection;
-			};
-		},
-
-		getId: (geoJSON) => {
-			try {
-				
-				if (turf.getType(geoJSON) === `FeatureCollection`) return `feature_collection_${geoJSON._id}`
-				else if (geoJSON.geometry._id) return `feature_${geoJSON.geometry._id}`
-
-			} catch (getGeoJSONIdErr) {
-				console.error(`getGeoJSONIdErr: ${getGeoJSONIdErr.message}`)
-			};
-		},
-	};
-})();
-
-
-// PIPELINE FN.
+ * When a key path is found and evaluated to a value that is not undefined, null, or an empty string, 
+ * the value will be returned. 
+ * 
+ * const unknown = evaluateObjProps(data, {}, "user", "phone"); // Output: null
+ * 
+ * If the key path is not found or the evaluated value is undefined, null, or an empty string, 
+ * null will be returned since no default return value is specified.
+ * 
+ */
 function evaluateObjProps (baseProp, {defaultReturn}, ...otherProps) {
 	TraverseObject.resetFinalValue();
 	TraverseObject.evaluateValue(baseProp, ...otherProps);
@@ -140,17 +105,7 @@ function evaluateObjProps (baseProp, {defaultReturn}, ...otherProps) {
 exports._GetClusterProps = (clusterFeatureCollection = _mandatoryParam()) => {
 	
 	try {
-		
-		// FIXME > REMOVE TO OUTSIDE CONTEXT
-		if (!TurfGeoJSONCheck.isValidFeatColl(clusterFeatureCollection)) {
-			throw new Error(`The supplied GeoJSON is not a valid FeatureCollection`);
-		};
-      
-		// FIXME > REMOVE TO OUTSIDE CONTEXT
-		if (!TurfGeoJSONCheck.hasItirableFeats(clusterFeatureCollection.features)) {
-			throw new Error(`The supplied FeatureCollection does not have itirable Features`);
-		};
-      
+		      
 		const props = clusterFeatureCollection.properties;
 
 		let clusterID = TraverseObject.evaluateValue(props, "geo_cluster_id")
@@ -171,9 +126,18 @@ exports._GetClusterProps = (clusterFeatureCollection = _mandatoryParam()) => {
 			? TraverseObject.getFinalValue()
 			: null;
 
+		/**
+		 * The code takes a `clusterName` string, performs the following operations on it:
+		 * 1. Convert the string to lowercase using `toLowerCase()` method
+		 * 2. Capitalize the first letter of each word in the string using `_startcase()` from Lodash library
+		 * 3. Capitalize the entire word for specific words in the string using `_capitalizeWords()` from Lodash library. 
+		 *    The specific words are defined as 'Agc', 'Pmro', 'Fct', "Nfgcs", "Ompcs".
+		 * 
+		 * The final result is assigned back to `clusterName` if it exists, otherwise `clusterName` remains unchanged.
+		 */
 			// clusterName = _startcase(clusterName.toLowerCase());
 			// clusterName = _capitalizeWords(clusterName, 'Agc', 'Pmro', 'Fct');
-			clusterName = clusterName ? _capitalizeWords(_startcase(clusterName.toLowerCase()), 'Agc', 'Pmro', 'Fct', "Nfgcs", "Ompcs") : clusterName;
+			clusterName = clusterName ? _capitalizeWords(_startcase(clusterName.toLowerCase()), ...CAPITALIZE_THESE_WORDS) : clusterName;
 
 		const clusterFeatsNum = clusterFeatureCollection.features.length;
       
@@ -294,7 +258,7 @@ exports._GetClusterProps = (clusterFeatureCollection = _mandatoryParam()) => {
 };
 
 
-exports._getClusterFeatProps = (clusterFeature = _mandatoryParam(), {featIdx}={}) => {
+exports._GetClusterFeatProps = (clusterFeature = _mandatoryParam(), {featIdx}={}) => {
 	
 	try {
 		      
@@ -302,11 +266,26 @@ exports._getClusterFeatProps = (clusterFeature = _mandatoryParam(), {featIdx}={}
 
 		if (props) {
 
-			const featureID = TraverseObject.evaluateValue(props, "chunk_id")
-				? TraverseObject.getFinalValue()
-				: TraverseObject.evaluateValue(props, "plot_id")
-				? TraverseObject.getFinalValue()
-				: null;
+			/**
+			 * The code evaluates the value of the "chunk_id" or "plot_id" key in the "props" object.
+			 * The TraverseObject.evaluateValue function is called with the "props" object and the first key to be evaluated, "chunk_id".
+			 * If the value of "chunk_id" is truthy, it returns the value of the final key evaluated, obtained by calling the TraverseObject.getFinalValue function.
+			 * If the value of "chunk_id" is falsy, it moves on to evaluate the value of the "plot_id" key, using the same method as above.
+			 * If both values are falsy, the code returns null.
+			 */
+
+			// Mtd. 1
+			// const featureID = TraverseObject.evaluateValue(props, "chunk_id")
+			// 	? TraverseObject.getFinalValue()
+			// 	: TraverseObject.evaluateValue(props, "plot_id")
+			// 	? TraverseObject.getFinalValue()
+			// 	: null;
+
+			// Mtd. 2 -> Using the better evaluateObjProps interface
+			const featureID = 
+				evaluateObjProps(props, {}, "chunk_idx") ||
+				evaluateObjProps(props, {}, "plot_idx") || 
+				null
 	
 			const featureIndex = featIdx + 1;		
 	

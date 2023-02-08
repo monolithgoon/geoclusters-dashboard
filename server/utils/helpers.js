@@ -19,36 +19,113 @@ const findSubStr = (subStr, baseStr) => {
 	// console.log({baseStr})
 	return subStr === baseStr;
 };
-exports._capitalizeWords = (baseStr, ...subStrings) => {
-	
-	baseStr = String(baseStr);
-	subStrings = subStrings.map(subStr => String(subStr));
 
-	// subStrings.forEach(subStr=>baseStr.split(" ").indexOf(subStr));
-	// subStrings.forEach(subStr=>baseStr.split(" ").find(findSubStr.bind(baseStr, subStr)));
 
-	try {
-		if (baseStr) {
-			// baseStr = String(baseStr);
-			// if (typeof baseStr === "string") {
-				for (let subStr of subStrings) {
-					if (subStr) {
-						// console.log({subStr})
-						// subStr = String(subStr);
-						// if (typeof subStr === "string") {
-							const regex = new RegExp(subStr, `g`);
-							baseStr = baseStr.replace(regex, subStr.toUpperCase());
-							// baseStr = baseStr.replace(/subStr/g, subStr.toUpperCase());
-							console.log({baseStr})
-						// };
-					};
-				};
-			// };
-		};
-		return baseStr;
-	} catch (capWordsErr) {
-		console.error(`capWordsErr: ${capWordsErr.message}`);
+/**
+ * TraverseObject is a closure that provides functions for evaluating the value of keys in a JavaScript object.
+ * The evaluateValue function evaluates the value of the given keys in the JavaScript object and returns the evaluated value. If evaluation fails, it returns null.
+ * The getFinalValue function returns the final value after evaluation.
+ * The resetFinalValue function resets the final value to undefined.
+ * 
+ * EXAMPLE -> Evaluate the value of a nested key in an object:
+ * 
+ * const data = {
+		order: {
+			items: [
+				{ name: "item 1", price: 10 },
+				{ name: "item 2", price: 20 }
+			],
+			total: 30
+		}
 	};
+
+ * const total = _TraverseObject.evaluateValue(data, "order", "total");
+ * console.log(total) // 30
+ * 
+ */
+exports._TraverseObject = (() => {
+  // Declare a private variable to store the final value after evaluation
+  let finalValue;
+
+  /**
+   * Evaluates the value of the given keys in a JavaScript object.
+   * @param  {...any} args - The keys to be evaluated in the JavaScript object.
+   * @return {any} The evaluated value, or null if evaluation failed.
+   */
+  function evaluateValue(...keys) {
+    try {
+      // Initialize a temporary variable with the first key in the keys argument
+      let tempValue = keys[0];
+      // Loop through the keys argument starting from the second key
+      for (let i = 0; i < keys.length - 1; i++) {
+        // Access the value of the current key in the tempValue object
+        tempValue = tempValue[keys[i + 1]];
+      }
+      // Set the final value to the value of the last key in the keys argument
+      finalValue = tempValue;
+      // Return the final value
+      return finalValue;
+    } catch (error) {
+      // Return null if an error occurred during evaluation
+      return null;
+    }
+  }
+
+  /**
+   * Gets the final value after evaluation.
+   * @return {any} The final value.
+   */
+  function getFinalValue() {                  
+    // Return the final value
+    return finalValue;
+  }
+
+  /**
+   * Resets the final value to undefined.
+   */
+  function resetFinalValue() {
+    // Set the final value to undefined
+    finalValue = undefined;
+  }
+
+  // Return the public functions of the TraverseObject closure
+	return {
+		evaluateValue,
+		getFinalValue,
+		resetFinalValue
+		};
+	})();
+
+
+// This is function capitalizes all the substrings in a base string.
+exports._capitalizeWords = (baseStr, ...subStrings) => {
+  
+  // Convert the base string and all substrings to strings.
+  baseStr = String(baseStr);
+  subStrings = subStrings.map(subStr => String(subStr));
+
+  try {
+    // Check if the base string is not empty.
+    if (baseStr) {
+      // Loop through all substrings.
+      for (let subStr of subStrings) {
+        // Check if the current substring is not empty.
+        if (subStr) {
+					// console.log({subStr})
+          // Create a regex pattern using the current substring.
+          const regex = new RegExp(subStr, `g`);
+          // Replace all occurrences of the substring with its uppercase version.
+          baseStr = baseStr.replace(regex, subStr.toUpperCase());
+					// console.log({baseStr})
+        }
+      }
+    }
+    // Return the capitalized base string.
+    return baseStr;
+  } catch (capWordsErr) {
+    // Log an error message if the function encounters an exception.
+    console.error(`capWordsErr: ${capWordsErr.message}`);
+  }
 };
 
 
@@ -125,7 +202,6 @@ exports._getFeatCenter = (featGeometry) => {
 
 // LOOP THRU EACH FEAT. AND CONVERT STRING COORDS. TO INTEGERS
 exports._sanitizeFeatCollCoords = (featureCollection = mandatoryParam()) => {
-	// let modFeatureCollection = repairFeatsCoords(_ProcessGeoJSON.hasInvalidFeatsCoords(_ProcessGeoJSON.isValidFeatColl(featureCollection)))
-   let modFeatureCollection = repairFeatsCoords(featureCollection);
+	let modFeatureCollection = repairFeatsCoords(featureCollection);
 	return modFeatureCollection ? modFeatureCollection : featureCollection;
 };

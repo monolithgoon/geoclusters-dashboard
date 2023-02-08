@@ -167,7 +167,20 @@ block landing-page
 
 
       //- 1. CLICK ANYWHERE ON PAGE FOR FULL SCREEN
-      document.addEventListener('click', _openFullScreen);
+      //- document.addEventListener('click', _openFullScreen);
+
+      //- SANDBOX
+      const ActivateNextBtn = (()=>{
+        if (loginEmailInput) {
+          const isValid = loginEmailInput.checkValidity();
+          if (isValid) {
+            console.log("activate next")
+            loginNextBtn.disabled = false;
+          } else {
+            loginNextBtn.disabled = true;
+          };
+        };
+      })();
 
 
       //- 2. USER ENTERS EMAIL ADDRESS
@@ -190,7 +203,7 @@ block landing-page
 
         loginPasswordInput.addEventListener('keyup', e => {
 
-          _openFullScreen();
+          //- _openFullScreen();
 
           const isValid = loginPasswordInput.checkValidity();
 
