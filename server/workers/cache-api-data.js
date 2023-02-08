@@ -63,7 +63,7 @@ function saveData(data, collectionName) {
 
 async function getDBCollection(url, apiAccessToken) {
 
-	console.log(chalk.consoleGy(`AXIOS retreiving data from [ ${url} ]`));
+	console.log(chalk.consoleY(`AXIOS retreiving data from [ ${url} ]`));
 
 	try {
 		const axiosRequest = axios({

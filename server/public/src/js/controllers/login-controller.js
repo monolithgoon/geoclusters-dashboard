@@ -3,6 +3,7 @@ import DURATION from "../constants/duration.js";
 import { showAlert } from "./alerts-controller.js";
 
 export const login = async (email, password) => {
+	
 	try {
 		const loginResponse = await axios({
 			method: "POST",
@@ -23,11 +24,21 @@ export const login = async (email, password) => {
 		// console.log({loginResponse})
 
 		return true;
-	} catch (loginErr) {
-		if (loginErr.response && loginErr.response.data) {
-			showAlert("error", loginErr.response.data.message);
+
+	} catch (error) {
+		if (error.response && error.response.data) {
+			const { message } = error.response.data;
+			const statusText = error.response.statusText;
+			if (message) {
+				showAlert("error", message);
+			} else if (statusText === "Bad Gateway") {
+				showAlert("error", "Server Is Offline");
+			} else {
+				showAlert("error", "Something Went Wrong");
+			}
 		} else {
-			showAlert("error", ALERT_MESSAGES.LOGIN_FAIL);
+			showAlert("error", "Something Went Wrong");
+			console.log("Login error:", error);
 		}
 		return false;
 	}
@@ -40,12 +51,11 @@ export const logout = async () => {
 			url: "/api/v1/users/logout",
 		});
 
-		console.log({logoutResponse})
+		console.log({ logoutResponse });
 
 		if (logoutResponse && logoutResponse.data.status === "success") location.assign("/");
-
 	} catch (logoutErr) {
 		// showAlert("error", "Error logging out! Try again.");
-		console.error({logoutErr})
+		console.error({ logoutErr });
 	}
 };
