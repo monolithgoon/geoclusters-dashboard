@@ -15,7 +15,7 @@ section.right-pane-container {
 }
 
 .right-pane-container .pane-controls {
-   z-index: var(--z-idx-2);
+   z-index: var(--z2);
 }
 
 .right-pane-content {
@@ -25,7 +25,7 @@ section.right-pane-container {
    grid-template-rows: 1fr;
    font-size: 0.6rem;
    height: 100%;
-   z-index: var(--z-idx-2);
+   z-index: var(--z2);
 }
 
 /* REMOVE */
@@ -114,7 +114,7 @@ section.right-pane-container {
    cursor: pointer;
    background-color: white;
    border: 1px solid #333;
-   z-index: var(--z-idx-3);
+   z-index: var(--z3);
 }
 
 .cluster-summary .wrapper {

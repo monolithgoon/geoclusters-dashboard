@@ -9,7 +9,7 @@ section.hidden-pane-container {
 }
 
 .hidden-pane-container .pane-controls {
-   z-index: var(--z-idx-2);
+   z-index: var(--z2);
 }
 
 .filter-controls-wrapper {
@@ -30,7 +30,7 @@ section.hidden-pane-container {
    grid-template-rows: 1fr auto;
 
    font-size: var(--pt7r-font);
-   z-index: var(--z-idx-2);
+   z-index: var(--z2);
 }
 
 .selected-filters-wrapper {

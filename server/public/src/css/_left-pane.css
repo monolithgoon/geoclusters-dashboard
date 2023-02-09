@@ -112,7 +112,7 @@ button#results_scroll_top_button {
    border-radius: 50% !important;
    border: 1px solid var(--theme-color);
    background-color: white;
-   z-index: var(--z-idx-2);
+   z-index: var(--z2);
    display: none;
 }
       

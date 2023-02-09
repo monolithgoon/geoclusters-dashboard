@@ -60,8 +60,8 @@
 	--sidebar-nav-tab-font-size: 0.65rem;
 
 	/* Z-INDEXES */
-	--z-idx-2: 500;
-	--z-idx-3: 501;
+	--z0: 0;
+	--z2: 500;
 	--z3: 501;
 	--z4: 502;
 	--z5: 999;
@@ -246,7 +246,7 @@ line-height: 15px;
 	.basemap-controls-placeholder {
 		display: grid;
 		/* border: 2px solid white; */
-		z-index: var(--z-idx-2);
+		z-index: var(--z2);
 		/* max-width: 35px; */
 	}
 	

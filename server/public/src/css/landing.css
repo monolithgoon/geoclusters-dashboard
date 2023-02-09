@@ -23,7 +23,7 @@
    letter-spacing: -0.2px;
    display: grid;
    grid-template-columns: 1fr;
-   z-index: 1;
+   z-index: var(--zmax);
 }
 
 .welcome-pane-content {
@@ -284,6 +284,14 @@ input, button,
 
 /* @media screen and (min-width: 968px) { */
    @media screen and (min-width: 850px) {
+
+      .welcome-pane-container {
+         z-index: var(--z3);
+      }      
+
+      #landing_page_map_container {
+         z-index: var(--z2);
+      }      
 
       @supports (-webkit-backdrop-filter: none) or (backdrop-filter: none) {
          .floating-pane .top-section {

@@ -254,6 +254,7 @@ const initDashboardApp = (() => {
 			let intervalDelay = initDelay;
 
 			setTimeout(async function request() {
+				
 				// get the new geo clusters from the data source
 				const newGeoClustersArr = await getNewlyParcelizedClusters(window);
 
