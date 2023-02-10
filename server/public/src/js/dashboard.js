@@ -45,6 +45,7 @@ const initDashboardApp = (() => {
 	 */
 	function renderGeoPolRegions(resourceName, featColl) {
 		if (resourceName === `nga-geo-pol-regions` && featColl) {
+			console.log(featColl)
 			_RenderEngine.renderFeatColl(featColl, {
 				useBuffer: false,
 				lineColor: DEFAULT_APP_SETTINGS.MAP_POLYGON_LINE_COLORS.BASEMAP.GEO_POL_REGIONS, // faded green
@@ -331,9 +332,9 @@ const initDashboardApp = (() => {
 
 		initDashboardApp.addDOMListeners();
 
-		// await initDashboardApp.cachePreloadedGeoClusters();
+		await initDashboardApp.cachePreloadedGeoClusters();
 
-		// await initDashboardApp.renderCachedGeoClusters();
+		await initDashboardApp.renderCachedGeoClusters();
 
 		await initDashboardApp.renderAdminBounds(windowObj);
 

@@ -27,6 +27,7 @@
 	--app-grid-template-cols: 300px 240px 1.2fr 1.2fr 30vw;
 	--app-grid-template-rows: 0.15fr 2fr;
 	/* --app-grid-template-rows: 8vh 2fr; */
+	--app-grid-template-rows: auto 2fr;
 
 	/* COLORS */
 	--theme-color: #0d6efd;
@@ -96,7 +97,7 @@
 	/* THUMB */
 	--input-slider-thumb-height: 15px;
 	--input-slider-thumb-border: 1px solid #000000;
-	--input-slider-thumb-top-margin: -15px;
+	--input-slider-thumb-top-margin: -10px;
 	--input-slider-thumb-box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
 }
 
@@ -361,6 +362,8 @@ input[type="checkbox"]:checked {
 		height: 0;
 		min-width: 250px;
 		max-width: 250px;
+		min-width: 285px;
+		max-width: 285px;
 		display: grid;
 		grid-template-rows: var(--app-grid-template-rows);
 		z-index: var(--zmax);
@@ -385,10 +388,8 @@ input[type="checkbox"]:checked {
 		flex-direction: row;
 		justify-content: space-between;
 		align-items: center;
-		background-color: white;
-		background-color: var(--theme-color);
-		background-color: lightslategrey;
-		color: white;
+		background-color: lightgrey;
+		color: black;
 
 		font-size: var(--settings-sidebar-header-font-size);
 		height: 45px;
@@ -404,6 +405,7 @@ input[type="checkbox"]:checked {
 		background: #dfe4ea;
 		/* background: #afb8c4;
 		background: #c2c7ce; */
+		background-color: whitesmoke;
 		overflow-y: scroll;
 	}
 

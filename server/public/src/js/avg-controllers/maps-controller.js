@@ -533,6 +533,7 @@ const LeafletMaps = (baseMap => {
          return visibleLayers;
       },
       getClusterPropsMarkup: (clusterProps) => {
+         console.log({clusterProps})
 
          try {
             
@@ -544,7 +545,7 @@ const LeafletMaps = (baseMap => {
                <div class="metadata-label--owner-info__avg"> 
                   <span> ${clusterProps.clusterName} </span>
                   <span>${clusterProps.clusterFeatsNum} Farmers •
-                     <span>Warwade, Lokoja</span>
+                     <span>${clusterProps.clusterLocation}</span>
                   </span>
                </div>
                <div class="metadata-label--turn-by-turn" id="metadata_label_turn_by_turn">
@@ -580,7 +581,7 @@ const LeafletMaps = (baseMap => {
          console.error(`HTMLMarkupErr: ${HTMLMarkupErr.message}`);
       };
       },
-      createHTMLMarker: (props, latLngPosition, styleClass, {draggable=true}) => {
+      getClusterPlotHTMLMarker: (props, latLngPosition, styleClass, {draggable=true}) => {
          const HTMLMarker = L.marker(latLngPosition, {
             draggable: draggable,
             icon: L.divIcon({
@@ -1151,7 +1152,7 @@ const LeafletMaps = (baseMap => {
 })(AVG_BASE_MAP);
 
 
-const MapboxMaps = ((plotsMap) => {
+const MapboxMaps = ((subplotsMap) => {
 
    return {
 
@@ -1211,7 +1212,7 @@ const MapboxMaps = ((plotsMap) => {
          };
       },
 
-      switchLayer: ({layerId=_mandatoryParam(), map=plotsMap}) => {
+      switchLayer: ({layerId=_mandatoryParam(), map=subplotsMap}) => {
          map.setStyle(`mapbox://styles/mapbox/${layerId}`);
       },
 
@@ -1328,7 +1329,7 @@ const MapboxMaps = ((plotsMap) => {
       },
       
       // SIMPLE MAPBOX GJ. RENDER FN.
-      drawFeatFeatColl: (featOrFeatColl, {map=plotsMap}) => {
+      drawFeatFeatColl: (featOrFeatColl, {map=subplotsMap}) => {
 
          try {
 
@@ -1484,8 +1485,8 @@ const MapboxFillLayerHandler = ((leafletModalMap)=>{
                // FILL THE POLYGON
                LeafletMaps.getFeatPolyFill(featCoords).addTo(leafletLayerGroup);
 
-               // DISPLAY PLOT METADATA AT CENTER OF FEATURE
-               LeafletMaps.createHTMLMarker(featProps, featCenter, 'plot-metadata-label', {draggable:true}).addTo(leafletLayerGroup);
+               // DISPLAY PLOT METADATA AT CENTER OF THE CLUSTER PLOT FEATURE
+               LeafletMaps.getClusterPlotHTMLMarker(featProps, featCenter, 'plot-metadata-label', {draggable:true}).addTo(leafletLayerGroup);
       
                // TODO
                // renderFeatVertices()
@@ -1727,7 +1728,7 @@ export const _RenderEngine = (function(avgBaseMap, clusterFeatsMap) {
 
                      let bufferedBboxPoly, finalBboxPoly;
                      
-                     // INIT LG. FOR CLUSTER HTML MARKER
+                     // INIT LG. FOR CLUSTER HTML MARKERS
                      const clusterMetaLabelsLG = LLayerGroupController.initLayerGroup("cluster-metadata-labels", {visibilityRank: 2});
 
                      // DISPLAY CLUSTER DETAILS IN HTML MARKER
