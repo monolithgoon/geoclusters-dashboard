@@ -1,45 +1,44 @@
 @import url("https://fonts.googleapis.com/css?family=Shadows+Into+Light+Two&display=swap");
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Fira+Sans&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Karla:wght@300&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Fira+Sans&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Karla:wght@300&display=swap");
 
-
-@import url('./404.css');
-@import url('./bs-custom.css');
-@import url('./uikit-custom.css');
-@import url('./leaflet-custom.css');
-@import url('./material-design-ripple.css');
-@import url('./_cluster-feature-card.css');
-@import url('./utility-classes.css');
-@import url('./_left-pane.css');
-@import url('./_middle-pane.css');
-@import url('./_header.css');
-@import url('./_right-pane.css');
-@import url('./map-overlays.css');
-
+@import url("./404.css");
+@import url("./bs-custom.css");
+@import url("./uikit-custom.css");
+@import url("./leaflet-custom.css");
+@import url("./material-design-ripple.css");
+@import url("./_cluster-feature-card.css");
+@import url("./utility-classes.css");
+@import url("./_left-pane.css");
+@import url("./_middle-pane.css");
+@import url("./_header.css");
+@import url("./_right-pane.css");
+@import url("./map-overlays.css");
+@import url("./range-input.css");
 
 :root {
 	--scrollbar-width: 7px;
 	--app-header-height: 40px;
-	
+
 	/* APP GRIDS */
 	--app-grid-template-cols: 300px 240px 1.2fr 1.2fr 360px;
 	--app-grid-template-cols: 300px 240px 1.2fr 1.2fr 30vw;
 	--app-grid-template-rows: 0.15fr 2fr;
 	/* --app-grid-template-rows: 8vh 2fr; */
-	
+
 	/* COLORS */
-	--theme-color: #0D6EFD;
+	--theme-color: #0d6efd;
 	--theme-color: #009432;
-	--card-light-grey: #F9F9F9;
-	--bg-light-blue: #EEF3FA;
+	--card-light-grey: #f9f9f9;
+	--bg-light-blue: #eef3fa;
 	--grey-line-50: #eee;
 	--grey-line-100: #dfe6e9;
 	--grey-line-200: lightgrey;
-	--btn-fill-rest: #0078D4;
-	--btn-fill-hover: #006CBE;
-	--btn-fill-active: #1683D8;
+	--btn-fill-rest: #0078d4;
+	--btn-fill-hover: #006cbe;
+	--btn-fill-active: #1683d8;
 	--btn-fill-active: #0d6efd;
 
 	/* FONT SIZES */
@@ -58,15 +57,16 @@
 	/* --cluster-feature-card-detail-text: 0.54rem; */
 	--cluster-feature-card-detail-text: 0.6rem;
 	--sidebar-nav-tab-font-size: 0.65rem;
-	--settings-sidebar-font-size: 0.75rem;
-	--settings-sidebar-input-font-size: 0.75rem;
+	--settings-sidebar-header-font-size: 0.7rem;
+	--settings-sidebar-body-font-size: 0.75rem;
+	--settings-sidebar-input-font-size: 0.8rem;
 
 	/* FONT WEIGHTS */
 	--settings-sidebar-font-weight: bold;
 
 	/* LETTER SPACINGS */
 	--settings-sidebar-letter-spacing: -0.4px;
-
+	--sidebar-pane-contorls-letter-spacing: -0.4px
 
 	/* Z-INDEXES */
 	--z0: 0;
@@ -88,6 +88,16 @@
 
 	/* LINE HEIGHTS */
 	--card-text-line: 1.5;
+
+	/* SETTINGS SIDEBAR RANGE INPUTS */
+	/* TRACK */
+	--input-slider-track-height: 5px;
+	--input-slider-track-border: 0.2px solid #010101;
+	/* THUMB */
+	--input-slider-thumb-height: 15px;
+	--input-slider-thumb-border: 1px solid #000000;
+	--input-slider-thumb-top-margin: -15px;
+	--input-slider-thumb-box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
 }
 
 * {
@@ -95,28 +105,31 @@
 	margin: 0;
 }
 
-body, html {
+body,
+html {
 	margin: auto;
 	width: 100%;
 	height: 100%;
 	font-family: "Shadows Into Light Two";
 	font-family: "IBM Plex Sans", sans-serif;
 	font-size: 1rem;
-	-webkit-box-sizing:border-box;
-	-moz-box-sizing:border-box;
-	box-sizing:border-box;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
 	/* -webkit-font-smoothing:antialiased;
 	-moz-font-smoothing:antialiased;
 	-o-font-smoothing:antialiased; */
-	text-rendering:optimizeLegibility;
+	text-rendering: optimizeLegibility;
 	scroll-behavior: smooth;
 }
 
+/* SCROLLBARS */
+
 ::-webkit-scrollbar {
-   width: var(--scrollbar-width);
-   border-left: 0;
-   background: rgba(0, 0, 0, 0.2);
-   background-color: inherit;
+	width: var(--scrollbar-width);
+	border-left: 0;
+	background: rgba(0, 0, 0, 0.2);
+	background-color: inherit;
 }
 
 /* ::-webkit-scrollbar-track {
@@ -124,16 +137,17 @@ body, html {
 } */
 
 ::-webkit-scrollbar-thumb {
-   background: var(--scrollbar-color);
-   background: var(--theme-color);
-   /* background: #e84118 ; */
-   height: auto;
-   border-radius: 0;
+	background: var(--scrollbar-color);
+	background: var(--theme-color);
+	/* background: #e84118 ; */
+	height: auto;
+	border-radius: 0;
 }
+
 
 a {
 	cursor: pointer !important;
-   text-decoration: none !important;
+	text-decoration: none !important;
 }
 
 fieldset {
@@ -147,8 +161,8 @@ fieldset > legend {
 }
 
 /* Step 1 – Hide the boxes */
-input[type=radio],
-input[type=checkbox] {
+input[type="radio"],
+input[type="checkbox"] {
 	margin: 0;
 	/* display: none; */
 }
@@ -156,33 +170,48 @@ input[type=checkbox] {
 /* TODO > MAKE THE CHECKBOXES ROUND */
 /* Step 2 – Stylize the before */
 .radio label:before {
-border-radius: 8px;
+	border-radius: 8px;
 }
 .checkbox label:before {
-border-radius: 3px;
-border-radius: 50%;
-
+	border-radius: 3px;
+	border-radius: 50%;
 }
 
 /* Step 3 – Stylize the after */
-input[type=radio]:checked {
-content: "\2022";
-color: #f3f3f3;
-font-size: 30px;
-text-align: center;
-line-height: 18px;
+input[type="radio"]:checked {
+	content: "\2022";
+	color: #f3f3f3;
+	font-size: 30px;
+	text-align: center;
+	line-height: 18px;
 }
 
-input[type=checkbox]:checked {
-content: "\2713";
-text-shadow: 1px 1px 1px rgba(0, 0, 0, .2);
-font-size: 15px;
-color: #f3f3f3;
-text-align: center;
-line-height: 15px;
+input[type="checkbox"]:checked {
+	content: "\2713";
+	text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+	font-size: 15px;
+	color: #f3f3f3;
+	text-align: center;
+	line-height: 15px;
 }
+
+
+/* FORM INPUT GROUPS */
+.form-input-group {
+	display: flex;
+}
+
+.form-input-group.vertical-stacked-inputs-wrapper {
+	flex-direction: column;
+}
+
+.form-input-group.vertical-stacked-inputs-wrapper > div {
+	margin-top: 10px;
+}
+
 
 /* MAIN DASHBOARD MAP */
+
 #avg_base_map_container {
 	position: absolute;
 	top: 0;
@@ -200,11 +229,9 @@ line-height: 15px;
 	height: 100%;
 }
 
-
 /* @media screen and (min-width: 968px) { */
 @media screen and (min-width: 850px) {
-
-	body {	
+	body {
 		/* THIS MAKES THE PAGE RESIZE WITH WINDOW */
 		display: flex;
 		overflow: hidden;
@@ -224,7 +251,7 @@ line-height: 15px;
 		width: 100%;
 		position: relative;
 	}
-		
+
 	.base-app-grid-container {
 		padding: var(--base-app-pad) var(--base-app-pad) 0 var(--base-app-pad);
 		display: grid;
@@ -232,17 +259,17 @@ line-height: 15px;
 		grid-template-rows: var(--app-grid-template-rows);
 		width: 100%;
 		height: 100vh;
-	
+
 		/* DEFINE THE GRID AREAS WITH NAMED GRID AREAS */
-		grid-template-areas:	
-				'left-pane		hidden-pane 	.	header	header'
-				'left-pane		hidden-pane 	. 			. 			right-pane';
-				
-		grid-template-areas:	
-				'left-pane		hidden-pane 	.	header	header'
-				'left-pane		hidden-pane 	. 	map-controls	right-pane';
-	
-		background-color: lightgrey;	
+		grid-template-areas:
+			"left-pane		hidden-pane 	.	header	header"
+			"left-pane		hidden-pane 	. 			. 			right-pane";
+
+		grid-template-areas:
+			"left-pane		hidden-pane 	.	header	header"
+			"left-pane		hidden-pane 	. 	map-controls	right-pane";
+
+		background-color: lightgrey;
 		position: relative;
 	}
 
@@ -258,20 +285,18 @@ line-height: 15px;
 		z-index: var(--z2);
 		/* max-width: 35px; */
 	}
-	
+
 	.user-action-container {
 		/* box-shadow: 0 1px 2px rgb(0 0 0 / 15%); */
 		border-bottom: 1px solid var(--grey-line-50);
 	}
 
-
 	/* SIDEBAR PANE CONTROLS */
 
-
 	.pane-info-text {
-		font-weight: bold
+		font-weight: bold;
 	}
-			
+
 	.pane-controls {
 		padding-left: 10px;
 		display: flex;
@@ -283,7 +308,7 @@ line-height: 15px;
 		cursor: pointer;
 		height: min-content;
 		height: 28px;
-		
+
 		/* opacity: 0.7; */
 		background-color: whitesmoke;
 
@@ -295,10 +320,10 @@ line-height: 15px;
 		opacity: 1;
 		background-color: white;
 	}
-	
+
 	.btn.pane-resize-btn {
 		font-size: 0.7rem !important;
-		letter-spacing: -0.4px;
+		letter-spacing: var(--sidebar-pane-controls-letter-spacing);
 		width: 70px; /* sets a fixed width of 100px */
 		overflow: hidden; /* hides any overflowing text */
 		text-overflow: ellipsis; /* adds an ellipsis to indicate truncated text */
@@ -323,36 +348,34 @@ line-height: 15px;
 		justify-content: center;
 	}
 
-
 	/* DASHBOARD SETTINGS SIDEBAR */
 
-
 	.avg-settings-sidebar-container {
-		font-size: var(--settings-sidebar-font-size);
+		font-size: var(--settings-sidebar-body-font-size);
 		position: absolute;
 		top: 0px;
 		right: 0px;
 	}
-	
+
 	#avg_settings_sidebar {
-		height     : 0;
-		min-width  : 250px;
-		max-width  : 250px;
+		height: 0;
+		min-width: 250px;
+		max-width: 250px;
 		display: grid;
 		grid-template-rows: var(--app-grid-template-rows);
 		z-index: var(--zmax);
 		overflow-y: hidden;
 	}
-	
+
 	#avg_settings_sidebar.active {
-		height     : 100vh;
+		height: 100vh;
 		position: absolute;
 		top: 0px;
 		right: -10px;
-		transition : transform ease-out .2s;
+		transition: transform ease-out 0.2s;
 		transform: translateX(-10px);
 	}
-	
+
 	.settings-sidebar-header {
 		margin-top: var(--base-app-pad);
 		padding: 0 15px;
@@ -363,89 +386,70 @@ line-height: 15px;
 		justify-content: space-between;
 		align-items: center;
 		background-color: white;
+		background-color: var(--theme-color);
+		background-color: lightslategrey;
+		color: white;
 
+		font-size: var(--settings-sidebar-header-font-size);
 		height: 45px;
 	}
 
+	#settings_sidebar_close_btn {
+		color: white;
+	}
+
 	.settings-sidebar-body {
+		font-size: var(--settings-sidebar-body-font-size);
 		padding: 15px;
 		background: #dfe4ea;
 		/* background: #afb8c4;
 		background: #c2c7ce; */
 		overflow-y: scroll;
 	}
-	
-	.settings-sidebar-header, 
+
+	.settings-sidebar-header,
 	.settings-sidebar-body {
-		font-size: var(--settings-sidebar-font-size);
 		letter-spacing: var(--settings-sidebar-letter-spacing);
 		font-weight: var(--settings-sidebar-font-weight);
-		}
+	}
 
 	.settings-sidebar-body .form-check input {
 		font-size: var(--settings-sidebar-input-font-size);
-	};
+	}
 
-	/* FIXME > NOT DOING ANYTHING */
-	/* .settings-sidebar-body .range-input-wrapper {
-		padding: 0 5px;
+	.settings-sidebar-body .range-input-wrapper {
+		padding: 10px 0;
+		padding: 0;
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+	}
+
+	.range-input-wrapper > label {
+		min-width: 30px;
+		text-align: center;
+	}
+
+	#settings_default_reset_btn.btn {
+		padding: 10px 0;
 		width: 100%;
-	} */
-	
-	input[type=range],
-	input.settings-range-input {
-		/* margin: 0 5px; */
-		-webkit-appearance: none;  /* Override default CSS styles */
-		appearance: none;
-		width: 100%; /* Full-width */
-		height: 2px; /* Specified height */
-		background: black;
-		outline: none; /* Remove outline */
-		opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
-		-webkit-transition: .2s; /* 0.2 seconds transition on hover */
-		transition: opacity .2s;
-	}
-
-	/* Mouse-over effects */
-	.settings-range-input:hover {
-		opacity: .8; /* Fully shown on mouse-over */
-	}
-
-	/* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
-	.settings-range-input::-webkit-slider-thumb {
-		-webkit-appearance: none; /* Override default look */
-		appearance: none;
-		width: 15px; /* Set a specific slider handle width */
-		height: 15px; /* Slider handle height */
-		background: orange; /* Green background */
-		cursor: pointer; /* Cursor on hover */
-
-		border-radius: 50%;
-		border: 2px solid black;
-		background: white;
-	}
-
-	.settings-range-input::-moz-range-thumb {
-		width: 15px; /* Set a specific slider handle width */
-		height: 15px; /* Slider handle height */
-		background: #04AA6D; /* Green background */
-		cursor: pointer; /* Cursor on hover */
-	}
-
-	#settings_default_reset.btn {
-		width: 100%; height: 100%;
+		height: 100%;
 		border-radius: 0;
-	};
+		font-size: var(--settings-sidebar-body-font-size);
+		font-family: monospace;
+		letter-spacing: -0.5px;
+	}
 }
 
 @font-face {
-	font-family: 'UberMove';
-	src: url('../../assets/fonts/UberMove-Regular.woff2') format('woff2');
+	font-family: "UberMove";
+	src: url("../../assets/fonts/UberMove-Regular.woff2") format("woff2");
 	font-style: normal;
 }
 
 @font-face {
 	font-family: "Google Sans";
-	src: url('../../assets/fonts/google-sans-2.woff2') format('woff2');
+	src: url("../../assets/fonts/google-sans-2.woff2") format("woff2");
 	font-style: normal;
 }

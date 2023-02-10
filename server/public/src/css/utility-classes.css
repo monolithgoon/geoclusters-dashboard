@@ -53,14 +53,14 @@ span.ripple-circle {
 
 
 /* SUB-SCRIPT & SUPER-SCRIPT */
-.super-scr {
+.super-script {
    position: relative;
    bottom: 1.0em;
    left: 0.1em;
    left: 0.05em;
 }
 
-.sub-scr {
+.sub-script {
    position: relative;
    top: 1.0em;
    right: 0.1em;

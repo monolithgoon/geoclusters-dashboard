@@ -21,6 +21,18 @@ const DEFAULT_APP_SETTINGS = Object.freeze({
 	LEAFLET_ADMIN_LEVEL_3_ZOOM: 15.5,
 	LEAFLET_MAX_ZOOM: 18,
 
+	MAP_POLYGON_LINE_COLORS: {
+		BASEMAP: {
+			GEO_POL_REGIONS: "#BDC581", // faded green
+		},
+	},
+
+	MAP_POLYGON_LINE_WEIGHTS: {
+		BASEMAP: {
+			GEO_POL_REGIONS: 1.5,
+		},
+	},
+
 	GEOCLUSTERS_API_HOST: API_URLS.GEOCLUSTERS.HOST.AWS,
 
 	// GEOCLUSTERS_API_RESOURCE_PATHS: ["api/v2/legacy-agcs", "api/v1/parcelized-agcs", "api/v1/agcs", "api/v2/geo-clusters"],

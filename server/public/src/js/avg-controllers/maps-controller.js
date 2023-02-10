@@ -1662,6 +1662,8 @@ export const _RenderEngine = (function(avgBaseMap, clusterFeatsMap) {
          
       return {
 
+         // TODO
+         // WIP > NOT IMPLEMENTED YET
          refreshClusterPlotsMap: (eventObj) => {
             var layerId = eventObj.target.id;
             if (layerId) { 

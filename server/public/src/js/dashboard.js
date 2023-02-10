@@ -36,17 +36,6 @@ import _openFullScreen from "./utils/open-full-screen.js";
 const initDashboardApp = (() => {
 
 
-	// REMOVE
-	// function renderGeoPolRegions(resourceName, featColl) {
-	// 	if (resourceName === `nga-geo-pol-regions` && featColl) {
-	// 		_RenderEngine.renderFeatColl(featColl, {
-	// 			useBuffer: false,
-	// 			lineColor: "#BDC581",
-	// 			lineWeight: 1.5,
-	// 		});
-	// 	}
-	// }
-
 	/**
 	 * Renders the geo-political regions on the Leaflet base map.
 	 *
@@ -58,8 +47,8 @@ const initDashboardApp = (() => {
 		if (resourceName === `nga-geo-pol-regions` && featColl) {
 			_RenderEngine.renderFeatColl(featColl, {
 				useBuffer: false,
-				lineColor: "#BDC581", // faded green
-				lineWeight: 1.5,
+				lineColor: DEFAULT_APP_SETTINGS.MAP_POLYGON_LINE_COLORS.BASEMAP.GEO_POL_REGIONS, // faded green
+				lineWeight: DEFAULT_APP_SETTINGS.MAP_POLYGON_LINE_WEIGHTS.BASEMAP.GEO_POL_REGIONS,
 			});
 		}
 	}
@@ -342,13 +331,13 @@ const initDashboardApp = (() => {
 
 		initDashboardApp.addDOMListeners();
 
-		await initDashboardApp.cachePreloadedGeoClusters();
+		// await initDashboardApp.cachePreloadedGeoClusters();
 
-		await initDashboardApp.renderCachedGeoClusters();
+		// await initDashboardApp.renderCachedGeoClusters();
 
 		await initDashboardApp.renderAdminBounds(windowObj);
 
-		await initDashboardApp.fireAutoUpdateWorker(windowObj);
+		// await initDashboardApp.fireAutoUpdateWorker(windowObj);
 	});
 })();
 

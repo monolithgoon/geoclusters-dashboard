@@ -22,7 +22,7 @@ const findSubStr = (subStr, baseStr) => {
 
 
 /**
- * TraverseObject is a closure that provides functions for evaluating the value of keys in a JavaScript object.
+ * _TraverseObject is a closure that provides functions for evaluating the value of keys in a JavaScript object.
  * The evaluateValue function evaluates the value of the given keys in the JavaScript object and returns the evaluated value. If evaluation fails, it returns null.
  * The getFinalValue function returns the final value after evaluation.
  * The resetFinalValue function resets the final value to undefined.

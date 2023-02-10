@@ -106,7 +106,7 @@ export const APP_STATE = (function() {
             console.log({lastRenderedGeoJSON});
             return lastRenderedGeoJSON = renderedGeoJSONArray.length[0];
          };
-         lastGeoJSON = renderedGeoJSONArray[renderedGeoJSONArray.length-1];
+         let lastGeoJSON = renderedGeoJSONArray[renderedGeoJSONArray.length-1];
          return lastGeoJSON ? lastGeoJSON : null;
       },
       getRenderedGeoJSON: () => {
