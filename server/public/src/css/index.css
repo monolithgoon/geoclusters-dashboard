@@ -58,6 +58,15 @@
 	/* --cluster-feature-card-detail-text: 0.54rem; */
 	--cluster-feature-card-detail-text: 0.6rem;
 	--sidebar-nav-tab-font-size: 0.65rem;
+	--settings-sidebar-font-size: 0.75rem;
+	--settings-sidebar-input-font-size: 0.75rem;
+
+	/* FONT WEIGHTS */
+	--settings-sidebar-font-weight: bold;
+
+	/* LETTER SPACINGS */
+	--settings-sidebar-letter-spacing: -0.4px;
+
 
 	/* Z-INDEXES */
 	--z0: 0;
@@ -319,7 +328,7 @@ line-height: 15px;
 
 
 	.avg-settings-sidebar-container {
-		font-size: var(--header-text-font-size);
+		font-size: var(--settings-sidebar-font-size);
 		position: absolute;
 		top: 0px;
 		right: 0px;
@@ -339,7 +348,6 @@ line-height: 15px;
 		height     : 100vh;
 		position: absolute;
 		top: 0px;
-		right: 0px;
 		right: -10px;
 		transition : transform ease-out .2s;
 		transform: translateX(-10px);
@@ -362,18 +370,20 @@ line-height: 15px;
 	.settings-sidebar-body {
 		padding: 15px;
 		background: #dfe4ea;
+		/* background: #afb8c4;
+		background: #c2c7ce; */
 		overflow-y: scroll;
 	}
 	
 	.settings-sidebar-header, 
 	.settings-sidebar-body {
-		font-size: 0.8rem;
-		letter-spacing: -0.4px;
-		font-weight: bold;
+		font-size: var(--settings-sidebar-font-size);
+		letter-spacing: var(--settings-sidebar-letter-spacing);
+		font-weight: var(--settings-sidebar-font-weight);
 		}
 
 	.settings-sidebar-body .form-check input {
-		font-size: 0.8rem;
+		font-size: var(--settings-sidebar-input-font-size);
 	};
 
 	/* FIXME > NOT DOING ANYTHING */

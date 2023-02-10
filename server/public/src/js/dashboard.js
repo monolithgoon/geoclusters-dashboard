@@ -35,21 +35,45 @@ import _openFullScreen from "./utils/open-full-screen.js";
 
 const initDashboardApp = (() => {
 
-	// 
+
+	// REMOVE
+	// function renderGeoPolRegions(resourceName, featColl) {
+	// 	if (resourceName === `nga-geo-pol-regions` && featColl) {
+	// 		_RenderEngine.renderFeatColl(featColl, {
+	// 			useBuffer: false,
+	// 			lineColor: "#BDC581",
+	// 			lineWeight: 1.5,
+	// 		});
+	// 	}
+	// }
+
+	/**
+	 * Renders the geo-political regions on the Leaflet base map.
+	 *
+	 * @param {String} resourceName - The name of the resource to be rendered.
+	 * @param {Object} featColl - The feature collection to be rendered.
+	 *
+	 */
 	function renderGeoPolRegions(resourceName, featColl) {
 		if (resourceName === `nga-geo-pol-regions` && featColl) {
 			_RenderEngine.renderFeatColl(featColl, {
 				useBuffer: false,
-				lineColor: "#BDC581",
+				lineColor: "#BDC581", // faded green
 				lineWeight: 1.5,
 			});
 		}
 	}
 
-	// 
+
+	/**
+	 * Renders the clusters collection on the Leaflet centerfold basemap.
+	 *
+	 * @param {Array} featCollArray - An array of feature collections to be rendered on the base map.
+	 *
+	 * @async
+	 */
 	async function renderClustersCollection(featCollArray) {
 		if (featCollArray && featCollArray.length > 0) {
-			// RENDER CLUSTERS' DATA ON BASE MAP
 			await _RenderEngine.populateClustersOnBasemap(featCollArray, {
 				useBuffer: _pollAVGSettingsValues().bufferFeatsChk,
 				bufferUnits: _pollAVGSettingsValues().distanceUnits,
@@ -58,15 +82,22 @@ const initDashboardApp = (() => {
 		}
 	}
 
-	// This function retrieves newly parcelized geoClusters' metadata from a database.
-	// It does this by downloading fresh parcelized GeoCluster metadata from the database and saving it to the application state.
-	// It then compares the GeoCluster metadata that is already in the app cache with the current metadata in the database.
-	// The function returns an array of new GeoClusters for which the GeoJSON has not been downloaded yet.
-	// If the function is successful, it returns the array of new GeoClusters.
-	// If it is not successful, it returns an empty array.
 
+	/**
+	 * Function to get newly parcelized GeoClusters from the database.
+	 * 
+	 * It does this by downloading fresh parcelized GeoCluster metadata from the database and saving it to the application state.
+	 * It then compares the GeoCluster metadata that is already in the app cache with the current metadata in the database.
+	 * The function returns an array of new GeoClusters for which the GeoJSON has not been downloaded yet.
+	 * If the function is successful, it returns the array of new GeoClusters.
+	 * If it is not successful, it returns an empty array.
+	 *
+	 * @function
+	 * @async
+	 * @param {Object} window - A reference to the window object.
+	 * @returns {Array} An array of GeoJSON objects representing the newly parcelized GeoClusters. An empty array is returned if there are no new GeoClusters or if the function fails.
+	 */
 	const getNewlyParcelizedClusters = async (window) => {
-		
 		// Download the latest GeoCluster metadata from the database and save it to the app state
 		const response = await _downloadAndSaveParcelizedClusters(window);
 
@@ -248,13 +279,11 @@ const initDashboardApp = (() => {
 
 		// NESTED, RECURSIVE setTimeouts THAT LOOPS INDEFINITELY @ PRE-SET INTERVALS
 		fireAutoUpdateWorker: async (window) => {
-
 			let initDelay = DURATION.GEOCLUSTERS_DATA_QUERY_INTERVAL;
 
 			let intervalDelay = initDelay;
 
 			setTimeout(async function request() {
-				
 				// get the new geo clusters from the data source
 				const newGeoClustersArr = await getNewlyParcelizedClusters(window);
 
@@ -294,22 +323,20 @@ const initDashboardApp = (() => {
 			}, intervalDelay);
 		},
 
-		// 
+		//
 		addDOMListeners: () => {
-
 			// logout btn. listener
 			GET_DOM_ELEMENTS().logoutBtn.addEventListener("click", logout);
 
 			//- Click anywhere on page fo fullscreen
-      document.addEventListener('click', _openFullScreen);
-		}
+			// document.addEventListener('click', _openFullScreen);
+		},
 	};
 })();
 
 // RUN DASHBOARD APP STARTUP FUNCTIONS
 (() => {
 	window.addEventListener(`DOMContentLoaded`, async (windowObj) => {
-
 		// save the default UI settings into the APP_STATE object
 		APP_STATE.saveDefaultSettings(_pollAVGSettingsValues());
 
@@ -328,7 +355,6 @@ const initDashboardApp = (() => {
 // REMOVE > DEPRECATED
 (() => {
 	window.addEventListener(`DOMContentLoaded`, async (windowObj) => {
-
 		// SANDBOX
 		//    document.body.addEventListener('click', e => {
 		//       if (e.target.matches("[data-bs-target]")) {
@@ -340,6 +366,5 @@ const initDashboardApp = (() => {
 		// SANDBOX
 		//    // init. the client side router
 		//    _clientSideRouter();
-		
 	});
 })();

@@ -656,6 +656,7 @@ export const _PopulateDOM = ((dom) => {
 })(GET_DOM_ELEMENTS());
 
 const DelegatePreloadedDOMElementsEvents = ((dom) => {
+	
 	// SANDBOX
 	$("#test_feat_card").on("click", function (evt) {
 		const cardDrawer = _ManipulateDOM.getSiblingElements(evt.currentTarget)[0];

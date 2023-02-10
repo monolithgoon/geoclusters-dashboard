@@ -1381,7 +1381,7 @@ const MapboxMaps = ((plotsMap) => {
 // OPEN A LEAFLET MAP IN A MODAL WHEN PLOTS MAP FILL LAYER IS CLICKED
 const MapboxFillLayerHandler = ((leafletModalMap)=>{
 
-   const baseMapLayerGroup = LLayerGroupController.getLayerGroups().baseMapLayerGroup;
+   const baseMapLayerGroup = LLayerGroupController.getLayerGroups().baseMapLayerGroup; // REMOVE > UN-USED
    const modalMapLayerGroup = LLayerGroupController.getLayerGroups().modalMapLayerGroup;
 
    // BUILD A DATA OBJ. TO HOLD THE NAV. INFO. FOR EACH PLOT
@@ -1427,7 +1427,7 @@ const MapboxFillLayerHandler = ((leafletModalMap)=>{
             MapboxLayersController.saveLayers(clickedLayer);
             MapboxLayersController.saveClickedLayers(clickedLayer);
 
-            // SHOW FEAT. DETAIL MAP CONT.
+            // SHOW FEAT. DETAIL MAP CONTAINER
             (function showFeatDetailMapContainer(clickedLayerId) {
                
                // SANDBOX
@@ -1455,9 +1455,11 @@ const MapboxFillLayerHandler = ((leafletModalMap)=>{
                // REMOVE
                // leafletMap.invalidateSize();
 
-               // FIX ME > NOT WORKING PROPERLY
+               // FIXME > NOT WORKING PROPERLY
                if (!_pollAVGSettingsValues().renderMultiFeatsChk) {
+                  console.log({leafletLayerGroup})
                   leafletLayerGroup.clearLayers();
+                  console.log({leafletLayerGroup})
                };
 
                const featIdx = featureData.featureIndex;
@@ -1853,9 +1855,10 @@ export const _RenderEngine = (function(avgBaseMap, clusterFeatsMap) {
          renderClusterPlotsOnSidemap: async (featColl, {useBuffer, bufferAmt, bufferUnits}) => {
             if (featColl.features) {
                for (let idx = 0; idx < featColl.features.length; idx++) {
-                  let clusterPlotFeat = featColl.features[idx];
-                  // clusterPlotFeat = getPresentationPoly(clusterPlotFeat, {useBuffer, bufferAmt, bufferUnits});
-                  await MapboxMaps.drawGJPolygon(clusterFeatsMap, clusterPlotFeat, idx);
+                  const clusterPlotFeat = featColl.features[idx];
+                  // await MapboxMaps.drawGJPolygon(clusterFeatsMap, clusterPlotFeat, idx);
+                  const clusterPlotFeatPoly = getPresentationPoly(clusterPlotFeat, {useBuffer, bufferAmt, bufferUnits});
+                  await MapboxMaps.drawGJPolygon(clusterFeatsMap, clusterPlotFeatPoly, idx);
                };
             } else {
                console.log(`There are no features to render.`);

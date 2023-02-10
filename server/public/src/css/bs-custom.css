@@ -10,7 +10,7 @@ input[type=checkbox] {
 	background-color: #2f3640; /* gb-electromagnetic */
 	background-color: #666;
 	background-color: #2d3436; /* us-dracula-orchid */
-	min-width: 40px;
+	min-width: 45px;
 	transition: min-width ease-out .1s;
 }
 
