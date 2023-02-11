@@ -5,3 +5,5 @@ sample.geojson
 request.http
 webpack.confing.js
 server/public/dist/bundle.js
+server/localdata/processed-legacy-agcs.json
+server/localdata/parcelized-agcs.json
