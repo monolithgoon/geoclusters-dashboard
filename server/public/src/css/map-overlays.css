@@ -139,8 +139,6 @@
    border: 2px solid black;
 
    display: grid !important;
-   /* REMOVE */
-   /* grid-template-columns: 1fr 1.5fr; */
 
    border-radius: 3px;
    -webkit-box-shadow: 0px 0px 0px 1px rgba(255,255,255,1);
@@ -151,18 +149,20 @@
 
 .plot-metadata-label--chunk-size {
    margin: auto 0;
-   padding: 0 4px;
+   padding: 0 8px;
    height: 100%;
    max-width: fit-content;
    background-color: black;
-   font-size: 10.5px;
+   font-size: var(--cluster-metadata-label-font-size);
+   font-size: 0.75rem;
    letter-spacing: -0.3px;
    color: white;
    border-right: 2px solid black;
 
-   /* CENTER THE TEXT IN THE GRID ITEM */
-   display: grid;
-   grid-template-rows: 1fr 1fr;
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   align-items: flex-start;
 }
 
 .plot-metadata-label--chunk-size span {
@@ -172,15 +172,19 @@
 
 .metadata-label--owner-info,
 .metadata-label--owner-info__avg  {
-   padding: 4px;
+   padding: 4px 8px;
    display: grid;
    grid-template-rows: repeat(2, 1fr);
-   font-weight: bold;
+   /* font-weight: bold; */
 }
 
 .metadata-label--owner-info__avg {
-   font-size: 0.7rem;
+   font-size: var(--cluster-metadata-label-font-size);
    letter-spacing: -0.5px;
+}
+
+.metadata-label--owner-info__avg > span:first-of-type {
+   font-weight: bold;
 }
 
 .metadata-label--turn-by-turn {
