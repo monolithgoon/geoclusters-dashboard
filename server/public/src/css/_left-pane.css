@@ -229,8 +229,8 @@ button#results_scroll_top_button {
 .result-item-modal-subtext {
    margin-bottom: 15px;
    line-height: 1.4;
-   font-family: "Google Sans", sans-serif;
    font-family: "IBM Plex Sans";
+   font-family: "Google Sans", sans-serif;
    font-size: 0.75rem;
    letter-spacing: -0.2px;
    word-spacing: 1.3px;
