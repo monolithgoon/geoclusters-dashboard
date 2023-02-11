@@ -80,7 +80,7 @@
 }
 
 /* ----------- Non-Retina Screens ----------- */
-@media screen and (min-device-width: 980px) {
+@media screen and (min-device-width: 400px) {
 	.error-page-wrapper {
 		width: 25%;
 		width: 30%;
