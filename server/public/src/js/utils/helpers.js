@@ -134,17 +134,26 @@ export const _TraverseObject = (() => {
 })();
 
 
-// CONVERT THE OBJ'S VALUES TO STRINGS
+/**
+ * @function _stringifyPropValues
+ * @description Converts the property values of an object to strings
+ * @param {Object} obj - The object to be modified.
+ * @returns {Object} - A modified object with the property values now all being strings.
+ */
 export const _stringifyPropValues = (obj) => {
-	return Object.keys(obj).reduce((modObject, key) => {
-		modObject[key] = (obj[key]).toString();
-		// modObject[key] = ``+obj[key];
-		return modObject;
-	}, {});
+   return Object.keys(obj).reduce((modObject, key) => {
+      modObject[key] = (obj[key]).toString();
+      return modObject;
+   }, {});
 };
 
 
-// CONVERT THE OBJ'S VALUES TO UPPERCASE STRINGS
+/**
+ * @function _capitalizePropValues
+ * @description Converts the values of an object to uppercase strings
+ * @param {Object} obj - The object to be modified
+ * @returns {Object} The modified object with capitalized values
+*/
 export const _capitalizePropValues = (obj) => {
 	return Object.keys(obj).reduce((modObject, key) => {
 		modObject[key] = (``+obj[key]).toUpperCase();
@@ -154,8 +163,8 @@ export const _capitalizePropValues = (obj) => {
 
 
 /**
- * Formats a number by adding commas as thousands separators.
- *
+ * @function _formatNumByThousand
+ * @description Formats a number by adding commas as thousands separators.
  * @param {number} number - The number to be formatted.
  * @return {string} The formatted number as a string.
  */

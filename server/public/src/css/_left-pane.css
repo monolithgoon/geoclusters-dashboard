@@ -227,13 +227,13 @@ button#results_scroll_top_button {
 }
 
 .result-item-modal-subtext {
-   margin-bottom: 10px;
-   line-height: 1.3;
-   /* font-family: "IBM Plex Sans", sans-serif; */
+   margin-bottom: 15px;
+   line-height: 1.4;
    font-family: "Google Sans", sans-serif;
-   font-size: 0.7rem;
+   font-family: "IBM Plex Sans";
+   font-size: 0.75rem;
    letter-spacing: -0.2px;
-   word-spacing: 1.5px;
+   word-spacing: 1.3px;
 }
 
 .result-item-modal-footer svg {
@@ -255,6 +255,8 @@ button#results_scroll_top_button {
 .modal-person-details,
 .modal-person-contact {
    width: 90%;
+   font-family: "Google Sans";
+   font-size: .8rem;
 }
 
 .result-item {

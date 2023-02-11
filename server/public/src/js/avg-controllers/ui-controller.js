@@ -4,6 +4,7 @@ import {
 	_getCheckedRadio,
 	_stringifyPropValues,
 	_TurfHelpers,
+	_formatNumByThousand,
 } from "../utils/helpers.js";
 import { _ProcessGeoJSON, _getBufferedPolygon } from "../utils/helpers.js";
 import { _RenderEngine } from "./maps-controller.js";
@@ -547,11 +548,12 @@ const DOMSequence = ((domElements) => {
 })(GET_DOM_ELEMENTS());
 
 export const _PopulateDOM = ((dom) => {
+
 	function renderClusterSummary(props) {
-		dom.clusterFeatsNumEl.innerText = props.clusterFeatsNum;
-		dom.clusterAreaEl.innerText = `${+props.clusterArea.toFixed(1)} ha.`;
-		dom.clusterUsedAreaEl.innerText = `${+props.clusterUsedArea.toFixed(1)} ha.`;
-		dom.clusterUnusedAreaEl.innerText = `${+props.clusterUnusedArea.toFixed(1)} ha.`;
+		dom.clusterFeatsNumEl.innerText = _formatNumByThousand(+props.clusterFeatsNum);
+		dom.clusterAreaEl.innerText = `${_formatNumByThousand(+props.clusterArea.toFixed(1))} ha.`;
+		dom.clusterUsedAreaEl.innerText = `${_formatNumByThousand(+props.clusterUsedArea.toFixed(1))} ha.`;
+		dom.clusterUnusedAreaEl.innerText = `${_formatNumByThousand(+props.clusterUnusedArea.toFixed(1))} ha.`;
 	}
 
 	return {
@@ -611,8 +613,12 @@ export const _PopulateDOM = ((dom) => {
 		},
 
 		clusterFeatsSidebar: async (clusterFeatColl) => {
+			
 			try {
+				
 				if (clusterFeatColl) {
+
+					// display a suummary of the cluster under the cluster plots map
 					renderClusterSummary(clusterFeatColl.properties);
 
 					// get the features
