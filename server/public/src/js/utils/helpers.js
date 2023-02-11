@@ -174,23 +174,24 @@ export const _formatNumByThousand = (number) => {
 
 
 /**
- * Returns the pluralized string if the number is greater than 1:
- *
+ * @function _pluralizeString
+ * @description Returns the pluralized string if the number is greater than 1
  * @param {string} string - The string to be pluralized.
- * @param {number} num - The number to determine if the string should be pluralized.
+ * @param {number} n - The number to determine if the string should be pluralized.
  * @return {string} The pluralized string.
  */
-export function _pluralizeString(string, num) {
-  if (num > 1) {
-    return num + " " + string + "s";
+export function _pluralizeString(n, string) {
+  if (n === 1) {
+    return string;
+  } else {
+    return string + 's';
   }
-  return num + " " + string;
 };
 
 
 /**
- * Capitalizes the first letter of a string.
- *
+ * @function _capitalizeFirstLetter
+ * @description Capitalizes the first letter of a string.
  * @param {string} string - The string to be capitalized.
  * @return {string} The capitalized string.
  */

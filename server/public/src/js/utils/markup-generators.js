@@ -1,4 +1,5 @@
-import { _formatNumByThousand, _joinWordsArray } from "./helpers.js";
+import DESCRIPTORS from "../constants/descriptors.js";
+import { _capitalizeFirstLetter, _formatNumByThousand, _joinWordsArray, _pluralizeString } from "./helpers.js";
 
 /**
  * Creates a new div element and adds the specified classes to it.
@@ -79,6 +80,8 @@ export const _GenerateClusterRecordMarkup = ((classList) => {
 })(["result-item", "flex-col-start"]);
 
 export const _GenClusterModalMarkup = (() => {
+   console.log(_pluralizeString(DESCRIPTORS.GEOCLUSTER_FEATURE_DESCRIPTION))
+   console.log(_capitalizeFirstLetter(_pluralizeString(DESCRIPTORS.GEOCLUSTER_FEATURE_DESCRIPTION)))
 	try {
 		const generateMarkup = function (props) {
 			const HTMLMarkup = `
@@ -91,11 +94,7 @@ export const _GenClusterModalMarkup = (() => {
                ></button>
             </div>
             <div class="result-item-modal-header flex-row-center-btw">
-               <span>${_formatNumByThousand(+
-						props.clusterFeatsNum
-					)} Farmers</span><span>${_formatNumByThousand(+
-				props.clusterArea.toFixed(0)
-			)} Hectares</span>
+               <span>${_formatNumByThousand(+props.clusterFeatsNum)} ${_capitalizeFirstLetter(_pluralizeString(+props.clusterFeatsNum, DESCRIPTORS.GEOCLUSTER_FEATURE_DESCRIPTION))}</span><span>${_formatNumByThousand(+props.clusterArea.toFixed(0))} ${_capitalizeFirstLetter(_pluralizeString(+props.clusterArea, DESCRIPTORS.GEOCLUSTERS_API_DEFAULT_LAND_AREA_UNIT))}</span>
             </div>
             <div class="result-item-modal-title flex-row-center">
                <span id="modal_title">${props.clusterName}</span>
