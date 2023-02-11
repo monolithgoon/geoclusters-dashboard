@@ -1,24 +1,22 @@
 import { _createCard, _createDiv, _joinWordsArray } from "./helpers.js";
 
+export const _GenerateClusterRecordMarkup = ((classList) => {
+	try {
+		const initContainerDiv = function () {
+			return _createDiv(classList);
+		};
 
-export const _GenerateClusterMarkup = ((classList) => {
+		const getClusterProps = function (propsGen, featureCollection) {
+			return propsGen(featureCollection);
+		};
 
-   try {
-      
-      const initContainerDiv = function() {
-         return _createDiv(classList);
-      };
-   
-      const getClusterProps = function(propsGen, featureCollection) {
-
-         return propsGen(featureCollection);
-      };
-   
-      const populateMarkup = function(props) {
-         const HTMLMarkup = `
+		const populateMarkup = function (props) {
+			const HTMLMarkup = `
             <div class='result-item-header flex-row-start'>
                <div class='result-item-titles flex-col-start flex-1'>
-                  <a class='result-item-title' title='Geo Cluster Name' href='#' title='Geo Cluster Name'>${props.clusterName}</ac>
+                  <a class='result-item-title' title='Geo Cluster Name' href='#' title='Geo Cluster Name'>${
+							props.clusterName
+						}</ac>
                   <small class='result-item-subtitle flex-row-center-btw'>
                      <svg class="locaiton-svg-icon" preserveAspectRatio="xMidYMid" viewBox="0 0 24 24">
                         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"></path>
@@ -40,7 +38,9 @@ export const _GenerateClusterMarkup = ((classList) => {
             </div>
             </div>
             <div class="result-item-body flex-col-start">
-            <a href="#" class="admin1-name" id="cluster_gov_admin1">President ${_.startCase(_joinWordsArray(Object.values(props.clusterGovAdmin1)))}</a>
+            <a href="#" class="admin1-name" id="cluster_gov_admin1">President ${_.startCase(
+					_joinWordsArray(Object.values(props.clusterGovAdmin1))
+				)}</a>
             <div class="result-item-pill">
                <span id="cluster_num_features">${props.clusterFeatsNum} Farmers</span>
                <span>•</span>
@@ -50,30 +50,26 @@ export const _GenerateClusterMarkup = ((classList) => {
             </div>
             </div>
          `;
-         return HTMLMarkup;
-      };
-         
-      return {
-   
-         getClusterResultDiv: function(featureCollection) {
-            const div = initContainerDiv();
-            const clusterProps = getClusterProps(_GetClusterProps, featureCollection);
-            div.innerHTML = populateMarkup(clusterProps);
-            return div;
-         },
-      };
+			return HTMLMarkup;
+		};
 
-   } catch (clusterMarkupGenErr) {
-      console.error(`clusterMarkupGenErr: ${clusterMarkupGenErr.message}`);
-   };
-
+		return {
+			getClusterResultDiv: function (featureCollection) {
+				const div = initContainerDiv();
+				const clusterProps = getClusterProps(_GetClusterProps, featureCollection);
+				div.innerHTML = populateMarkup(clusterProps);
+				return div;
+			},
+		};
+	} catch (clusterMarkupGenErr) {
+		console.error(`clusterMarkupGenErr: ${clusterMarkupGenErr.message}`);
+	}
 })(["result-item", "flex-col-start"]);
 
-
 export const _GenClusterModalMarkup = (() => {
-   try {
-      const populateMarkup = function(props) {
-         const HTMLMarkup = `
+	try {
+		const populateMarkup = function (props) {
+			const HTMLMarkup = `
             <div class="result-item-modal-controls">
                <button
                   class="btn-close btn-close-white"
@@ -83,7 +79,9 @@ export const _GenClusterModalMarkup = (() => {
                ></button>
             </div>
             <div class="result-item-modal-header flex-row-center-btw">
-               <span>${props.clusterFeatsNum} Farmers</span><span>${props.clusterArea.toFixed(0)} Hectares</span>
+               <span>${props.clusterFeatsNum} Farmers</span><span>${props.clusterArea.toFixed(
+				0
+			)} Hectares</span>
             </div>
             <div class="result-item-modal-title flex-row-center">
                <span id="modal_title">${props.clusterName}</span>
@@ -120,41 +118,63 @@ export const _GenClusterModalMarkup = (() => {
                </span>
             </div>
          `;
-         return HTMLMarkup;
-      };
+			return HTMLMarkup;
+		};
 
-      return {
-
-         getInnerMarkup: (modalProps) => {
-            return populateMarkup(modalProps);
-         },
-      };
-
-   } catch (modalMarkupGenErr) {
-      console.error(`modalMarkupGenErr: ${modalMarkupGenErr}`)
-   };
+		return {
+			getInnerMarkup: (modalProps) => {
+				return populateMarkup(modalProps);
+			},
+		};
+	} catch (modalMarkupGenErr) {
+		console.error(`modalMarkupGenErr: ${modalMarkupGenErr}`);
+	}
 })();
 
+export const _getClusterLabelMarkup = (clusterProps) => {
+	console.log({ clusterProps });
+
+	try {
+		const HTMLMarkup = `
+         <div class= "plot-metadata-label--chunk-size"> 
+            <span> ${clusterProps.clusterArea.toFixed(1)} hectares </span>
+            <span> ${(clusterProps.clusterArea * 2.47105).toFixed(1)} acres </span> 
+         </div>
+         <div class="metadata-label--owner-info__avg"> 
+            <span> ${clusterProps.clusterName} </span>
+            <span>${clusterProps.clusterFeatsNum} Farmers •
+               <span>${clusterProps.clusterLocation}</span>
+            </span>
+         </div>
+         <div class="metadata-label--turn-by-turn" id="metadata_label_turn_by_turn">
+            <a href="#" role="button" title="Plot boundary turn-by-turn directions" aria-label="Plot boundary turn-by-turn directions"></a>
+               <span >
+                  <i id="" class="fas fa-route"></i>
+               </span>
+         </div>`;
+		return HTMLMarkup;
+	} catch (HTMLMarkupErr) {
+		console.error(`HTMLMarkupErr: ${HTMLMarkupErr.message}`);
+	}
+};
 
 export const _GenerateClusterFeatMarkup = (() => {
+	try {
+		const populateCardMarkup = function (props) {
+			const plotAdminPhotoUrl = props.featureAdmin.admin1.photoURL;
 
-   try {
-            
-      const populateCardMarkup = function(props) {
+			// let admin1Names = _.startCase(_joinWordsArray(Object.values(props.featureAdmin.admin1.names)).toLowerCase());
+			let admin1Names = _joinWordsArray(Object.values(props.featureAdmin.admin1.names));
+			if (admin1Names) admin1Names = _.startCase(admin1Names.toLowerCase());
 
-         const plotAdminPhotoUrl = props.featureAdmin.admin1.photoURL;
+			// let admin1BiometricNames = _.startCase((props.featureAdmin.admin1.biometrics.names).toLowerCase());
+			let admin1BiometricNames = props.featureAdmin.admin1.biometrics.names;
+			if (admin1BiometricNames)
+				admin1BiometricNames = _.startCase(admin1BiometricNames.toLowerCase());
 
-         // let admin1Names = _.startCase(_joinWordsArray(Object.values(props.featureAdmin.admin1.names)).toLowerCase());
-         let admin1Names = _joinWordsArray(Object.values(props.featureAdmin.admin1.names));
-         if (admin1Names) admin1Names = _.startCase(admin1Names.toLowerCase());
-         
-         // let admin1BiometricNames = _.startCase((props.featureAdmin.admin1.biometrics.names).toLowerCase());
-         let admin1BiometricNames = props.featureAdmin.admin1.biometrics.names;
-         if (admin1BiometricNames) admin1BiometricNames = _.startCase(admin1BiometricNames.toLowerCase());
+			const plotAdminNames = admin1BiometricNames || admin1Names;
 
-         const plotAdminNames = admin1BiometricNames || admin1Names;
-
-         const HTMLMarkup = `
+			const HTMLMarkup = `
             <div class="card-content-wrapper">
                <div class="card-media-wrapper">
                   <div class="feat-admin-avatar">
@@ -167,7 +187,9 @@ export const _GenerateClusterFeatMarkup = (() => {
                   <div class="card-text-top">
                      <div class="main-card-text">
                         <span class="feat-admin1-title flex-center justify-start">${plotAdminNames}</span>
-                        <span>${props.featCenterLng.toFixed(6)}°E • ${props.featCenterLat.toFixed(6)}°N</span>
+                        <span>${props.featCenterLng.toFixed(6)}°E • ${props.featCenterLat.toFixed(
+				6
+			)}°N</span>
                      </div>
                      <div class="card-pills">
                         <span class="flex-row-center">Plot ${props.featureIndex}</span>
@@ -176,7 +198,7 @@ export const _GenerateClusterFeatMarkup = (() => {
                   </div>
                   <div class="card-text-bottom">
                      <div class="flex-row-start">
-                        <span>FID</span><span>${`${(props.featureAdmin.admin1.id)}`.slice(0)}</span>
+                        <span>FID</span><span>${`${props.featureAdmin.admin1.id}`.slice(0)}</span>
                      </div>
                      <div class="flex-row-start">
                         <span class="flex-row-center">VASTID</span>
@@ -186,14 +208,13 @@ export const _GenerateClusterFeatMarkup = (() => {
                </div>
             </div>
          `;
-         return HTMLMarkup;
-      };
+			return HTMLMarkup;
+		};
 
-      const populateCardDrawerMarkup = function(props) {
+		const populateCardDrawerMarkup = function (props) {
+			const admin1 = props.featureAdmin.admin1;
 
-         const admin1 = props.featureAdmin.admin1;
-
-         const HTMLMarkup = `
+			const HTMLMarkup = `
             <section class="feat-card-bio-section">
 
                <section class="section-1">
@@ -222,58 +243,57 @@ export const _GenerateClusterFeatMarkup = (() => {
                </section>
             </section>
          `;
-         return HTMLMarkup;
-      };
-   
-      return {
-   
-         getClusterFeatDiv: async function(featureProps) {
-            
-            const clusterFeatCardWrapper = _createDiv(["cluster-feature-wrapper"]);
+			return HTMLMarkup;
+		};
 
-            // INIT. FEAT. CARD
-            const clusterFeatCard = _createCard(["cluster-feature-card"]);
-            clusterFeatCard.innerHTML = populateCardMarkup(featureProps);
-            
-            // INIT. FEAT. CARD DRAWER
-            const featCardDrawer = _createDiv(["cluster-feature-card-drawer"]);
-            featCardDrawer.innerHTML = populateCardDrawerMarkup(featureProps);
+		return {
+			getClusterFeatDiv: async function (featureProps) {
+				const clusterFeatCardWrapper = _createDiv(["cluster-feature-wrapper"]);
 
-            clusterFeatCardWrapper.appendChild(clusterFeatCard);
-            clusterFeatCardWrapper.appendChild(featCardDrawer);
+				// INIT. FEAT. CARD
+				const clusterFeatCard = _createCard(["cluster-feature-card"]);
+				clusterFeatCard.innerHTML = populateCardMarkup(featureProps);
 
-            return {clusterFeatCard, clusterFeatCardWrapper};
-         },   
-      };
-      
-   } catch (featMarkupGenErr) {
-      console.error(`featMarkupGenErr: ${featMarkupGenErr.message}`);
-   };
+				// INIT. FEAT. CARD DRAWER
+				const featCardDrawer = _createDiv(["cluster-feature-card-drawer"]);
+				featCardDrawer.innerHTML = populateCardDrawerMarkup(featureProps);
 
+				clusterFeatCardWrapper.appendChild(clusterFeatCard);
+				clusterFeatCardWrapper.appendChild(featCardDrawer);
+
+				return { clusterFeatCard, clusterFeatCardWrapper };
+			},
+		};
+	} catch (featMarkupGenErr) {
+		console.error(`featMarkupGenErr: ${featMarkupGenErr.message}`);
+	}
 })();
 
-
 export const _getClusterFeatPopupMarkup = (props) => {
-   try {
-      
-      const HTMLMarkup = `
+	try {
+		const HTMLMarkup = `
          <div class="mapboxgl-popup-body flex-row-center">
          
             <div class="mapboxgl-popup-media-wrapper">
-               <img src="${props.featureAdmin.admin1.photoURL}" alt=Feature Admin Photo" style="max-width:100%; opacity: 1;">
+               <img src="${
+						props.featureAdmin.admin1.photoURL
+					}" alt=Feature Admin Photo" style="max-width:100%; opacity: 1;">
             </div>
       
             <div class="mapboxgl-popup-text-wrapper">
-               <span class="mapboxgl-popup-title">${_.startCase(_joinWordsArray(Object.values(props.featureAdmin.admin1.names)))}</span>
+               <span class="mapboxgl-popup-title">${_.startCase(
+						_joinWordsArray(Object.values(props.featureAdmin.admin1.names))
+					)}</span>
                <span>VASTID • ${props.featureID}</span>
-               <span>Lat ${props.featCenterLat.toFixed(6)}°N Lng ${props.featCenterLng.toFixed(6)}°E </span>
+               <span>Lat ${props.featCenterLat.toFixed(6)}°N Lng ${props.featCenterLng.toFixed(
+			6
+		)}°E </span>
             </div>      
 
-         </div>`
+         </div>`;
 
-      return HTMLMarkup;
-
-   } catch (featPopupMarkupErr) {
-      console.error(`featPopupMarkupErr: ${featPopupMarkupErr.message}`)
-   };
+		return HTMLMarkup;
+	} catch (featPopupMarkupErr) {
+		console.error(`featPopupMarkupErr: ${featPopupMarkupErr.message}`);
+	}
 };

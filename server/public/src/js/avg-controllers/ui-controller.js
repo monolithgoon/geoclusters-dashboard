@@ -10,7 +10,7 @@ import { _RenderEngine } from "./maps-controller.js";
 import { APP_STATE } from "./state-controller.js";
 import {
 	_GenerateClusterFeatMarkup,
-	_GenerateClusterMarkup,
+	_GenerateClusterRecordMarkup,
 	_GenClusterModalMarkup,
 } from "../utils/markup-generators.js";
 import { _clientSideRouter, _navigateTo } from "../routers/router.js";
@@ -587,7 +587,7 @@ export const _PopulateDOM = ((dom) => {
 					dbCollection.map((geoClusterGeoJSON) => {
 						// GET THE CLUSTER RESULT DIV
 						const clusterResultDiv =
-							_GenerateClusterMarkup.getClusterResultDiv(geoClusterGeoJSON);
+							_GenerateClusterRecordMarkup.getClusterResultDiv(geoClusterGeoJSON);
 
 						// Hydrate the dataset for the geocluster record div
 						// This dataset will be read when the geocluster needs to be rendered on the mini-map in the right sidebar

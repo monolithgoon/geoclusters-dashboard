@@ -1,7 +1,7 @@
 `use strict`
 import { AVG_BASE_MAP, CLUSTER_PLOTS_MAP, FEAT_DETAIL_MAP } from "../config/maps-config.js";
 import LEAFLET_TILE_LAYERS from "../config/leaflet-tile-layers.js"
-import { _getClusterFeatPopupMarkup, _GenerateClusterFeatMarkup } from "../utils/markup-generators.js";
+import { _getClusterFeatPopupMarkup, _GenerateClusterFeatMarkup, _getClusterLabelMarkup } from "../utils/markup-generators.js";
 import { _ManipulateDOM, _pollAVGSettingsValues } from "./ui-controller.js";
 import { _MonitorExecution } from "../utils/fn-monitor.js";
 import { LAYER_COLORS } from "../utils/mapbox-layer-colors.js";
@@ -597,7 +597,8 @@ const LeafletMaps = (baseMap => {
             draggable: draggable,
             icon: L.divIcon({
                className: `${styleClass}`,
-               html: LeafletMaps.getClusterPropsMarkup(props),
+               // html: LeafletMaps.getClusterPropsMarkup(props),
+               html: _getClusterLabelMarkup(props)
             }),
             zIndexOffset: 100
          });
