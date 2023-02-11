@@ -11,19 +11,11 @@ block 404
                span Status
                span= `${err_status_code}`
                span Access blocked.
-            //- p You do not have permission to view this resource.
             p= err_msg
          
-            div 
-               //- button Sign In
-               button.btn.btn-primary(href="/landing" role="button") Sign In
+            button.btn.btn-primary.ripplelink(href="/landing" role="button")
+               a(href="/landing" role="button") Sign In
                   i(class="fas fa-arrow-circle-right")
 
-         .page-graphic
+         section.page-graphic
             img(src="/assets/images/noun-dark-contour.svg" alt="" viewBox="0 0 100 120")
-
-         //- section.bottom-section
-         //-    h1
-         //-       div
-         //-          a.btn.btn-primary(href="/landing" role="button") Sign In
-         //-             i(class="fas fa-arrow-circle-right")

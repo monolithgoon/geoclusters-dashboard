@@ -10,24 +10,22 @@
 	margin: auto;
 	width: 100%;
 	height: 100%;
-	background-color: var(--error-page-background-color);
 	display: grid;
 	grid-template-rows: 1fr auto 0.7fr;
 	grid-template-rows: 1fr auto;
-			align-items: start;
-
+	align-items: start;
+	background-color: white;
 }
 
-.top-section,
-.bottom-section {
+.top-section {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
 }
 
 .top-section {
-   /* margin: 25px; */
-   margin-bottom: 0px;
+	/* margin: 25px; */
+	margin-bottom: 0px;
 }
 
 .top-section h1 {
@@ -36,11 +34,11 @@
 	font-family: "IBM Plex Sans";
 	font-size: 70px;
 	font-weight: bolder;
-	line-height: 50px;
+	line-height: 55px;
 	display: flex;
 	flex-direction: column;
 	color: darkslateblue;
-   border: 5px solid darkslateblue;
+	border: 5px solid darkslateblue;
 }
 
 .top-section h1 > span:first-of-type,
@@ -53,11 +51,27 @@
 	margin: 0;
 	padding: 20px 25px;
 	padding: 50px 25px;
-	font-size: 15px;
+	font-size: 1.2rem;
 	font-weight: bold;
 	line-height: 1.4;
+	background-color: var(--bs-orange);
 	color: white;
-	border: 5px solid var(--bs-orange);
+}
+
+.top-section button > a {
+	padding: 13px 0;
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	
+	font-size: 1.2rem;
+	color: white;
+}
+
+.top-section button > a > i {
+	padding: 0 10px;
 }
 
 .page-graphic img {
@@ -65,57 +79,15 @@
 	background-color: var(--error-page-background-color);
 }
 
-.bottom-section h1 {
-   margin: 0;
-	padding: 20px 0;
-   padding-bottom: 0;
-	font-weight: bold;
-}
-
-/* .bottom-section h1 > div > a {
-	display: flex;
-	flex-direction: row;
-	justify-content: center;
-	align-items: center;
-	color: white;
-}
-
-.bottom-section h1 > div > a > i {
-	padding: 0 10px;
-} */
-
-.top-section div > button {
-	padding: 13px 0;
-	width: 100%;
-	display: flex;
-	flex-direction: row;
-	justify-content: center;
-	align-items: center;
-	color: white;
-}
-
-.top-section div > button > i {
-	padding: 0 10px;
-}
-
 /* ----------- Non-Retina Screens ----------- */
 @media screen and (min-device-width: 587px) {
 	.error-page-wrapper {
 		width: 25%;
-		width: 30%;
-		background: white;
-	}
-
-	.top-section p {
-		color: var(--bs-orange);
+		width: 40%;
+		background-color: white;
 	}
 
 	.page-graphic img {
 		width: 100%;
 	}
-   .bottom-section h1 {
-      margin: 0;
-      padding: 0;
-      padding-bottom: auto;
-   }
 }
