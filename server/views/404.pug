@@ -13,9 +13,12 @@ block 404
                span Access blocked.
             p= err_msg
          
-            button.btn.btn-primary.ripplelink(href="/landing" role="button")
+            button#return_to_landing_btn.btn.btn-primary.ripplelink(href="/landing" role="button")
                a(href="/landing" role="button") Sign In
                   i(class="fas fa-arrow-circle-right")
 
          section.page-graphic
             img(src="/assets/images/noun-dark-contour.svg" alt="" viewBox="0 0 100 120")
+
+            //- script to disable sign-in btn. after click
+            script(src="/src/js/404.js" type="module") 
