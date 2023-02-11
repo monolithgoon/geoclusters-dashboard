@@ -41,6 +41,7 @@
 	--btn-fill-hover: #006cbe;
 	--btn-fill-active: #1683d8;
 	--btn-fill-active: #0d6efd;
+	--error-page-background-color: rgba(43, 49, 55, .2);
 
 	/* FONT SIZES */
 	--pt3r-font: 0.3rem;

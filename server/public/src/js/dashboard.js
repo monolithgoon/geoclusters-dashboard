@@ -334,11 +334,11 @@ const initDashboardApp = (() => {
 
 		await initDashboardApp.cachePreloadedGeoClusters();
 
-		await initDashboardApp.renderCachedGeoClusters();
+		// await initDashboardApp.renderCachedGeoClusters();
 
 		await initDashboardApp.renderAdminBounds(windowObj);
 
-		// await initDashboardApp.fireAutoUpdateWorker(windowObj);
+		await initDashboardApp.fireAutoUpdateWorker(windowObj);
 	});
 })();
 

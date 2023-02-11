@@ -80,8 +80,6 @@ export const _GenerateClusterRecordMarkup = ((classList) => {
 })(["result-item", "flex-col-start"]);
 
 export const _GenClusterModalMarkup = (() => {
-   console.log(_pluralizeString(DESCRIPTORS.GEOCLUSTER_FEATURE_DESCRIPTION))
-   console.log(_capitalizeFirstLetter(_pluralizeString(DESCRIPTORS.GEOCLUSTER_FEATURE_DESCRIPTION)))
 	try {
 		const generateMarkup = function (props) {
 			const HTMLMarkup = `

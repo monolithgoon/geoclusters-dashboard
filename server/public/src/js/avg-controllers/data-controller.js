@@ -4,6 +4,7 @@ import { _ManipulateDOM } from "./ui-controller.js";
 import { _MonitorExecution } from "../utils/fn-monitor.js";
 import { APP_STATE } from "./state-controller.js";
 import DEFAULT_APP_SETTINGS from "../constants/default-app-settings.js"
+import { _ExecutionMeasureFn } from "../utils/helpers.js";
 
 export function _retreiveClusterGJDatasets() {
 	try {
@@ -18,6 +19,7 @@ export function _retreiveClusterGJDatasets() {
 		console.error(`retreiveGJErr: ${retreiveGJErr.message}`);
 	}
 }
+
 
 async function queryAPI(fetch, apiHost, apiResourcePath, { queryString }) {
 	queryString = queryString ? queryString : (queryString = "");
@@ -59,12 +61,20 @@ export async function _getAPIResource(eventObj, resourceHost, resourcePath, { qu
 		};
 
 		// EXECUTE THE API CALL
-		await _MonitorExecution.execute(apiDataQuery);
+		// await _MonitorExecution.execute(apiDataQuery);
 
-		// GET MEASURE OF HOW LONG IT TOOK
-		_MonitorExecution.getExecutionTime();
+		// // GET MEASURE OF HOW LONG IT TOOK
+		// _MonitorExecution.getExecutionTime();
 
-		return _MonitorExecution.getData();
+		// return _MonitorExecution.getData();
+
+
+		const result = await _ExecutionMeasureFn().execute(apiDataQuery);
+		console.log(result);
+		// console.log(result.executionMs);
+		// console.log(result.returnedData);
+		return result.returnedData;
+
 	} catch (getAPIResourceErr) {
 		console.error(`getAPIResourceErr: ${getAPIResourceErr.message}`);
 	}

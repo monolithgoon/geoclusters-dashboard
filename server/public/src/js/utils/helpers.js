@@ -24,9 +24,9 @@ export function _errorHandler(callback, errName) {
 };
 
 
-// FIXME > TEST THE OUTPUTS
+// REMOVE > DEPRECATED 
 // CONCAT. STRINGS FROM ARRAY; SEPARATE BY SPACE
-export function _joinWordsArray(keywords, {inclQuotes=false, commaSeparated=false}={}) {
+export function joinWordsArray(keywords, {inclQuotes=false, commaSeparated=false}={}) {
 	let concatArray;
    concatArray = keywords.map((keyword) => {
 		if (keyword) {
@@ -34,12 +34,33 @@ export function _joinWordsArray(keywords, {inclQuotes=false, commaSeparated=fals
 			else return keyword.trim();
 		};
    });
-	return commaSeparated ? concatArray.join(",") : concatArray.join(" ");
+	return commaSeparated ? concatArray.join(", ") : concatArray.join(" ");
+};
+
+/**
+ * @function _joinWordsArray
+ * @description Joins an array of words into a single string, with optional quotes and comma separators
+ * 
+ * @param {Array} keywords - An array of words to concatenate
+ * @param {Object} [options={}] - An optional object with the following keys:
+ * @param {Boolean} [options.inclQuotes=false] - Whether or not to include quotes around each keyword in the string
+ * @param {Boolean} [options.commaSeparated=false] - Whether or not to separate the keywords by commas in the string
+ * 
+ * @returns {String} A string of concatenated keywords
+ */
+export function _joinWordsArray(keywords, {inclQuotes=false, commaSeparated=false}={}) {
+  
+  // Filter out any falsy values in the array and trim each word
+  const concatArray = keywords.filter(Boolean).map(keyword => inclQuotes ? `"${keyword.trim()}"` : keyword.trim());
+
+  // Join the array into a single string, using either commas or spaces as the separator
+  return commaSeparated ? concatArray.join(", ") : concatArray.join(" ");
 };
 
 
+// REMOVE > DEPRECATED
 // CALC. TIME TO EXE. A FN.
-export const _ExecutionMeasureFn = (function() {
+export const ExecutionMeasureFn = (function() {
 
 	let returnedData, executionMs;
 
@@ -69,6 +90,45 @@ export const _ExecutionMeasureFn = (function() {
 		},
 	};
 })();
+
+/**
+ * @function _ExecutionMeasureFn
+ * @description This module returns an object that provides the `execute` method to measure the execution time of a callback function. The execution time and the returned data from the callback are logged.
+ * @param {function} [logger=console.log] - A logger function that logs the execution time in milliseconds.
+ * @returns {object} - An object with the `execute` method.
+ */
+export const _ExecutionMeasureFn = (logger = console.log) => ({
+  /**
+	 * @function execute
+   * @description Measures the execution time of a callback function and logs the result using the provided logger.
+   * @param {function} callback - The callback function to be executed and measured.
+   * @returns {object} - An object with two properties: `executionMs` which is the execution time in milliseconds, 
+   * and `returnedData` which is the data returned from the callback.
+   */
+  execute: async (callback) => {
+
+		logger(`%c This funciton [ ${callback.name} ] is executing ..`, `background-color: lightgrey; color: blue;`);
+		
+    // Get the current time in milliseconds
+    const exeStart = Date.now();
+
+    // Execute the callback and store the returned data
+    const returnedData = await callback();
+
+    // Get the time again in milliseconds
+    const exeEnd = Date.now();
+
+    // Calculate the execution time by subtracting the start time from the end time
+    const executionMs = exeEnd - exeStart;
+
+    // Log the execution time using the provided logger
+    logger(`The function "${callback.name}" executed in: ${executionMs}ms`);
+
+    // Return the execution time and the returned data from the callback
+    return { executionMs, returnedData };
+  },
+});
+
 
 
 // TRAVERSE AN OBJECT USING AN ARRAY OF OBJ. PROPS.

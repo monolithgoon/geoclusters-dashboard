@@ -1,95 +1,103 @@
 /* main */
 .main-container {
-   width: 100vw;
-   height: 100vh;
-   background: white;
-   background-color: rgba(43, 49, 55, .4);
-   font-family: 'Roboto', sans-serif;
+	width: 100vw;
+	height: 100vh;
+	background-color: var(--error-page-background-color);
+	font-family: "Roboto", sans-serif;
 }
 
 .error-page-wrapper {
-   margin: auto;
-   width: 100%;
-   height: 100%;
-   background-color: rgba(43, 49, 55, .4);
-   background: white;
-   display: grid;
-   grid-template-rows: 1fr auto 0.7fr;
+	margin: auto;
+	width: 100%;
+	height: 100%;
+	background-color: var(--error-page-background-color);
+	display: grid;
+	grid-template-rows: 1fr auto 0.7fr;
 }
 
-.error-page-wrapper h1 {
-   margin: 0;
-   font-family: 'Roboto', sans-serif;
-   font-weight: bolder;
-}
-
-.error-page-wrapper p {
-   margin: 0;
-   padding: 0 35px;
-   font-size: 15px;
-	line-height: 1.4;
-   font-weight: normal;
-}
-
-.top-section, 
+.top-section,
 .bottom-section {
-   display: flex;
-   flex-direction: column;
-   justify-content: center;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
 }
 
 .top-section {
-   padding-bottom: 20px;
+   margin: 25px;
+   margin-bottom: 0px;
 }
 
 .top-section h1 {
-   padding: 20px 35px 10px;
-   font-size: 55px;
-   line-height: 50px;
+   margin: 0;
+	padding: 20px 35px;
+   font-family: "IBM Plex Sans";
+	font-size: 70px;
+	font-weight: bolder;
+	line-height: 50px;
+	display: flex;
+	flex-direction: column;
+	color: darkslateblue;
+   border: 5px solid darkslateblue;
+}
+
+.top-section h1 > span:first-of-type,
+.top-section h1 > span:last-of-type {
+	font-size: 30px;
+   color: black;
+}
+
+.top-section p {
+	margin: 0;
+	padding: 20px 35px;
+	font-size: 15px;
+	font-weight: bold;
+	line-height: 1.4;
+	color: white;
 }
 
 .page-graphic img {
-   width: 100%;
-   background: white;
+	width: 100%;
+	background-color: var(--error-page-background-color);
 }
 
 .bottom-section h1 {
-   padding: 20px;
-   font-size: 1rem;
-   font-weight: normal;
-   display: flex;
-   flex-direction: column;
-   justify-content: space-around;
+   margin: 0;
+	padding: 20px 0;
+   padding-bottom: 0;
+	font-weight: bold;
 }
 
 .bottom-section h1 > div > a {
-   display: flex;
-   flex-direction: row;
-   justify-content: center;
-   align-items: center;
-   color: white;
-   font-weight: lighter;
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	color: white;
 }
 
-.bottom-section h1 > div > a > i{
-   padding: 0 10px;
+.bottom-section h1 > div > a > i {
+	padding: 0 10px;
 }
 
 /* ----------- Non-Retina Screens ----------- */
-@media screen and (min-device-width: 700px) {
+@media screen and (min-device-width: 850px) {
+	.error-page-wrapper {
+		width: 25%;
+		width: 30%;
+		background: white;
+      align-items: start;
+	}
 
-   .error-page-wrapper {
-      width: 25%;
-      width: 30%;
-   }
+	.top-section p {
+		color: var(--bs-orange);
+	}
 
-   .top-section h1 {
-      padding: 20px 35px 10px;
-      font-size: 60px;
-   }
-
-   .page-graphic img {
-      width: 100%;
-      background-color: rgba(43, 49, 55, .4);
+	.page-graphic img {
+		width: 100%;
+	}
+   .bottom-section h1 {
+      margin: 0;
+      padding: 0;
+      padding-bottom: auto;
    }
 }

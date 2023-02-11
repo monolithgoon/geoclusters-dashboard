@@ -7,12 +7,15 @@ block 404
       .error-page-wrapper
 
          section.top-section
-            h1= `${err_status_code}. Blocked.`
+            h1
+               span Status
+               span= `${err_status_code}`
+               span Access blocked
             //- p You do not have permission to view this resource.
             p= err_msg
 
          .page-graphic
-            img(src="/assets/images/noun-dark-contour.svg" alt="")
+            img(src="/assets/images/noun-dark-contour.svg" alt="" viewBox="0 0 100 120")
 
          section.bottom-section
             h1
