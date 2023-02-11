@@ -38,20 +38,6 @@ export function _joinWordsArray(keywords, {inclQuotes=false, commaSeparated=fals
 };
 
 
-export function _createDiv(classArray) {
-   const newDiv = document.createElement('div');
-   newDiv.classList.add(...classArray);
-   return newDiv;
-};
-
-
-export function _createCard(classArray) {
-   const newCard = document.createElement('card');
-   newCard.classList.add(...classArray);
-   return newCard;
-};
-
-
 // CALC. TIME TO EXE. A FN.
 export const _ExecutionMeasureFn = (function() {
 
@@ -167,55 +153,89 @@ export const _capitalizePropValues = (obj) => {
 };
 
 
-// Fn. akes a string and a number, and returns the pluralized string if the number is greater than 1:
+/**
+ * Formats a number by adding commas as thousands separators.
+ *
+ * @param {number} number - The number to be formatted.
+ * @return {string} The formatted number as a string.
+ */
+export const _formatNumByThousand = (number) => {
+	return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};
+
+
+/**
+ * Returns the pluralized string if the number is greater than 1:
+ *
+ * @param {string} string - The string to be pluralized.
+ * @param {number} num - The number to determine if the string should be pluralized.
+ * @return {string} The pluralized string.
+ */
 export function _pluralizeString(string, num) {
   if (num > 1) {
     return num + " " + string + "s";
   }
   return num + " " + string;
-}
-
-
-// capitalize the first letter of a string
-export function _capitalizeFirstLetter(string) {
-  return string.charAt(0).toUpperCase() + string.slice(1);
-}
-
-
-// get element states
-export function _getCheckedRadio(radioGroup) {
-
-   const checkedRadiosArray = [];
-   let radioElement = null;
-   let radioValue = null;
-
-   try {
-
-		if (radioGroup) {
-
-			radioGroup.forEach(radio => {
-				if (radio.checked) { checkedRadiosArray.push(radio) };
-			});
-
-			if (checkedRadiosArray.length > 1) { throw new Error(`Cannot have more than one checked radio per group`)}
-			if (checkedRadiosArray.length === 0) { throw new Error(`At least one radio must be checked by default`)}
-			if (checkedRadiosArray.length > 0) {
-				radioElement = checkedRadiosArray[0];
-				radioValue = checkedRadiosArray[0].value;
-			};
-			
-			return {
-				radioElement,
-				radioValue,
-			};
-		};
-
-   } catch (getCheckedRadioErr) {
-      console.error(`getCheckedRadioErr: ${getCheckedRadioErr.message}`)
-   };
 };
 
 
+/**
+ * Capitalizes the first letter of a string.
+ *
+ * @param {string} string - The string to be capitalized.
+ * @return {string} The capitalized string.
+ */
+export function _capitalizeFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+};
+
+
+/**
+ * Gets the checked radio button in a group of radio buttons and returns its element and value.
+ *
+ * @param {Array<HTMLElement>} radioGroup - An array of radio button elements.
+ * @return {Object} The checked radio button element and its value, or an error message if there is no checked radio or more than one checked radio in the group.
+ */
+export function _getCheckedRadio(radioGroup) {
+
+	const checkedRadiosArray = [];
+	let radioElement = null;
+	let radioValue = null;
+
+	try {
+
+	 if (radioGroup) {
+
+		 radioGroup.forEach(radio => {
+			 if (radio.checked) { checkedRadiosArray.push(radio) };
+		 });
+
+		 if (checkedRadiosArray.length > 1) { throw new Error(`Cannot have more than one checked radio per group`)}
+		 if (checkedRadiosArray.length === 0) { throw new Error(`At least one radio must be checked by default`)}
+		 if (checkedRadiosArray.length > 0) {
+			 radioElement = checkedRadiosArray[0];
+			 radioValue = checkedRadiosArray[0].value;
+		 };
+		 
+		 return {
+			 radioElement,
+			 radioValue,
+		 };
+	 };
+
+	} catch (getCheckedRadioErr) {
+		 console.error(`getCheckedRadioErr: ${getCheckedRadioErr.message}`)
+	};
+};
+
+
+/**
+ * Replaces the value of a specified data attribute in the dataset of a div element.
+ *
+ * @param {HTMLElement} div - The div element to modify.
+ * @param {string} dataAttribute - The name of the data attribute to be replaced.
+ * @param {string} data - The new value for the data attribute.
+ */
 export function _replaceDataset(div, dataAttribute, data) {
 	if (div.dataset[dataAttribute]) {
 		div.dataset[dataAttribute] = data;
@@ -412,6 +432,12 @@ export const _TurfHelpers = (()=>{
 })();
 
 
+/**
+ * Extracts the Polygon features from a GeoJSON geometry collection and returns them as an array.
+ *
+ * @param {Object} geojson - The GeoJSON object.
+ * @return {Array<Object>} The Polygon features from the GeoJSON geometry collection, or `null` if there are no polygons.
+ */
 function getGeomCollPolyFeats(geojson) {
 
 	const geomCollPolyFeatures = [];
@@ -434,8 +460,9 @@ function getGeomCollPolyFeats(geojson) {
 		};
 	});
 
-return polygonFeats;
+	return polygonFeats;
 };
+
 
 // SIMPLIFY MULTIPOLYGON & GEOMETRY COLL. GEOMETRIES > 
 // EXTRACT POLYGONS FROM MultiPolygons & GeometryCollections

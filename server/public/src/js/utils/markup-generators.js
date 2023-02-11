@@ -1,9 +1,23 @@
-import { _createCard, _createDiv, _joinWordsArray } from "./helpers.js";
+import { _formatNumByThousand, _joinWordsArray } from "./helpers.js";
+
+
+/**
+ * Creates a new div element and adds the specified classes to it.
+ *
+ * @param {Array} classArray - An array of class names to be added to the div.
+ * @return {HTMLElement} The newly created div element.
+ */
+function createDiv(classArray) {
+	const newDiv = document.createElement("div");
+	newDiv.classList.add(...classArray);
+	return newDiv;
+};
+
 
 export const _GenerateClusterRecordMarkup = ((classList) => {
 	try {
 		const initContainerDiv = function () {
-			return _createDiv(classList);
+			return createDiv(classList);
 		};
 
 		const getClusterProps = function (propsGen, featureCollection) {
@@ -65,6 +79,7 @@ export const _GenerateClusterRecordMarkup = ((classList) => {
 		console.error(`clusterMarkupGenErr: ${clusterMarkupGenErr.message}`);
 	}
 })(["result-item", "flex-col-start"]);
+
 
 export const _GenClusterModalMarkup = (() => {
 	try {
@@ -131,14 +146,15 @@ export const _GenClusterModalMarkup = (() => {
 	}
 })();
 
-export const _getClusterLabelMarkup = (clusterProps) => {
+
+export const _getClusterMetadaMarkerMarkup = (clusterProps) => {
 	console.log({ clusterProps });
 
 	try {
 		const HTMLMarkup = `
          <div class= "plot-metadata-label--chunk-size"> 
-            <span> ${clusterProps.clusterArea.toFixed(1)} hectares </span>
-            <span> ${(clusterProps.clusterArea * 2.47105).toFixed(1)} acres </span> 
+            <span> ${_formatNumByThousand(clusterProps.clusterArea.toFixed(0))} hectares </span>
+            <span> ${_formatNumByThousand((clusterProps.clusterArea * 2.47105).toFixed(0))} acres </span> 
          </div>
          <div class="metadata-label--owner-info__avg"> 
             <span> ${clusterProps.clusterName} </span>
@@ -160,6 +176,19 @@ export const _getClusterLabelMarkup = (clusterProps) => {
 
 export const _GenerateClusterFeatMarkup = (() => {
 	try {
+
+      /**
+		 * Creates a new card element and adds the specified classes to it.
+		 *
+		 * @param {Array} classArray - An array of class names to be added to the card.
+		 * @return {HTMLElement} The newly created card element.
+		 */
+		function createCard(classArray) {
+			const newCard = document.createElement("card");
+			newCard.classList.add(...classArray);
+			return newCard;
+		}
+
 		const populateCardMarkup = function (props) {
 			const plotAdminPhotoUrl = props.featureAdmin.admin1.photoURL;
 
@@ -248,14 +277,14 @@ export const _GenerateClusterFeatMarkup = (() => {
 
 		return {
 			getClusterFeatDiv: async function (featureProps) {
-				const clusterFeatCardWrapper = _createDiv(["cluster-feature-wrapper"]);
+				const clusterFeatCardWrapper = createDiv(["cluster-feature-wrapper"]);
 
 				// INIT. FEAT. CARD
-				const clusterFeatCard = _createCard(["cluster-feature-card"]);
+				const clusterFeatCard = createCard(["cluster-feature-card"]);
 				clusterFeatCard.innerHTML = populateCardMarkup(featureProps);
 
 				// INIT. FEAT. CARD DRAWER
-				const featCardDrawer = _createDiv(["cluster-feature-card-drawer"]);
+				const featCardDrawer = createDiv(["cluster-feature-card-drawer"]);
 				featCardDrawer.innerHTML = populateCardDrawerMarkup(featureProps);
 
 				clusterFeatCardWrapper.appendChild(clusterFeatCard);

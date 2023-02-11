@@ -1,7 +1,7 @@
 `use strict`
 import { AVG_BASE_MAP, CLUSTER_PLOTS_MAP, FEAT_DETAIL_MAP } from "../config/maps-config.js";
 import LEAFLET_TILE_LAYERS from "../config/leaflet-tile-layers.js"
-import { _getClusterFeatPopupMarkup, _GenerateClusterFeatMarkup, _getClusterLabelMarkup } from "../utils/markup-generators.js";
+import { _getClusterFeatPopupMarkup, _GenerateClusterFeatMarkup, _getClusterMetadaMarkerMarkup } from "../utils/markup-generators.js";
 import { _ManipulateDOM, _pollAVGSettingsValues } from "./ui-controller.js";
 import { _MonitorExecution } from "../utils/fn-monitor.js";
 import { LAYER_COLORS } from "../utils/mapbox-layer-colors.js";
@@ -592,13 +592,12 @@ const LeafletMaps = (baseMap => {
          });
          return HTMLMarker;
       },
-      getClusterHTMLMarker: (props, latLngPosition, styleClass, {draggable=true}) => {
+      getClusterMetadataMarker: (props, latLngPosition, styleClass, {draggable=true}) => {
          const HTMLMarker = L.marker(latLngPosition, {
             draggable: draggable,
             icon: L.divIcon({
                className: `${styleClass}`,
-               // html: LeafletMaps.getClusterPropsMarkup(props),
-               html: _getClusterLabelMarkup(props)
+               html: _getClusterMetadaMarkerMarkup(props)
             }),
             zIndexOffset: 100
          });
@@ -1733,7 +1732,7 @@ export const _RenderEngine = (function(avgBaseMap, clusterFeatsMap) {
                      const clusterMetaLabelsLG = LLayerGroupController.initLayerGroup("cluster-metadata-labels", {visibilityRank: 2});
 
                      // DISPLAY CLUSTER DETAILS IN HTML MARKER
-                     LeafletMaps.getClusterHTMLMarker(polyProps, polyCenter, 'plot-metadata-label', {draggable:true}).addTo(clusterMetaLabelsLG);                     
+                     LeafletMaps.getClusterMetadataMarker(polyProps, polyCenter, 'plot-metadata-label', {draggable:true}).addTo(clusterMetaLabelsLG);                     
    
                      // INIT. LAYER GROUP FOR CLUSTER POLY.
                      const clusterPolyOutlineLG = LLayerGroupController.initLayerGroup(polyProps.clusterID, {visibilityRank: 5});
