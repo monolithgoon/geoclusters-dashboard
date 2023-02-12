@@ -1,10 +1,10 @@
 `use strict`;
 import { GET_DOM_ELEMENTS } from "../utils/get-dom-elements.js";
 import { _ManipulateDOM } from "./ui-controller.js";
-import { _MonitorExecution } from "../utils/fn-monitor.js";
+import { ShowActivity, _MonitorExecution } from "../utils/fn-monitor.js";
 import { APP_STATE } from "./state-controller.js";
-import DEFAULT_APP_SETTINGS from "../constants/default-app-settings.js"
-import { _ExecutionMeasureFn } from "../utils/helpers.js";
+import DEFAULT_APP_SETTINGS from "../constants/default-app-settings.js";
+import { _MeasureExecution } from "../utils/helpers.js";
 
 export function _retreiveClusterGJDatasets() {
 	try {
@@ -20,24 +20,40 @@ export function _retreiveClusterGJDatasets() {
 	}
 }
 
-
-async function queryAPI(fetch, apiHost, apiResourcePath, { queryString }) {
+/**
+ * @description Queries an API for data
+ *
+ * @async
+ * @function queryAPI
+ * @param {function} fetch - The `fetch` function with which to make API requests
+ * @param {string} apiHost - The base URL of the API to be queried
+ * @param {string} apiResourcePath - The path to the desired API resource
+ * @param {object} [options={}] - Additional options to configure the API request
+ * @param {string} [options.queryString=''] - The query string to be appended to the API request URL
+ * @returns {(object|null)} - The data returned from the API, or `null` if an error occurs
+ */
+async function queryAPI(fetch, apiHost, apiResourcePath, { queryString } = {}) {
+	// Set the query string to an empty string if no query string is provided
 	queryString = queryString ? queryString : (queryString = "");
 
-	console.log(
-		`%c ${this.target} is getting latest data from API`,
-		`background-color: lightgrey; color: blue;`
-	);
+	// console.log(
+	//   `%c ${this.target} is getting latest data from API`,
+	//   `background-color: lightgrey; color: blue;`
+	// );
 
 	try {
+		// Make the API request
 		const apiResponse = await fetch(`${apiHost}/${apiResourcePath}/${queryString}`);
 		const data = await apiResponse.json();
 
+		// Check if the API responded with data
 		if (!data) {
-			throw new Error(`Endpoint did not respond; check your connection`);
+			throw new Error(
+				`The API endpoint [ ${apiHost}/${apiResourcePath}/${queryString} ] did not respond; check your connection`
+			);
 		}
 
-		// FIXME > ERR. HANDLING NOT COMPLETELY TESTED
+		// Check if the API request was successful
 		// if (checkStatus(data.status)) {
 		if (data.status !== `fail`) {
 			return data;
@@ -50,31 +66,49 @@ async function queryAPI(fetch, apiHost, apiResourcePath, { queryString }) {
 	}
 }
 
+/**
+ * @function
+ * @async
+ * @param {Object} eventObj - An object representing the event.
+ * @param {string} resourceHost - The hostname of the API resource.
+ * @param {string} resourcePath - The path of the API resource.
+ * @param {Object} options - An object containing queryString and other options.
+ * @param {string} options.queryString - The query string to be passed in the API call.
+ * @returns {Promise} A promise that resolves to the data returned from the API call.
+ * @throws {Error} If an error occurs during the API call.
+ */
 export async function _getAPIResource(eventObj, resourceHost, resourcePath, { queryString }) {
 	try {
 		queryString = queryString ? queryString : (queryString = "");
 
-		const apiDataQuery = function () {
-			console.log(document.domain);
-
+		/**
+		 * @function
+		 * @inner
+		 * @description A pipeline function for the API call
+		 */
+		const callQueryAPI = function () {
+			// console.log(document.domain);
 			return queryAPI.call(eventObj, window.fetch, resourceHost, resourcePath, { queryString });
 		};
 
-		// EXECUTE THE API CALL
-		// await _MonitorExecution.execute(apiDataQuery);
+		/**
+		 * @constant
+		 * @description An object containing options for display functions and activity indicators.
+		 */
+		const options = {
+			startDisplayFn: ShowActivity.activityStart,
+			endDisplayFn: ShowActivity.activityEnd,
+			appActivityIndWrapper: GET_DOM_ELEMENTS().appActivityIndWrapper,
+			appActivityInd: GET_DOM_ELEMENTS().appActivityInd,
+		};
 
-		// // GET MEASURE OF HOW LONG IT TOOK
-		// _MonitorExecution.getExecutionTime();
+		// Execute the API call inside a monitoring function
+		const exeResult = await _MeasureExecution({ logger: console.log }).execute(
+			callQueryAPI,
+			options
+		);
 
-		// return _MonitorExecution.getData();
-
-
-		const result = await _ExecutionMeasureFn().execute(apiDataQuery);
-		console.log(result);
-		// console.log(result.executionMs);
-		// console.log(result.returnedData);
-		return result.returnedData;
-
+		return exeResult.returnedData;
 	} catch (getAPIResourceErr) {
 		console.error(`getAPIResourceErr: ${getAPIResourceErr.message}`);
 	}
@@ -99,24 +133,44 @@ export async function _downloadAndSaveParcelizedClusters(eventObj) {
 			// const dbQueryStr = DEFAULT_APP_SETTINGS.LEGACY_CLUSTER_QUERY_STR;
 
 			// Create a pipeline function for the API call
-			const apiDataQuery = function () {
+			const callQueryAPI = function () {
 				return queryAPI.call(eventObj, window.fetch, apiHost, resourcePath, {});
 			};
 
-			// execute the API call
-			await _MonitorExecution.execute(apiDataQuery);
+			// // execute the API call
+			// await _MonitorExecution.execute(callQueryAPI);
 
-			// get the execution time
-			_MonitorExecution.getExecutionTime();
+			// // get the execution time
+			// _MonitorExecution.getExecutionTime();
+
+			/**
+			 * @constant
+			 * @description An object containing options for display functions and activity indicators.
+			 */
+			const options = {
+				startDisplayFn: ShowActivity.activityStart,
+				endDisplayFn: ShowActivity.activityEnd,
+				appActivityIndWrapper: GET_DOM_ELEMENTS().appActivityIndWrapper,
+				appActivityInd: GET_DOM_ELEMENTS().appActivityInd,
+			};
+
+			// Execute the API call inside a monitoring function
+			const exeResult = await _MeasureExecution({ logger: console.log }).execute(
+				callQueryAPI,
+				options
+			);
 
 			// get the resource name from the resource path
 			const dbCollectionName = resourcePath.slice(resourcePath.indexOf("/") + 1);
 
 			// SAVE THE RETURNED DATA
-			if (_MonitorExecution.getData())
+			// if (_MonitorExecution.getData()) {
+			// 	APP_STATE.cacheDBCollection(dbCollectionName, _MonitorExecution.getData());
+			// };
+			
+			if (exeResult.returnedData) {
 				APP_STATE.cacheDBCollection(dbCollectionName, _MonitorExecution.getData());
-
-			// console.log(...APP_STATE.returnCachedDBCollections());
+			}
 		}
 
 		return true;

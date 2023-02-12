@@ -34,8 +34,6 @@ import DEFAULT_APP_SETTINGS from "./constants/default-app-settings.js";
 import _openFullScreen from "./utils/open-full-screen.js";
 
 const initDashboardApp = (() => {
-
-
 	/**
 	 * Renders the geo-political regions on the Leaflet base map.
 	 *
@@ -45,7 +43,6 @@ const initDashboardApp = (() => {
 	 */
 	function renderGeoPolRegions(resourceName, featColl) {
 		if (resourceName === `nga-geo-pol-regions` && featColl) {
-			console.log(featColl)
 			_RenderEngine.renderFeatColl(featColl, {
 				useBuffer: false,
 				lineColor: DEFAULT_APP_SETTINGS.MAP_POLYGON_LINE_COLORS.BASEMAP.GEO_POL_REGIONS, // faded green
@@ -53,7 +50,6 @@ const initDashboardApp = (() => {
 			});
 		}
 	}
-
 
 	/**
 	 * Renders the clusters collection on the Leaflet centerfold basemap.
@@ -72,10 +68,9 @@ const initDashboardApp = (() => {
 		}
 	}
 
-
 	/**
 	 * Function to get newly parcelized GeoClusters from the database.
-	 * 
+	 *
 	 * It does this by downloading fresh parcelized GeoCluster metadata from the database and saving it to the application state.
 	 * It then compares the GeoCluster metadata that is already in the app cache with the current metadata in the database.
 	 * The function returns an array of new GeoClusters for which the GeoJSON has not been downloaded yet.
@@ -235,80 +230,137 @@ const initDashboardApp = (() => {
 			await renderClustersCollection(geoClustersArr);
 		},
 
-		// GET & RENDER ADMIN BOUNDS GEOJSON
+		/**
+		 * This function is used to render administrative boundaries on the map.
+		 * @param {Window} window - The global window object.
+		 */
 		renderAdminBounds: async (window) => {
+			// The default API host URL for the administrative boundaries GeoJSON data
 			const apiHost = DEFAULT_APP_SETTINGS.ADMIN_BOUNDS_GEOJSON_API_HOST;
+
+			// An array of resource paths for the administrative boundaries GeoJSON data
 			const adminBoundsAPIResourcePaths =
 				DEFAULT_APP_SETTINGS.ADMIN_BOUNDS_GEOJSON_API_RESOURCE_PATHS;
 
 			for (const adminBoundsResourcePath of adminBoundsAPIResourcePaths) {
-				// get the resource name
+				// Get the resource name by slicing the resource path after the "/nga" string
 				const resourceName = adminBoundsResourcePath.slice(
 					adminBoundsResourcePath.indexOf("/nga") + 1
 				);
+
 				console.log({ resourceName });
 
-				// get the resource
+				// Get the administrative boundaries resource data from the API
 				const adminBoundsResource = await _getAPIResource(
 					window,
 					apiHost,
 					adminBoundsResourcePath,
 					{}
 				);
-				console.log({ adminBoundsResource });
+
+				// console.log({ adminBoundsResource });
 
 				if (adminBoundsResource && adminBoundsResource.data) {
-					// SAVE THE RETURNED DATA
+					// Save the resource data to the APP_STATE cache database collection
 					APP_STATE.cacheDBCollection(resourceName, adminBoundsResource.data);
 
-					// RENDER ON MAP
+					// Render the administrative boundaries on the map
 					renderGeoPolRegions(resourceName, adminBoundsResource.data);
 				}
 			}
 		},
 
-		// NESTED, RECURSIVE setTimeouts THAT LOOPS INDEFINITELY @ PRE-SET INTERVALS
+		// // NESTED, RECURSIVE setTimeouts THAT LOOPS INDEFINITELY @ PRE-SET INTERVALS
+		// fireAutoUpdateWorker: async (window) => {
+
+		// 	let initDelay = DURATION.GEOCLUSTERS_DATA_QUERY_INTERVAL;
+
+		// 	let intervalDelay = initDelay;
+
+		// 	setTimeout(async function request() {
+
+		// 		// get the new geo clusters from the data source
+		// 		const newGeoClustersArr = await getNewlyParcelizedClusters(window);
+
+		// 		// if there ARE new geo clusters
+		// 		if (newGeoClustersArr && newGeoClustersArr.length > 0) {
+		// 			// reset the interval delay when new geoclusters are found
+		// 			intervalDelay = initDelay;
+
+		// 			// SAVE THE NEWLY RETREIVED GEOJSON TO APP_STATE OBJECT / CACHE
+		// 			updateCachedGeoClusters("cached-geo-clusters", newGeoClustersArr);
+
+		// 			// RENDER THE NEW CLUSTERS
+		// 			// FIXME > WIP > NOT YET IMPLEMENTED
+		// 			await renderLiveGeoClusters(newGeoClustersArr);
+		// 		}
+
+		// 		// PROGRESSIVELY INCREASE THE INTERVAL IF NO NEW CLUSTERS ARE BEING FOUND..
+
+		// 		// if there are no new geo clusters
+		// 		if (newGeoClustersArr && newGeoClustersArr.length === 0) {
+		// 			// increment the interval delay
+		// 			intervalDelay += DURATION.DATA_QUERY_INCREMENT;
+		// 		}
+
+		// 		// DOUBLE THE INTERVAL BETWEEN setTimeouts IF 1ST CALL FAILED TO EXECUTE COMPLTELY..
+
+		// 		// if the request failed to complete
+		// 		if (!newGeoClustersArr) {
+		// 			// double the interval delay
+		// 			intervalDelay *= 2;
+		// 		}
+
+		// 		// console.log({ intervalDelay });
+
+		// 		// RECURSIVE LOOP
+		// 		setTimeout(request, intervalDelay);
+		// 	}, intervalDelay);
+		// },
+
+		/**
+		 * @description Function to initiate an indefinitely recursive setTimeout loop with pre-set intervals
+		 * @function fireAutoUpdateWorker
+		 * @async
+		 * @param {Object} window - The window object passed in as argument
+		 */
 		fireAutoUpdateWorker: async (window) => {
+
+			// The initial delay for the setTimeout function
 			let initDelay = DURATION.GEOCLUSTERS_DATA_QUERY_INTERVAL;
 
+			// The interval delay that will be updated
 			let intervalDelay = initDelay;
 
 			setTimeout(async function request() {
-				// get the new geo clusters from the data source
+
+				// Get the new geo clusters from the data source
 				const newGeoClustersArr = await getNewlyParcelizedClusters(window);
 
-				// if there ARE new geo clusters
 				if (newGeoClustersArr && newGeoClustersArr.length > 0) {
-					// reset the interval delay when new geoclusters are found
+
+					// Reset the interval delay to the initial delay
 					intervalDelay = initDelay;
 
-					// SAVE THE NEWLY RETREIVED GEOJSON TO APP_STATE OBJECT / CACHE
+					// Save the newly retrieved geoJSON to the app_state object / cache
 					updateCachedGeoClusters("cached-geo-clusters", newGeoClustersArr);
 
-					// RENDER THE NEW CLUSTERS
+					// Render the new clusters
 					// FIXME > WIP > NOT YET IMPLEMENTED
 					await renderLiveGeoClusters(newGeoClustersArr);
 				}
 
-				// PROGRESSIVELY INCREASE THE INTERVAL IF NO NEW CLUSTERS ARE BEING FOUND..
-
-				// if there are no new geo clusters
+				// If there are no new geo clusters, increment the interval delay
 				if (newGeoClustersArr && newGeoClustersArr.length === 0) {
-					// increment the interval delay
 					intervalDelay += DURATION.DATA_QUERY_INCREMENT;
 				}
 
-				// DOUBLE THE INTERVAL BETWEEN setTimeouts IF 1ST CALL FAILED TO EXECUTE COMPLTELY..
-
-				// if the request failed to complete
+				// If the request failed to complete, double the interval delay
 				if (!newGeoClustersArr) {
-					// double the interval delay
 					intervalDelay *= 2;
 				}
 
-				console.log({ intervalDelay });
-
-				// RECURSIVE LOOP
+				// Recursively loop the setTimeout function with the updated interval delay
 				setTimeout(request, intervalDelay);
 			}, intervalDelay);
 		},
@@ -334,9 +386,9 @@ const initDashboardApp = (() => {
 
 		await initDashboardApp.cachePreloadedGeoClusters();
 
-		// await initDashboardApp.renderCachedGeoClusters();
+		await initDashboardApp.renderCachedGeoClusters();
 
-		await initDashboardApp.renderAdminBounds(windowObj);
+		// await initDashboardApp.renderAdminBounds(windowObj);
 
 		await initDashboardApp.fireAutoUpdateWorker(windowObj);
 	});

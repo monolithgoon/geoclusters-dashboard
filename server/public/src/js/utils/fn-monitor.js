@@ -3,38 +3,100 @@ import { _ManipulateDOM } from "../avg-controllers/ui-controller.js";
 import { GET_DOM_ELEMENTS } from "./get-dom-elements.js";
 
 
-// ACTIVATE THE DIV THAT DISPLAYS APP BACKGROUND ACTIVITY
-const ShowActivity = (()=>{
+// // ACTIVATE THE DIV THAT DISPLAYS APP BACKGROUND ACTIVITY
+// export const ShowActivity = (()=>{
    
-   try {
+//    try {
       
-      function toggleIndicatorWrapper (wrapperDiv) {
-         _ManipulateDOM.toggleClassList(wrapperDiv, "reveal");         
-      };
-      function toggleIndicator (indicatorDiv) {
-         _ManipulateDOM.toggleClassList(indicatorDiv, "spinner-grow", "text-light", "spinner-grow-sm");
-      };
-      return {
-         activityStart: (wrapperDiv, indicatorDiv) => {
-            toggleIndicatorWrapper(wrapperDiv)
-            toggleIndicator(indicatorDiv)
-         },
-         activityEnd: (wrapperDiv, indicatorDiv) => {
-            // indicatorDiv.innerText = `Data Loaded`;
-            // setTimeout(() => {
-            //    indicatorDiv.innerText = ``
-            //    toggleIndicator(indicatorDiv);
-            //    toggleIndicatorWrapper(wrapperDiv);
-            // }, 3000);
-            toggleIndicator(indicatorDiv);
-            toggleIndicatorWrapper(wrapperDiv);
-         },
-      };
+//       function toggleIndicatorWrapper (wrapperDiv) {
+//          _ManipulateDOM.toggleClassList(wrapperDiv, "reveal");         
+//       };
+//       function toggleIndicator (indicatorDiv) {
+//          _ManipulateDOM.toggleClassList(indicatorDiv, "spinner-grow", "text-light", "spinner-grow-sm");
+//       };
+//       return {
+//          activityStart: (wrapperDiv, indicatorDiv) => {
+//             toggleIndicatorWrapper(wrapperDiv)
+//             toggleIndicator(indicatorDiv)
+//          },
+//          activityEnd: (wrapperDiv, indicatorDiv) => {
+//             indicatorDiv.innerText = `Data Loaded`;
+//             setTimeout(() => {
+//                indicatorDiv.innerText = ``
+//                toggleIndicator(indicatorDiv);
+//                toggleIndicatorWrapper(wrapperDiv);
+//             }, 3000);
+//             toggleIndicator(indicatorDiv);
+//             toggleIndicatorWrapper(wrapperDiv);
+//          },
+//       };
 
-   } catch (showActivityErr) {
-      console.error(`showActivityErr: ${showActivityErr.message}`)
+//    } catch (showActivityErr) {
+//       console.error(`showActivityErr: ${showActivityErr.message}`)
+//    };
+// })();
+
+/**
+ * This module toggles the display of the app background activity indicator.
+ * @module ShowActivity
+ */
+
+export const ShowActivity = (() => {
+   /**
+    * Toggles the class list of the inicator wrapper div.
+    * @param {Element} wrapperDiv - The div element that wraps the indicator.
+    * @private
+    */
+   function toggleIndicatorWrapper(wrapperDiv) {
+      _ManipulateDOM.toggleClassList(wrapperDiv, "reveal");
+   }
+
+   /**
+    * Toggles the class list of the indicator div.
+    * @param {Element} indicatorDiv - The div element that displays the indicator.
+    * @private
+    */
+   function toggleIndicator(indicatorDiv) {
+      _ManipulateDOM.toggleClassList(
+         indicatorDiv,
+         "spinner-grow",
+         "text-light",
+         "spinner-grow-sm"
+      );
+   }
+
+   return {
+
+      /**
+       * Starts the activity indicator.
+       * @param {Element} wrapperDiv - The div element that wraps the indicator.
+       * @param {Element} indicatorDiv - The div element that displays the indicator.
+       */
+      activityStart: (wrapperDiv, indicatorDiv) => {
+         toggleIndicatorWrapper(wrapperDiv);
+         toggleIndicator(indicatorDiv);
+      },
+
+      /**
+       * Stops the activity indicator.
+       * @param {Element} wrapperDiv - The div element that wraps the indicator.
+       * @param {Element} indicatorDiv - The div element that displays the indicator.
+       */
+      activityEnd: (wrapperDiv, indicatorDiv) => {
+         toggleIndicator(indicatorDiv);
+         toggleIndicatorWrapper(wrapperDiv);
+
+         // indicatorDiv.innerText = `Data Loaded`;
+         // setTimeout(() => {
+         //    indicatorDiv.innerText = ``
+         //    toggleIndicator(indicatorDiv);
+         //    toggleIndicatorWrapper(wrapperDiv);
+         // }, 3000);
+
+      },
    };
 })();
+
 
 
 // CALC. TIME TO EXE. A FN. && DISPLAY INDICATOR
