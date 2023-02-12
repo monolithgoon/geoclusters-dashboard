@@ -102,8 +102,9 @@ export async function _getAPIResource(eventObj, resourceHost, resourcePath, { qu
 			appActivityInd: GET_DOM_ELEMENTS().appActivityInd,
 		};
 
-		// Execute the API call inside a monitoring function
-		const exeResult = await _MeasureExecution({ logger: console.log }).execute(
+		// Execute the API call inside a monitoring function		
+		// const exeResult = await _MeasureExecution({ logger: console.log }).execute(
+		const exeResult = await _MeasureExecution({}).execute(
 			callQueryAPI,
 			options
 		);
@@ -123,43 +124,64 @@ export async function _getAPIResource(eventObj, resourceHost, resourcePath, { qu
 	The function returns true on success or false if there is an error during the process.
  */
 export async function _downloadAndSaveParcelizedClusters(eventObj) {
+
 	try {
+
 		// constants
 		const apiHost = DEFAULT_APP_SETTINGS.GEOCLUSTERS_API_HOST;
 		const resourcePaths = DEFAULT_APP_SETTINGS.PARCELIZED_CLUSTERS_RESOURCE_PATHS;
 
 		// loop thru. each resource path
 		for (const resourcePath of resourcePaths) {
+
 			// const dbQueryStr = DEFAULT_APP_SETTINGS.LEGACY_CLUSTER_QUERY_STR;
 
-			// Create a pipeline function for the API call
-			const callQueryAPI = function () {
-				return queryAPI.call(eventObj, window.fetch, apiHost, resourcePath, {});
-			};
 
-			/**
-			 * @constant
-			 * @description An object containing options for display functions and activity indicators.
-			 */
-			const options = {
-				startDisplayFn: ShowActivity.activityStart,
-				endDisplayFn: ShowActivity.activityEnd,
-				appActivityIndWrapper: GET_DOM_ELEMENTS().appActivityIndWrapper,
-				appActivityInd: GET_DOM_ELEMENTS().appActivityInd,
-			};
+			// SANDBOX
+			const apiResponse = await _getAPIResource(window, apiHost, resourcePath, {});
 
-			// Execute the API call inside a monitoring function
-			const exeResult = await _MeasureExecution({ logger: console.log }).execute(
-				callQueryAPI,
-				options
-			);
+
+			// REMOVE
+			// // Create a pipeline function for the API call
+			// const callQueryAPI = function () {
+			// 	return queryAPI.call(eventObj, window.fetch, apiHost, resourcePath, {});
+			// };
+
+			// // REMOVE
+			// /**
+			//  * @constant
+			//  * @description An object containing options for display functions and activity indicators.
+			//  */
+			// const options = {
+			// 	startDisplayFn: ShowActivity.activityStart,
+			// 	endDisplayFn: ShowActivity.activityEnd,
+			// 	appActivityIndWrapper: GET_DOM_ELEMENTS().appActivityIndWrapper,
+			// 	appActivityInd: GET_DOM_ELEMENTS().appActivityInd,
+			// };
+
+			// // Execute the API call inside a monitoring function
+
+			// // ... with logging
+			// // const exeResult = await _MeasureExecution({ logger: console.log }).execute(
+
+			// 	// ... without logging
+			// const exeResult = await _MeasureExecution({}).execute(
+			// 	callQueryAPI,
+			// 	options
+			// );
 
 			// get the resource name from the resource path
 			const dbCollectionName = resourcePath.slice(resourcePath.indexOf("/") + 1);
 
+			// // REMOVE
+			// // Save the returned data			
+			// if (exeResult.returnedData) {
+			// 	APP_STATE.cacheDBCollection(dbCollectionName, exeResult.returnedData);
+			// }
+
 			// Save the returned data			
-			if (exeResult.returnedData) {
-				APP_STATE.cacheDBCollection(dbCollectionName, exeResult.returnedData);
+			if (apiResponse) {
+				APP_STATE.cacheDBCollection(dbCollectionName, apiResponse);
 			}
 		}
 

@@ -97,19 +97,19 @@ const initDashboardApp = (() => {
 	// 		let newGeoclustersArray = [];
 
 	// 		// Get all the pre-loaded clusters stored in the app cache
-	// 		const cachedGeoClusters = _TraverseObject.evaluateValue(
+	// 		const cachedGeoclusers = _TraverseObject.evaluateValue(
 	// 			APP_STATE.returnCachedDBCollection("cached-geo-clusters"),
 	// 			"data"
 	// 		);
 
-	// 		if (!cachedGeoClusters) {
+	// 		if (!cachedGeoclusers) {
 	// 			throw new Error(`There are no saved geoclusters in the app cache`);
 	// 		}
 
 	// 		// Get the IDs for all the clusters in the app cache
 	// 		const cachedGeoClusterIds = [];
-	// 		for (let idx = 0; idx < cachedGeoClusters.length; idx++) {
-	// 			let cachedClusterId = cachedGeoClusters[idx].properties.clusterID;
+	// 		for (let idx = 0; idx < cachedGeoclusers.length; idx++) {
+	// 			let cachedClusterId = cachedGeoclusers[idx].properties.clusterID;
 	// 			if (cachedClusterId) {
 	// 				cachedClusterId = cachedClusterId.toLowerCase();
 	// 				cachedGeoClusterIds.push(cachedClusterId);
@@ -189,15 +189,17 @@ const initDashboardApp = (() => {
 			const liveParcelizedClusterIds =
 				liveParcelizedClustersMetadata?.data?.collection_metadata?.ids || [];
 
+			console.log({liveParcelizedClusterIds})
+
 			// Get all the previously pre-loaded clusters stored in the app cache
-			const cachedGeoClusters = _TraverseObject.evaluateValue(
+			const cachedGeoclusers = _TraverseObject.evaluateValue(
 				APP_STATE.returnCachedDBCollection("cached-geo-clusters"),
 				"data"
 			);
 
 			let newGeoclusterIds = [];
 
-			if (!cachedGeoClusters) {
+			if (!cachedGeoclusers) {
 				// If there are no geoclusters in the app cache, throw an error
 				// throw new Error(`There are no saved geoclusters in the app cache`);
 				newGeoclusterIds = liveParcelizedClusterIds;
@@ -205,12 +207,12 @@ const initDashboardApp = (() => {
 			} else {
 
 				// Get the IDs of the cached geoclusters
-				const cachedGeoClusterIds = cachedGeoClusters.map((c) =>
+				const cachedGeoClusterIds = cachedGeoclusers.map((c) =>
 					c.properties.clusterID.toLowerCase()
 				);
 
 				console.log({ cachedGeoClusterIds });
-				console.log({ liveParcelizedClusterIds });
+				console.log({ newGeoclusterIds });
 
 				// Compare the arrays of IDs and determine the Ids of new geoclusters
 				newGeoclusterIds = _Arrays.containsAllChk(
@@ -219,12 +221,14 @@ const initDashboardApp = (() => {
 				).missingElements;
 			};
 
+			// REMOVE
 			// // Get the IDs of the cached geoclusters
-			// const cachedGeoClusterIds = cachedGeoClusters.map((c) =>
+			// const cachedGeoClusterIds = cachedGeoclusers.map((c) =>
 			// 	c.properties.clusterID.toLowerCase()
 			// );
 
 
+			// REMOVE
 			// // Compare the arrays of IDs and determine the new geocluster Ids
 			// const newGeoclusterIds = _Arrays.containsAllChk(
 			// 	cachedGeoClusterIds,
@@ -384,6 +388,7 @@ const initDashboardApp = (() => {
 			let intervalDelay = initDelay;
 
 			setTimeout(async function request() {
+				
 				// Get the new geo clusters from the data source
 				const newGeoClustersArr = getNewlyParcelizedClusters(window);
 
@@ -435,7 +440,7 @@ const initDashboardApp = (() => {
 
 		// await initDashboardApp.cachePreloadedGeoClusters();
 
-		await initDashboardApp.renderCachedGeoClusters();
+		// await initDashboardApp.renderCachedGeoClusters();
 
 		// await initDashboardApp.renderAdminBounds(windowObj);
 

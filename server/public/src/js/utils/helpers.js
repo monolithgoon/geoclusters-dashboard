@@ -1,3 +1,5 @@
+import DEFAULT_APP_SETTINGS from "../constants/default-app-settings";
+
 `use strict`;
 
 export const _delayExecution = async (durationMs) => {
@@ -95,7 +97,13 @@ export const ExecutionMeasureFn = (function () {
  * @param {function} [logger=console.log] - A logger function that logs the execution time in milliseconds.
  * @returns {object} - An object with the `execute` method.
  */
-export const _MeasureExecution = ({ logger = console.log } = {}) => ({
+// export const _MeasureExecution = ({ logger } = {}) => ({
+// export const _MeasureExecution = ({ logger = console.log } = {}) => ({
+export const _MeasureExecution = ({
+	logger = function () {
+		return DEFAULT_APP_SETTINGS.USE_LOGGING ? console.log : undefined;
+	},
+} = {}) => ({
 	/**
 	 * @function execute
 	 * @description Measures the execution time of a callback function and logs the result using the provided logger.
@@ -112,9 +120,7 @@ export const _MeasureExecution = ({ logger = console.log } = {}) => ({
 			appActivityInd = null,
 		} = {}
 	) => {
-
 		try {
-			
 			if (!startDisplayFn || !endDisplayFn || !appActivityIndWrapper || !appActivityInd) {
 				throw new Error(`One or more required arguments for the 'execute' fn. are missing.`);
 			}
@@ -122,10 +128,11 @@ export const _MeasureExecution = ({ logger = console.log } = {}) => ({
 			// Start the app background activity display
 			startDisplayFn(appActivityIndWrapper, appActivityInd);
 
-			logger(
-				`%c This funciton [ ${callbackFn.name} ] is executing ..`,
-				`background-color: lightgrey; color: blue;`
-			);
+			logger &&
+				logger(
+					`%c This funciton [ ${callbackFn.name} ] is executing ..`,
+					`background-color: lightgrey; color: blue;`
+				);
 
 			// Get the current time in milliseconds
 			const exeStart = Date.now();
@@ -140,20 +147,19 @@ export const _MeasureExecution = ({ logger = console.log } = {}) => ({
 			const executionMs = exeEnd - exeStart;
 
 			// Log the execution time using the provided logger
-			// logger(`The function "${callbackFn.name}" executed in: ${executionMs}ms`);
-			logger(
-				`%c The fn. [ ${callbackFn.name} ] executed in: ${(executionMs / 1000).toFixed(
-					2
-				)} seconds`,
-				`background-color: yellow; color: blue;`
-			);
+			logger &&
+				logger(
+					`%c The fn. [ ${callbackFn.name} ] executed in: ${(executionMs / 1000).toFixed(
+						2
+					)} seconds`,
+					`background-color: yellow; color: blue;`
+				);
 
 			// End the app background activity display
 			endDisplayFn(appActivityIndWrapper, appActivityInd);
 
 			// Return the execution time and the returned data from the callbackFn
 			return { executionMs, returnedData };
-
 		} catch (executeFnErr) {
 			console.error(executeFnErr.message);
 		}

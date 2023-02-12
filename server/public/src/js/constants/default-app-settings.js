@@ -2,6 +2,8 @@
 import API_URLS from "../constants/api-urls.js";
 
 const DEFAULT_APP_SETTINGS = Object.freeze({
+
+	USE_LOGGING: true,
 	
 	// PARCELIZED_CLUSTER_PLOTS_BUFFER: -0.005,
 	PARCELIZED_CLUSTER_PLOTS_BUFFER: -0.0065,
