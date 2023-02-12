@@ -3,39 +3,6 @@ import { _ManipulateDOM } from "../avg-controllers/ui-controller.js";
 import { GET_DOM_ELEMENTS } from "./get-dom-elements.js";
 
 
-// // ACTIVATE THE DIV THAT DISPLAYS APP BACKGROUND ACTIVITY
-// export const ShowActivity = (()=>{
-   
-//    try {
-      
-//       function toggleIndicatorWrapper (wrapperDiv) {
-//          _ManipulateDOM.toggleClassList(wrapperDiv, "reveal");         
-//       };
-//       function toggleIndicator (indicatorDiv) {
-//          _ManipulateDOM.toggleClassList(indicatorDiv, "spinner-grow", "text-light", "spinner-grow-sm");
-//       };
-//       return {
-//          activityStart: (wrapperDiv, indicatorDiv) => {
-//             toggleIndicatorWrapper(wrapperDiv)
-//             toggleIndicator(indicatorDiv)
-//          },
-//          activityEnd: (wrapperDiv, indicatorDiv) => {
-//             indicatorDiv.innerText = `Data Loaded`;
-//             setTimeout(() => {
-//                indicatorDiv.innerText = ``
-//                toggleIndicator(indicatorDiv);
-//                toggleIndicatorWrapper(wrapperDiv);
-//             }, 3000);
-//             toggleIndicator(indicatorDiv);
-//             toggleIndicatorWrapper(wrapperDiv);
-//          },
-//       };
-
-//    } catch (showActivityErr) {
-//       console.error(`showActivityErr: ${showActivityErr.message}`)
-//    };
-// })();
-
 /**
  * This module toggles the display of the app background activity indicator.
  * @module ShowActivity

@@ -80,7 +80,7 @@
 	flex-direction: row;
 	justify-content: center;
 	align-items: center;
-	
+
 	font-size: 1.2rem;
 	color: white;
 }
@@ -91,21 +91,34 @@
 
 section.bottom-section {
 	flex: 1;
-	background-image: url('/assets/images/noun-dark-contour.svg');
-	background-size: contain;
+	background-image: url("/assets/images/noun-dark-contour.svg");
+	background-size: cover;
 	background-repeat: no-repeat;
 	background-color: var(--error-page-background-color);
+
+	position: relative;
+	z-index: 2;
 }
+
+/* section.bottom-section .color-div {
+	margin: 70px;
+	height: 100%;
+	border: 15px solid pink;
+	background-color: rgba(0, 0, 0, 0.5);
+	
+	position: relative;
+	z-index: 1;
+} */
 
 /* ----------- Non-Retina Screens ----------- */
 @media screen and (min-device-width: 587px) {
 	.error-page-wrapper {
 		width: 25%;
-		width: 30%;
+		width: 40%;
 		background-color: white;
 	}
 
-	.bottom-section img {
-		width: 100%;
-	}
+	/* section.bottom-section {
+		background-size: contain;
+	} */
 }

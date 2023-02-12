@@ -1,7 +1,7 @@
 `use strict`;
 import { GET_DOM_ELEMENTS } from "../utils/get-dom-elements.js";
 import { _ManipulateDOM } from "./ui-controller.js";
-import { ShowActivity, _MonitorExecution } from "../utils/fn-monitor.js";
+import { ShowActivity } from "../utils/fn-monitor.js";
 import { APP_STATE } from "./state-controller.js";
 import DEFAULT_APP_SETTINGS from "../constants/default-app-settings.js";
 import { _MeasureExecution } from "../utils/helpers.js";
@@ -118,7 +118,7 @@ export async function _getAPIResource(eventObj, resourceHost, resourcePath, { qu
 	This function downloads and saves parcelized cluster data from a remote API. 
 	The function loops through each resource path defined in DEFAULT_APP_SETTINGS.PARCELIZED_CLUSTERS_RESOURCE_PATHS 
 	and performs an API call for each resource path using queryAPI.call function. 
-	The execution time of each API call is monitored and recorded using the _MonitorExecution object. 
+	The execution time of each API call is monitored and recorded using the _MeasureExecution object. 
 	If the API call returns data, it is saved using the APP_STATE.cacheDBCollection function. 
 	The function returns true on success or false if there is an error during the process.
  */
@@ -136,12 +136,6 @@ export async function _downloadAndSaveParcelizedClusters(eventObj) {
 			const callQueryAPI = function () {
 				return queryAPI.call(eventObj, window.fetch, apiHost, resourcePath, {});
 			};
-
-			// // execute the API call
-			// await _MonitorExecution.execute(callQueryAPI);
-
-			// // get the execution time
-			// _MonitorExecution.getExecutionTime();
 
 			/**
 			 * @constant
@@ -163,13 +157,9 @@ export async function _downloadAndSaveParcelizedClusters(eventObj) {
 			// get the resource name from the resource path
 			const dbCollectionName = resourcePath.slice(resourcePath.indexOf("/") + 1);
 
-			// SAVE THE RETURNED DATA
-			// if (_MonitorExecution.getData()) {
-			// 	APP_STATE.cacheDBCollection(dbCollectionName, _MonitorExecution.getData());
-			// };
-			
+			// Save the returned data			
 			if (exeResult.returnedData) {
-				APP_STATE.cacheDBCollection(dbCollectionName, _MonitorExecution.getData());
+				APP_STATE.cacheDBCollection(dbCollectionName, exeResult.returnedData);
 			}
 		}
 
