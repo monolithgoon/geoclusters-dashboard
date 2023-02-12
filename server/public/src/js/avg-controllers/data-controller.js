@@ -82,7 +82,7 @@ export async function _getAPIResource(eventObj, resourceHost, resourcePath, { qu
 		queryString = queryString ? queryString : (queryString = "");
 
 		/**
-		 * @function
+		 * @function callQueryAPI
 		 * @inner
 		 * @description A pipeline function for the API call
 		 */
@@ -102,92 +102,130 @@ export async function _getAPIResource(eventObj, resourceHost, resourcePath, { qu
 			appActivityInd: GET_DOM_ELEMENTS().appActivityInd,
 		};
 
-		// Execute the API call inside a monitoring function		
-		// const exeResult = await _MeasureExecution({ logger: console.log }).execute(
-		const exeResult = await _MeasureExecution({}).execute(
+		// Execute the API call inside a monitoring function
+		const exeResult = await _MeasureExecution({ logger: undefined }).execute(
 			callQueryAPI,
 			options
 		);
 
-		return exeResult.returnedData;
+		return exeResult?.returnedData;
 	} catch (getAPIResourceErr) {
 		console.error(`getAPIResourceErr: ${getAPIResourceErr.message}`);
 	}
 }
 
+// REMOVE > DEPRECATED
 /**
-	This function downloads and saves parcelized cluster data from a remote API. 
-	The function loops through each resource path defined in DEFAULT_APP_SETTINGS.PARCELIZED_CLUSTERS_RESOURCE_PATHS 
-	and performs an API call for each resource path using queryAPI.call function. 
-	The execution time of each API call is monitored and recorded using the _MeasureExecution object. 
-	If the API call returns data, it is saved using the APP_STATE.cacheDBCollection function. 
-	The function returns true on success or false if there is an error during the process.
+	This function downloads and saves parcelized cluster data from a remote API. <br>
+	The function loops through each resource path defined in DEFAULT_APP_SETTINGS.PARCELIZED_CLUSTERS_RESOURCE_PATHS <br>
+	and performs an API call for each resource path using queryAPI.call function. <br>
+	The execution time of each API call is monitored and recorded using the _MeasureExecution object. <br>
+	If the API call returns data, it is saved using the APP_STATE.cacheDBCollection function. <br>
+	The function returns true on success or false if there is an error during the process. <br>
  */
-export async function _downloadAndSaveParcelizedClusters(eventObj) {
+// export async function _downloadAndSaveParcelizedClusters(eventObj) {
+// 	try {
+// 		// constants
+// 		const apiHost = DEFAULT_APP_SETTINGS.GEOCLUSTERS_API_HOST;
+// 		const resourcePaths = DEFAULT_APP_SETTINGS.PARCELIZED_CLUSTERS_RESOURCE_PATHS;
 
+// 		// loop thru. each resource path
+// 		for (const resourcePath of resourcePaths) {
+// 			// const dbQueryStr = DEFAULT_APP_SETTINGS.LEGACY_CLUSTER_QUERY_STR;
+
+// 			// SANDBOX
+// 			const apiResponse = await _getAPIResource(window, apiHost, resourcePath, {});
+
+// 			// REMOVE
+// 			// // Create a pipeline function for the API call
+// 			// const callQueryAPI = function () {
+// 			// 	return queryAPI.call(eventObj, window.fetch, apiHost, resourcePath, {});
+// 			// };
+
+// 			// // REMOVE
+// 			// /**
+// 			//  * @constant
+// 			//  * @description An object containing options for display functions and activity indicators.
+// 			//  */
+// 			// const options = {
+// 			// 	startDisplayFn: ShowActivity.activityStart,
+// 			// 	endDisplayFn: ShowActivity.activityEnd,
+// 			// 	appActivityIndWrapper: GET_DOM_ELEMENTS().appActivityIndWrapper,
+// 			// 	appActivityInd: GET_DOM_ELEMENTS().appActivityInd,
+// 			// };
+
+// 			// // Execute the API call inside a monitoring function
+
+// 			// // ... with logging
+// 			// // const exeResult = await _MeasureExecution({ logger: console.log }).execute(
+
+// 			// 	// ... without logging
+// 			// const exeResult = await _MeasureExecution({}).execute(
+// 			// 	callQueryAPI,
+// 			// 	options
+// 			// );
+
+// 			// get the resource name from the resource path
+// 			const dbCollectionName = resourcePath.slice(resourcePath.indexOf("/") + 1);
+
+// 			// // REMOVE
+// 			// // Save the returned data
+// 			// if (exeResult.returnedData) {
+// 			// 	APP_STATE.cacheDBCollection(dbCollectionName, exeResult.returnedData);
+// 			// }
+
+// 			// Save the returned data
+// 			if (apiResponse) {
+// 				APP_STATE.cacheDBCollection(dbCollectionName, apiResponse);
+// 			}
+// 		}
+
+// 		return true;
+// 	} catch (downloadParcelizedClustersErr) {
+// 		console.error(`downloadParcelizedClustersErr: ${downloadParcelizedClustersErr}`);
+// 		return false;
+// 	}
+// }
+
+/**
+ * @description Downloads and saves parcelized cluster data from a remote API.
+ * 
+ * The function loops through each resource path defined in DEFAULT_APP_SETTINGS.PARCELIZED_CLUSTERS_RESOURCE_PATHS 
+ * and performs an API call for each resource path using the `queryAPI.call` function. 
+ * The execution time of each API call is monitored and recorded using the `_MeasureExecution` object. 
+ * If the API call returns data, it is saved using the `APP_STATE.cacheDBCollection` function. 
+ * The function returns `true` on success or `false` if there is an error during the process.
+ * 
+ * @async
+ * @function _downloadAndSaveParcelizedClusters
+ *
+ * @returns {boolean} - Returns true on success or false if there is an error during the process.
+ *
+ * @throws {Error} - If there is an error during the process, an error will be thrown.
+ */
+export async function _downloadAndSaveParcelizedClusters() {
 	try {
-
-		// constants
+		// Constants
 		const apiHost = DEFAULT_APP_SETTINGS.GEOCLUSTERS_API_HOST;
 		const resourcePaths = DEFAULT_APP_SETTINGS.PARCELIZED_CLUSTERS_RESOURCE_PATHS;
 
-		// loop thru. each resource path
 		for (const resourcePath of resourcePaths) {
 
-			// const dbQueryStr = DEFAULT_APP_SETTINGS.LEGACY_CLUSTER_QUERY_STR;
-
-
-			// SANDBOX
+			// Get the API response for the current resource path
 			const apiResponse = await _getAPIResource(window, apiHost, resourcePath, {});
 
-
-			// REMOVE
-			// // Create a pipeline function for the API call
-			// const callQueryAPI = function () {
-			// 	return queryAPI.call(eventObj, window.fetch, apiHost, resourcePath, {});
-			// };
-
-			// // REMOVE
-			// /**
-			//  * @constant
-			//  * @description An object containing options for display functions and activity indicators.
-			//  */
-			// const options = {
-			// 	startDisplayFn: ShowActivity.activityStart,
-			// 	endDisplayFn: ShowActivity.activityEnd,
-			// 	appActivityIndWrapper: GET_DOM_ELEMENTS().appActivityIndWrapper,
-			// 	appActivityInd: GET_DOM_ELEMENTS().appActivityInd,
-			// };
-
-			// // Execute the API call inside a monitoring function
-
-			// // ... with logging
-			// // const exeResult = await _MeasureExecution({ logger: console.log }).execute(
-
-			// 	// ... without logging
-			// const exeResult = await _MeasureExecution({}).execute(
-			// 	callQueryAPI,
-			// 	options
-			// );
-
-			// get the resource name from the resource path
+			// Get the database collection name from the resource path
 			const dbCollectionName = resourcePath.slice(resourcePath.indexOf("/") + 1);
 
-			// // REMOVE
-			// // Save the returned data			
-			// if (exeResult.returnedData) {
-			// 	APP_STATE.cacheDBCollection(dbCollectionName, exeResult.returnedData);
-			// }
-
-			// Save the returned data			
+			// Save the API response in the app state
 			if (apiResponse) {
 				APP_STATE.cacheDBCollection(dbCollectionName, apiResponse);
 			}
 		}
 
 		return true;
-	} catch (downloadParcelizedClustersErr) {
-		console.error(`downloadParcelizedClustersErr: ${downloadParcelizedClustersErr}`);
+	} catch (error) {
+		console.error(`Error while downloading and saving parcelized clusters: ${error}`);
 		return false;
 	}
 }

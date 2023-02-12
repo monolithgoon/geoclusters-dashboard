@@ -13,13 +13,11 @@ const { _sanitizeFeatCollCoords } = require("../utils/helpers.js");
 const API_URLS = require("../constants/api-urls.js");
 const config = require("../config/config.js");
 
-
 /**
  * Reports the statistics of a saved file.
  * @param {string} filePath - The path of the saved file.
  */
 function reportFileStats(filePath) {
-	
 	// Getting the stats of the saved file
 	const fileStats = fs.statSync(`${filePath}`);
 
@@ -30,9 +28,12 @@ function reportFileStats(filePath) {
 	const fileMBSize = fileByteSize / (1024 * 1024);
 
 	// Logging the file statistics
-	console.log(chalk.success(`File was saved -> [ ${path.basename(filePath)} ] -> ${fileMBSize.toFixed(2)} MB`));
-};
-
+	console.log(
+		chalk.success(
+			`File was saved -> [ ${path.basename(filePath)} ] -> ${fileMBSize.toFixed(2)} MB`
+		)
+	);
+}
 
 /**
  * Saves the returned data from the database to disk.
@@ -40,12 +41,13 @@ function reportFileStats(filePath) {
  * @param {string} collectionName - The name of the database collection.
  */
 function saveData(data, collectionName) {
+	console.log(
+		chalk.working(`Saving database collection [ ${collectionName} ] to local storage ..`)
+	);
 
-	console.log(chalk.working(`Saving database collection [ ${collectionName} ] to local storage ..`));
-	
 	// Defining the file path where the data will be saved
 	const filePath = path.resolve(`${__approotdir}/localdata/${collectionName}.json`);
-	
+
 	// Writing the data to the specified file path
 	fs.writeFile(filePath, data, (saveDataErr) => {
 		// If there is an error in saving the data
@@ -58,11 +60,9 @@ function saveData(data, collectionName) {
 		// If the data was saved successfully
 		reportFileStats(filePath);
 	});
-};
-
+}
 
 async function getDBCollection(url, apiAccessToken) {
-
 	console.log(chalk.consoleY(`AXIOS retreiving data from [ ${url} ]`));
 
 	try {
@@ -91,15 +91,13 @@ async function getDBCollection(url, apiAccessToken) {
 		requestTimeStr = requestTimeStr.replace(/T/g, "-T");
 
 		return collectionData;
-
 	} catch (axiosError) {
 		console.error(chalk.fail(`axiosError: ${axiosError.message}`));
 		return null;
 	}
 }
 
-
-// REMOVE > UN-USED 
+// REMOVE > UN-USED
 // TODO > VALIDATE GeoJSON
 function validateGeoJSON(geoJSON) {
 	if (!gjv.valid(geoJSON)) {
@@ -121,15 +119,11 @@ function validateGeoJSON(geoJSON) {
  * @returns {Array} normalizedClusters - An array of normalized GeoJSON clusters.
  */
 function returnNormalized(geoclustersArray) {
-
 	try {
-
 		const normalizedClusters = [];
 
 		if (geoclustersArray) {
-
 			for (let geoclusterGeoJSON of geoclustersArray) {
-
 				// Check if the supplied GeoJSON is a valid FeatureCollection
 				if (turf.getType(geoclusterGeoJSON) !== `FeatureCollection`) {
 					throw new Error(`The supplied GeoJSON is not a valid FeatureCollection`);
@@ -138,7 +132,7 @@ function returnNormalized(geoclustersArray) {
 				// Check if the FeatureCollection contains iterable features
 				if (!Array.isArray(geoclusterGeoJSON.features)) {
 					throw new Error(`The supplied FeatureCollection does not have itirable Features`);
-				};
+				}
 
 				// SANDBOX
 				// if (!gjv.valid(geoclusterGeoJSON)) {
@@ -169,7 +163,6 @@ function returnNormalized(geoclustersArray) {
 	}
 }
 
-
 /**
  * Gets collections from an API.
  * @param {string} apiHost - The host URL of the API.
@@ -177,49 +170,87 @@ function returnNormalized(geoclustersArray) {
  * @return {Array} The collected data from the API.
  */
 async function getAPICollections(apiHost, resourcePaths) {
-
 	// Initializing an array to store the collected data
 	const data = [];
-	
+
 	// Looping through the resource paths
 	for (const resourcePath of resourcePaths) {
-
 		// Getting the data for each collection
 		const collectionData = await getDBCollection(`${apiHost}/${resourcePath}`);
-		
+
 		// If the data exists, push it to the data array
 		if (collectionData) data.push(collectionData);
 	}
-	
+
 	// Returning the collected data
 	return data;
 }
 
+// /**
+//  *
+//  * Asynchronously download data from the geoclusters API, and save locally to disk in server/localdata
+//  * This action is performed only **once** when the server loads up initially
+//  * This action is neccessary in order to avoid expensive API calls on paage load,
+//  * and to instantly hydrate the DOM with server-side data
+//  * The cached data is read from disk, and passed to the /server/view-controller via the server/data-controller
+//  * The data is then made available as an object in the dashboard app using PUG variables
+//  *
+//  */
+// async function cacheAPIData() {
+// 	try {
+// 		const apiCollections = await getAPICollections(
+// 			config.geoclustersHostUrl,
+// 			API_URLS.GEOCLUSTERS.RESOURCE_PATHS
+// 		);
 
-/** 
- * 
+// 		console.log({ apiCollections });
+
+// 		for (const geoclusterCollection of apiCollections) {
+// 			if (geoclusterCollection && geoclusterCollection.data) {
+// 				const collectionJSON = returnNormalized(geoclusterCollection.data.collection_docs);
+// 				if (collectionJSON) {
+// 					saveData(JSON.stringify(collectionJSON), geoclusterCollection.data.collection_name);
+// 				}
+// 			}
+// 		}
+// 	} catch (cacheAPIDataErr) {
+// 		console.error(chalk.fail(`cacheAPIDataErr: ${cacheAPIDataErr.message}`));
+// 	}
+// }
+
+/**
+ * @description Caches data from the API collections.
+ *
  * Asynchronously download data from the geoclusters API, and save locally to disk in server/localdata
  * This action is performed only **once** when the server loads up initially
- * This action is neccessary in order to avoid expensive API calls on paage load, 
+ * This action is neccessary in order to avoid expensive API calls on paage load,
  * and to instantly hydrate the DOM with server-side data
  * The cached data is read from disk, and passed to the /server/view-controller via the server/data-controller
  * The data is then made available as an object in the dashboard app using PUG variables
- * 
+ *
+ * @async
+ * @function cacheAPIData
+ * @throws {Error} If the API request fails or if there is an issue with the data being processed.
  */
 async function cacheAPIData() {
-
 	try {
+		// Make the API request to get the collections.
 		const apiCollections = await getAPICollections(
 			config.geoclustersHostUrl,
 			API_URLS.GEOCLUSTERS.RESOURCE_PATHS
 		);
 
+		// Log the received collections for debugging purposes.
 		console.log({ apiCollections });
 
+		// Loop through each collection and process the data
 		for (const geoclusterCollection of apiCollections) {
 			if (geoclusterCollection && geoclusterCollection.data) {
+				// Normalize (flatten) the collection data.
 				const collectionJSON = returnNormalized(geoclusterCollection.data.collection_docs);
+
 				if (collectionJSON) {
+					// Save the normalized data to disk.
 					saveData(JSON.stringify(collectionJSON), geoclusterCollection.data.collection_name);
 				}
 			}

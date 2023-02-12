@@ -1,6 +1,6 @@
-import DEFAULT_APP_SETTINGS from "../constants/default-app-settings";
-
 `use strict`;
+import DEFAULT_APP_SETTINGS from "../constants/default-app-settings.js";
+
 
 export const _delayExecution = async (durationMs) => {
 	return new Promise((resolve, reject) => {
@@ -8,9 +8,11 @@ export const _delayExecution = async (durationMs) => {
 	});
 };
 
+
 export const _mandatoryParam = () => {
 	throw new Error(`Parameter is required.`);
 };
+
 
 // GLOBAL TRY CATCH ERR. HANDLER
 export function _errorHandler(callback, errName) {
@@ -22,18 +24,6 @@ export function _errorHandler(callback, errName) {
 	}
 }
 
-// REMOVE > DEPRECATED
-// CONCAT. STRINGS FROM ARRAY; SEPARATE BY SPACE
-export function joinWordsArray(keywords, { inclQuotes = false, commaSeparated = false } = {}) {
-	let concatArray;
-	concatArray = keywords.map((keyword) => {
-		if (keyword) {
-			if (inclQuotes) return `"${keyword}"`;
-			else return keyword.trim();
-		}
-	});
-	return commaSeparated ? concatArray.join(", ") : concatArray.join(" ");
-}
 
 /**
  * @function _joinWordsArray
@@ -55,6 +45,7 @@ export function _joinWordsArray(keywords, { inclQuotes = false, commaSeparated =
 	// Join the array into a single string, using either commas or spaces as the separator
 	return commaSeparated ? concatArray.join(", ") : concatArray.join(" ");
 }
+
 
 // REMOVE > DEPRECATED
 // CALC. TIME TO EXE. A FN.
@@ -91,19 +82,14 @@ export const ExecutionMeasureFn = (function () {
 	};
 })();
 
+
 /**
  * @function _MeasureExecution
  * @description This module returns an object that provides the `execute` method to measure the execution time of a callback function. The execution time and the returned data from the callback are logged.
  * @param {function} [logger=console.log] - A logger function that logs the execution time in milliseconds.
  * @returns {object} - An object with the `execute` method.
  */
-// export const _MeasureExecution = ({ logger } = {}) => ({
-// export const _MeasureExecution = ({ logger = console.log } = {}) => ({
-export const _MeasureExecution = ({
-	logger = function () {
-		return DEFAULT_APP_SETTINGS.USE_LOGGING ? console.log : undefined;
-	},
-} = {}) => ({
+export const _MeasureExecution = ({ logger } = {}) => ({
 	/**
 	 * @function execute
 	 * @description Measures the execution time of a callback function and logs the result using the provided logger.
@@ -121,6 +107,12 @@ export const _MeasureExecution = ({
 		} = {}
 	) => {
 		try {
+
+			// if logger is not set when fn. is called, use `console.log` if settings allow
+			if (!logger) {
+				logger = DEFAULT_APP_SETTINGS.USE_LOGGING === true ? console.log : undefined;
+			}
+
 			if (!startDisplayFn || !endDisplayFn || !appActivityIndWrapper || !appActivityInd) {
 				throw new Error(`One or more required arguments for the 'execute' fn. are missing.`);
 			}
