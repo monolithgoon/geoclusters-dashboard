@@ -3,9 +3,11 @@ import { AVG_BASE_MAP, CLUSTER_PLOTS_MAP, FEAT_DETAIL_MAP } from "../config/maps
 import LEAFLET_TILE_LAYERS from "../config/leaflet-tile-layers.js"
 import { _getClusterFeatPopupMarkup, _GenerateClusterFeatMarkup, _getClusterMetadaMarkerMarkup } from "../utils/markup-generators.js";
 import { _ManipulateDOM, _pollAVGSettingsValues } from "./ui-controller.js";
-import { _MonitorExecution } from "../utils/fn-monitor.js";
+import { _MonitorExecution, _MONITOR_EXECUTION } from "../utils/fn-monitor.js";
+import { _ShowActivityAlert } from "../utils/activity-alert.js";
 import { LAYER_COLORS } from "../utils/mapbox-layer-colors.js";
 import { _TurfHelpers, _getBufferedPolygon, _ProcessGeoJSON, _GeometryMath, _getUsableGeometry, _mandatoryParam, _joinWordsArray, _delayExecution } from "../utils/helpers.js";
+import { GET_DOM_ELEMENTS } from "../utils/get-dom-elements.js";
 
 
 const LLayerGroupController = ((leafletBaseMap, leafletModalMap)=>{
@@ -1891,9 +1893,27 @@ export const _RenderEngine = (function(avgBaseMap, clusterFeatsMap) {
             (async () => {
                await sidemapPanToCluster(featColl);
                // await _delayExecution(9000);
-               await _MonitorExecution.measureExecution(()=>basemapPanToCluster(featColl, {zoomLevel: baseMapZoomLvl}));
+               // await _MonitorExecution.measureExecution(()=>basemapPanToCluster(featColl, {zoomLevel: baseMapZoomLvl}));
+               await _MONITOR_EXECUTION({logger: console.log}).execute(()=>basemapPanToCluster(featColl, {zoomLevel: baseMapZoomLvl}), {
+                  startDisplayFn: _ShowActivityAlert.activityStart,
+                  endDisplayFn: _ShowActivityAlert.activityEnd,
+                  appActivityIndWrapper: GET_DOM_ELEMENTS().appActivityIndWrapper,
+                  appActivityIndEl: GET_DOM_ELEMENTS().appActivityIndEl,
+                  appActivityStartIndTextEl: GET_DOM_ELEMENTS().appActivityStartIndTextEl,
+                  appActivityEndIndTextEl: GET_DOM_ELEMENTS().appActivityEndIndTextEl,
+                  appActivityIndText: `PANNING CLUSTER`,         
+               })
                // await _delayExecution(10000);
-               await _MonitorExecution.measureExecution(()=>basemapFitCluster(featColl, {zoomLevel: baseMapZoomLvl}));
+               // await _MonitorExecution.measureExecution(()=>basemapFitCluster(featColl, {zoomLevel: baseMapZoomLvl}));
+               await _MONITOR_EXECUTION({logger: console.log}).execute(()=>basemapFitCluster(featColl, {zoomLevel: baseMapZoomLvl}), {
+                  startDisplayFn: _ShowActivityAlert.activityStart,
+                  endDisplayFn: _ShowActivityAlert.activityEnd,
+                  appActivityIndWrapper: GET_DOM_ELEMENTS().appActivityIndWrapper,
+                  appActivityIndEl: GET_DOM_ELEMENTS().appActivityIndEl,
+                  appActivityStartIndTextEl: GET_DOM_ELEMENTS().appActivityStartIndTextEl,
+                  appActivityEndIndTextEl: GET_DOM_ELEMENTS().appActivityEndIndTextEl,
+                  appActivityIndText: `FITTING CLUSTER`,         
+               })
                // await _delayExecution(12000);
                await _RenderEngine.renderClusterPlotsOnBasemap(featColl, {useBuffer, bufferAmt, bufferUnits, lineColor: "#feca57", lineWeight: 1.5, lineDashArray: "3"});
             })();

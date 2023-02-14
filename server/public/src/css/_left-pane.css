@@ -218,7 +218,6 @@ button#results_scroll_top_button {
    font-size: 1.2rem;
    font-weight: bold;
    line-height: 1.3;
-   letter-spacing: -0.4px;
    text-align: center;
 }
 
@@ -229,8 +228,8 @@ button#results_scroll_top_button {
 .result-item-modal-subtext {
    margin-bottom: 15px;
    line-height: 1.4;
-   font-family: "IBM Plex Sans";
    font-family: "Google Sans", sans-serif;
+   font-family: "IBM Plex Sans";
    font-size: 0.75rem;
    letter-spacing: -0.2px;
    word-spacing: 1.3px;
@@ -241,6 +240,11 @@ button#results_scroll_top_button {
    fill: white;
    height: 15px;
 }
+
+.result-item-modal-header, .result-item-modal-footer {
+   font-family: "UberMove";
+}
+
 
 .modal-person-avatar {
    padding-bottom: 10px;

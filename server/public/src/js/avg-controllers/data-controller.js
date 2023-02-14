@@ -1,11 +1,12 @@
 `use strict`;
 import { GET_DOM_ELEMENTS } from "../utils/get-dom-elements.js";
 import { _ManipulateDOM } from "./ui-controller.js";
-import { ShowActivity } from "../utils/fn-monitor.js";
+import { _ShowActivityAlert } from "../utils/activity-alert.js";
 import { APP_STATE } from "./state-controller.js";
 import DEFAULT_APP_SETTINGS from "../constants/default-app-settings.js";
-import { _Arrays, _MONITOR_EXECUTION } from "../utils/helpers.js";
+import { _Arrays } from "../utils/helpers.js";
 import API_URLS from "../constants/api-urls.js";
+import { _MONITOR_EXECUTION } from "../utils/fn-monitor.js";
 
 export function _retreiveClusterGJDatasets() {
 	try {
@@ -97,8 +98,8 @@ export async function _getAPIResource(eventObj, resourceHost, resourcePath, { qu
 		 * @description An object containing options for display functions and activity indicators.
 		 */
 		const options = {
-			startDisplayFn: ShowActivity.activityStart,
-			endDisplayFn: ShowActivity.activityEnd,
+			startDisplayFn: _ShowActivityAlert.activityStart,
+			endDisplayFn: _ShowActivityAlert.activityEnd,
 			appActivityIndWrapper: GET_DOM_ELEMENTS().appActivityIndWrapper,
 			appActivityIndEl: GET_DOM_ELEMENTS().appActivityIndEl,
 			appActivityStartIndTextEl: GET_DOM_ELEMENTS().appActivityStartIndTextEl,
