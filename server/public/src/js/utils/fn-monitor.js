@@ -11,21 +11,21 @@ import { GET_DOM_ELEMENTS } from "./get-dom-elements.js";
 export const ShowActivity = (() => {
    /**
     * Toggles the class list of the inicator wrapper div.
-    * @param {Element} wrapperDiv - The div element that wraps the indicator.
+    * @param {Element} wrapperDivEl - The div element that wraps the indicator.
     * @private
     */
-   function toggleIndicatorWrapper(wrapperDiv) {
-      _ManipulateDOM.toggleClassList(wrapperDiv, "reveal");
+   function toggleIndicatorWrapper(wrapperDivEl) {
+      _ManipulateDOM.toggleClassList(wrapperDivEl, "reveal");
    }
 
    /**
     * Toggles the class list of the indicator div.
-    * @param {Element} indicatorDiv - The div element that displays the indicator.
+    * @param {Element} indicatorDivEl - The div element that displays the indicator.
     * @private
     */
-   function toggleIndicator(indicatorDiv) {
+   function toggleIndicator(indicatorDivEl) {
       _ManipulateDOM.toggleClassList(
-         indicatorDiv,
+         indicatorDivEl,
          "spinner-grow",
          "text-light",
          "spinner-grow-sm"
@@ -36,36 +36,32 @@ export const ShowActivity = (() => {
 
       /**
        * Starts the activity indicator.
-       * @param {Element} wrapperDiv - The div element that wraps the indicator.
-       * @param {Element} indicatorDiv - The div element that displays the indicator.
+       * @param {Element} wrapperDivEl - The div element that wraps the indicator.
+       * @param {Element} indicatorDivEl - The div element that displays the indicator.
        */
-      activityStart: (wrapperDiv, indicatorDiv) => {
-         toggleIndicatorWrapper(wrapperDiv);
-         toggleIndicator(indicatorDiv);
+      activityStart: (wrapperDivEl, indicatorDivEl, activityStartTextEl, activityEndTextEl, startActivityText) => {
+         toggleIndicatorWrapper(wrapperDivEl);
+         toggleIndicator(indicatorDivEl);
+         activityStartTextEl.innerText = startActivityText;
       },
-
+      
       /**
        * Stops the activity indicator.
-       * @param {Element} wrapperDiv - The div element that wraps the indicator.
-       * @param {Element} indicatorDiv - The div element that displays the indicator.
+       * @param {Element} wrapperDivEl - The div element that wraps the indicator.
+       * @param {Element} indicatorDivEl - The div element that displays the indicator.
        */
-      activityEnd: (wrapperDiv, indicatorDiv) => {
-         toggleIndicator(indicatorDiv);
-         toggleIndicatorWrapper(wrapperDiv);
-
-         // indicatorDiv.innerText = `Data Loaded`;
-         // setTimeout(() => {
-         //    indicatorDiv.innerText = ``
-         //    toggleIndicator(indicatorDiv);
-         //    toggleIndicatorWrapper(wrapperDiv);
-         // }, 3000);
-
+      activityEnd: (wrapperDivEl, indicatorDivEl, activityStartTextEl, activityEndTextEl, executionSecs ) => {
+         toggleIndicator(indicatorDivEl);
+         toggleIndicatorWrapper(wrapperDivEl);
+         activityStartTextEl.innerText = ``;
+         activityEndTextEl.innerText = `${executionSecs}s`
       },
    };
 })();
 
 
 
+// REMOVE > DEPRECATED
 // CALC. TIME TO EXE. A FN. && DISPLAY INDICATOR
 export const _MonitorExecution = (function(dom) {
 
@@ -75,7 +71,7 @@ export const _MonitorExecution = (function(dom) {
 
 		execute: async function(callbackFn) {
 						
-			ShowActivity.activityStart(dom.appActivityIndWrapper, dom.appActivityInd);
+			ShowActivity.activityStart(dom.appActivityIndWrapper, dom.appActivityIndEl);
 	
          console.log(`%c This funciton [${callbackFn}] is executing ..`, `background-color: lightgrey; color: blue;`);
 
@@ -87,7 +83,7 @@ export const _MonitorExecution = (function(dom) {
 
 			executionMs = exeEnd - exeStart;
 
-			ShowActivity.activityEnd(dom.appActivityIndWrapper, dom.appActivityInd);
+			ShowActivity.activityEnd(dom.appActivityIndWrapper, dom.appActivityIndEl);
 		},
 
       getExecutionTime: function() {

@@ -47,6 +47,23 @@ header.header-wrapper {
    
    width: 45px;
    width: 50px;
+
+   width: 9vw;
+   display: flex;
+   flex-direction: row;
+   align-items: center;
+   justify-content: space-evenly;
+}
+
+.app-activity-start-indicator-text,
+.app-activity-end-indicator-text {
+   padding: auto 5px;
+   font-size: .6rem;
+   font-weight: bold;
+   letter-spacing: -0.2px;
+   line-height: 1.9;
+   color: white;
+   text-align: center;
 }
 
 .navbar-nav > li.nav-item > a {

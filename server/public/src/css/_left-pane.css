@@ -348,8 +348,6 @@ button#results_scroll_top_button {
 
 .result-item > *,
 .result-item > * > * {
-   line-height: 1.35;
-   line-height: 1.4;
    line-height: 1.2;
 }
 

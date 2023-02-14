@@ -14,8 +14,11 @@ export function GET_DOM_ELEMENTS() {
    const sidebarExpandBtn = document.getElementById(`app_sidebar_expand_button`);
    const settingsSidebarToggleBtn = document.getElementById(`avg_settings_sidebar_toggle_btn`);
 
+   // HEADER ELEMENTS
    const appActivityIndWrapper = document.querySelector(`.app-activity-indicator-wrapper`);
-   const appActivityInd = document.querySelector(`.app-activity-indicator`);
+   const appActivityIndEl = document.querySelector(`.app-activity-indicator`);
+   const appActivityStartIndTextEl = document.querySelector(`.app-activity-start-indicator-text`);
+   const appActivityEndIndTextEl = document.querySelector(`.app-activity-end-indicator-text`);
 
    // PANE ELEMENTS
    const paneResizeBtns = document.querySelectorAll(`.pane-resize-btn`);
@@ -71,7 +74,9 @@ export function GET_DOM_ELEMENTS() {
       sidebarExpandBtn,
       // settingsSidebarToggleBtn,
       appActivityIndWrapper,
-      appActivityInd,
+      appActivityIndEl,
+      appActivityStartIndTextEl,
+      appActivityEndIndTextEl,
       plotsMapStyleRadios,
       baseMapRadios,
       distanceUnitsRadios,

@@ -161,7 +161,7 @@ block landing-page
       const loginBackBtn = document.getElementById("login_back_btn");
       const loginSubmitBtn = document.getElementById("login_submit_btn");
       const loginSubmitBtnTxt = document.getElementById("login_submit_btn_txt");
-      const appActivityInd = document.querySelector(`.app-activity-indicator`);
+      const appActivityIndEl = document.querySelector(`.app-activity-indicator`);
 
 
       //- EVENT(S) DELEGATION
@@ -271,7 +271,7 @@ block landing-page
         loginSubmitBtn.style.border = `none`;
         
         // Add the classes to show the spinner activity indicator
-        appActivityInd.classList.add(`spinner-border`, `text-dark`, `spinner-border-sm`);
+        appActivityIndEl.classList.add(`spinner-border`, `text-dark`, `spinner-border-sm`);
         });
       };
     })();

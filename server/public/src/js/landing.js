@@ -35,7 +35,7 @@ if (loginForm) {
 		const password = document.getElementById("login_password_input").value;
 		const loginSubmitBtn = document.getElementById(`login_submit_btn`);
 		const loginSubmitBtnTxt = document.getElementById(`login_submit_btn_txt`);		
-		const appActivityInd = document.querySelector(`.app-activity-indicator`);
+		const appActivityIndEl = document.querySelector(`.app-activity-indicator`);
 		const loginPasswordInput = document.getElementById("login_password_input");
 		
 		// DISABLE THE SUBMIT BUTTON BY DEFAULT
@@ -48,7 +48,7 @@ if (loginForm) {
 			loginSubmitBtn.style.color = `#fff`;
 			loginSubmitBtn.style.border = `1px solid #0d6efd`;
 			loginSubmitBtnTxt.innerText = `Submit`;
-			appActivityInd.classList.remove(`spinner-border`, `text-dark`, `spinner-border-sm`);
+			appActivityIndEl.classList.remove(`spinner-border`, `text-dark`, `spinner-border-sm`);
 		} else {
 			// LOGIN SUCCESS
 			loginSubmitBtn.disabled = true;
@@ -56,7 +56,7 @@ if (loginForm) {
 			loginSubmitBtn.style.color = `#333`;
 			loginSubmitBtn.style.border = `1px solid lightgrey`;
 			loginSubmitBtnTxt.innerText = `Please Wait`;
-			appActivityInd.classList.remove(`spinner-border`, `text-dark`, `spinner-border-sm`);
+			appActivityIndEl.classList.remove(`spinner-border`, `text-dark`, `spinner-border-sm`);
 		};
 	});
 };

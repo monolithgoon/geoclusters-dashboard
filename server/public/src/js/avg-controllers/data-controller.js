@@ -4,7 +4,7 @@ import { _ManipulateDOM } from "./ui-controller.js";
 import { ShowActivity } from "../utils/fn-monitor.js";
 import { APP_STATE } from "./state-controller.js";
 import DEFAULT_APP_SETTINGS from "../constants/default-app-settings.js";
-import { _Arrays, _MeasureExecution } from "../utils/helpers.js";
+import { _Arrays, _MONITOR_EXECUTION } from "../utils/helpers.js";
 import API_URLS from "../constants/api-urls.js";
 
 export function _retreiveClusterGJDatasets() {
@@ -100,11 +100,14 @@ export async function _getAPIResource(eventObj, resourceHost, resourcePath, { qu
 			startDisplayFn: ShowActivity.activityStart,
 			endDisplayFn: ShowActivity.activityEnd,
 			appActivityIndWrapper: GET_DOM_ELEMENTS().appActivityIndWrapper,
-			appActivityInd: GET_DOM_ELEMENTS().appActivityInd,
+			appActivityIndEl: GET_DOM_ELEMENTS().appActivityIndEl,
+			appActivityStartIndTextEl: GET_DOM_ELEMENTS().appActivityStartIndTextEl,
+			appActivityEndIndTextEl: GET_DOM_ELEMENTS().appActivityEndIndTextEl,
+			appActivityIndText: `FETCHING DATA`,
 		};
 
 		// Execute the API call inside a monitoring function
-		const exeResult = await _MeasureExecution({ logger: undefined }).execute(
+		const exeResult = await _MONITOR_EXECUTION({ logger: undefined }).execute(
 			callQueryAPI,
 			options
 		);
@@ -121,7 +124,7 @@ export async function _getAPIResource(eventObj, resourceHost, resourcePath, { qu
  *
  * The function loops through each resource path defined in DEFAULT_APP_SETTINGS.PARCELIZED_CLUSTERS_RESOURCE_PATHS
  * and performs an API call for each resource path using the `queryAPI.call` function.
- * The execution time of each API call is monitored and recorded using the `_MeasureExecution` object.
+ * The execution time of each API call is monitored and recorded using the `_MONITOR_EXECUTION` object.
  * If the API call returns data, it is saved using the `APP_STATE.cacheDBCollection` function.
  * The function returns `true` on success or `false` if there is an error during the process.
  *
@@ -398,7 +401,7 @@ export async function APIHTTPRequest(queryString) {
 		const resultsStatus = document.getElementById("results_status");
 
 		const appActivityIndWrapper = document.querySelector(`.app-activity-indicator-wrapper`);
-		const appActivityInd = document.querySelector(`.app-activity-indicator`);
+		const appActivityIndEl = document.querySelector(`.app-activity-indicator`);
 
 		console.log(`this.id [ ${this.id} ] sending http request to API`);
 		resultsCountDiv.innerHTML = ``;
@@ -407,10 +410,10 @@ export async function APIHTTPRequest(queryString) {
 		resultsStatus.classList.add(`spinner-grow-sm`);
 
 		appActivityIndWrapper.classList.add(`reveal`);
-		appActivityInd.innerHTML = ``;
-		appActivityInd.classList.add(`spinner-grow`);
-		appActivityInd.classList.add(`text-light`);
-		appActivityInd.classList.add(`spinner-grow-sm`);
+		appActivityIndEl.innerHTML = ``;
+		appActivityIndEl.classList.add(`spinner-grow`);
+		appActivityIndEl.classList.add(`text-light`);
+		appActivityIndEl.classList.add(`spinner-grow-sm`);
 
 		const xhttp = new XMLHttpRequest();
 		const url = `https://geoclusters.herokuapp.com/api/v2/legacy-agcs/${queryString}`;
@@ -445,7 +448,7 @@ export async function APIHTTPRequest(queryString) {
 				} Clusters ... ${JSON.parse(this.responseText).num_plot_owners} Plot Owners`;
 
 				appActivityIndWrapper.classList.remove(`reveal`);
-				appActivityInd.classList.remove(`spinner-grow`);
+				appActivityIndEl.classList.remove(`spinner-grow`);
 			}
 		};
 
