@@ -1,18 +1,15 @@
 `use strict`;
 import DEFAULT_APP_SETTINGS from "../constants/default-app-settings.js";
 
-
 export const _delayExecution = async (durationMs) => {
 	return new Promise((resolve, reject) => {
 		setTimeout(() => resolve(), durationMs);
 	});
 };
 
-
 export const _mandatoryParam = () => {
 	throw new Error(`Parameter is required.`);
 };
-
 
 // GLOBAL TRY CATCH ERR. HANDLER
 export function _errorHandler(callback, errName) {
@@ -23,7 +20,6 @@ export function _errorHandler(callback, errName) {
 		console.error(`${errName}: ${tryCatchErr.message}`);
 	}
 }
-
 
 /**
  * @function _joinWordsArray
@@ -45,7 +41,6 @@ export function _joinWordsArray(keywords, { inclQuotes = false, commaSeparated =
 	// Join the array into a single string, using either commas or spaces as the separator
 	return commaSeparated ? concatArray.join(", ") : concatArray.join(" ");
 }
-
 
 // REMOVE > DEPRECATED
 // CALC. TIME TO EXE. A FN.
@@ -82,7 +77,6 @@ export const ExecutionMeasureFn = (function () {
 	};
 })();
 
-
 /**
  * @function _MeasureExecution
  * @description This module returns an object that provides the `execute` method to measure the execution time of a callback function. The execution time and the returned data from the callback are logged.
@@ -107,10 +101,9 @@ export const _MeasureExecution = ({ logger } = {}) => ({
 		} = {}
 	) => {
 		try {
-
 			// if logger is not set when fn. is called, use `console.log` if settings allow
 			if (!logger) {
-				logger = DEFAULT_APP_SETTINGS.USE_LOGGING === true ? console.log : undefined;
+				logger = DEFAULT_APP_SETTINGS.USE_DEFAULT_LOGGER === true ? console.log : undefined;
 			}
 
 			if (!startDisplayFn || !endDisplayFn || !appActivityIndWrapper || !appActivityInd) {
@@ -819,6 +812,73 @@ export const _Arrays = (() => {
 				}
 				return true;
 			};
+		},
+
+		/**
+		 * @function getNonDuplicateElements
+		 * @description A function that compares two string arrays and returns the non-duplicate strings or empty [] if they are an exact match.
+		 *
+		 * @param {Array} expandingArray - The first array of strings to compare.
+		 * @param {Array} staticArray - The second array of strings to compare.
+		 *
+		 * @returns {Array|[]} - Returns an array of non-duplicate strings, or empty [] if they are an exact match.
+		 */
+		getNonDuplicateElements: ({expandingArray, staticArray}) => {
+			let uniqueStrings = [];
+
+			// Loop through each string in the first array
+			for (let str1 of expandingArray) {
+				// Check if the current string exists in the second array
+				if (staticArray.indexOf(str1) === -1) {
+					uniqueStrings.push(str1);
+				}
+			}
+
+			// Return the list of duplicate strings
+			return uniqueStrings;
+		},
+
+		/**
+		 * @function getNonDuplicateObjs
+		 * @description A function that finds the non-duplicate objects in two arrays based on a shared property.
+		 *
+		 * @param {Array} objArr1 - The first array of objects to search through.
+		 * @param {Array} objArr2 - The second array of objects to search through.
+		 * @param {string} prop - The property that the objects will be compared against.
+		 *
+		 * @returns {Array|false} - Returns an array of non-duplicate objects, or false if there are no duplicates.
+		 */
+		getNonDuplicateObjs: (objArr1, objArr2, prop) => {
+			let uniqueObjs = [];
+
+			// Loop through each array of objects
+			for (let arr of [objArr1, objArr2]) {
+				// Loop through each object in the current array
+				for (let obj of arr) {
+					let isDuplicate = false;
+
+					// Check if the current object is a duplicate
+					for (let uniqueObj of uniqueObjs) {
+						if (uniqueObj[prop] === obj[prop]) {
+							isDuplicate = true;
+							break;
+						}
+					}
+
+					// If the current object is not a duplicate, add it to the list of unique objects
+					if (!isDuplicate) {
+						uniqueObjs.push(obj);
+					}
+				}
+			}
+
+			// If there are no duplicates, return false
+			if (uniqueObjs.length === [].concat(objArr1, objArr2).length) {
+				return false;
+			}
+
+			// Otherwise, return the list of unique objects
+			return uniqueObjs;
 		},
 	};
 })();

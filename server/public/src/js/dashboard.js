@@ -21,6 +21,7 @@ import {
 	_downloadAndSaveParcelizedClusters,
 	_retreiveClusterGJDatasets,
 	_getAPIResource,
+	_ParcelizedClustersController,
 } from "./avg-controllers/data-controller.js";
 import { _Arrays, _TraverseObject } from "./utils/helpers.js";
 import { _pollAVGSettingsValues, _PopulateDOM } from "./avg-controllers/ui-controller.js";
@@ -68,6 +69,7 @@ const initDashboardApp = (() => {
 		}
 	};
 
+	// REMOVE > DEPRECATED
 	/**
 	 * @description Function to get newly parcelized GeoClusters from the database.
 	 *
@@ -82,102 +84,13 @@ const initDashboardApp = (() => {
 	 * @param {Object} window - A reference to the window object.
 	 * @returns {Array} An array of GeoJSON objects representing the newly parcelized GeoClusters. An empty array is returned if there are no new GeoClusters or if the function fails.
 	 */
-	// const getNewlyParcelizedClusters = async (window) => {
-	// 	try {
-	// 		// Download the latest GeoCluster metadata from the database and save it to the app state
-	// 		const response = await _downloadAndSaveParcelizedClusters(window);
-
-	// 		// Return empty [] if _downloadAndSaveParcelizedClusters fails
-	// 		if (!response) return [];
-
-	// 		// Array to store the IDs of the new GeoClusters
-	// 		let newGeoclusterIds = [];
-
-	// 		// Array to store the GeoJSON data of the new GeoClusters
-	// 		let newGeoclustersArray = [];
-
-	// 		// Get all the pre-loaded clusters stored in the app cache
-	// 		const cachedGeoclusers = _TraverseObject.evaluateValue(
-	// 			APP_STATE.returnCachedDBCollection("cached-geo-clusters"),
-	// 			"data"
-	// 		);
-
-	// 		if (!cachedGeoclusers) {
-	// 			throw new Error(`There are no saved geoclusters in the app cache`);
-	// 		}
-
-	// 		// Get the IDs for all the clusters in the app cache
-	// 		const cachedGeoClusterIds = [];
-	// 		for (let idx = 0; idx < cachedGeoclusers.length; idx++) {
-	// 			let cachedClusterId = cachedGeoclusers[idx].properties.clusterID;
-	// 			if (cachedClusterId) {
-	// 				cachedClusterId = cachedClusterId.toLowerCase();
-	// 				cachedGeoClusterIds.push(cachedClusterId);
-	// 			}
-	// 		}
-
-	// 		// Get the metadata for all the live clusters returned from the database
-	// 		const liveParcelizedClustersMetadata = _TraverseObject.evaluateValue(
-	// 			APP_STATE.returnCachedDBCollection("v1/parcelized-agcs/metadata"),
-	// 			"data"
-	// 		);
-
-	// 		// Extract the IDs for all the live clusters from the metadata
-	// 		let liveParcelizedClusterIds = [];
-	// 		if (liveParcelizedClustersMetadata && liveParcelizedClustersMetadata.data) {
-	// 			liveParcelizedClusterIds.push(
-	// 				...liveParcelizedClustersMetadata.data.collection_metadata.ids
-	// 			);
-	// 		}
-
-	// 		console.log({ cachedGeoClusterIds });
-	// 		console.log({ liveParcelizedClusterIds });
-
-	// 		// Compare the arrays of IDs and retrieve the GeoJSON data for the new cluster IDs
-	// 		if (liveParcelizedClusterIds.length > 0) {
-	// 			newGeoclusterIds = _Arrays.containsAllChk(
-	// 				cachedGeoClusterIds,
-	// 				liveParcelizedClusterIds
-	// 			).missingElements;
-	// 		}
-
-	// 		// If there are new GeoCluster IDs, download the GeoJSON data for them
-	// 		if (newGeoclusterIds.length > 0) {
-	// 			for (let idx = 0; idx < newGeoclusterIds.length; idx++) {
-	// 				const newGeoClusterId = newGeoclusterIds[idx];
-	// 				const resourcePath = `${DEFAULT_APP_SETTINGS.PARCELIZED_CLUSTER_API_RESOURCE_PATH}`;
-	// 				const queryString = `?${newGeoClusterId}`;
-	// 				const apiHost = DEFAULT_APP_SETTINGS.GEOCLUSTERS_API_HOST;
-	// 				// Get the API response for the new GeoCluster GeoJSON data
-	// 				const APIResponse = await _getAPIResource(window, apiHost, resourcePath, {
-	// 					queryString,
-	// 				});
-	// 				let newGeoClusterGeoJSON = null;
-	// 				if (APIResponse) {
-	// 					if (APIResponse.status === "success") {
-	// 						if (APIResponse.data) {
-	// 							newGeoClusterGeoJSON = APIResponse.data.parcelizedAgcData;
-	// 							console.log({ newGeoClusterGeoJSON });
-	// 							newGeoclustersArray.push(newGeoClusterGeoJSON);
-	// 						}
-	// 					}
-	// 				}
-	// 			}
-	// 		}
-
-	// 		return newGeoclustersArray.length > 0 ? newGeoclustersArray : [];
-
-	// 	} catch (getParcelizedClustersErr) {
-	// 		console.error(`getParcelizedClustersErr: ${getParcelizedClustersErr}`);
-	// 	}
-	// };
 	const getNewlyParcelizedClusters = async (window) => {
 		try {
 			// Download the latest GeoCluster metadata from the database and save it to the app state
-			const response = await _downloadAndSaveParcelizedClusters(window);
+			const newClustersChk = _downloadAndSaveParcelizedClusters(window);
 
-			// If the response from _downloadAndSaveParcelizedClusters fails, return an empty array
-			if (!response) return [];
+			// If the return from _downloadAndSaveParcelizedClusters sis false, return an empty array
+			if (!newClustersChk) return [];
 
 			// Get the metadata for all the live clusters returned the database
 			const liveParcelizedClustersMetadata = _TraverseObject.evaluateValue(
@@ -189,7 +102,7 @@ const initDashboardApp = (() => {
 			const liveParcelizedClusterIds =
 				liveParcelizedClustersMetadata?.data?.collection_metadata?.ids || [];
 
-			console.log({liveParcelizedClusterIds})
+			console.log({ liveParcelizedClusterIds });
 
 			// Get all the previously pre-loaded clusters stored in the app cache
 			const cachedGeoclusers = _TraverseObject.evaluateValue(
@@ -199,13 +112,10 @@ const initDashboardApp = (() => {
 
 			let newGeoclusterIds = [];
 
-			if (!cachedGeoclusers) {
-				// If there are no geoclusters in the app cache, throw an error
-				// throw new Error(`There are no saved geoclusters in the app cache`);
+			if (!cachedGeoclusers || cachedGeoclusers.length === 0) {
+				// If there are no pre-loaded geoclusters in the app cache ..
 				newGeoclusterIds = liveParcelizedClusterIds;
-
 			} else {
-
 				// Get the IDs of the cached geoclusters
 				const cachedGeoClusterIds = cachedGeoclusers.map((c) =>
 					c.properties.clusterID.toLowerCase()
@@ -219,21 +129,9 @@ const initDashboardApp = (() => {
 					cachedGeoClusterIds,
 					liveParcelizedClusterIds
 				).missingElements;
-			};
+			}
 
-			// REMOVE
-			// // Get the IDs of the cached geoclusters
-			// const cachedGeoClusterIds = cachedGeoclusers.map((c) =>
-			// 	c.properties.clusterID.toLowerCase()
-			// );
-
-
-			// REMOVE
-			// // Compare the arrays of IDs and determine the new geocluster Ids
-			// const newGeoclusterIds = _Arrays.containsAllChk(
-			// 	cachedGeoClusterIds,
-			// 	liveParcelizedClusterIds
-			// ).missingElements;
+			console.log({ newGeoclusterIds });
 
 			// If there are no new GeoCluster IDs, return empty []
 			if (newGeoclusterIds.length === 0) return [];
@@ -268,6 +166,7 @@ const initDashboardApp = (() => {
 		}
 	};
 
+	// FIXME > BAD IMPLEMENTATION
 	// The code implements a function that updates a cached collection of geo-clusters stored in the APP_STATE.
 	const updateCachedGeoClusters = (collectionName, featCollArr) => {
 		// Retrieve the cached geo-cluster collection
@@ -288,7 +187,7 @@ const initDashboardApp = (() => {
 		APP_STATE.cacheDBCollection(collectionName, geoClustersArr);
 	};
 
-	// TODO > WIP > RENDER NEWLY PARCELIZED CLUSTERS
+	// FIXME > BAD IMPLEMENTATION
 	// RENDER NEW GEOCLUSTERS ADDED TO THE DB.
 	const renderLiveGeoClusters = async (featCollArr) => {
 		(function renderLiveGeoClusters() {
@@ -375,8 +274,8 @@ const initDashboardApp = (() => {
 		},
 
 		/**
-		 * @description Function to initiate an indefinitely recursive setTimeout loop with pre-set intervals
 		 * @function fireAutoUpdateWorker
+		 * @description Function to initiate an indefinitely recursive setTimeout loop with pre-set intervals
 		 * @async
 		 * @param {Object} window - The window object passed in as argument
 		 */
@@ -388,29 +287,46 @@ const initDashboardApp = (() => {
 			let intervalDelay = initDelay;
 
 			setTimeout(async function request() {
-				
-				// Get the new geo clusters from the data source
-				const newGeoClustersArr = getNewlyParcelizedClusters(window);
+				// Cache existing cluster data
+				await _ParcelizedClustersController.cacheClustersData(window, APP_STATE);
 
-				if (newGeoClustersArr && newGeoClustersArr.length > 0) {
+				// Download new clusters
+				const newClustersArr = await _ParcelizedClustersController.downloadNewClusters(
+					window,
+					APP_STATE
+				);
+
+				// If new clusters are available, cache them
+				if (newClustersArr) {
+					_ParcelizedClustersController.cacheNewClusters(newClustersArr, APP_STATE);
+				}
+
+				// REMOVE
+				// Get the new geo clusters from the data source
+				// const newGeoClustersArr = getNewlyParcelizedClusters(window);
+
+				if (newClustersArr && newClustersArr.length > 0) {
 					// Reset the interval delay to the initial delay
 					intervalDelay = initDelay;
 
 					// Save the newly retrieved geoJSON to the app_state object / cache
-					updateCachedGeoClusters("cached-geo-clusters", newGeoClustersArr);
+					// FIXME > BAD IMPLEMENTATION
+					updateCachedGeoClusters("cached-geo-clusters", newClustersArr);
 
 					// Render the new clusters
-					// FIXME > WIP > NOT YET IMPLEMENTED
-					await renderLiveGeoClusters(newGeoClustersArr);
+					// TODO > MOVE TO OUTSIDE CONTEXT
+					// FIXME > BAD IMPLEMENTATION
+					await renderLiveGeoClusters(newClustersArr);
 				}
 
 				// If there are no new geo clusters, increment the interval delay
-				if (newGeoClustersArr && newGeoClustersArr.length === 0) {
+				if (newClustersArr && newClustersArr.length === 0) {
+					console.log("IncreasingAPI  data query interval");
 					intervalDelay += DURATION.DATA_QUERY_INCREMENT;
 				}
 
 				// If the request failed to complete, double the interval delay
-				if (!newGeoClustersArr) {
+				if (!newClustersArr) {
 					intervalDelay *= 2;
 				}
 
@@ -422,7 +338,8 @@ const initDashboardApp = (() => {
 		//
 		addDOMListeners: () => {
 			// logout btn. listener
-			GET_DOM_ELEMENTS().logoutBtn.addEventListener("click", logout);
+			const logoutBtn = GET_DOM_ELEMENTS().logoutBtn;
+			if (logoutBtn) addEventListener("click", logout);
 
 			//- Click anywhere on page fo fullscreen
 			// document.addEventListener('click', _openFullScreen);
