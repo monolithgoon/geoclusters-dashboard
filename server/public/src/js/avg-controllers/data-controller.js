@@ -8,7 +8,6 @@ import { _Arrays } from "../utils/helpers.js";
 import API_URLS from "../constants/api-urls.js";
 import { _MONITOR_EXECUTION } from "../utils/fn-monitor.js";
 
-
 export function _retreiveClusterGJDatasets() {
 	try {
 		const geoClusters = JSON.parse(
@@ -22,7 +21,6 @@ export function _retreiveClusterGJDatasets() {
 		console.error(`retreiveGJErr: ${retreiveGJErr.message}`);
 	}
 }
-
 
 /**
  * @description Queries an API for data
@@ -70,7 +68,6 @@ async function queryAPI(fetch, apiHost, apiResourcePath, { queryString } = {}) {
 	}
 }
 
-
 /**
  * @function
  * @async
@@ -111,7 +108,7 @@ export async function _getAPIResource(eventObj, resourceHost, resourcePath, { qu
 		};
 
 		// Execute the API call inside a monitoring function
-		const exeResult = await _MONITOR_EXECUTION({ logger: undefined }).execute(
+		const exeResult = await _MONITOR_EXECUTION({ logger: undefined }).executeNotify(
 			callQueryAPI,
 			options
 		);
@@ -122,9 +119,7 @@ export async function _getAPIResource(eventObj, resourceHost, resourcePath, { qu
 	}
 }
 
-
 export const _ParcelizedClustersController = (() => {
-
 	/**
 	 * @funciton getCollectionNameFromPath
 	 * @description Extracts the collection name from the given resource path.
@@ -171,7 +166,7 @@ export const _ParcelizedClustersController = (() => {
 	 * @returns {Promise} - A promise that resolves to an array of parcelized clusters.
 	 */
 	const retreiveParcelizedClusters = async (clusterIds, window, apiHost, resourcePath) => {
-		console.log("Retreiving geojson for each new cluster")
+		console.log("Retreiving geojson for each new cluster");
 
 		const clusters = [];
 
@@ -199,36 +194,38 @@ export const _ParcelizedClustersController = (() => {
 		return clusters;
 	};
 
-	/**
-	 * @function cacheNewParcelizedClusters
-	 * @description Adds a new array of clusters to the existing collection in appState and caches it.
-	 * @param {Object} appState - The current app state object.
-	 * @param {string} collectionName - The name of the collection where the clusters should be added.
-	 * @param {Object[]} newClustersArray - The array of new clusters to add to the collection.
-	 * @returns {Promise<void>}
-	 */
-	async function cacheNewParcelizedClusters(appState, collectionName, newClustersArray) {
+	// /**
+	//  * @function cacheNewParcelizedClusters
+	//  * @description Adds a new array of clusters to the existing collection in appState and caches it.
+	//  * @param {Object} appState - The current app state object.
+	//  * @param {string} collectionName - The name of the collection where the clusters should be added.
+	//  * @param {Object[]} newClustersArray - The array of new clusters to add to the collection.
+	//  * @returns {Promise<void>}
+	//  */
+	// async function cacheNewParcelizedClusters(appState, collectionName, newClustersArray) {
 
-		// Get the existing collection from the app state
-		const cachedCollection = appState.returnCachedDBCollection(collectionName);
+	// 	// Get the existing collection from the app state
+	// 	const cachedCollection = appState.returnCachedDBCollection(collectionName);
+	// 	console.log({cachedCollection})
+	// 	console.log(cachedCollection)
 
-		// Create a new array of clusters that includes the existing and new clusters
-		const updatedClusters = [...cachedCollection.data.collection_docs, ...newClustersArray];
+	// 	// Create a new array of clusters that includes the existing and new clusters
+	// 	const updatedClusters = [...cachedCollection.data.data.collection_docs, ...newClustersArray];
 
-		// Create a new object that copies the existing collection object and replaces the cluster array
-		const updatedCachedCollection = {
-			...cachedCollection,
-			data: {
-				...cachedCollection.data,
-				collection_docs: updatedClusters,
-			},
-		};
+	// 	// Create a new object that copies the existing collection object and replaces the cluster array
+	// 	const updatedCachedCollection = {
+	// 		...cachedCollection,
+	// 		data: {
+	// 			...cachedCollection.data,
+	// 			collection_docs: updatedClusters,
+	// 		},
+	// 	};
 
-		console.log({ updatedCachedCollection });
+	// 	console.log({ updatedCachedCollection });
 
-		// Cache the updated collection object in the app state
-		appState.cacheDBCollection(collectionName, updatedCachedCollection);
-	}
+	// 	// Cache the updated collection object in the app state
+	// 	appState.cacheDBCollection(collectionName, updatedCachedCollection);
+	// }
 
 	// Constants for parcelized clusters metadata API host and resource path
 	// Only the metadata for the clusters is downloaded at this step in order to save network bandwith
@@ -250,7 +247,6 @@ export const _ParcelizedClustersController = (() => {
 	const resourceNames = [clustersCollectionName, metadataCollectionName];
 
 	return {
-
 		/**
 		 * @funciton cacheLiveData
 		 * @description Caches live data for each resource name if not already cached in APP_STATE.
@@ -259,10 +255,8 @@ export const _ParcelizedClustersController = (() => {
 		 * @param {Object} APP_STATE - The application state object.
 		 */
 		cacheLiveData: async (window, APP_STATE) => {
-
 			// Loop through each resource name and retrieve the live data if it is not already cached.
 			for (const collectionName of resourceNames) {
-
 				// Check if the collection is already cached in the database
 				const isCachedBefore = collectionAlreadyCached(APP_STATE, collectionName);
 
@@ -298,7 +292,7 @@ export const _ParcelizedClustersController = (() => {
 			// "Cached metadata collection exists -> Will now check for new cluster IDs."
 			const cachedMetadataCollection =
 				APP_STATE.returnCachedDBCollection(metadataCollectionName);
-				console.log(cachedMetadataCollection)
+			console.log(cachedMetadataCollection);
 
 			const liveMetadataCollection = await _getAPIResource(
 				window,
@@ -345,19 +339,47 @@ export const _ParcelizedClustersController = (() => {
 			return newParcelizedClusters;
 		},
 
-		cacheNewClusters: (clustersArray, APP_STATE) => {
-			// Append the data in the APP_STATE cache with the new clusters data
-			cacheNewParcelizedClusters(APP_STATE, clustersCollectionName, clustersArray);
+		/**
+		 * @function cacheNewClusters
+		 * @description Appends a new array of parcelized clusters to the existing collection in APP_STATE
+		 * @param {Object} appState - The current APP_STATE object.
+		 * @param {Object[]} newClustersArray - The array of new clusters to add to the collection.
+		 * @returns {Promise<void>}
+		 */
+		cacheNewClusters: (newClustersArray, appState) => {
 
-			//
-			APP_STATE.returnCachedDBCollections();
+			// Get the existing collection from the app state
+			const cachedCollection = appState.returnCachedDBCollection(clustersCollectionName);
+
+			// TODO > TRAVERSE
+			const collectionDocs = cachedCollection.data.data.collection_docs;
+
+			// Create a new array of clusters that includes the existing and new clusters
+			const updatedClusters = [
+				...collectionDocs,
+				...newClustersArray,
+			];
+
+			// Create a new object that copies the existing collection object and replaces the cluster array
+			const updatedCachedCollection = {
+				...cachedCollection,
+				data: {
+					...cachedCollection.data,
+					collection_docs: updatedClusters,
+				},
+			};
+
+			console.log({ updatedCachedCollection });
+
+			// Cache the updated collection object in the app state
+			appState.cacheDBCollection(collectionName, updatedCachedCollection);
 		},
 
 		// TODO
 		renderNewClusters: (clustersArray, APP_STATE) => {
 			// 1. update sidebar UI
 			// 2. add clusters to basemap
-		}
+		},
 	};
 })();
 

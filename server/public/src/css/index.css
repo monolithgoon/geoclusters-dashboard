@@ -448,12 +448,12 @@ input[type="checkbox"]:checked {
 
 @font-face {
 	font-family: "UberMove";
-	src: url("../../assets/fonts/UberMove-Regular.woff2") format("woff2");
+	src: url("../../src/assets/fonts/UberMove-Regular.woff2") format("woff2");
 	font-style: normal;
 }
 
 @font-face {
 	font-family: "Google Sans";
-	src: url("../../assets/fonts/google-sans-2.woff2") format("woff2");
+	src: url("../../src/assets/fonts/google-sans-2.woff2") format("woff2");
 	font-style: normal;
 }

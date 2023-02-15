@@ -207,7 +207,7 @@ const initDashboardApp = (() => {
 				);
 
 				// If new clusters are available, cache them
-				if (newClustersArr) {
+				if (newClustersArr && newClustersArr.length > 0) {
 					_ParcelizedClustersController.cacheNewClusters(newClustersArr, APP_STATE);
 				}
 
@@ -252,7 +252,7 @@ const initDashboardApp = (() => {
 		addDOMListeners: () => {
 			// logout btn. listener
 			const logoutBtn = GET_DOM_ELEMENTS().logoutBtn;
-			if (logoutBtn) addEventListener("click", logout);
+			if (logoutBtn) logoutBtn.addEventListener("click", logout);
 
 			//- Click anywhere on page fo fullscreen
 			// document.addEventListener('click', _openFullScreen);
@@ -263,6 +263,7 @@ const initDashboardApp = (() => {
 // Run dashboard app startup functions
 (() => {
 	window.addEventListener(`DOMContentLoaded`, async (windowObj) => {
+
 		// save the default UI settings into the APP_STATE object
 		APP_STATE.saveDefaultSettings(_pollAVGSettingsValues());
 

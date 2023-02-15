@@ -7,7 +7,7 @@ import {
 	_getClusterMetadaMarkerMarkup,
 } from "../utils/markup-generators.js";
 import { _ManipulateDOM, _pollAVGSettingsValues } from "./ui-controller.js";
-import { _MonitorExecution, _MONITOR_EXECUTION } from "../utils/fn-monitor.js";
+import { _MONITOR_EXECUTION } from "../utils/fn-monitor.js";
 import { _ShowActivityAlert } from "../utils/activity-alert.js";
 import { LAYER_COLORS } from "../utils/mapbox-layer-colors.js";
 import {
@@ -1966,36 +1966,33 @@ export const _RenderEngine = (function (avgBaseMap, clusterFeatsMap) {
 				clusterFeatsMap.fire("closeAllPopups");
 
 				(async () => {
+
 					await sidemapPanToCluster(featColl);
+
 					// await _delayExecution(9000);
-					// await _MonitorExecution.measureExecution(()=>basemapPanToCluster(featColl, {zoomLevel: baseMapZoomLvl}));
-					await _MONITOR_EXECUTION({ logger: console.log }).execute(
-						() => basemapPanToCluster(featColl, { zoomLevel: baseMapZoomLvl }),
-						{
-							startDisplayFn: _ShowActivityAlert.activityStart,
-							endDisplayFn: _ShowActivityAlert.activityEnd,
-							appActivityIndWrapper: GET_DOM_ELEMENTS().appActivityIndWrapper,
-							appActivityIndEl: GET_DOM_ELEMENTS().appActivityIndEl,
-							appActivityStartIndTextEl: GET_DOM_ELEMENTS().appActivityStartIndTextEl,
-							appActivityEndIndTextEl: GET_DOM_ELEMENTS().appActivityEndIndTextEl,
-							appActivityIndText: `PANNING CLUSTER`,
-						}
-					);
+
+					const panningBasemap = () => {
+						basemapPanToCluster(featColl, { zoomLevel: baseMapZoomLvl })
+					};
+
+					const fittingBasemap = () => {
+						basemapFitCluster(featColl, { zoomLevel: baseMapZoomLvl })
+					}
+
+					// await _MONITOR_EXECUTION({ logger: console.log }).execute(() =>
+					// 	basemapPanToCluster(featColl, { zoomLevel: baseMapZoomLvl })
+					// );
+					await _MONITOR_EXECUTION({ logger: console.log }).execute(panningBasemap);
+
 					// await _delayExecution(10000);
-					// await _MonitorExecution.measureExecution(()=>basemapFitCluster(featColl, {zoomLevel: baseMapZoomLvl}));
-					await _MONITOR_EXECUTION({ logger: console.log }).execute(
-						() => basemapFitCluster(featColl, { zoomLevel: baseMapZoomLvl }),
-						{
-							startDisplayFn: _ShowActivityAlert.activityStart,
-							endDisplayFn: _ShowActivityAlert.activityEnd,
-							appActivityIndWrapper: GET_DOM_ELEMENTS().appActivityIndWrapper,
-							appActivityIndEl: GET_DOM_ELEMENTS().appActivityIndEl,
-							appActivityStartIndTextEl: GET_DOM_ELEMENTS().appActivityStartIndTextEl,
-							appActivityEndIndTextEl: GET_DOM_ELEMENTS().appActivityEndIndTextEl,
-							appActivityIndText: `FITTING CLUSTER`,
-						}
-					);
+					
+					// await _MONITOR_EXECUTION({ logger: console.log }).execute(() =>
+					// 	basemapFitCluster(featColl, { zoomLevel: baseMapZoomLvl })
+					// );
+					await _MONITOR_EXECUTION({ logger: console.log }).execute(fittingBasemap);
+
 					// await _delayExecution(12000);
+					
 					await _RenderEngine.renderClusterPlotsOnBasemap(featColl, {
 						useBuffer,
 						bufferAmt,
