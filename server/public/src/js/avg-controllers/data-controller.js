@@ -138,13 +138,13 @@ export const _ParcelizedClustersController = (() => {
 	}
 
 	/**
-	 * @function collectionAlreadyCached
+	 * @function isCollectionCached
 	 * @description Check if a collection is already cached in the APP_STATE.
 	 * @param {object} appState - The state object containing information about the cached collections.
 	 * @param {string} dbCollectionName - The name of the database collection to check.
 	 * @returns {boolean} - A boolean indicating whether the collection is cached or not.
 	 */
-	function collectionAlreadyCached(appState, dbCollectionName) {
+	function isCollectionCached(appState, dbCollectionName) {
 		// Retrieve the cached collection from the state object
 		const cachedCollection = appState.returnCachedDBCollection(dbCollectionName);
 
@@ -194,39 +194,6 @@ export const _ParcelizedClustersController = (() => {
 		return clusters;
 	};
 
-	// /**
-	//  * @function cacheNewParcelizedClusters
-	//  * @description Adds a new array of clusters to the existing collection in appState and caches it.
-	//  * @param {Object} appState - The current app state object.
-	//  * @param {string} collectionName - The name of the collection where the clusters should be added.
-	//  * @param {Object[]} newClustersArray - The array of new clusters to add to the collection.
-	//  * @returns {Promise<void>}
-	//  */
-	// async function cacheNewParcelizedClusters(appState, collectionName, newClustersArray) {
-
-	// 	// Get the existing collection from the app state
-	// 	const cachedCollection = appState.returnCachedDBCollection(collectionName);
-	// 	console.log({cachedCollection})
-	// 	console.log(cachedCollection)
-
-	// 	// Create a new array of clusters that includes the existing and new clusters
-	// 	const updatedClusters = [...cachedCollection.data.data.collection_docs, ...newClustersArray];
-
-	// 	// Create a new object that copies the existing collection object and replaces the cluster array
-	// 	const updatedCachedCollection = {
-	// 		...cachedCollection,
-	// 		data: {
-	// 			...cachedCollection.data,
-	// 			collection_docs: updatedClusters,
-	// 		},
-	// 	};
-
-	// 	console.log({ updatedCachedCollection });
-
-	// 	// Cache the updated collection object in the app state
-	// 	appState.cacheDBCollection(collectionName, updatedCachedCollection);
-	// }
-
 	// Constants for parcelized clusters metadata API host and resource path
 	// Only the metadata for the clusters is downloaded at this step in order to save network bandwith
 	const apiHost = DEFAULT_APP_SETTINGS.GEOCLUSTERS_API_HOST;
@@ -255,13 +222,18 @@ export const _ParcelizedClustersController = (() => {
 		 * @param {Object} APP_STATE - The application state object.
 		 */
 		cacheLiveData: async (window, APP_STATE) => {
+
 			// Loop through each resource name and retrieve the live data if it is not already cached.
 			for (const collectionName of resourceNames) {
+
 				// Check if the collection is already cached in the database
-				const isCachedBefore = collectionAlreadyCached(APP_STATE, collectionName);
+				const isCachedBefore = isCollectionCached(APP_STATE, collectionName);
 
 				// If the collection is not cached, retrieve the live data and cache it
 				if (!isCachedBefore) {
+					
+					console.log("Caching all parcelized clusters from DB");
+
 					// Get the live data for the current collection
 					const liveCollection = await _getAPIResource(
 						window,
@@ -277,23 +249,32 @@ export const _ParcelizedClustersController = (() => {
 
 					// Cache the live data for the current collection
 					APP_STATE.cacheDBCollection(collectionName, liveCollection);
+
 				} else {
+					console.log("Collection alredy cached")
 					// Exit the loop if the collection has already been cached
 					break;
 				}
 			}
-
-			console.log("Finished caching all parcelized clusters from DB");
 		},
 
+	/**
+	 * Downloads new parcelized clusters that are not already cached in the app state.
+	 * 
+	 * @async
+	 * @param {Object} window - The window object of the browser or the global object in a Node.js environment.
+	 * @param {Object} APP_STATE - The app state object.
+	 * @returns {Promise<Array>} The promise that resolves to the new parcelized clusters or null if the API call fails.
+	 */		
 		getNewClusters: async (window, APP_STATE) => {
-			console.log("Downloading new parcelized clusters");
+			
+			console.log("Tryng to download new parcelized clusters");
 
 			// "Cached metadata collection exists -> Will now check for new cluster IDs."
 			const cachedMetadataCollection =
 				APP_STATE.returnCachedDBCollection(metadataCollectionName);
-			console.log(cachedMetadataCollection);
 
+			// Get the live metadata collection by making an API call.
 			const liveMetadataCollection = await _getAPIResource(
 				window,
 				apiHost,
@@ -304,13 +285,15 @@ export const _ParcelizedClustersController = (() => {
 			// Break out of the controller if the API call fails
 			if (!liveMetadataCollection) return null;
 
-			// REMOVE > SIMULATION
 			let liveIds = [...liveMetadataCollection.data.collection_metadata.ids];
+
+			// REMOVE > SIMULATION
 			// liveIds.concat(["OGO_OWO_IS_A_PLATINUM_WHORE", "AGCBEN000005", "OGWDT000001"]);
 			// liveIds.push("OGO_OWO_IS_A_PLATINUM_WHORE");
 			// liveIds.push("AGCBEN000005");
 			// liveIds.push("OGWDT000001");
-
+			
+			// Create an array of live cluster IDs and remove duplicates from it.
 			const newClusterIds = _Arrays.getNonDuplicateElements({
 				expandingArray: liveIds,
 				// expandingArray: liveMetadataCollection.data.collection_metadata.ids,
@@ -336,6 +319,7 @@ export const _ParcelizedClustersController = (() => {
 
 			// console.log({newParcelizedClusters})
 
+			// Return the new parcelized clusters.
 			return newParcelizedClusters;
 		},
 

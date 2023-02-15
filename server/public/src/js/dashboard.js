@@ -32,8 +32,11 @@ import INTERVALS from "./constants/intervals.js";
 import { logout } from "./controllers/login-controller.js";
 import DEFAULT_APP_SETTINGS from "./constants/default-app-settings.js";
 import _openFullScreen from "./utils/open-full-screen.js";
+import DESCRIPTORS from "./constants/descriptors.js";
 
-const initDashboardApp = (() => {
+
+const InitDashboardApp = (() => {
+	
 	/**
 	 * Renders the geo-political regions on the Leaflet base map.
 	 *
@@ -113,32 +116,49 @@ const initDashboardApp = (() => {
 	};
 
 	return {
-		// THIS APP'S BACKEND COMBINES BOTH NEWLY PARCELIZED AND LEGACY CLUSTERS INTO A VARIABLE CALLED "geoClusters"
-		// THIS VARIABLE WAS SENT TO THE DOM VIA server/controllers/view-controller.js,
-		// IT WAS "STORED" IN A DOM ELEMENT WITH DATASET ATTRIBUTE = "geoclusters" WITH ID = "geo_clusters_dataset"
-		// THIS FUNCTION STORES THAT DATA IN THE FRONT-END "APP_STATE" OBJECT
+		
+		/**
+		 * This app's backend combines both newly parcelized and legacy clusters into a variable called "geoClusters".
+		 * This variable was sent to the DOM via `server/controllers/view-controller.js` and stored in a DOM
+		 * element with dataset attribute `geoclusters` and ID `geo_clusters_dataset`. This function retrieves
+		 * the `geoClusters` data from the DOM and stores it in the front-end `APP_STATE` object.
+		 */
+
+		/**
+		 * Stores the pre-loaded geoclusters data in the front-end "APP_STATE" object.
+		 * 
+		 * @async
+		 */		
 		cachePreLoadedGeoclusters: async () => {
+			// Retrieve the pre-loaded geoclusters data from the cluster GJ datasets.
 			const { geoClusters } = _retreiveClusterGJDatasets();
-
-			APP_STATE.cacheDBCollection(`pre-loaded-geoclusters`, [...geoClusters]);
+		
+			// Cache the pre-loaded geoclusters data in the app state object.
+			APP_STATE.cacheDBCollection(DESCRIPTORS.PRE_LOADED_GEOCLUSTERS_CACHE_NAME, [...geoClusters]);
 		},
-
+		
+		/**
+		 * Renders the pre-loaded geoclusters on the map.
+		 * 
+		 * @async
+		 */		
 		renderPreLoadedGeoclusters: async () => {
 			
-			// GET THE PRE-LOADED GEOCLUSTERS DATA FROM APP_STATE
+			// Get the pre-loaded geoclusters data from the app state object / cache
 			const preLoadedGeoclusters = _TraverseObject.evaluateValue(
-				APP_STATE.returnCachedDBCollection("pre-loaded-geoclusters"),
+				APP_STATE.returnCachedDBCollection(DESCRIPTORS.PRE_LOADED_GEOCLUSTERS_CACHE_NAME),
 				"data"
 			);
 
 			console.log({preLoadedGeoclusters})
 
-			// RENDER ON MAP
+			// Render the pre-loaded geoclusters on the map.
 			await renderClustersCollection(preLoadedGeoclusters);
 		},
 
 		/**
-		 * This function is used to render administrative boundaries on the map.
+		 * @function renderCachedAdminBounds
+		 * @description This function is used to render administrative boundaries on the map.
 		 * @param {Window} window - The global window object.
 		 */
 		renderCachedAdminBounds: async (window) => {
@@ -197,33 +217,35 @@ const initDashboardApp = (() => {
 				// EXIT IF THE INTERVALS EXCEED A LIMIT
 				if(updatedInterval > INTERVALS.AUTO_WORKER_INTERVAL_LIMIT) return;
 				
+				// Step-1
 				// Cache entire parcelized-agcs db collection in APP_STATE; skip if it's been done before 
 				await _ParcelizedClustersController.cacheLiveData(window, APP_STATE);
 
+				// Step-2
 				// Download new clusters
 				const newClustersArr = await _ParcelizedClustersController.getNewClusters(
 					window,
 					APP_STATE
 				);
 
+				// Step-3
 				// If new clusters are available, cache them
 				if (newClustersArr && newClustersArr.length > 0) {
 					_ParcelizedClustersController.cacheNewClusters(newClustersArr, APP_STATE);
 				}
 
-				// REMOVE
-				// Get the new geo clusters from the data source
-				// const newGeoClustersArr = getNewlyParcelizedClusters(window);
-
 				if (newClustersArr && newClustersArr.length > 0) {
-
+					
+					// Step-4
 					// New clusters found; reset the interval delay to the initial delay
 					updatedInterval = initInterval;
 
+					// Step-5
 					// Save the newly retrieved geoJSON to the app_state object / cache
 					// FIXME > BAD IMPLEMENTATION
-					updateCachedGeoClusters("pre-loaded-geoclusters", newClustersArr);
-
+					updateCachedGeoClusters(DESCRIPTORS.PRE_LOADED_GEOCLUSTERS_CACHE_NAME, newClustersArr);
+					
+					// Step-6
 					// Render the new clusters
 					// TODO > MOVE TO OUTSIDE CONTEXT
 					// FIXME > BAD IMPLEMENTATION
@@ -267,22 +289,22 @@ const initDashboardApp = (() => {
 		// save the default UI settings into the APP_STATE object
 		APP_STATE.saveDefaultSettings(_pollAVGSettingsValues());
 
-		initDashboardApp.addDOMListeners();
+		InitDashboardApp.addDOMListeners();
 
-		await initDashboardApp.cachePreLoadedGeoclusters();
+		await InitDashboardApp.cachePreLoadedGeoclusters();
 
-		await initDashboardApp.renderPreLoadedGeoclusters();
+		await InitDashboardApp.renderPreLoadedGeoclusters();
 
 		// TODO > split the caching and rendering ops.
-		// await initDashboardApp.cacheAdminBounds(windowObj);
+		// await InitDashboardApp.cacheAdminBounds(windowObj);
 		
-		await initDashboardApp.renderCachedAdminBounds(windowObj);
+		await InitDashboardApp.renderCachedAdminBounds(windowObj);
 
 		// cache other (markets, roadways, waterways, city centers) geojson assets
 
 		// render other geojson assets
 
-		await initDashboardApp.fireAutoUpdateWorker(windowObj);
+		await InitDashboardApp.fireAutoUpdateWorker(windowObj);
 	});
 })();
 
