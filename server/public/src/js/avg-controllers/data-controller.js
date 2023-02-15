@@ -8,6 +8,7 @@ import { _Arrays } from "../utils/helpers.js";
 import API_URLS from "../constants/api-urls.js";
 import { _MONITOR_EXECUTION } from "../utils/fn-monitor.js";
 
+
 export function _retreiveClusterGJDatasets() {
 	try {
 		const geoClusters = JSON.parse(
@@ -21,6 +22,7 @@ export function _retreiveClusterGJDatasets() {
 		console.error(`retreiveGJErr: ${retreiveGJErr.message}`);
 	}
 }
+
 
 /**
  * @description Queries an API for data
@@ -67,6 +69,7 @@ async function queryAPI(fetch, apiHost, apiResourcePath, { queryString } = {}) {
 		return null;
 	}
 }
+
 
 /**
  * @function
@@ -119,57 +122,12 @@ export async function _getAPIResource(eventObj, resourceHost, resourcePath, { qu
 	}
 }
 
-// REMOVE > DEPRECATED
-/**
- * @description Downloads and saves parcelized cluster data from a remote API.
- *
- * The function loops through each resource path defined in DEFAULT_APP_SETTINGS.PARCELIZED_CLUSTERS_RESOURCE_PATHS
- * and performs an API call for each resource path using the `queryAPI.call` function.
- * The execution time of each API call is monitored and recorded using the `_MONITOR_EXECUTION` object.
- * If the API call returns data, it is saved using the `APP_STATE.cacheDBCollection` function.
- * The function returns `true` on success or `false` if there is an error during the process.
- *
- * @async
- * @function _downloadAndSaveParcelizedClusters
- *
- * @returns {boolean} - Returns true on success or false if there is an error during the process.
- *
- * @throws {Error} - If there is an error during the process, an error will be thrown.
- */
-export async function _downloadAndSaveParcelizedClusters() {
-	try {
-		// Constants
-		const apiHost = DEFAULT_APP_SETTINGS.GEOCLUSTERS_API_HOST;
-		const resourcePaths = DEFAULT_APP_SETTINGS.PARCELIZED_CLUSTERS_RESOURCE_PATHS;
-
-		for (const resourcePath of resourcePaths) {
-			// Get the API response for the current resource path
-			const apiResponse = await _getAPIResource(window, apiHost, resourcePath, {});
-
-			if (!apiResponse) throw new Error(`The API did not respond`);
-
-			console.log({ apiResponse });
-
-			// Get the database collection name from the resource path
-			const dbCollectionName = resourcePath.slice(resourcePath.indexOf("/") + 1);
-
-			// Save the API response in the app state
-			APP_STATE.cacheDBCollection(dbCollectionName, apiResponse);
-		}
-
-		return true;
-	} catch (error) {
-		console.error(`Error while downloading and saving parcelized clusters: ${error}`);
-		return false;
-	}
-}
 
 export const _ParcelizedClustersController = (() => {
 
 	/**
 	 * @funciton getCollectionNameFromPath
 	 * @description Extracts the collection name from the given resource path.
-	 *
 	 * @param {string} resourcePath - The resource path to extract the collection name from.
 	 * @returns {string} - The collection name.
 	 */
@@ -203,8 +161,8 @@ export const _ParcelizedClustersController = (() => {
 	}
 
 	/**
-	 * Downloads parcelized clusters from the API.
-	 *
+	 * @function retreiveParcelizedClusters
+	 * @description Downloads parcelized clusters from the API.
 	 * @async
 	 * @param {string[]} clusterIds - An array of cluster IDs to download.
 	 * @param {Window} window - The current window object.
@@ -250,6 +208,7 @@ export const _ParcelizedClustersController = (() => {
 	 * @returns {Promise<void>}
 	 */
 	async function cacheNewParcelizedClusters(appState, collectionName, newClustersArray) {
+
 		// Get the existing collection from the app state
 		const cachedCollection = appState.returnCachedDBCollection(collectionName);
 
@@ -292,9 +251,18 @@ export const _ParcelizedClustersController = (() => {
 
 	return {
 
-		cacheClustersData: async (window, APP_STATE) => {
-			//  * Loop through each resource name and retrieve the live data if it is not already cached.
+		/**
+		 * @funciton cacheLiveData
+		 * @description Caches live data for each resource name if not already cached in APP_STATE.
+		 * @async
+		 * @param {Window} window - The browser window object.
+		 * @param {Object} APP_STATE - The application state object.
+		 */
+		cacheLiveData: async (window, APP_STATE) => {
+
+			// Loop through each resource name and retrieve the live data if it is not already cached.
 			for (const collectionName of resourceNames) {
+
 				// Check if the collection is already cached in the database
 				const isCachedBefore = collectionAlreadyCached(APP_STATE, collectionName);
 
@@ -316,19 +284,21 @@ export const _ParcelizedClustersController = (() => {
 					// Cache the live data for the current collection
 					APP_STATE.cacheDBCollection(collectionName, liveCollection);
 				} else {
-					// exit loop if previously cached
+					// Exit the loop if the collection has already been cached
 					break;
 				}
 			}
-			console.log("Finished caching clusters");
+
+			console.log("Finished caching all parcelized clusters from DB");
 		},
 
-		downloadNewClusters: async (window, APP_STATE) => {
-			console.log("Downloading new clusters");
+		getNewClusters: async (window, APP_STATE) => {
+			console.log("Downloading new parcelized clusters");
 
 			// "Cached metadata collection exists -> Will now check for new cluster IDs."
 			const cachedMetadataCollection =
 				APP_STATE.returnCachedDBCollection(metadataCollectionName);
+				console.log(cachedMetadataCollection)
 
 			const liveMetadataCollection = await _getAPIResource(
 				window,
@@ -342,22 +312,22 @@ export const _ParcelizedClustersController = (() => {
 
 			// REMOVE > SIMULATION
 			let liveIds = [...liveMetadataCollection.data.collection_metadata.ids];
-			liveIds.concat(["OGO_OWO_IS_A_PLATINUM_WHORE", "AGCBEN000005", "OGWDT000001"]);
-			liveIds.push("OGO_OWO_IS_A_PLATINUM_WHORE");
-			liveIds.push("AGCBEN000005");
-			liveIds.push("OGWDT000001");
+			// liveIds.concat(["OGO_OWO_IS_A_PLATINUM_WHORE", "AGCBEN000005", "OGWDT000001"]);
+			// liveIds.push("OGO_OWO_IS_A_PLATINUM_WHORE");
+			// liveIds.push("AGCBEN000005");
+			// liveIds.push("OGWDT000001");
 
 			const newClusterIds = _Arrays.getNonDuplicateElements({
 				expandingArray: liveIds,
 				// expandingArray: liveMetadataCollection.data.collection_metadata.ids,
-				staticArray: cachedMetadataCollection.data.collection_metadata.ids,
+				staticArray: cachedMetadataCollection.data.data.collection_metadata.ids,
 			});
 
 			// console.log({ newClusterIds });
 
 			// REMOVE > SIMULATION
-			newClusterIds.push("AGCBEN000005");
-			newClusterIds.push("OGWDT000001");
+			// newClusterIds.push("AGCBEN000005");
+			// newClusterIds.push("OGWDT000001");
 
 			// Download the data for the new Ids from the DB
 			const newParcelizedClusters = await retreiveParcelizedClusters(

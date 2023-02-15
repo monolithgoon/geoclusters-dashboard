@@ -1,5 +1,5 @@
 import ALERT_MESSAGES from "../constants/alert-messages.js";
-import DURATION from "../constants/duration.js";
+import INTERVALS from "../constants/intervals.js";
 import { showAlert } from "./alerts-controller.js";
 
 export const login = async (email, password) => {
@@ -18,7 +18,7 @@ export const login = async (email, password) => {
 			showAlert("success", ALERT_MESSAGES.LOGIN_SUCCESS);
 			window.setTimeout(() => {
 				location.assign("/dashboard/");
-			}, DURATION.LOGIN_NAVIGATION_DELAY);
+			}, INTERVALS.LOGIN_NAVIGATION_DELAY);
 		}
 
 		// console.log({loginResponse})

@@ -161,7 +161,7 @@ These processed legacy AGCs are appended with farmer biometric data.
 
 3. `/attribution`
 
-4. `/duration.js`
+4. `/intervals.js`
 
 5. `/maps-tile-sources.js`
 

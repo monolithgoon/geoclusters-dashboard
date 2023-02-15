@@ -282,8 +282,7 @@ input, button,
 }
 
 
-/* @media screen and (min-width: 968px) { */
-   @media screen and (min-width: 850px) {
+   @media screen and (min-width: 800px) {
 
       .welcome-pane-container {
          z-index: var(--z3);
@@ -311,7 +310,7 @@ input, button,
          right: 0;
          bottom: 9.5vh;
 
-         z-index: 1;
+         z-index: var(--z3);
          
          display: grid;
          color: inherit;

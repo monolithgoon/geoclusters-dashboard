@@ -1,39 +1,47 @@
+const path = require('path');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+
 module.exports = {
-	entry: "./server/public/src/js/app.js",
-	output: {
-		path: __dirname + "/server/public/dist/",
-		filename: "bundle.js",
-	},
-	module: {
-		rules: [
-			{
-				test: /\.css$/i,
-				use: [
-					"style-loader", // style-loader injects the CSS, that is exported by the < as a > JavaScript module, into a <style> tag at runtime
-					"css-loader", // css-loader transforms CSS to a JavaScript module
-				],
-			},
-			// {
-			// 	test: /\.css$/,
-			// 	use: "file-loader",
-			// },
-			// {
-			// 	test: /\.(svg|jpg|ttf|woff|woff2)$/i,
-			// 	loader: "file-loader",
-			// 	options: {
-			// 		emitFile: false,
-			// 		name: "[name].[ext]",
-			// 		outputPath: "/assets/fonts",
-			// 		// publicPath: "/dist/",
-			// 	}
-			// },
-			{
-				test: /\.(svg|jpg|ttf|woff|woff2)$/i,
-				type: "asset/resource",
-				generator: {
-					filename: "./assets/[name][ext]",
-				},
-			},
-		],
-	},
+  context: path.resolve(__dirname, 'server', 'public', 'src'),
+  entry: './js/app.js',
+  output: {
+    path: path.resolve(__dirname, 'server', 'public', 'dist'),
+    filename: 'bundle.js',
+    assetModuleFilename: 'assets/[name][ext][query]',
+  },
+  plugins: [
+    new CleanWebpackPlugin({
+      cleanOnceBeforeBuildPatterns: ['**/*', '!assets/**/*'],
+    }),
+  ],
+  module: {
+    rules: [
+      {
+        test: /\.css$/i,
+        use: [
+          'style-loader',
+          'css-loader',
+        ],
+      },
+      {
+        test: /\.(png|jpe?g|gif|svg)$/i,
+        type: 'asset',
+        generator: {
+          filename: 'assets/images/[name][ext][query]',
+        },
+        parser: {
+          dataUrlCondition: {
+            maxSize: 8 * 1024,
+          },
+        },
+      },
+      {
+        test: /\.(ttf|woff|woff2)$/i,
+        type: 'asset',
+        generator: {
+          filename: 'assets/fonts/[name][ext][query]',
+        },
+      },
+    ],
+  },
 };

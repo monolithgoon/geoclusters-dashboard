@@ -39,14 +39,14 @@ export const APP_STATE = (function () {
 
 		/**
 		 * @description Caches a database collection in APP_STATE
-       * 
-       * This code defines a function named `cacheDBCollection` that takes two arguments: 
-       * `collectionName` and `data`. The function creates a new object, `newCollection`, 
-       * using `DATA_STORE` as its prototype. The `name` property of `newCollection` is 
-       * set to `collectionName` and the `data` property is set to `data`. This function 
-       * is likely used to cache a database collection by creating a new object with the
-       * given collection name and data, and setting it as the prototype of `DATA_STORE`.
-       * 
+		 *
+		 * This code defines a function named `cacheDBCollection` that takes two arguments:
+		 * `collectionName` and `data`. The function creates a new object, `newCollection`,
+		 * using `DATA_STORE` as its prototype. The `name` property of `newCollection` is
+		 * set to `collectionName` and the `data` property is set to `data`. This function
+		 * is likely used to cache a database collection by creating a new object with the
+		 * given collection name and data, and setting it as the prototype of `DATA_STORE`.
+		 *
 		 * @function cacheDBCollection
 		 * @param {string} collectionName - The name of the database collection.
 		 * @param {object} data - The data to be stored in the database collection.
@@ -57,7 +57,7 @@ export const APP_STATE = (function () {
 			newCollection.data = data;
 
 			// Remove the existing collection with the same name
-         // FIXME > MOVE TO findUpdateCachedDBCollection() FN. BELOW
+			// FIXME > MOVE TO findUpdateCachedDBCollection() FN. BELOW
 			CACHED_DB_COLLECTIONS = CACHED_DB_COLLECTIONS.filter(
 				(collection) => collection.name !== collectionName
 			);
@@ -68,16 +68,16 @@ export const APP_STATE = (function () {
 			console.log({ CACHED_DB_COLLECTIONS });
 		},
 
-      // TODO
-      findUpdateCachedDBCollection: (collectionName, data) => {
-         // 0. Make sure data is not null
-         // 1. check if collection with same name already exists in cache
-         // 2. check if new data is better? than old data
-         // 3. replace the data in cache
-      },
+		// TODO
+		findUpdateCachedDBCollection: (collectionName, data) => {
+			// 0. Make sure data is not null
+			// 1. check if collection with same name already exists in cache
+			// 2. check if new data is better? than old data
+			// 3. replace the data in cache
+		},
 
 		returnCachedDBCollections: function () {
-			console.log({CACHED_DB_COLLECTIONS})
+			console.log({ CACHED_DB_COLLECTIONS });
 			return CACHED_DB_COLLECTIONS;
 		},
 
@@ -85,8 +85,8 @@ export const APP_STATE = (function () {
 			const cachedDBCollection = CACHED_DB_COLLECTIONS.find(
 				(collection) => collection.name === collectionName
 			);
-         if (!cachedDBCollection) return null;
-			return cachedDBCollection.data;
+			if (!cachedDBCollection) return null;
+			return cachedDBCollection;
 		},
 
 		deleteCachedDBCollection: (collectionName) => {

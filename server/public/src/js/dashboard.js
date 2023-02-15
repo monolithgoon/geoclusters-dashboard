@@ -3,22 +3,21 @@
  *
  * THE FOLLOWING TOP-LEVEL FUNCTIONS RUN ONCE THIS FILE EXECUTES:
  *
- * 1. cachePreloadedGeoClusters -
+ * 1. cachePreLoadedGeoclusters -
  * The html for the dashboard is generated with PUG from the server-side;
  * It contains a pre-fetched set of geoclusters loaded into a "geoClusters" variable via server/controllers/view-controller.js
  * This variale is passed to the front-end via a dataset called "geoclusters" with HTML id = geo_clusters_dataset
  * The above function caches the "geoclusters" data in the APP_STATE, which makes it available throughout the app
  *
- * 2. renderCachedGeoClusters - DISPLAYS CLUSTER BUBBLES ON THE MAIN MAP OF THE GEOCLUSTERS RETREIVED FROM THE GEOCLUSTERS API
+ * 2. renderPreLoadedGeoclusters - DISPLAYS CLUSTER BUBBLES ON THE MAIN MAP OF THE GEOCLUSTERS RETREIVED FROM THE GEOCLUSTERS API
  *
- * 3. renderAdminBounds - RENDERS GEOJSON POLYGON ADMIN BOUNDS FOR THE GEO-POL REGIONS OF NIGERIA
+ * 3. renderCachedAdminBounds - RENDERS GEOJSON POLYGON ADMIN BOUNDS FOR THE GEO-POL REGIONS OF NIGERIA
  *
  * 4. fireAutoUpdateWorker - updateCachedGeoClusters
  */
 
 `use strict`;
 import {
-	_downloadAndSaveParcelizedClusters,
 	_retreiveClusterGJDatasets,
 	_getAPIResource,
 	_ParcelizedClustersController,
@@ -29,7 +28,7 @@ import { APP_STATE } from "./avg-controllers/state-controller.js";
 import { _RenderEngine } from "./avg-controllers/maps-controller.js";
 import { _clientSideRouter } from "./routers/router.js";
 import { GET_DOM_ELEMENTS } from "./utils/get-dom-elements.js";
-import DURATION from "./constants/duration.js";
+import INTERVALS from "./constants/intervals.js";
 import { logout } from "./controllers/login-controller.js";
 import DEFAULT_APP_SETTINGS from "./constants/default-app-settings.js";
 import _openFullScreen from "./utils/open-full-screen.js";
@@ -53,10 +52,9 @@ const initDashboardApp = (() => {
 	}
 
 	/**
-	 * Renders the clusters collection on the Leaflet centerfold basemap.
-	 *
+	 * @function renderClustersCollection
+	 * @description Renders the clusters collection on the Leaflet centerfold basemap.
 	 * @param {Array} featCollArray - An array of feature collections to be rendered on the base map.
-	 *
 	 * @async
 	 */
 	const renderClustersCollection = async (featCollArray) => {
@@ -66,103 +64,6 @@ const initDashboardApp = (() => {
 				bufferUnits: _pollAVGSettingsValues().distanceUnits,
 				bufferAmt: DEFAULT_APP_SETTINGS.PARCELIZED_CLUSTER_PLOTS_BUFFER,
 			});
-		}
-	};
-
-	// REMOVE > DEPRECATED
-	/**
-	 * @description Function to get newly parcelized GeoClusters from the database.
-	 *
-	 * It does this by downloading fresh parcelized GeoCluster metadata from the database and saving it to the application state.
-	 * It then compares the GeoCluster metadata that is already in the app cache with the current metadata in the database.
-	 * The function returns an array of new GeoClusters for which the GeoJSON has not been downloaded yet.
-	 * If the function is successful, it returns the array of new GeoClusters.
-	 * If it is not successful, it returns an empty array.
-	 *
-	 * @function getNewlyParcelizedClusters
-	 * @async
-	 * @param {Object} window - A reference to the window object.
-	 * @returns {Array} An array of GeoJSON objects representing the newly parcelized GeoClusters. An empty array is returned if there are no new GeoClusters or if the function fails.
-	 */
-	const getNewlyParcelizedClusters = async (window) => {
-		try {
-			// Download the latest GeoCluster metadata from the database and save it to the app state
-			const newClustersChk = _downloadAndSaveParcelizedClusters(window);
-
-			// If the return from _downloadAndSaveParcelizedClusters sis false, return an empty array
-			if (!newClustersChk) return [];
-
-			// Get the metadata for all the live clusters returned the database
-			const liveParcelizedClustersMetadata = _TraverseObject.evaluateValue(
-				APP_STATE.returnCachedDBCollection("v1/parcelized-agcs/metadata"),
-				"data"
-			);
-
-			// Retrieve the live parcelized cluster IDs
-			const liveParcelizedClusterIds =
-				liveParcelizedClustersMetadata?.data?.collection_metadata?.ids || [];
-
-			console.log({ liveParcelizedClusterIds });
-
-			// Get all the previously pre-loaded clusters stored in the app cache
-			const cachedGeoclusers = _TraverseObject.evaluateValue(
-				APP_STATE.returnCachedDBCollection("cached-geo-clusters"),
-				"data"
-			);
-
-			let newGeoclusterIds = [];
-
-			if (!cachedGeoclusers || cachedGeoclusers.length === 0) {
-				// If there are no pre-loaded geoclusters in the app cache ..
-				newGeoclusterIds = liveParcelizedClusterIds;
-			} else {
-				// Get the IDs of the cached geoclusters
-				const cachedGeoClusterIds = cachedGeoclusers.map((c) =>
-					c.properties.clusterID.toLowerCase()
-				);
-
-				console.log({ cachedGeoClusterIds });
-				console.log({ newGeoclusterIds });
-
-				// Compare the arrays of IDs and determine the Ids of new geoclusters
-				newGeoclusterIds = _Arrays.containsAllChk(
-					cachedGeoClusterIds,
-					liveParcelizedClusterIds
-				).missingElements;
-			}
-
-			console.log({ newGeoclusterIds });
-
-			// If there are no new GeoCluster IDs, return empty []
-			if (newGeoclusterIds.length === 0) return [];
-
-			// Define the API resource path and host
-			const resourcePath = `${DEFAULT_APP_SETTINGS.PARCELIZED_CLUSTER_API_RESOURCE_PATH}`;
-			const apiHost = DEFAULT_APP_SETTINGS.GEOCLUSTERS_API_HOST;
-
-			// Initialize an array to store the new geo clusters
-			const newGeoclustersArray = [];
-
-			// If there are new GeoCluster IDs, download the GeoJSON data for them
-			for (const newGeoClusterId of newGeoclusterIds) {
-				// Construct the API query string
-				const queryString = `?${newGeoClusterId}`;
-
-				// Retrieve the API resource
-				const APIResponse = await _getAPIResource(window, apiHost, resourcePath, {
-					queryString,
-				});
-
-				// Retrieve the new geo cluster GeoJSON
-				const newGeoClusterGeoJSON = APIResponse?.data?.parcelizedAgcData;
-
-				// Add the new geo cluster to the array if it exists
-				if (newGeoClusterGeoJSON) newGeoclustersArray.push(newGeoClusterGeoJSON);
-			}
-
-			return newGeoclustersArray;
-		} catch (getParcelizedClustersErr) {
-			console.error(`getParcelizedClustersErr: ${getParcelizedClustersErr}`);
 		}
 	};
 
@@ -216,28 +117,31 @@ const initDashboardApp = (() => {
 		// THIS VARIABLE WAS SENT TO THE DOM VIA server/controllers/view-controller.js,
 		// IT WAS "STORED" IN A DOM ELEMENT WITH DATASET ATTRIBUTE = "geoclusters" WITH ID = "geo_clusters_dataset"
 		// THIS FUNCTION STORES THAT DATA IN THE FRONT-END "APP_STATE" OBJECT
-		cachePreloadedGeoClusters: async () => {
+		cachePreLoadedGeoclusters: async () => {
 			const { geoClusters } = _retreiveClusterGJDatasets();
 
-			APP_STATE.cacheDBCollection(`cached-geo-clusters`, [...geoClusters]);
+			APP_STATE.cacheDBCollection(`pre-loaded-geoclusters`, [...geoClusters]);
 		},
 
-		renderCachedGeoClusters: async () => {
-			// GET THE CACHED GEOCLUSTERS DATA FROM APP_STATE
-			const geoClustersArr = _TraverseObject.evaluateValue(
-				APP_STATE.returnCachedDBCollection("cached-geo-clusters"),
+		renderPreLoadedGeoclusters: async () => {
+			
+			// GET THE PRE-LOADED GEOCLUSTERS DATA FROM APP_STATE
+			const preLoadedGeoclusters = _TraverseObject.evaluateValue(
+				APP_STATE.returnCachedDBCollection("pre-loaded-geoclusters"),
 				"data"
 			);
 
+			console.log({preLoadedGeoclusters})
+
 			// RENDER ON MAP
-			await renderClustersCollection(geoClustersArr);
+			await renderClustersCollection(preLoadedGeoclusters);
 		},
 
 		/**
 		 * This function is used to render administrative boundaries on the map.
 		 * @param {Window} window - The global window object.
 		 */
-		renderAdminBounds: async (window) => {
+		renderCachedAdminBounds: async (window) => {
 			// The default API host URL for the administrative boundaries GeoJSON data
 			const apiHost = DEFAULT_APP_SETTINGS.ADMIN_BOUNDS_GEOJSON_API_HOST;
 
@@ -275,23 +179,29 @@ const initDashboardApp = (() => {
 
 		/**
 		 * @function fireAutoUpdateWorker
-		 * @description Function to initiate an indefinitely recursive setTimeout loop with pre-set intervals
+		 * @description Function to initiate a recursive setTimeout loop with pre-set intervals. 
+		 * The recursion will terminate when the updated setTimeout interval exceeds a pre-defined limit
 		 * @async
 		 * @param {Object} window - The window object passed in as argument
 		 */
 		fireAutoUpdateWorker: async (window) => {
-			// The initial delay for the setTimeout function
-			let initDelay = DURATION.GEOCLUSTERS_DATA_QUERY_INTERVAL;
 
-			// The interval delay that will be updated
-			let intervalDelay = initDelay;
+			// Get the initial interval for the setTimeout function
+			let initInterval = INTERVALS.BASE_DATA_QUERY_INTERVAL;
+
+			// The interval variable that will be updated
+			let updatedInterval = initInterval;
 
 			setTimeout(async function request() {
-				// Cache existing cluster data
-				await _ParcelizedClustersController.cacheClustersData(window, APP_STATE);
+
+				// EXIT IF THE INTERVALS EXCEED A LIMIT
+				if(updatedInterval > INTERVALS.AUTO_WORKER_INTERVAL_LIMIT) return;
+				
+				// Cache entire parcelized-agcs db collection in APP_STATE; skip if it's been done before 
+				await _ParcelizedClustersController.cacheLiveData(window, APP_STATE);
 
 				// Download new clusters
-				const newClustersArr = await _ParcelizedClustersController.downloadNewClusters(
+				const newClustersArr = await _ParcelizedClustersController.getNewClusters(
 					window,
 					APP_STATE
 				);
@@ -306,12 +216,13 @@ const initDashboardApp = (() => {
 				// const newGeoClustersArr = getNewlyParcelizedClusters(window);
 
 				if (newClustersArr && newClustersArr.length > 0) {
-					// Reset the interval delay to the initial delay
-					intervalDelay = initDelay;
+
+					// New clusters found; reset the interval delay to the initial delay
+					updatedInterval = initInterval;
 
 					// Save the newly retrieved geoJSON to the app_state object / cache
 					// FIXME > BAD IMPLEMENTATION
-					updateCachedGeoClusters("cached-geo-clusters", newClustersArr);
+					updateCachedGeoClusters("pre-loaded-geoclusters", newClustersArr);
 
 					// Render the new clusters
 					// TODO > MOVE TO OUTSIDE CONTEXT
@@ -321,18 +232,20 @@ const initDashboardApp = (() => {
 
 				// If there are no new geo clusters, increment the interval delay
 				if (newClustersArr && newClustersArr.length === 0) {
-					console.log("IncreasingAPI  data query interval");
-					intervalDelay += DURATION.DATA_QUERY_INCREMENT;
+					console.log("Incrementing the auto-worker data query interval");
+					updatedInterval += INTERVALS.AUTO_DATA_QUERY_INTERVAL_INCREMENT;
 				}
 
-				// If the request failed to complete, double the interval delay
+				// If the request failed to complete, double the interval icrement
 				if (!newClustersArr) {
-					intervalDelay *= 2;
+					updatedInterval += INTERVALS.AUTO_DATA_QUERY_INTERVAL_INCREMENT*2;
 				}
+
+				console.log({updatedInterval})
 
 				// Recursively loop the setTimeout function with the updated interval delay
-				setTimeout(request, intervalDelay);
-			}, intervalDelay);
+				setTimeout(request, updatedInterval);
+			}, updatedInterval);
 		},
 
 		//
@@ -355,11 +268,18 @@ const initDashboardApp = (() => {
 
 		initDashboardApp.addDOMListeners();
 
-		// await initDashboardApp.cachePreloadedGeoClusters();
+		await initDashboardApp.cachePreLoadedGeoclusters();
 
-		// await initDashboardApp.renderCachedGeoClusters();
+		await initDashboardApp.renderPreLoadedGeoclusters();
 
-		// await initDashboardApp.renderAdminBounds(windowObj);
+		// TODO > split the caching and rendering ops.
+		// await initDashboardApp.cacheAdminBounds(windowObj);
+		
+		await initDashboardApp.renderCachedAdminBounds(windowObj);
+
+		// cache other (markets, roadways, waterways, city centers) geojson assets
+
+		// render other geojson assets
 
 		await initDashboardApp.fireAutoUpdateWorker(windowObj);
 	});
