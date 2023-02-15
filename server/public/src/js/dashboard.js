@@ -125,8 +125,8 @@ const InitDashboardApp = (() => {
 		 */
 
 		/**
-		 * Stores the pre-loaded geoclusters data in the front-end "APP_STATE" object.
-		 * 
+		 * @function cachePreLoadedGeoclusters
+		 * @description Stores the pre-loaded geoclusters data in the front-end "APP_STATE" object.
 		 * @async
 		 */		
 		cachePreLoadedGeoclusters: async () => {
@@ -138,8 +138,8 @@ const InitDashboardApp = (() => {
 		},
 		
 		/**
-		 * Renders the pre-loaded geoclusters on the map.
-		 * 
+		 * @function renderPreLoadedGeoclusters
+		 * @description Renders the pre-loaded geoclusters on the centerfold basemap.
 		 * @async
 		 */		
 		renderPreLoadedGeoclusters: async () => {
