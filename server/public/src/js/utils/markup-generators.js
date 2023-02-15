@@ -101,7 +101,7 @@ export const _GenClusterModalMarkup = (() => {
                <span class="modal-person-avatar">
                   <img
                      class="rounded-circle"
-                     src="/assets/images/users/img_avatar1.png"
+                     src="/src/assets/images/users/img_avatar1.png"
                      alt="Modal Avatar" />
                </span>
                <span class="modal-person-details flex-col-center">PMRO • Abdulsalam Dansuki</span>
