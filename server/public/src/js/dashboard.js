@@ -228,17 +228,16 @@ const InitDashboardApp = (() => {
 					APP_STATE
 				);
 
-				// Step-3
-				// If new clusters are available, cache them
-				if (newClustersArr && newClustersArr.length > 0) {
-					_ParcelizedClustersController.cacheNewClusters(newClustersArr, APP_STATE);
-				}
-
+				// Confirm if new clusters are available...
 				if (newClustersArr && newClustersArr.length > 0) {
 					
-					// Step-4
-					// New clusters found; reset the interval delay to the initial delay
+					// Step-3
+					// Reset the interval delay to the initial delay
 					updatedInterval = initInterval;
+					
+					// Step-4
+					// ...cache them
+					_ParcelizedClustersController.cacheNewClusters(newClustersArr, APP_STATE);					
 
 					// Step-5
 					// Save the newly retrieved geoJSON to the app_state object / cache
@@ -246,7 +245,13 @@ const InitDashboardApp = (() => {
 					updateCachedGeoClusters(DESCRIPTORS.PRE_LOADED_GEOCLUSTERS_CACHE_NAME, newClustersArr);
 					
 					// Step-6
+					// ...add them to the clusters' sidebar
+					// await addClustersToSidebar(newClustersArr)
+
+					// Step-7
 					// Render the new clusters
+					// await addClustersToBasemap(newClustersArr)
+					
 					// TODO > MOVE TO OUTSIDE CONTEXT
 					// FIXME > BAD IMPLEMENTATION
 					await renderLiveGeoClusters(newClustersArr);

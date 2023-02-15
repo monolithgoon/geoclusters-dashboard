@@ -4,7 +4,7 @@ import { _ManipulateDOM } from "./ui-controller.js";
 import { _ShowActivityAlert } from "../utils/activity-alert.js";
 import { APP_STATE } from "./state-controller.js";
 import DEFAULT_APP_SETTINGS from "../constants/default-app-settings.js";
-import { _Arrays } from "../utils/helpers.js";
+import { _Arrays, _TraverseObject } from "../utils/helpers.js";
 import API_URLS from "../constants/api-urls.js";
 import { _MONITOR_EXECUTION } from "../utils/fn-monitor.js";
 
@@ -335,8 +335,11 @@ export const _ParcelizedClustersController = (() => {
 			// Get the existing collection from the app state
 			const cachedCollection = appState.returnCachedDBCollection(clustersCollectionName);
 
-			// TODO > TRAVERSE
+			// Get the array of GeoJSON objects
 			const collectionDocs = cachedCollection.data.data.collection_docs;
+			// const collectionDocs = _TraverseObject.evaluateValue(cachedCollection, `data`, `data`, `collection_docs`)
+			
+			console.log({collectionDocs})
 
 			// Create a new array of clusters that includes the existing and new clusters
 			const updatedClusters = [
