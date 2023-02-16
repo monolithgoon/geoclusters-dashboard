@@ -58,6 +58,7 @@ const handleLoginBackBtnClick = (e) => {
   e.target.style.display = "none";
   toggleDisplay("password_form_group", false);
   loginNextBtn.disabled = false;
+  toggleDisplay("login_next_btn", true);
   toggleDisplay("login_submit_btn", false);
 };
 
