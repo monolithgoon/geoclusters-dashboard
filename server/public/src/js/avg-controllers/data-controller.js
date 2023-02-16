@@ -336,8 +336,8 @@ export const _ParcelizedClustersController = (() => {
 			const cachedCollection = appState.returnCachedDBCollection(clustersCollectionName);
 
 			// Get the array of GeoJSON objects
-			const collectionDocs = cachedCollection.data.data.collection_docs;
-			// const collectionDocs = _TraverseObject.evaluateValue(cachedCollection, `data`, `data`, `collection_docs`)
+			// const collectionDocs = cachedCollection.data.data.collection_docs;
+			const collectionDocs = _TraverseObject.evaluateValue(cachedCollection, `data`, `data`, `collection_docs`)
 			
 			console.log({collectionDocs})
 

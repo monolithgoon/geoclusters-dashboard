@@ -70,6 +70,7 @@
 .top-section h1 > span:nth-of-type(2) {
 	font-family: monospace;
 	font-size: 7.5rem;
+	letter-spacing: -4px;
 }
 
 .top-section h1 > span:last-of-type {

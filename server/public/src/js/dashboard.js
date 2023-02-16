@@ -215,7 +215,7 @@ const InitDashboardApp = (() => {
 			setTimeout(async function request() {
 
 				// EXIT IF THE INTERVALS EXCEED A LIMIT
-				if(updatedInterval > INTERVALS.AUTO_WORKER_INTERVAL_LIMIT) return;
+				if(updatedInterval >= INTERVALS.AUTO_WORKER_INTERVAL_LIMIT) return;
 				
 				// Step-1
 				// Cache entire parcelized-agcs db collection in APP_STATE; skip if it's been done before 
