@@ -19,4 +19,8 @@ router.get("/nga-geo-pol-regions",
 	dataController.getGeoPolRegionsGeoJSON,
 );
 
+router.get("/nga-markets-geojson", 
+	// dataController.getNgaMarkets,
+)
+
 module.exports = router;

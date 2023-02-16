@@ -252,12 +252,12 @@ function combineObjArrays(...baseArrays) {
  * The files are cached in `server/localdata`
  * The exact file names correspond to the names of the collections in the database
  */
-function retreiveClustersData() {
+function retreiveClustersData(cachedFileNames) {
 
    const GEOCLUSTERS_DATA = [];
 
    // Loop through the list of cached files and read the data, parse it and push it to the GEOCLUSTERS_DATA array
-   for (const fileName of CACHED_FILE_NAMES) {
+   for (const fileName of cachedFileNames) {
       let geoClusterJSON = fs.readFileSync(path.resolve(`${__approotdir}/localdata/${fileName}`), {encoding: 'utf8'});
       let geoClusterObj = JSON.parse(geoClusterJSON);
       GEOCLUSTERS_DATA.push(geoClusterObj);
@@ -286,21 +286,48 @@ function retreiveClustersData() {
 };
 
 
-exports.getClustersSummary = catchAsync(async(req, res, next) => {
-   const clustersSummary = retreiveClustersData().clustersSummary;
-   req.app.locals.clustersSummary = clustersSummary;
-   next();
-}, `getClustersSummaryErr`);
-
-
-exports.getCachedGeoClustersData = catchAsync(async(req, res, next) => {
+/**
+ * @function getClustersSummary
+ * @description A function that retrieves geocluster summary data from the server's local cache and
+ * stores it in the application's locals object.
+ * @param {Request} req - Express request object
+ * @param {Response} res - Express response object
+ * @param {Function} next - Express next middleware function
+ * @throws {Error} If an error occurs while retrieving the cluster summary data.
+ */
+exports.getClustersSummary = catchAsync(async (req, res, next) => {
    
-   // const returnedClusters = retreiveClustersData().returnedClusters;
-   const { returnedClusters, clustersSummary } = retreiveClustersData();
-      
+   // Retrieve the geocluster data and clusters summary from this server's localdata cache
+   const { clustersSummary } = retreiveClustersData(CACHED_FILE_NAMES);
+ 
+   // Store the clusters summary in the application's locals object
+   req.app.locals.clustersSummary = clustersSummary;
+ 
+   // Call the next middleware function
+   next();
+ }, `getClustersSummaryErr`);
+ 
+
+
+/**
+ * @function getCachedGeoClustersData
+ * @description A function that retrieves geocluster data and summary information from the server's local cache
+ * and stores it in the application's locals object.
+ * @param {Request} req - Express request object
+ * @param {Response} res - Express response object
+ * @param {Function} next - Express next middleware function
+ * @throws {Error} If an error occurs while retrieving the geocluster data and summary information.
+ */
+exports.getCachedGeoClustersData = catchAsync(async (req, res, next) => {
+
+   // Retrieve the geocluster data and clusters summary from this server's localdata cache
+   const { returnedClusters, clustersSummary } = retreiveClustersData(CACHED_FILE_NAMES);
+ 
+   // Store the geocluster data and clusters summary in the application's locals object
    req.app.locals.returnedClusters = returnedClusters;
    req.app.locals.clustersSummary = clustersSummary;
-
+ 
+   // Call the next middleware function
    next();
-   
-}, `getClustersDataErr`);
+ }, `getClustersDataErr`);
+ 

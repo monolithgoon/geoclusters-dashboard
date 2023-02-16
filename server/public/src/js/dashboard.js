@@ -245,7 +245,7 @@ const InitDashboardApp = (() => {
 					updateCachedGeoClusters(DESCRIPTORS.PRE_LOADED_GEOCLUSTERS_CACHE_NAME, newClustersArr);
 					
 					// Step-6
-					// ...add them to the clusters' sidebar
+					// Add them to the clusters' sidebar
 					// await addClustersToSidebar(newClustersArr)
 
 					// Step-7

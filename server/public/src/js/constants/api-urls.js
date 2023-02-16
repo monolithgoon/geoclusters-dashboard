@@ -21,10 +21,10 @@ const API_URLS = Object.freeze({
 			AWS: `http://54.225.80.233:9090`,
 		},
 		RESOURCE_PATHS: [
-			`api/v1/admin-bounds/nga-geo-pol-regions`,
-			`api/v1/admin-bounds/nga-admin-bounds-lvl1`,
-			`api/v1/admin-bounds/nga-admin-bounds-lvl2`,
-			`api/v1/admin-bounds/nga-admin-bounds-lvl3`,
+			`api/v1/geojson/nga-geo-pol-regions`,
+			`api/v1/geojson/nga-admin-bounds-lvl1`,
+			`api/v1/geojson/nga-admin-bounds-lvl2`,
+			`api/v1/geojson/nga-admin-bounds-lvl3`,
 		],
 	},
 });
