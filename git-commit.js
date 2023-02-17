@@ -9,8 +9,10 @@ const rl = readline.createInterface({
 
 // Prompt the user for a commit message
 rl.question("ENTER A COMMIT MESSAGE: ", (message) => {
+
 	// Run the git add and commit commands using the entered message
 	exec(`git add -A && git commit -m "${message}"`, (error, stdout, stderr) => {
+    
 		if (error) {
 			console.error(`Error: ${error.message}`);
 			return;
@@ -21,44 +23,43 @@ rl.question("ENTER A COMMIT MESSAGE: ", (message) => {
 		}
 		// console.log(`stdout: ${stdout}`);
 
-		// Prompt the user for the number of log lines to show
-		rl.question("ENTER THE NUMBER GIT LOG LINES TO SHOW: ", (numLines) => {
+		// Promit the user to push commit to remote origin or not
+		rl.question(`PUSH COMMIT TO REMOTE ORIGIN? (YES | Y or NO | N)`, (response) => {
+			// User chooses to commit to remote origin
+			if (response.toLowerCase === "y") {
+				exec(`git push origin master`, (error, stdout, stderr) => {
+					if (error) {
+						console.error(`Error: ${error.message}`);
+						return;
+					}
+					if (stderr) {
+						console.error(`stderr: ${stderr}`);
+						return;
+					}
+				});
+			}
 
-			// Run the git log command using the entered number of lines
-			exec(`git log --oneline -n ${numLines}`, (error, stdout, stderr) => {
+			// Prompt the user for the number of log lines to show
+			rl.question("ENTER THE NUMBER GIT LOG LINES TO SHOW: ", (numLines) => {
 
-				if (error) {
-					console.error(`Error: ${error.message}`);
-					return;
-				}
-				if (stderr) {
-					console.error(`stderr: ${stderr}`);
-					return;
-				}
+				// Run the git log command using the entered number of lines
+				exec(`git log --oneline -n ${numLines}`, (error, stdout, stderr) => {
 
-				// console.log(`Git log (${numLines} lines):\n${stdout}`);
-				console.log(`Git log (${numLines} lines):\n}`);
+					if (error) {
+						console.error(`Error: ${error.message}`);
+						return;
+					}
+					if (stderr) {
+						console.error(`stderr: ${stderr}`);
+						return;
+					}
 
-        // Promit the user to push commit to remote origin or not
-        rl.question(`PUSH COMMIT TO REMOTE ORIGIN? (YES | Y or NO | N)`, (response) => {
-  
-          // User chooses to commit to remote origin
-          if (response.toLowerCase === "y") {
-  
-            exec(`git push origin master`, (error, stdout, stderr) => {
-              if (error) {
-                console.error(`Error: ${error.message}`);
-                return;
-              }
-              if (stderr) {
-                console.error(`stderr: ${stderr}`);
-                return;
-              }
-            });
-          }
-          // Close the readline interface
-          rl.close();
-        });
+					// console.log(`Git log (${numLines} lines):\n${stdout}`);
+					console.log(`Git log (${numLines} lines):\n}`);
+				});
+
+				// Close the readline interface
+				rl.close();
 			});
 		});
 	});
