@@ -1,5 +1,5 @@
 `use strict`
-const catchAsync = require("./../utils/catch-async");
+const catchAsync = require("../middlewares/catch-async-error.js");
 const ServerError = require("./../utils/app-error");
 const APIFeatures = require("./../utils/api-features");
 

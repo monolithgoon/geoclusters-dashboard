@@ -102,7 +102,7 @@ EXPRESS_SERVER.use(express.urlencoded({ extended: true }));
 // Load the routes
 const viewRouter = require("./routes/view-routes.js");
 const userRouter = require("./routes/user-routes.js");
-const adminBoundsRouter = require("./routes/geojson-routes.js");
+const geojsonRoutes = require("./routes/geojson-routes.js");
 const webhookRouter = require("./routes/webhook-routes.js");
 
 
@@ -116,7 +116,7 @@ const webhookRouter = require("./routes/webhook-routes.js");
 // MOUNT THE ROUTES
 EXPRESS_SERVER.use("/", viewRouter);
 EXPRESS_SERVER.use("/api/v1/users/", userRouter);
-EXPRESS_SERVER.use("/api/v1/geojson/", adminBoundsRouter);
+EXPRESS_SERVER.use("/api/v1/geojson/", geojsonRoutes);
 EXPRESS_SERVER.use("/api/v1/webhook/", webhookRouter);
 
 

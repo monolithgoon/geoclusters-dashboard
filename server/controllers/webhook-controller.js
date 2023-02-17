@@ -1,6 +1,6 @@
 `use strict`;
 const cacheAPIData = require(`../workers/cache-api-data.js`);
-const catchAsync = require('../utils/catch-async.js');
+const catchAsync = require("../middlewares/catch-async-error.js");
 
 exports.cacheNewData = catchAsync((async(req, res, next) => {
    await cacheAPIData();

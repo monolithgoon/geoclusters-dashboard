@@ -4,17 +4,18 @@ const fs = require('fs');
 const fsPromises = require('fs').promises;
 const path = require('path');
 const CACHED_FILE_NAMES = require("../constants/cached-file-names.js");
+const LOCAL_FILE_NAMES = require("../constants/local-file-names.js");
 const NGA_GEO_POL_REGIONS = require("../constants/nga-geo-pol-regions.js");
-const catchAsync = require('../utils/catch-async.js');
+const catchAsync = require('../middlewares/catch-async-error.js');
 const chalk = require("../utils/chalk-messages.js");
-const { _formatNumByThousand } = require("../utils/helpers.js");
+const { _formatNumByThousand, _combineObjArrays, _catchAsyncError } = require("../utils/helpers.js");
 
 
 const parseString = async str => {
    try {
       return JSON.parse(str);
    } catch (parseStringErr) {
-      console.error(`parseStringErr: ${parseStringErr.message}`);
+      console.error(chalk.fail(`parseStringErr: ${parseStringErr.message}`));
    };
 };
 
@@ -58,7 +59,7 @@ const ProcessFiles = ((root) => {
       
       initBaseFiles: async () => {
          try {            
-            // START BLANK GEOJSON FILES THAT (WILL) EVENTUALLY HOLD THE MERGED DIR. FILES
+            // START BLANK GEOJSON FILES THAT (WILL) EVENTUALLY HOLD MERGED GEOJSON FILES
             fs.writeFile(path.resolve(`${__approotdir}/localdata/nga-lvl1-admin-bounds.geojson`), ``, () => console.log(chalk.warningBright(`Base nga-ward-bounds.geojson file created`)));
             fs.writeFile(path.resolve(`${__approotdir}/localdata/nga-lvl2-admin-bounds.geojson`), ``, () => console.log(chalk.warningBright(`Base nga-ward-bounds.geojson file created`)));
             fs.writeFile(path.resolve(`${__approotdir}/localdata/nga-lvl3-admin-bounds.geojson`), ``, () => console.log(chalk.warningBright(`Base nga-ward-bounds.geojson file created`)));
@@ -67,67 +68,144 @@ const ProcessFiles = ((root) => {
          };   
       },
 
-      // READ ALL THE GEOJSON FILES IN A DIR
-      // FILTER OUT THOSE THAT NEED TO BE PROCESSED;
-      // USE Promise.all to TIME WHEN ALL ASYNC readFiles HAS COMPLETED
-      scanDirectory: async filesDirectory => {
+			// REMOVE > DEPRECATED FOR loadGeoJSONFilesFromDirectory()
+			/**
+			 * @function loadDirGeojsonFiles
+			 * @description Read all the GeoJSON files in a directory and load their contents into an array
+			 * USE Promise.all to to time when all the async readFiles HAS COMPLETED
+			 * Tt is more performant to work with an array of geojson files split from one large file
+			 * @param {string} filesDirectory - The path of the directory containing the GeoJSON files
+			 * @returns {Promise} A Promise that resolves to an array of the contents of the GeoJSON files in the directory
+			 */
+			loadDirGeojsonFiles: async filesDirectory => {
 
-         console.log(chalk.working(`READING GEOJSON FILE(S) DATA in ${filesDirectory}`));
+				console.log(chalk.working(`READING GEOJSON FILE(S) DATA in ${filesDirectory}`));
 
-         return fs.readdirAsync(path.resolve(`${root}/${filesDirectory}`))
+				// Get an array of all the file names in the directory
+				return fs.readdirAsync(path.resolve(`${root}/${filesDirectory}`))
 
-            .then(gjFileNames => {
-               gjFileNames = gjFileNames.filter(isGeoJSONFile);
-               gjFileNames.forEach(gjFileName => console.log({gjFileName}));
-               // console.log(chalk.consoleB(JSON.stringify({gjFileNames})));
-               return Promise.all(gjFileNames.map(gjFileName => {
-                  return getFileData(gjFileName, filesDirectory);
-               }))
-            })
+					// Filter out any files that are not GeoJSON files
+					.then(gjFileNames => {
 
-            .then(gjFiles => {
+							gjFileNames = gjFileNames.filter(isGeoJSONFile);
 
-               gjFiles.forEach(gjFile => {
-                  // console.log({gjFile});
-                  console.log(chalk.working(`[ parsing file buffer ]`))
-                  const geojson_file = JSON.parse(gjFile);
-                  COMBINED_FILES_ARR.push(geojson_file);
-               });
-               
-               console.log(chalk.success(`Finished combining all the files`));
-               
-               return COMBINED_FILES_ARR;
-            })
+							gjFileNames.forEach(gjFileName => console.log({gjFileName}));
+							// console.log(chalk.consoleB(JSON.stringify({gjFileNames})));
+							// Read the contents of each GeoJSON file in parallel
+							return Promise.all(gjFileNames.map(gjFileName => {
+								return getFileData(gjFileName, filesDirectory);
+							}))
+					})
 
-            .catch(err => console.error(err));
-      },
+					// Combine the contents of all the GeoJSON files into a single array
+					.then(gjFiles => {
 
+							gjFiles.forEach(gjFile => {
+								console.log(chalk.working(`[ parsing file buffer ]`))
+								const geojson_file = JSON.parse(gjFile);
+								COMBINED_FILES_ARR.push(geojson_file);
+							});
+							
+							console.log(chalk.success(`Finished combining all the files`));
+							
+							return COMBINED_FILES_ARR;
+					})
+
+					// Handle any errors that occur while reading the files
+					.catch(err => {
+							console.error(err);
+							return [];
+					})
+			},
+
+			/**
+			 * @function loadGeoJSONFilesFromDirectory
+			 * @description Reads all the GeoJSON files in a directory and loads their contents into an array
+			 * Some of the GeoJSON this app needs have been split into separate files
+			 * It is more performant to work with an array of geojson files that have been split from one large file
+			 * @param {string} filesDirectory - The path of the directory containing the GeoJSON files
+			 * @returns {Promise} A Promise that resolves to an array of the contents of the GeoJSON files in the directory
+			 */
+			loadGeoJSONFilesFromDirectory: async (filesDirectory) => {
+
+				console.log(chalk.working(`Reading GeoJSON file(s) data in ${filesDirectory}`));
+
+				try {
+
+					// Get an array of all the file names in the directory
+					const fileNames = await fs.readdirAsync(path.join(root, filesDirectory));
+
+					// Filter out any files that are not GeoJSON files and parse each GeoJSON file in parallel
+					const geojsonFiles = fileNames.filter(isGeoJSONFile).map(async (fileName) => {
+						const fileData = await getFileData(fileName, filesDirectory);
+						console.log(chalk.consoleY(`Parsing file - ${fileName}`))
+						return JSON.parse(fileData);
+					});
+
+					// Wait for all the parsed GeoJSON files to be resolved and return them as an array
+					const combinedFiles = await Promise.all(geojsonFiles);
+
+					console.log(chalk.success(`Finished combining all the files`));
+					return combinedFiles;
+
+				} catch (err) {
+					// Handle any errors that occur while reading the files
+					console.error(err);
+					return [];
+				}
+			},
+ 
+			// REMOVE > DEPRECATED BELOW
+      // returnLocalFiles: async (fileNamesArr) => {
+      //    for (let fileName of fileNamesArr) {
+      //       let fileData = await fsPromises.readFile(path.resolve(`${__approotdir}/${LOCAL_FILE_NAMES.BASE_DIRECTORY}/${fileName}`), `utf8`, (readFileErr, fileBuffer) => {
+      //          if (readFileErr) throw readFileErr;
+      //          console.log(chalk.result(`FILE READ OK - ${fileName}`));
+      //          resolve(fileBuffer);
+      //       });
+      //       if (!fileData) null;
+      //       return fileData;
+      //    };
+      // },
+			
+			/**
+			 * @function returnLocalFiles
+			 * @description Reads the contents of an array of files from the local filesystem
+			 * @param {string[]} fileNamesArr - An array of file names to read
+			 * @returns {Promise} A Promise that resolves to an array of file contents
+			 */
+			returnLocalFiles: _catchAsyncError(async (fileNamesArr) => {
+				// Create an empty array to store the file contents
+				const fileContents = [];
+
+				// Loop through each file name in the array and read its contents
+				for (let fileName of fileNamesArr) {
+					const fileData = await fsPromises.readFile(path.resolve(`${__approotdi}/${LOCAL_FILE_NAMES.BASE_DIRECTORY}/${fileName}`), `utf8`);
+					console.log(chalk.result(`FILE READ OK - ${fileName}`));
+					fileContents.push(fileData);
+				}
+
+				return fileContents;
+				
+			}, `returnLocalFiles`),
+
+			// REMOVE > UNNECESSARY > REPLACE returnDirectoryFiles WITH loadGeoJSONFilesFromDirectory
       returnDirectoryFiles: async filesDirectory => {
-         const ngaAdmiinBoundsLvl3Files = await ProcessFiles.scanDirectory(filesDirectory);
-         return ngaAdmiinBoundsLvl3Files;
+         const directoryFiles = await ProcessFiles.loadGeoJSONFilesFromDirectory(filesDirectory);
+         return directoryFiles;
       },
 
       getCombinedDirFiles: async filesDirectory => {
          // TODO
       },
 
-      retreiveFilesData: async fileNamesArr => {
-         for (let fileName of fileNamesArr) {
-            let fileData = await fsPromises.readFile(path.resolve(`${__approotdir}/localdata/${fileName}`), `utf8`, (readFileErr, fileBuffer) => {
-               if (readFileErr) throw readFileErr;
-               console.log(chalk.result(`FILE READ OK - ${fileName}`));
-               resolve(fileBuffer);
-            });
-            return fileData;
-         };
-      },      
 
       /*
          This fn. creates a GeoJSON Feature Collection of 6 geographical and political regions in Nigeria. 
          Each Feature represents a geo. pol. region. It does this by combining the GeoJSON of each state of that pol. region
 
          The function performs the following operations:
-         1. Retrieves the contents of a GeoJSON file `nga-state-admin-bounds.geojson` using the `retreiveFilesData` method from the `ProcessFiles` module.
+         1. Retrieves the contents of a GeoJSON file `nga-state-admin-bounds.geojson` using the `returnLocalFiles` method from the `ProcessFiles` module.
          2. Parses the retrieved data into a GeoJSON Feature Collection using the `parseString` method.
          3. Iterates over the properties of the `NGA_GEO_POL_REGIONS` object and performs the following operations for each region:
             a. Filters the features of the `ngaAdmiinBoundsLvl1FeatColl` Feature Collection to find the ones that correspond to the states in the region.
@@ -139,7 +217,7 @@ const ProcessFiles = ((root) => {
       getNGAGeoPolRegions: async () => {
 
          // Get a GeoJSON Feat. Collection for all the states in Nigeria
-         const ngaAdmiinBoundsLvl1FeatColl = await parseString(await ProcessFiles.retreiveFilesData([`nga-state-admin-bounds.geojson`]));
+         const ngaAdmiinBoundsLvl1FeatColl = await parseString(await ProcessFiles.returnLocalFiles([`nga-state-admin-bounds.geojson`]));
          
          const geoPolRegionsGJ = {
             "type": "FeatureCollection",                                                                                         
@@ -218,7 +296,7 @@ exports.getAdminBoundsLvl3GeoJSON = catchAsync((async(req, res, next) => {
 
 
 exports.getGeoPolRegionsGeoJSON = catchAsync((async(req, res, next) => {
-   const ngaGeoPolRegionsGJ = await parseString(await ProcessFiles.retreiveFilesData([`nga-geo-pol-regions.geojson`]));
+   const ngaGeoPolRegionsGJ = await parseString(await ProcessFiles.returnLocalFiles([`nga-geo-pol-regions.geojson`]));
    res.status(200).json({
       status: `success`,
       requested_at: req.requestTime,
@@ -227,23 +305,36 @@ exports.getGeoPolRegionsGeoJSON = catchAsync((async(req, res, next) => {
 }), `getGeoPolRegionsErr`);
 
 
-function combineObjArrays(...baseArrays) {
-   const newObjArray = [];
-   const arrays = [...baseArrays];
-   arrays.forEach(array => {
-      if (array) {
-         array.forEach(el => {
-            newObjArray.push(el);
-         });
-      };
-   });
-   // for (const baseArray in baseArrays) {
-   //    for (const obj in baseArray) {
-   //       newObjArray.push(obj);
-   //    };
-   // };
-   return newObjArray;
-};
+exports.getNgaMarketsGeoJSON = catchAsync((async(req, res, next) => {
+   const ngaMarketsGeoJSON = await ProcessFiles.loadGeoJSONFilesFromDirectory(LOCAL_FILE_NAMES.DIRECTORIES.NGA.MARKETS);
+   res.status(200).json({
+      status: `success`,
+      requested_at: req.requestTime,
+      data: ngaMarketsGeoJSON,
+   })
+}), `getNgaMarketsErr`)
+
+
+exports.getNgaWaterwaysGeoJSON = catchAsync((async(req, res, next) => {
+   const ngaWaterwaysGeoJSON = await ProcessFiles.returnDirectoryFiles(LOCAL_FILE_NAMES.DIRECTORIES.NGA.WATERWAYS);
+   res.status(200).json({
+      status: `success`,
+      requested_at: req.requestTime,
+      data: ngaWaterwaysGeoJSON,
+   })
+}), `getNgaWaterwaysErr`);
+
+
+exports.getWorldCountriesGeoJSON = catchAsync((async(req, res, next) => {
+
+   const worldCountriesGeoJSON = await parseString(await ProcessFiles.returnLocalFiles([LOCAL_FILE_NAMES.FILES.WORLD.COUNTRIES]));
+
+   res.status(200).json({
+      status: `success`,
+      requested_at: req.requestTime,
+      data: worldCountriesGeoJSON,
+   })
+}), `getWorldCountriesErr`);
 
 
 /** 
@@ -252,38 +343,96 @@ function combineObjArrays(...baseArrays) {
  * The files are cached in `server/localdata`
  * The exact file names correspond to the names of the collections in the database
  */
-function retreiveClustersData(cachedFileNames) {
+// function retrieveCachedClustersData(cachedFileNames) {
 
+//    const GEOCLUSTERS_DATA = [];
+
+//    // Loop through the list of cached files and read the data, parse it and push it to the GEOCLUSTERS_DATA array
+//    for (const fileName of cachedFileNames) {
+//       let geoClusterJSON = fs.readFileSync(path.resolve(`${__approotdir}/localdata/${fileName}`), {encoding: 'utf8'});
+//       let geoClusterObj = JSON.parse(geoClusterJSON);
+//       GEOCLUSTERS_DATA.push(geoClusterObj);
+//    };
+      
+//    // Combine the JSON for all the returned clusters into a single object
+//    const returnedClusters = _combineObjArrays(...GEOCLUSTERS_DATA);
+
+//    // Create a summary of the returned clusters
+//    const clustersSummary = {
+//       totalNumClusters: _formatNumByThousand(returnedClusters.length),
+//       totalNumFeatures: (()=>{
+//          let featsCount = 0;
+//          const featsCounts = [];
+//          for (let idx = 0; idx < returnedClusters.length; idx++) {
+//             const cluster = returnedClusters[idx];
+//             featsCounts.push(cluster.features.length);
+//          }
+//          featsCount = _formatNumByThousand(featsCounts.reduce((sum, featCount) => sum + featCount));
+//          return featsCount;
+//       })(),
+//    };
+         
+//    // Return the combined data and the clusters summary
+//    return {returnedClusters, clustersSummary};
+// };
+
+/**
+ * 
+ * @function retrieveCachedClustersData
+ * @description Retrieves geoclusters data from the server's local cache.
+ * @returns {object} Returns an object with two properties:
+ *   - returnedClusters: an array of geocluster objects
+ *   - clustersSummary: an object with a summary of the returned geoclusters, containing the following properties:
+ *       - totalNumClusters: a formatted string representing the total number of clusters returned
+ *       - totalNumFeatures: a formatted string representing the total number of features across all clusters returned
+ */
+function retrieveCachedClustersData(cachedFileNames) {
+
+   // Initialize an array to store geocluster data
    const GEOCLUSTERS_DATA = [];
-
+ 
    // Loop through the list of cached files and read the data, parse it and push it to the GEOCLUSTERS_DATA array
    for (const fileName of cachedFileNames) {
-      let geoClusterJSON = fs.readFileSync(path.resolve(`${__approotdir}/localdata/${fileName}`), {encoding: 'utf8'});
-      let geoClusterObj = JSON.parse(geoClusterJSON);
-      GEOCLUSTERS_DATA.push(geoClusterObj);
-   };
-      
+ 
+     // Get the file path
+     const filePath = path.resolve(`${__approotdir}/localdata/${fileName}`);
+ 
+     // Read the file content and parse the JSON data
+     const geoClusterJSON = fs.readFileSync(filePath, { encoding: 'utf8' });
+     const geoClusterObj = JSON.parse(geoClusterJSON);
+ 
+     // Push the parsed data to the array
+     GEOCLUSTERS_DATA.push(geoClusterObj);
+   }
+ 
+   // TODO -> SPLIT INTO SEPARATE FN.
    // Combine the JSON for all the returned clusters into a single object
-   const returnedClusters = combineObjArrays(...GEOCLUSTERS_DATA);
-
-   // Create a summary of the returned clusters
+   const returnedClusters = _combineObjArrays(...GEOCLUSTERS_DATA);
+ 
+   // TODO -> SPLIT INTO SEPARATE FN.
+   // Calculate a summary of the returned clusters
    const clustersSummary = {
-      totalNumClusters: _formatNumByThousand(returnedClusters.length),
-      totalNumFeatures: (()=>{
-         let featsCount = 0;
-         const featsCounts = [];
-         for (let idx = 0; idx < returnedClusters.length; idx++) {
-            const cluster = returnedClusters[idx];
-            featsCounts.push(cluster.features.length);
-         }
-         featsCount = _formatNumByThousand(featsCounts.reduce((sum, featCount) => sum + featCount));
-         return featsCount;
-      })(),
+     // Format the number of clusters as a string with commas
+     totalNumClusters: _formatNumByThousand(returnedClusters.length),
+     // Calculate the total number of features and format the result as a string with commas
+     totalNumFeatures: (() => {
+       // Initialize a variable to keep track of the total number of features
+       let total = 0;
+ 
+       // Loop through each cluster and add the number of features to the total
+       for (const cluster of returnedClusters) {
+         total += cluster.features.length;
+       }
+ 
+       // Format the total number of features as a string with commas and return the result
+       return _formatNumByThousand(total);
+     })(),
    };
-         
-   // Return the combined data and the clusters summary
-   return {returnedClusters, clustersSummary};
-};
+ 
+   // Return the combined data and the clusters summary as an object
+   return { returnedClusters, clustersSummary };
+ }
+ 
 
 
 /**
@@ -296,9 +445,9 @@ function retreiveClustersData(cachedFileNames) {
  * @throws {Error} If an error occurs while retrieving the cluster summary data.
  */
 exports.getClustersSummary = catchAsync(async (req, res, next) => {
-   
+
    // Retrieve the geocluster data and clusters summary from this server's localdata cache
-   const { clustersSummary } = retreiveClustersData(CACHED_FILE_NAMES);
+   const { clustersSummary } = retrieveCachedClustersData(CACHED_FILE_NAMES);
  
    // Store the clusters summary in the application's locals object
    req.app.locals.clustersSummary = clustersSummary;
@@ -307,7 +456,6 @@ exports.getClustersSummary = catchAsync(async (req, res, next) => {
    next();
  }, `getClustersSummaryErr`);
  
-
 
 /**
  * @function getCachedGeoClustersData
@@ -321,7 +469,7 @@ exports.getClustersSummary = catchAsync(async (req, res, next) => {
 exports.getCachedGeoClustersData = catchAsync(async (req, res, next) => {
 
    // Retrieve the geocluster data and clusters summary from this server's localdata cache
-   const { returnedClusters, clustersSummary } = retreiveClustersData(CACHED_FILE_NAMES);
+   const { returnedClusters, clustersSummary } = retrieveCachedClustersData(CACHED_FILE_NAMES);
  
    // Store the geocluster data and clusters summary in the application's locals object
    req.app.locals.returnedClusters = returnedClusters;

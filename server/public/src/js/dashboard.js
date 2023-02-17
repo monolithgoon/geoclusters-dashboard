@@ -170,6 +170,7 @@ const InitDashboardApp = (() => {
 				DEFAULT_APP_SETTINGS.ADMIN_BOUNDS_GEOJSON_API_RESOURCE_PATHS;
 
 			for (const adminBoundsResourcePath of adminBoundsAPIResourcePaths) {
+				
 				// Get the resource name by slicing the resource path after the "/nga" string
 				const resourceName = adminBoundsResourcePath.slice(
 					adminBoundsResourcePath.indexOf("/nga") + 1

@@ -1,12 +1,10 @@
 `use strict`
-/** @param {object} featureCollection @returns {object} GeoJSON FeatureCollection*/
 const turf = require('@turf/turf');
 
 
 mandatoryParam = () => {
 	throw new Error(`Parameter is required.`);
 };
-
 
 // function replaceAll(baseStr, subStr, replace) {
 // 	return baseStr.replace(new RegExp(subStr, `g`), replace);
@@ -147,6 +145,40 @@ exports._joinWordsArray = (keywords, {inclQuotes=false, commaSeparated=false}={}
 };
 
 
+/**
+ * 
+ * @function _combineObjArrays
+ * @description A function that combines multiple arrays of objects into a single array.
+ * @param {...Array<Object>} baseArrays - A variable number of arrays containing objects to be combined.
+ * @returns {Array<Object>} An array of objects containing all of the objects from the input arrays.
+ */
+exports._combineObjArrays = (...baseArrays) => {
+
+  // Create a new array to store the combined objects
+  const combinedObjsArray = [];
+
+  // Create a copy of the input arrays so we can modify them without affecting the original arrays
+  const arrays = [...baseArrays];
+
+  // Loop through each array in the arrays array
+  arrays.forEach((array) => {
+    // Check if the array is not null or undefined
+    if (array && array?.length > 0) {
+      // Loop through each element in the array and push it to the combinedObjsArray
+      // MTD. 1
+      array.forEach((el) => {
+        combinedObjsArray.push(el);
+      });
+      // MTD. 2
+      // combinedObjsArray.push(...array);
+    }
+  });
+
+  // Return the combined array of objects
+  return combinedObjsArray;
+}
+
+
 // fix the coords in each feat. and return the featColl.
 repairFeatsCoords = (featureCollection) => {
 
@@ -205,3 +237,21 @@ exports._sanitizeFeatCollCoords = (featureCollection = mandatoryParam()) => {
 	let modFeatureCollection = repairFeatsCoords(featureCollection);
 	return modFeatureCollection ? modFeatureCollection : featureCollection;
 };
+
+/**
+ * Wraps an asynchronous function and catches any errors that occur during its execution.
+ *
+ * @param {Function} fn - The asynchronous function to wrap.
+ * @param {string} fnDescr - A description of the function (optional).
+ * @returns {Function} A new function that catches errors and returns a Promise.
+ */
+exports._catchAsyncError = (fn, fnDescr = null) => {
+  return async function (...params) {
+    try {
+      return await fn(...params);
+    } catch (err) {
+      console.error(`${fnDescr || fn.name} error:`, err.message);
+      throw err;
+    }
+  };
+}

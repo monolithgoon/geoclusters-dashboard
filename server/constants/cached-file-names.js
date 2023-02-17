@@ -12,4 +12,23 @@ const CACHED_FILE_NAMES = [
 	"processed-legacy-agcs.json",
 ];
 
+const LOCAL_FILE_NAMES = {
+	FILES: {
+		GEOCLUSTERS: [
+			"parcelized-agcs.json",
+			// "legacy-agcs.json",
+			"processed-legacy-agcs.json",
+		],
+		GEO_POL_REGIONS: `nga-geo-pol-regions.geojson`,
+	},
+	DIRECTORIES: {
+		ADMIN_BOUNDS: {
+			STATES: `/localdata/nga-state-admin-bounds`,
+			LGAS: `/localdata/nga-lga-admin-bounds`,
+			WARDS: `/localdata/nga-ward-admin-bounds-openAFRICA`,
+		},
+    MARKETS: `/localdata/nga-markets`,
+	},
+};
+
 module.exports = CACHED_FILE_NAMES;

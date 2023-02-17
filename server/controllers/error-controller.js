@@ -49,8 +49,17 @@ const handleJWTExpiredError = () =>
 	new ServerError("Session expired. Please login again.", 401);
 
 
+/**
+ * @function sendErrorDev
+ * @description Sends error response in development environment.
+ * @param {Error} err - Error object
+ * @param {Object} req - Request object
+ * @param {Object} res - Response object
+ * @returns {Object} - Response object
+ */
 const sendErrorDev = (err, req, res) => {
 
+	// If request is for API endpoint, send JSON response
 	if (req.originalUrl.startsWith("/api")) {
 		return res.status(err.statusCode).json({
 			status: err.status,
@@ -60,16 +69,17 @@ const sendErrorDev = (err, req, res) => {
 		});
 	};
 
-	// 1. Log error
+	// Log error
 	console.error(chalk.fail(`ERROR 🥺🥺🥺`, `[ ${err.caller} ]`, err.message));
 
-	// 3. Send error message
+	// Send error message as HTML
 	return res.status(err.statusCode).render("404", {
 		err_status_code: err.statusCode,
 		err_title: "Something went wrong...",
 		err_msg: `[ ${err.message} ]`,
 	});
 };
+
 
 
 const sendErrorProd = (err, req, res) => {
@@ -116,21 +126,63 @@ const sendErrorProd = (err, req, res) => {
 };
 
 
-module.exports = (err, req, res, next) => {
-	err.statusCode = err.statusCode || 500;
-	err.status = err.status || "error";
-	err.caller = err.caller || `💥 This is probably not a server error.`
+// REMOVE > DEPRC. BELOW
+// module.exports = (err, req, res, next) => {
+// 	err.statusCode = err.statusCode || 500;
+// 	err.status = err.status || "error";
+// 	err.caller = err.caller || `💥 This is probably not a server error.`
 
-	if (process.env.NODE_ENV === "development") {
-		sendErrorDev(err, req, res);
-	} else if (process.env.NODE_ENV === "production") {
-		let error = { ...err };
-		error.message = err.message;
-		if (error.name === "CastError") error = handleCastErrorDB(error);
-		if (error.code === 11000) error = handleDuplicateFieldsDB(error);
-		if (error.name === "ValidationError") error = handleValidationErrorDB(error);
-		if (error.name === "JsonWebTokenError") error = handleJWTError(error);
-		if (error.name === "TokenExpiredError") error = handleJWTExpiredError(error);
-		sendErrorProd(error, req, res);
-	};
+// 	if (process.env.NODE_ENV === "development") {
+// 		sendErrorDev(err, req, res);
+// 	} else if (process.env.NODE_ENV === "production") {
+// 		let error = { ...err };
+// 		error.message = err.message;
+// 		if (error.name === "CastError") error = handleCastErrorDB(error);
+// 		if (error.code === 11000) error = handleDuplicateFieldsDB(error);
+// 		if (error.name === "ValidationError") error = handleValidationErrorDB(error);
+// 		if (error.name === "JsonWebTokenError") error = handleJWTError(error);
+// 		if (error.name === "TokenExpiredError") error = handleJWTExpiredError(error);
+// 		sendErrorProd(error, req, res);
+// 	};
+// };
+
+/**
+ * Express middleware for handling errors.
+ * @param {Error} err - Error object
+ * @param {Object} req - Request object
+ * @param {Object} res - Response object
+ * @param {Function} next - Next middleware function
+ */
+module.exports = (err, req, res, next) => {
+  err.statusCode = err.statusCode || 500;
+  err.status = err.status || "error";
+  err.caller = err.caller || `💥 This is probably not a server error.`;
+
+  // Handle errors differently in development and production environments
+  if (process.env.NODE_ENV === "development") {
+
+    sendErrorDev(err, req, res);
+
+  } else if (process.env.NODE_ENV === "production") {
+
+    // Clone the error object to avoid modifying the original
+    let error = { ...err };
+    error.message = err.message;
+
+    // Handle specific error types
+    if (error.name === "CastError") {
+      error = handleCastErrorDB(error);
+    } else if (error.code === 11000) {
+      error = handleDuplicateFieldsDB(error);
+    } else if (error.name === "ValidationError") {
+      error = handleValidationErrorDB(error);
+    } else if (error.name === "JsonWebTokenError") {
+      error = handleJWTError(error);
+    } else if (error.name === "TokenExpiredError") {
+      error = handleJWTExpiredError(error);
+    }
+
+    // Send error response using production error handler
+    sendErrorProd(error, req, res);
+  }
 };
