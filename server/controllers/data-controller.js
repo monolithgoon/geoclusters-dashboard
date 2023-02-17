@@ -128,7 +128,7 @@ const ProcessFiles = ((root) => {
 			 */
 			loadGeoJSONFilesFromDirectory: _catchAsync(async (filesDirectory) => {
 
-				console.log(chalk.working(`Reading GeoJSON file(s) data in ${filesDiectory}`));
+				console.log(chalk.working(`Reading GeoJSON file(s) data in ${filesDirectory}`));
 
 				// try {
 
@@ -336,116 +336,87 @@ exports.getWorldCountriesGeoJSON = catchAsync((async(req, res, next) => {
 }), `getWorldCountriesErr`);
 
 
-/** 
- * This function retreives geoclusters that have been downloaded from the database, 
- * prorcessed, convered to .json, and saved to disk by `server/workers/cache-api-data.js`
- * The files are cached in `server/localdata`
- * The exact file names correspond to the names of the collections in the database
+/**
+ * @function readGeoClusterFile
+ * @description Reads a single geocluster file from the server's local cache and returns its parsed contents.
+ * @param {string} fileName - The name of the file to read.
+ * @returns {object} The parsed contents of the file.
  */
-// function retrieveCachedClustersData(cachedFileNames) {
-
-//    const GEOCLUSTERS_DATA = [];
-
-//    // Loop through the list of cached files and read the data, parse it and push it to the GEOCLUSTERS_DATA array
-//    for (const fileName of cachedFileNames) {
-//       let geoClusterJSON = fs.readFileSync(path.resolve(`${__approotdir}/localdata/${fileName}`), {encoding: 'utf8'});
-//       let geoClusterObj = JSON.parse(geoClusterJSON);
-//       GEOCLUSTERS_DATA.push(geoClusterObj);
-//    };
-      
-//    // Combine the JSON for all the returned clusters into a single object
-//    const returnedClusters = _combineObjArrays(...GEOCLUSTERS_DATA);
-
-//    // Create a summary of the returned clusters
-//    const clustersSummary = {
-//       totalNumClusters: _formatNumByThousand(returnedClusters.length),
-//       totalNumFeatures: (()=>{
-//          let featsCount = 0;
-//          const featsCounts = [];
-//          for (let idx = 0; idx < returnedClusters.length; idx++) {
-//             const cluster = returnedClusters[idx];
-//             featsCounts.push(cluster.features.length);
-//          }
-//          featsCount = _formatNumByThousand(featsCounts.reduce((sum, featCount) => sum + featCount));
-//          return featsCount;
-//       })(),
-//    };
-         
-//    // Return the combined data and the clusters summary
-//    return {returnedClusters, clustersSummary};
-// };
+function readGeoClusterFile(fileName) {
+  // Get the full file path for the given fileName
+  const filePath = path.resolve(`${__approotdir}/localdata/${fileName}`);
+  // Read the contents of the file
+  const geoClusterJSON = fs.readFileSync(filePath, { encoding: 'utf8' });
+  // Parse the JSON data and return the resulting object
+  const geoClusterObj = JSON.parse(geoClusterJSON);
+  return geoClusterObj;
+}
 
 /**
- * 
+ * @function combineGeoClusterData
+ * @description Combines an array of geocluster objects into a single object.
+ * @param {Array<object>} parsedGeoclusters - The array of geocluster objects to combine.
+ * @returns {object} The combined geocluster data.
+ */
+function combineGeoClusterData(parsedGeoclusters) {
+  // Call the helper function to combine the array of objects
+  return _combineObjArrays(...parsedGeoclusters);
+}
+
+/**
+ * @function calculateClustersSummary
+ * @description Calculates a summary of an array of geocluster objects.
+ * @param {Array<object>} parsedGeoclusters - The array of geocluster objects to summarize.
+ * @returns {object} An object with summary information about the geoclusters.
+ */
+function calculateClustersSummary(parsedGeoclusters) {
+  // Format the number of clusters as a string with commas
+  const totalNumClusters = _formatNumByThousand(parsedGeoclusters.length);
+  // Initialize a variable to keep track of the total number of features
+  let totalNumFeatures = 0;
+  // Loop through each cluster and add the number of features to the total
+  for (const cluster of parsedGeoclusters) {
+    totalNumFeatures += cluster.features.length;
+  }
+  // Format the total number of features as a string with commas and return the result
+  totalNumFeatures = _formatNumByThousand(totalNumFeatures);
+  return { totalNumClusters, totalNumFeatures };
+}
+
+/**
  * @function retrieveCachedClustersData
  * @description Retrieves geoclusters data from the server's local cache.
+ * @param {Array<string>} JSONFiles - The names of the cached files to read.
  * @returns {object} Returns an object with two properties:
  *   - returnedClusters: an array of geocluster objects
  *   - clustersSummary: an object with a summary of the returned geoclusters, containing the following properties:
  *       - totalNumClusters: a formatted string representing the total number of clusters returned
  *       - totalNumFeatures: a formatted string representing the total number of features across all clusters returned
  */
-function retrieveCachedClustersData(cachedFileNames) {
-
-	// Initialize an array to store geocluster data
-	const GEOCLUSTERS_DATA = [];
-
-	// Loop through the list of cached files and read the data, parse it and push it to the GEOCLUSTERS_DATA array
-	for (const fileName of cachedFileNames) {
- 
-		// Get the file path
-		const filePath = path.resolve(`${__approotdir}/localdata/${fileName}`);
-
-		// Read the file content and parse the JSON data
-		const geoClusterJSON = fs.readFileSync(filePath, { encoding: 'utf8' });
-		const geoClusterObj = JSON.parse(geoClusterJSON);
-
-		// Push the parsed data to the array
-		GEOCLUSTERS_DATA.push(geoClusterObj);
-	}
- 
-	// TODO -> SPLIT INTO SEPARATE FN.
-	// Combine the JSON for all the returned clusters into a single object
-	const returnedClusters = _combineObjArrays(...GEOCLUSTERS_DATA);
-
-	// TODO -> SPLIT INTO SEPARATE FN.
-	// Calculate a summary of the returned clusters
-	const clustersSummary = {
-		// Format the number of clusters as a string with commas
-		totalNumClusters: _formatNumByThousand(returnedClusters.length),
-		// Calculate the total number of features and format the result as a string with commas
-		totalNumFeatures: (() => {
-			// Initialize a variable to keep track of the total number of features
-			let total = 0;
-
-			// Loop through each cluster and add the number of features to the total
-			for (const cluster of returnedClusters) {
-				total += cluster.features.length;
-			}
-
-			// Format the total number of features as a string with commas and return the result
-			return _formatNumByThousand(total);
-		})(),
-	};
- 
-   // Return the combined data and the clusters summary as an object
-   return { returnedClusters, clustersSummary };
- }
- 
+function retrieveCachedClustersJSON(JSONFiles) {
+  // Read the data from all of the files and store it in an array
+  const parsedGeoclusters = JSONFiles.map(readGeoClusterFile);
+	console.log({parsedGeoclusters})
+  // Combine the data from all of the files into a single object
+  const returnedClusters = combineGeoClusterData(parsedGeoclusters);
+  // Calculate a summary of the data and return it as an object
+  const clustersSummary = calculateClustersSummary(returnedClusters);
+  return { returnedClusters, clustersSummary };
+}
 
 
 /**
- * @function getClustersSummary
+ * @function getCachedClustersSummary
  * @description A function that retrieves geocluster summary data from the server's local cache and stores it in the application's locals object.
  * @param {Request} req - Express request object
  * @param {Response} res - Express response object
  * @param {Function} next - Express next middleware function
  * @throws {Error} If an error occurs while retrieving the cluster summary data.
  */
-exports.getClustersSummary = catchAsync(async (req, res, next) => {
+exports.getCachedClustersSummary = catchAsync(async (req, res, next) => {
 
    // Retrieve the geocluster data and clusters summary from this server's localdata cache
-   const { clustersSummary } = retrieveCachedClustersData(CACHED_FILE_NAMES);
+   const { clustersSummary } = retrieveCachedClustersJSON(LOCAL_FILE_NAMES.FILES.GEOCLUSTERS);
  
    // Store the clusters summary in the application's locals object
    req.app.locals.clustersSummary = clustersSummary;
@@ -456,17 +427,17 @@ exports.getClustersSummary = catchAsync(async (req, res, next) => {
  
 
 /**
- * @function getCachedGeoClustersData
+ * @function getCachedClustersData
  * @description A function that retrieves geocluster data and summary information from the server's local cache and stores it in the application's locals object.
  * @param {Request} req - Express request object
  * @param {Response} res - Express response object
  * @param {Function} next - Express next middleware function
  * @throws {Error} If an error occurs while retrieving the geocluster data and summary information.
  */
-exports.getCachedGeoClustersData = catchAsync(async (req, res, next) => {
+exports.getCachedClustersData = catchAsync(async (req, res, next) => {
 
    // Retrieve the geocluster data and clusters summary from this server's localdata cache
-   const { returnedClusters, clustersSummary } = retrieveCachedClustersData(CACHED_FILE_NAMES);
+   const { returnedClusters, clustersSummary } = retrieveCachedClustersJSON(LOCAL_FILE_NAMES.FILES.GEOCLUSTERS);
  
    // Store the geocluster data and clusters summary in the application's locals object
    req.app.locals.returnedClusters = returnedClusters;

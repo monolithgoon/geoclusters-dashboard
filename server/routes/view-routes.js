@@ -6,12 +6,12 @@ const dataController = require("../controllers/data-controller.js");
 const authController = require("../controllers/auth-controller.js");
 
 router.get("/", 
-	dataController.getClustersSummary,
+	dataController.getCachedClustersSummary,
 	viewsController.renderLandingPage
 );
 
 router.get("/landing",
-	dataController.getClustersSummary,
+	dataController.getCachedClustersSummary,
 	viewsController.renderLandingPage
 	);
 	
@@ -22,7 +22,7 @@ router.get("/landing",
 	.get(
 		authController.protectRoute,
 		authController.restrictTo(`manager`, `admin`),
-		dataController.getCachedGeoClustersData,
+		dataController.getCachedClustersData,
 		viewsController.renderAVGDashboard
 	);
 
