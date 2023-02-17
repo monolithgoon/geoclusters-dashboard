@@ -9,6 +9,7 @@ const rl = readline.createInterface({
 
 // Prompt the user for a commit message
 rl.question('Enter a commit message: ', (message) => {
+
   // Run the git add and commit commands using the entered message
   exec(`git add -A && git commit -m "${message}"`, (error, stdout, stderr) => {
     if (error) {
@@ -19,12 +20,13 @@ rl.question('Enter a commit message: ', (message) => {
       console.error(`stderr: ${stderr}`);
       return;
     }
-    console.log(`stdout: ${stdout}`);
+    // console.log(`stdout: ${stdout}`);
 
     // Prompt the user for the number of log lines to show
     rl.question('Enter the number of log lines to show: ', (numLines) => {
+
       // Run the git log command using the entered number of lines
-      exec(`git log --oneline -n ${numLines}`, (error, stdout, stderr) => {
+      exec(`git log --oneline -${numLines}`, (error, stdout, stderr) => {
         if (error) {
           console.error(`Error: ${error.message}`);
           return;
@@ -33,7 +35,8 @@ rl.question('Enter a commit message: ', (message) => {
           console.error(`stderr: ${stderr}`);
           return;
         }
-        console.log(`Git log (${numLines} lines):\n${stdout}`);
+        // console.log(`Git log (${numLines} lines):\n${stdout}`);
+        console.log(`Git log (${numLines} lines):\n}`);
       });
 
       // Close the readline interface
