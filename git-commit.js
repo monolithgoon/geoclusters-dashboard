@@ -12,7 +12,7 @@ rl.question("ENTER A COMMIT MESSAGE: ", (message) => {
 
 	// Run the git add and commit commands using the entered message
 	exec(`git add -A && git commit -m "${message}"`, (error, stdout, stderr) => {
-    
+
 		if (error) {
 			console.error(`Error: ${error.message}`);
 			return;
@@ -24,7 +24,7 @@ rl.question("ENTER A COMMIT MESSAGE: ", (message) => {
 		// console.log(`stdout: ${stdout}`);
 
 		// Promit the user to push commit to remote origin or not
-		rl.question(`PUSH COMMIT TO REMOTE ORIGIN? (YES | Y or NO | N)`, (response) => {
+		rl.question(`PUSH COMMIT TO REMOTE ORIGIN? (YES | Y or NO | N): `, (response) => {
 			// User chooses to commit to remote origin
 			if (response.toLowerCase === "y") {
 				exec(`git push origin master`, (error, stdout, stderr) => {
