@@ -245,7 +245,7 @@ exports._sanitizeFeatCollCoords = (featureCollection = mandatoryParam()) => {
  * @param {string} fnDescr - A description of the function (optional).
  * @returns {Function} A new function that catches errors and returns a Promise.
  */
-exports._catchAsyncError = (fn, fnDescr = null) => {
+exports._catchAsync = (fn, fnDescr = null) => {
   return async function (...params) {
     try {
       return await fn(...params);

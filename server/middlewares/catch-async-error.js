@@ -1,7 +1,7 @@
 // REMOVE > DEPRECATED
 // // This function Replaces the try / catch block in an async function
 
-// function catchAsyncError(fn, fnDescr=null) {
+// function catchAsyncServer(fn, fnDescr=null) {
 //    // `fn` is the async function that used to have a try / catch block
 
 //    // RETURN AN ANNONYMOUS FN. THAT EXPRESS IS GOING TO CALL FOR THE PARTICULAR RESOURCE
@@ -21,14 +21,14 @@
 // };
 
 /**
- * @function catchAsyncError
+ * @function catchAsyncServer
  * @description Returns a middleware function that wraps an async function and handles any errors thrown
  * Replaces the try / catch block in an async function
  * @param {Function} fn - The async function to wrap
  * @param {string} [fnDescr] - An optional description of the async function for debugging purposes
  * @returns {Function} A middleware function that wraps the async function and handles any errors
  */
-function catchAsyncError(fn, fnDescr = null) {
+function catchAsyncServer(fn, fnDescr = null) {
 
    return function (request, response, next) {
 
@@ -45,4 +45,4 @@ function catchAsyncError(fn, fnDescr = null) {
    };
  }
  
- module.exports = catchAsyncError;
+ module.exports = catchAsyncServer;

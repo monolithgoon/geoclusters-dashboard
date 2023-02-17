@@ -19,7 +19,7 @@ const LOCAL_FILE_NAMES = {
 			GEO_POL_REGIONS: `nga-geo-pol-regions.geojson`,
 		},
 		WORLD: {
-			COUNTRIES: `world-countries.geojson`,
+			COUNTRIES: `world-bank-world-boundaries-geojson-lowres.geojson`,
 		},
 	},
 	DIRECTORIES: {

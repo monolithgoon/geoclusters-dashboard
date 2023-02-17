@@ -58,6 +58,9 @@ const handleJWTExpiredError = () =>
  */
 const sendErrorDev = (err, req, res) => {
 
+  // Log error
+  console.error(chalk.fail(`ERROR 🥺🥺🥺`, `[ ${err.caller} ]`, err.message));
+
 	// If request is for API endpoint, send JSON response
 	if (req.originalUrl.startsWith("/api")) {
 		return res.status(err.statusCode).json({
@@ -68,8 +71,7 @@ const sendErrorDev = (err, req, res) => {
 		});
 	};
 
-	// Log error
-	console.error(chalk.fail(`ERROR 🥺🥺🥺`, `[ ${err.caller} ]`, err.message));
+  /** Not and /api error */
 
 	// Send error message as HTML
 	return res.status(err.statusCode).render("404", {
