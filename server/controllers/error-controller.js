@@ -1,6 +1,5 @@
 `use strict`
 
-
 // GLOBAL ERR. HANDLER MIDDLEWARE > DERIVES PROPS. FROM ServerError CLASS
 const ServerError = require("../utils/app-error.js");
 const chalk = require("../utils/chalk-messages.js");
@@ -81,48 +80,107 @@ const sendErrorDev = (err, req, res) => {
 };
 
 
+// REMOVE > DEPRC. BELOW
+// const sendErrorProd = (err, req, res) => {
 
+// 	if (req.originalUrl.startsWith("/api")) {
+
+// 		// Operational, trusted error: send message to client
+// 		if (err.isOperational) {
+// 			return res.status(err.statusCode).json({
+// 				status: err.status,
+// 				message: err.message,
+// 			});
+// 		};
+
+// 		// 1) Log error
+// 		console.error("ERROR 🥺", err);
+
+// 		// 2) Send error message
+// 		return res.status(500).json({
+// 			status: "error",
+// 			message: "Something went wrong!",
+// 		});
+// 	};
+
+// 	if (err.isOperational) {
+
+// 		console.log(err);
+// 		return res.status(err.statusCode).render("404", {
+// 			err_status_code: err.statusCode,
+// 			err_title: "Something went wrong!",
+// 			err_msg: err.message,
+// 		});
+// 	};
+
+// 	// 1) Log error
+// 	console.error("ERROR 🥺", err);
+
+// 	// 2) Send error message
+// 	return res.status(err.statusCode).render("404", {
+// 		err_status_code: err.statusCode,
+// 		err_title: "Something went wrong...",
+// 		err_msg: "Please try again later.",
+// 	});
+// };
+
+/**
+ * @funciton sendErrProd
+ * @description
+ * Sends production error response to client or render error page for server-side rendering.
+ * @param {Error} err - Error object
+ * @param {Object} req - Request object
+ * @param {Object} res - Response object
+ */
 const sendErrorProd = (err, req, res) => {
 
-	if (req.originalUrl.startsWith("/api")) {3
+  // Check if the request is for an API endpoint
+  if (req.originalUrl.startsWith("/api")) {
 
-		// Operational, trusted error: send message to client
-		if (err.isOperational) {
-			return res.status(err.statusCode).json({
-				status: err.status,
-				message: err.message,
-			});
-		};
+    // Send the error response to the client if it's an operational, trusted error
+    if (err.isOperational) {
+      return res.status(err.statusCode).json({
+        status: err.status,
+        message: err.message,
+      });
+    }
 
-		// 1) Log error
-		console.error("ERROR 🥺", err);
+    // Log the error
+    console.error("ERROR 🥺", err);
+		
+    // Send a generic error response to the client if it's not an operational error
+    return res.status(500).json({
+      status: "error",
+      message: "Something went wrong!",
+    });
+  }
 
-		// 2) Send error message
-		return res.status(500).json({
-			status: "error",
-			message: "Something went wrong!",
-		});
-	};
+	/** Not an /api error */
 
-	if (err.isOperational) {
+  // Render an error page for server-side rendering if it's an operational error
+  if (err.isOperational) {
+		
+    // Log the error
+    console.error("ERROR 🥺", err);
 
-		console.log(err);
-		return res.status(err.statusCode).render("404", {
-			err_status_code: err.statusCode,
-			err_title: "Something went wrong!",
-			err_msg: err.message,
-		});
-	};
+    return res.status(err.statusCode).render("404", {
+      err_status_code: err.statusCode,
+      err_title: "Something went wrong!",
+      err_msg: err.message,
+    });
+  }
 
-	// 1) Log error
-	console.error("ERROR 🥺", err);
+	/** Not an /api or operational error */
 
-	// 2) Send error message
-	return res.status(err.statusCode).render("404", {
-		err_status_code: err.statusCode,
-		err_title: "Something went wrong...",
-		err_msg: "Please try again later.",
-	});
+  // Log the error
+  console.error("ERROR 🥺", err);
+
+  // Render a generic error page for server-side rendering if it's not an operational error
+  return res.status(err.statusCode).render("404", {
+    err_status_code: err.statusCode,
+    err_title: "Something went wrong...",
+    err_msg: "Please try again later.",
+  });
 };
 
 
@@ -147,7 +205,7 @@ const sendErrorProd = (err, req, res) => {
 // };
 
 /**
- * Express middleware for handling errors.
+ * @description Express middleware for handling errors.
  * @param {Error} err - Error object
  * @param {Object} req - Request object
  * @param {Object} res - Response object
