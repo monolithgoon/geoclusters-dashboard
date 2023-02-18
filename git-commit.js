@@ -53,7 +53,8 @@ async function executeCommands() {
 
     // User chooses to commit to remote origin
     if (response.toLowerCase() === "yes" || response.toLowerCase() === "y") {
-      await execAsync(`git push origin master`, rl)
+      const origin = await execAsync(`git push origin master`, rl)
+      console.log(origin)
     }
 
     // Prompt the user for the num. of log lines to show
