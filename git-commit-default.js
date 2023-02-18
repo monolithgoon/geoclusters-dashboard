@@ -16,10 +16,14 @@ rl.question(chalk.interaction("Enter a commit message:"), (message) => {
 	exec(`git add -A && git commit -m "${message}"`, (error, stdout, stderr) => {
 		if (error) {
 			console.error(`Error: ${error.message}`);
+			// SANDBOX
+			rl.close()
 			return;
 		}
 		if (stderr) {
 			console.error(`stderr: ${stderr}`);
+			// SANDBOX
+			rl.close()
 			return;
 		}
 
@@ -29,7 +33,7 @@ rl.question(chalk.interaction("Enter a commit message:"), (message) => {
 			chalk.interaction(`Push commit to remote origin? (YES | Y or NO | N):`),
 			(response) => {
 				// User chooses to commit to remote origin
-				if (response.toLowerCase === "yes" || response.toLowerCase === "y") {
+				if (response.toLowerCase() === "yes" || response.toLowerCase() === "y") {
 					exec(`git push origin master`, (error, stdout, stderr) => {
 						if (error) {
 							console.error(`Error: ${error.message}`);
