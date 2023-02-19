@@ -52,14 +52,21 @@ async function askCommitPrompt(prompt, rl, promptFlag) {
 					console.log(chalk.consoleYlow("Commit type must be at least 2 characters long"));
 					promptResponse = await askCommitPrompt(prompt, rl, promptFlag);
 				}
-				if (!["test", "feat", "refactor", "style", "fix", "chore", "docs", "perf", "ci", "revert"].includes(promptResponse.toLowerCase())) {
-					console.log(
-						chalk.consoleYlow(`Invalid input. Please enter one of:`)
-						);
-					console.log(COMMIT_TYPES);
-					promptResponse = await askCommitPrompt(prompt, rl, promptFlag);
+				if (typeof promptResponse === "string") {
+					if (!Object.values(COMMIT_TYPES).includes(promptResponse.toUpperCase())) {
+						console.log(chalk.consoleYlow(`Invalid input. Please enter a correct type:`));
+						console.log(COMMIT_TYPES);
+						promptResponse = await askCommitPrompt(prompt, rl, promptFlag);
+					}
+					break;
 				}
-				break;
+				if (typeof promptResponse === "number") {
+					if (!Object.keys(COMMIT_TYPES).includes(promptResponse.toUpperCase())) {
+						console.log(chalk.consoleYlow(`Invalid input. Please select a number:`));
+						console.log(COMMIT_TYPES);
+						promptResponse = await askCommitPrompt(prompt, rl, promptFlag);
+					}
+				}
 			case "DOMAIN":
 				if (promptResponse.length < 3) {
 					console.log(chalk.consoleYlow("Commit domain must be at least 3 characters long"));
@@ -81,7 +88,9 @@ async function askCommitPrompt(prompt, rl, promptFlag) {
 			case "CHANGE":
 				if (!["TYPE", "DOMAIN", "MESSAGE", "NONE"].includes(promptResponse.toUpperCase())) {
 					console.log(
-						chalk.consoleYlow("Invalid input. Please enter 'TYPE', 'DOMAIN', 'MESSAGE' or 'NONE'")
+						chalk.consoleYlow(
+							"Invalid input. Please enter 'TYPE', 'DOMAIN', 'MESSAGE' or 'NONE'"
+						)
 					);
 					promptResponse = await askCommitPrompt(prompt, rl, promptFlag);
 				}
@@ -99,15 +108,23 @@ async function askCommitPrompt(prompt, rl, promptFlag) {
 	return promptResponse;
 }
 
-async function executeCommands() {
-
-	// Create a readline interface to prompt the user for a commit message and number of log lines
+/**
+ * @description Prompts the user for a commit message and number of log lines, then
+ * executes a git commit and push to origin.
+ * @function executeCommitPrompts
+ */
+async function executeCommitPrompts() {
+	// Create a readline interface to prompt the user for input
 	const rl = readline.createInterface({
 		input: process.stdin,
 		output: process.stdout,
 	});
 
+	console.log(chalk.consoleYlow(`Valid commit types:`));
+	console.log(COMMIT_TYPES);
+
 	try {
+		// Declare variables to store commit information
 		let commitType,
 			commitDomain,
 			commitMsg,
@@ -117,53 +134,58 @@ async function executeCommands() {
 			commitResponse,
 			okCommitOrigin;
 
+		// Prompt the user for commit information until they confirm their message
 		while (true) {
-
+			// Check if the user has requested to change a specific part of the commit message
 			switch (commitAmendChoice?.toUpperCase()) {
-
 				case "TYPE":
 					commitType = await askCommitPrompt("Enter a commit TYPE:", rl, "TYPE");
 					break;
+
 				case "DOMAIN":
 					commitDomain = await askCommitPrompt("Enter a commit DOMAIN:", rl, "DOMAIN");
 					break;
+
 				case "MESSAGE":
 					commitMsg = await askCommitPrompt("Enter a commit MESSAGE:", rl, "MESSAGE");
 					break;
+
 				case "NONE":
 					break;
+
 				default:
+					// Prompt the user for the full commit message if no amendment is requested
 					commitType = await askCommitPrompt("Enter a commit TYPE:", rl, "TYPE");
-
 					commitDomain = await askCommitPrompt("Enter a commit DOMAIN:", rl, "DOMAIN");
-
 					commitMsg = await askCommitPrompt("Enter a commit MESSAGE:", rl, "MESSAGE");
-
 					console.log({ completeCommitMsg });
-					
 					break;
 			}
 
+			// Combine the commit information into a single message
 			completeCommitMsg = `${commitType.toUpperCase()} (${commitDomain}): ${commitMsg}"`;
 
 			console.log({ completeCommitMsg });
 
-			commitConfirm = await askCommitPrompt("Confirm commit message? ( Y / N )", rl, "CONFIRM");
+			// Confirm the commit message with the user
+			commitConfirm = await askCommitPrompt("Confirm commit message is OK? ( Y / N )", rl, "CONFIRM");
 
 			if (["yes", "y"].includes(commitConfirm.toLowerCase())) {
 				break;
 			} else {
+				// If the user doesn't confirm their message, allow them to amend it
 				console.log({ commitType });
 				console.log({ commitDomain });
 				console.log({ commitMsg });
 				commitAmendChoice = await askCommitPrompt(
-					`Select which prompt to change: ( "TYPE", "DOMAIN", "MESSAGE", "NONE")`,
+					`Select which prompt to change ( "TYPE", "DOMAIN", "MESSAGE", "NONE"):`,
 					rl,
 					"CHANGE"
 				);
 			}
 		}
 
+		// Add and commit the changes using the complete commit message
 		commitResponse = await execAsync(`git add -A && git commit -m "${completeCommitMsg}`, rl);
 		console.log({ commitResponse });
 
@@ -180,10 +202,13 @@ async function executeCommands() {
 			console.log({ okCommitOrigin });
 		}
 	} catch (error) {
-		console.error(error);
+		console.error(chalk.fail(error.message));
+		// console.error(error);
 	} finally {
+		// Close the readline interface and exit the process
 		rl.close();
 		process.exit();
 	}
 }
-executeCommands();
+
+executeCommitPrompts();

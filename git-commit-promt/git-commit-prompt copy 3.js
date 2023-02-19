@@ -1,7 +1,7 @@
 `use strict`;
 const { exec } = require("child_process");
 const readline = require("readline");
-const chalk = require("./server/utils/chalk-messages.js");
+const chalk = require("../server/utils/chalk-messages.js");
 
 async function askCommitPrompt(prompt, rl, promptFlag) {
 	return new Promise((resolve, reject) => {

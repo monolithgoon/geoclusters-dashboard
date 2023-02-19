@@ -2,7 +2,7 @@
 const { exec } = require("child_process");
 const inquirer = require("inquirer");
 const readline = require("readline");
-const chalk = require("./server/utils/chalk-messages.js");
+const chalk = require("../server/utils/chalk-messages.js");
 
 const COMMIT_TYPES = Object.freeze({
 	1: "TEST",
