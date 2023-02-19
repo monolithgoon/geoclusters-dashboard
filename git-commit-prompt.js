@@ -1,33 +1,7 @@
 `use strict`;
 const { exec } = require("child_process");
-const inquirer = require("inquirer");
 const readline = require("readline");
 const chalk = require("./server/utils/chalk-messages.js");
-
-// Create a readline interface to prompt the user for a commit message and number of log lines
-const rl = readline.createInterface({
-	input: process.stdin,
-	output: process.stdout,
-});
-
-const COMMIT_TYPES = Object.freeze({
-	1: "TEST",
-	2: "FEAT",
-	3: "REFACTOR",
-	4: "STYLE",
-	5: "FIX",
-	6: "CHORE",
-	7: "DOCS",
-	8: "PERF",
-	9: "CI",
-	10: "REVERT",
-});
-
-// Transform the COMMIT_TYPES object into an array of objects with name and value properties
-const choices = Object.entries(COMMIT_TYPES).map(([value, name]) => ({
-	name, // Name of the option to display in the prompt
-	value, // Value of the option to return when selected
-}));
 
 function execAsync(command, rl) {
 	return new Promise((resolve, reject) => {
@@ -53,67 +27,163 @@ function readlineQuestionAsync(question, rl) {
 	});
 }
 
+const COMMIT_TYPES = Object.freeze({
+	1: "TEST",
+	2: "FEAT",
+	3: "REFACTOR",
+	4: "STYLE",
+	5: "FIX",
+	6: "CHORE",
+	7: "DOCS",
+	8: "PERF",
+	9: "CI",
+	10: "REVERT",
+});
+
+async function askCommitPrompt(prompt, rl, promptFlag) {
+	let promptResponse = await readlineQuestionAsync(`\n${prompt}`, rl);
+	if (typeof promptResponse !== "string" || promptResponse.trim() === "") {
+		console.log(chalk.consoleYlow(`Response must be a non-empty string`));
+		promptResponse = askCommitPrompt(prompt, rl, promptFlag);
+	} else {
+		switch (promptFlag) {
+			case "TYPE":
+				if (promptResponse.length < 2) {
+					console.log(chalk.consoleYlow("Commit type must be at least 2 characters long"));
+					promptResponse = await askCommitPrompt(prompt, rl, promptFlag);
+				}
+				if (!["test", "feat", "refactor", "style", "fix", "chore", "docs", "perf", "ci", "revert"].includes(promptResponse.toLowerCase())) {
+					console.log(
+						chalk.consoleYlow(`Invalid input. Please enter one of:`)
+						);
+					console.log(COMMIT_TYPES);
+					promptResponse = await askCommitPrompt(prompt, rl, promptFlag);
+				}
+				break;
+			case "DOMAIN":
+				if (promptResponse.length < 3) {
+					console.log(chalk.consoleYlow("Commit domain must be at least 3 characters long"));
+					promptResponse = await askCommitPrompt(prompt, rl, promptFlag);
+				}
+				break;
+			case "MESSAGE":
+				if (promptResponse.length < 10) {
+					console.log(chalk.consoleYlow("Commit message must be at least 10 characters long"));
+					promptResponse = await askCommitPrompt(prompt, rl, promptFlag);
+				}
+				break;
+			case "CONFIRM":
+				if (!["yes", "y", "no", "n"].includes(promptResponse.toLowerCase())) {
+					console.log(chalk.consoleYlow("Invalid input. Please enter 'Y' or 'N'"));
+					promptResponse = await askCommitPrompt(prompt, rl, promptFlag);
+				}
+				break;
+			case "CHANGE":
+				if (!["TYPE", "DOMAIN", "MESSAGE", "NONE"].includes(promptResponse.toUpperCase())) {
+					console.log(
+						chalk.consoleYlow("Invalid input. Please enter 'TYPE', 'DOMAIN', 'MESSAGE' or 'NONE'")
+					);
+					promptResponse = await askCommitPrompt(prompt, rl, promptFlag);
+				}
+				break;
+			case "ORIGIN":
+				if (!["yes", "y", "no", "n"].includes(promptResponse.toLowerCase())) {
+					console.log(chalk.consoleYlow("Invalid input. Please enter 'Y' or 'N'"));
+					promptResponse = await askCommitPrompt(prompt, rl, promptFlag);
+				}
+			default:
+				// resolve(answer);
+				break;
+		}
+	}
+	return promptResponse;
+}
+
 async function executeCommands() {
+
+	// Create a readline interface to prompt the user for a commit message and number of log lines
+	const rl = readline.createInterface({
+		input: process.stdin,
+		output: process.stdout,
+	});
+
 	try {
-		// const gitStatus = await execAsync("git status, rl);
-		// console.log(chalk.consoleGy(`\nGit status:\n${status}`));
-		// console.log({ gitStatus });
+		let commitType,
+			commitDomain,
+			commitMsg,
+			completeCommitMsg,
+			commitConfirm,
+			commitAmendChoice,
+			commitResponse,
+			okCommitOrigin;
 
-		// const gitLog = await execAsync("git log --oneline -5", rl);
-		// console.log(chalk.consoleG(`\nGit log:\n${ gitLog }`));
-		// console.log({ gitLog });
+		while (true) {
 
-		const commitType = await readlineQuestionAsync("\nEnter a commit type:", rl);
+			switch (commitAmendChoice?.toUpperCase()) {
 
-		if (!commitType || commitType === "") process.exit(0);
+				case "TYPE":
+					commitType = await askCommitPrompt("Enter a commit TYPE:", rl, "TYPE");
+					break;
+				case "DOMAIN":
+					commitDomain = await askCommitPrompt("Enter a commit DOMAIN:", rl, "DOMAIN");
+					break;
+				case "MESSAGE":
+					commitMsg = await askCommitPrompt("Enter a commit MESSAGE:", rl, "MESSAGE");
+					break;
+				case "NONE":
+					break;
+				default:
+					commitType = await askCommitPrompt("Enter a commit TYPE:", rl, "TYPE");
 
-		const commitDomain = await readlineQuestionAsync("\nEnter a commit domain:", rl);
+					commitDomain = await askCommitPrompt("Enter a commit DOMAIN:", rl, "DOMAIN");
 
-		const commitMSg = await readlineQuestionAsync("\nEnter a commit message:", rl);
+					commitMsg = await askCommitPrompt("Enter a commit MESSAGE:", rl, "MESSAGE");
 
-		const completeCommitMsg = `${commitType.toUpperCase()} (${commitDomain}): ${commitMSg}"`
-		
-		console.log({ completeCommitMsg });
+					console.log({ completeCommitMsg });
+					
+					break;
+			}
 
-		const commitConfirm = await readlineQuestionAsync(
-			"\nConfirm commit message? ( Y / N )",
-			rl
-		);
+			completeCommitMsg = `${commitType.toUpperCase()} (${commitDomain}): ${commitMsg}"`;
 
-		if (!["yes", "y"].includes(commitConfirm.toLowerCase())) process.exit(0);
+			console.log({ completeCommitMsg });
 
-		// const commitedRes = await execAsync(`git add -A && git commit -m "${commitType}: ${commitMSg}"`, rl);
-		const commitedRes = await execAsync(
-			`git add -A && git commit -m "${completeCommitMsg}`,
-			rl
-		);
-		console.log({ commitedRes });
+			commitConfirm = await askCommitPrompt("Confirm commit message? ( Y / N )", rl, "CONFIRM");
 
-		// Prompt user to commit to origin / master
-		const response = await readlineQuestionAsync(
-			`\nPush commit to remote origin? ( Y / N ):`,
-			rl
-		);
-		console.log(response);
-
-		// User chooses to commit to remote origin
-		if (["yes", "y"].includes(response.toLowerCase())) {
-			const origin = await execAsync(`git push origin master`, rl);
-			console.log({ origin });
+			if (["yes", "y"].includes(commitConfirm.toLowerCase())) {
+				break;
+			} else {
+				console.log({ commitType });
+				console.log({ commitDomain });
+				console.log({ commitMsg });
+				commitAmendChoice = await askCommitPrompt(
+					`Select which prompt to change: ( "TYPE", "DOMAIN", "MESSAGE", "NONE")`,
+					rl,
+					"CHANGE"
+				);
+			}
 		}
 
-		// // Prompt the user for the num. of log lines to show
-		// const numLines = await readlineQuestionAsync(`Enter the number of log lines to show:`);
+		commitResponse = await execAsync(`git add -A && git commit -m "${completeCommitMsg}`, rl);
+		console.log({ commitResponse });
 
-		// const newGitLog = await execAsync(`git log --oneline -${numLines}`, rl);
-		// console.log({ newGitLog });
+		// Prompt user to commit to origin / master
+		okCommitOrigin = await askCommitPrompt(
+			"Push commit to remote origin? ( Y / N )",
+			rl,
+			"ORIGIN"
+		);
 
+		// User chooses to commit to remote origin
+		if (["yes", "y"].includes(okCommitOrigin.toLowerCase())) {
+			okCommitOrigin = await execAsync(`git push origin master`, rl);
+			console.log({ okCommitOrigin });
+		}
 	} catch (error) {
 		console.error(error);
 	} finally {
-		// rl.close();
+		rl.close();
 		process.exit();
 	}
 }
-
 executeCommands();

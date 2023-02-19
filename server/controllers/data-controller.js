@@ -3,7 +3,6 @@ const turf = require("@turf/turf");
 const fs = require('fs');
 const fsPromises = require('fs').promises;
 const path = require('path');
-const CACHED_FILE_NAMES = require("../constants/cached-file-names.js");
 const LOCAL_FILE_NAMES = require("../constants/local-file-names.js");
 const NGA_GEO_POL_REGIONS = require("../constants/nga-geo-pol-regions.js");
 const catchAsync = require('../middlewares/catch-async-error.js');
