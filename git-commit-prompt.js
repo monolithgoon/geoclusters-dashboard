@@ -55,27 +55,28 @@ function readlineQuestionAsync(question, rl) {
 
 async function executeCommands() {
 	try {
-		const gitStatus = await execAsync("git status && git log --oneline -5", rl);
+		// const gitStatus = await execAsync("git status, rl);
 		// console.log(chalk.consoleGy(`\nGit status:\n${status}`));
 		// console.log({ gitStatus });
 
-		const gitLog = await execAsync("git log --oneline -5", rl);
-		console.log(chalk.consoleG(`\nGit log:\n${ gitLog }`));
+		// const gitLog = await execAsync("git log --oneline -5", rl);
+		// console.log(chalk.consoleG(`\nGit log:\n${ gitLog }`));
 		// console.log({ gitLog });
 
-		const commitType = await readlineQuestionAsync("Enter a commit type:", rl);
+		const commitType = await readlineQuestionAsync("\nEnter a commit type:", rl);
 
-		const commitDomain = await readlineQuestionAsync("Enter a commit domain:", rl);
-		console.log({ commitDomain });
+		if (!commitType || commitType === "") process.exit(0);
 
-		const commitMSg = await readlineQuestionAsync("Enter a commit message:", rl);
+		const commitDomain = await readlineQuestionAsync("\nEnter a commit domain:", rl);
+
+		const commitMSg = await readlineQuestionAsync("\nEnter a commit message:", rl);
 
 		const completeCommitMsg = `${commitType.toUpperCase()} (${commitDomain}): ${commitMSg}"`
 		
 		console.log({ completeCommitMsg });
 
 		const commitConfirm = await readlineQuestionAsync(
-			"Confirm commit message? ( YES | Y or NO | N )",
+			"\nConfirm commit message? ( Y / N )",
 			rl
 		);
 
@@ -90,7 +91,7 @@ async function executeCommands() {
 
 		// Prompt user to commit to origin / master
 		const response = await readlineQuestionAsync(
-			`Push commit to remote origin? ( YES | Y or NO | N ):`,
+			`\nPush commit to remote origin? ( Y / N ):`,
 			rl
 		);
 		console.log(response);
@@ -101,11 +102,12 @@ async function executeCommands() {
 			console.log({ origin });
 		}
 
-		// Prompt the user for the num. of log lines to show
-		const numLines = await readlineQuestionAsync(`Enter the number of log lines to show:`);
+		// // Prompt the user for the num. of log lines to show
+		// const numLines = await readlineQuestionAsync(`Enter the number of log lines to show:`);
 
-		const newGitLog = await execAsync(`git log --oneline -${numLines}`, rl);
-		console.log({ newGitLog });
+		// const newGitLog = await execAsync(`git log --oneline -${numLines}`, rl);
+		// console.log({ newGitLog });
+
 	} catch (error) {
 		console.error(error);
 	} finally {
