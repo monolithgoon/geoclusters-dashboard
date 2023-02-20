@@ -41,7 +41,8 @@ const COMMIT_TYPES = Object.freeze({
 });
 
 async function askCommitPrompt(prompt, rl, promptFlag) {
-	let promptResponse = await readlineQuestionAsync(`\n${prompt}`, rl);
+	// let promptResponse = await readlineQuestionAsync(`\n${prompt}`, rl);
+	let promptResponse = await readlineQuestionAsync(`${prompt}`, rl);
 	if (typeof promptResponse !== "string" || promptResponse.trim() === "") {
 		console.log(chalk.consoleYlow(`Response must be a non-empty string`));
 		promptResponse = askCommitPrompt(prompt, rl, promptFlag);
@@ -80,8 +81,8 @@ async function askCommitPrompt(prompt, rl, promptFlag) {
 				}
 				break;
 			case "CONFIRM":
-				if (!["yes", "y", "no", "n"].includes(promptResponse.toLowerCase())) {
-					console.log(chalk.consoleYlow("Invalid input. Please enter 'Y' or 'N'"));
+				if (!["yes", "y", "no", "n", "quit", "end", "close"].includes(promptResponse.toLowerCase())) {
+					console.log(chalk.consoleYlow("Invalid input. Please enter 'Y', 'N', 'END' or 'QUIT'"));
 					promptResponse = await askCommitPrompt(prompt, rl, promptFlag);
 				}
 				break;
@@ -114,8 +115,6 @@ async function askCommitPrompt(prompt, rl, promptFlag) {
  * @function executeCommitPrompts
  */
 async function executeCommitPrompts() {
-
-	console.log(chalk.working("Starting git commit prompts..."))
 	
 	// Create a readline interface to prompt the user for input
 	const rl = readline.createInterface({
@@ -171,10 +170,13 @@ async function executeCommitPrompts() {
 			console.log({ completeCommitMsg });
 
 			// Confirm the commit message with the user
-			commitConfirm = await askCommitPrompt("Confirm commit message is OK? ( Y / N ):", rl, "CONFIRM");
+			commitConfirm = await askCommitPrompt("Confirm commit message is OK? ( Y / N / QUIT):", rl, "CONFIRM");
 
 			if (["yes", "y"].includes(commitConfirm.toLowerCase())) {
 				break;
+			}
+			else if ((["quit", "q", "end"].includes(commitConfirm.toLowerCase()))) {
+				process.exit(0);
 			} else {
 				// If the user doesn't confirm their message, allow them to amend it
 				console.log({ commitType });
@@ -188,7 +190,7 @@ async function executeCommitPrompts() {
 			}
 		}
 
-		console.log(chalk.consoleB("Writing commit .."))
+		console.log(chalk.working("Writing commit .."))
 
 		// Add and commit the changes using the complete commit message
 		commitResponse = await execAsync(`git add -A && git commit -m "${completeCommitMsg}`, rl);
