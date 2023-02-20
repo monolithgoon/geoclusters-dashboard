@@ -21,7 +21,7 @@ function execAsync(command, rl) {
 
 function readlineQuestionAsync(question, rl) {
 	return new Promise((resolve, reject) => {
-		rl.question(chalk.interaction(question) + " ", (answer) => {
+		rl.question(chalk.consoleB(question) + " ", (answer) => {
 			resolve(answer);
 		});
 	});
@@ -114,6 +114,9 @@ async function askCommitPrompt(prompt, rl, promptFlag) {
  * @function executeCommitPrompts
  */
 async function executeCommitPrompts() {
+
+	console.log(chalk.working("Starting git commit prompts..."))
+	
 	// Create a readline interface to prompt the user for input
 	const rl = readline.createInterface({
 		input: process.stdin,
@@ -168,7 +171,7 @@ async function executeCommitPrompts() {
 			console.log({ completeCommitMsg });
 
 			// Confirm the commit message with the user
-			commitConfirm = await askCommitPrompt("Confirm commit message is OK? ( Y / N )", rl, "CONFIRM");
+			commitConfirm = await askCommitPrompt("Confirm commit message is OK? ( Y / N ):", rl, "CONFIRM");
 
 			if (["yes", "y"].includes(commitConfirm.toLowerCase())) {
 				break;
@@ -184,6 +187,8 @@ async function executeCommitPrompts() {
 				);
 			}
 		}
+
+		console.log(chalk.consoleB("Writing commit .."))
 
 		// Add and commit the changes using the complete commit message
 		commitResponse = await execAsync(`git add -A && git commit -m "${completeCommitMsg}`, rl);
