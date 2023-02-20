@@ -40,53 +40,87 @@ const COMMIT_TYPES = Object.freeze({
 	10: "REVERT",
 });
 
+/**
+ * @function askCommitPrompt
+ * @description This function prompts the user for input using the provided prompt message and
+ * validates the response according to the provided prompt flag.
+ *
+ * @param {string} prompt - The message to prompt the user for input
+ * @param {readline.Interface} rl - The readline interface object used for user input
+ * @param {string} promptFlag - A flag indicating the type of prompt to display,
+ *                               either "TYPE", "DOMAIN", "MESSAGE", "CONFIRM",
+ *                               "AMEND", or "ORIGIN"
+ * @returns {Promise<string>} - The validated user input as a string
+ */
 async function askCommitPrompt(prompt, rl, promptFlag) {
-	// let promptResponse = await readlineQuestionAsync(`\n${prompt}`, rl);
+
+	// Prompt the user for input and await the response
 	let promptResponse = await readlineQuestionAsync(`${prompt}`, rl);
+
+	// Validate the user input based on the prompt flag
 	if (typeof promptResponse !== "string" || promptResponse.trim() === "") {
+
 		console.log(chalk.consoleYlow(`Response must be a non-empty string`));
+
+		// Recursively call the function until a valid input is received
 		promptResponse = askCommitPrompt(prompt, rl, promptFlag);
+
 	} else {
+
 		switch (promptFlag) {
+
 			case "TYPE":
+
+				// Check if the input is at least 2 characters long
 				if (promptResponse.length < 2) {
 					console.log(chalk.consoleYlow("Commit type must be at least 2 characters long"));
 					promptResponse = await askCommitPrompt(prompt, rl, promptFlag);
 				}
-				if (typeof promptResponse === "string") {
+
+				// Check if the input is a valid commit type
 					if (!Object.values(COMMIT_TYPES).includes(promptResponse.toUpperCase())) {
 						console.log(chalk.consoleYlow(`Invalid input. Please enter a correct type:`));
 						console.log(COMMIT_TYPES);
 						promptResponse = await askCommitPrompt(prompt, rl, promptFlag);
 					}
 					break;
-				}
-				if (typeof promptResponse === "number") {
-					if (!Object.keys(COMMIT_TYPES).includes(promptResponse.toUpperCase())) {
-						console.log(chalk.consoleYlow(`Invalid input. Please select a number:`));
-						console.log(COMMIT_TYPES);
-						promptResponse = await askCommitPrompt(prompt, rl, promptFlag);
-					}
-				}
+
 			case "DOMAIN":
+
+				// Check if the input is at least 3 characters long
 				if (promptResponse.length < 3) {
 					console.log(chalk.consoleYlow("Commit domain must be at least 3 characters long"));
 					promptResponse = await askCommitPrompt(prompt, rl, promptFlag);
 				}
 				break;
+
 			case "MESSAGE":
+
+				// Check if the input is at least 10 characters long
 				if (promptResponse.length < 10) {
 					console.log(chalk.consoleYlow("Commit message must be at least 10 characters long"));
 					promptResponse = await askCommitPrompt(prompt, rl, promptFlag);
 				}
 				break;
-			case "CONFIRM": 
-				if (!["yes", "y", "no", "n", "quit", "end", "close"].includes(promptResponse.toLowerCase())) {
-					console.log(chalk.consoleYlow("Invalid input. Please enter 'Y', 'N', 'END' or 'QUIT'"));
+
+			case "CONFIRM":
+
+				// Check if the input is a valid confirmation response
+				if (
+					!["yes", "y", "no", "n", "quit", "end", "close"].includes(
+						promptResponse.toLowerCase()
+					)
+				) {
+					console.log(
+						chalk.consoleYlow("Invalid input. Please enter 'Y', 'N', 'END' or 'QUIT'")
+					);
 					promptResponse = await askCommitPrompt(prompt, rl, promptFlag);
 				}
 				break;
-			case "CHANGE":
+
+			case "AMEND":
+
+				// Check if the input is a valid amend type
 				if (!["TYPE", "DOMAIN", "MESSAGE", "NONE"].includes(promptResponse.toUpperCase())) {
 					console.log(
 						chalk.consoleYlow(
@@ -96,7 +130,9 @@ async function askCommitPrompt(prompt, rl, promptFlag) {
 					promptResponse = await askCommitPrompt(prompt, rl, promptFlag);
 				}
 				break;
+
 			case "ORIGIN":
+				
 				if (!["yes", "y", "no", "n"].includes(promptResponse.toLowerCase())) {
 					console.log(chalk.consoleYlow("Invalid input. Please enter 'Y' or 'N'"));
 					promptResponse = await askCommitPrompt(prompt, rl, promptFlag);
@@ -115,7 +151,6 @@ async function askCommitPrompt(prompt, rl, promptFlag) {
  * @function executeCommitPrompts
  */
 async function executeCommitPrompts() {
-	
 	// Create a readline interface to prompt the user for input
 	const rl = readline.createInterface({
 		input: process.stdin,
@@ -170,12 +205,15 @@ async function executeCommitPrompts() {
 			console.log({ completeCommitMsg });
 
 			// Confirm the commit message with the user
-			commitConfirm = await askCommitPrompt("Confirm commit message is OK? ( Y / N / QUIT):", rl, "CONFIRM");
+			commitConfirm = await askCommitPrompt(
+				"Confirm commit message is OK? ( Y / N / QUIT):",
+				rl,
+				"CONFIRM"
+			);
 
 			if (["yes", "y"].includes(commitConfirm.toLowerCase())) {
 				break;
-			}
-			else if ((["quit", "q", "end"].includes(commitConfirm.toLowerCase()))) {
+			} else if (["quit", "q", "end"].includes(commitConfirm.toLowerCase())) {
 				process.exit(0);
 			} else {
 				// If the user doesn't confirm their message, allow them to amend it
@@ -185,12 +223,12 @@ async function executeCommitPrompts() {
 				commitAmendChoice = await askCommitPrompt(
 					`Select which prompt to amend ( "TYPE", "DOMAIN", "MESSAGE", "NONE"):`,
 					rl,
-					"CHANGE"
+					"AMEND"
 				);
 			}
 		}
 
-		console.log(chalk.working("Writing commit .."))
+		console.log(chalk.working("Writing commit .."));
 
 		// Add and commit the changes using the complete commit message
 		commitResponse = await execAsync(`git add -A && git commit -m "${completeCommitMsg}`, rl);
@@ -212,11 +250,7 @@ async function executeCommitPrompts() {
 		console.error(chalk.fail(error.message));
 		// console.error(error);
 		if (error.message.toLowerCase().includes("command failed")) {
-			await askCommitPrompt(
-				"Force push commit to remote origin? ( Y / N )",
-				rl,
-				"ORIGIN"
-			);
+			await askCommitPrompt("Force push commit to remote origin? ( Y / N )", rl, "ORIGIN");
 			// pushOriginResponse = await execAsync(`git push origin master --force`)
 		}
 	} finally {
