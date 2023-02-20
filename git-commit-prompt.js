@@ -80,7 +80,7 @@ async function askCommitPrompt(prompt, rl, promptFlag) {
 					promptResponse = await askCommitPrompt(prompt, rl, promptFlag);
 				}
 				break;
-			case "CONFIRM":
+			case "CONFIRM": 
 				if (!["yes", "y", "no", "n", "quit", "end", "close"].includes(promptResponse.toLowerCase())) {
 					console.log(chalk.consoleYlow("Invalid input. Please enter 'Y', 'N', 'END' or 'QUIT'"));
 					promptResponse = await askCommitPrompt(prompt, rl, promptFlag);
@@ -210,7 +210,15 @@ async function executeCommitPrompts() {
 		}
 	} catch (error) {
 		console.error(chalk.fail(error.message));
-		console.error(error);
+		// console.error(error);
+		if (error.message.toLowerCase().includes("command failed")) {
+			await askCommitPrompt(
+				"Force push commit to remote origin? ( Y / N )",
+				rl,
+				"ORIGIN"
+			);
+			// pushOriginResponse = await execAsync(`git push origin master --force`)
+		}
 	} finally {
 		// Close the readline interface and exit the process
 		rl.close();
