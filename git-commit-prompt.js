@@ -132,7 +132,8 @@ async function executeCommitPrompts() {
 			commitConfirm,
 			commitAmendChoice,
 			commitResponse,
-			okCommitOrigin;
+			okCommitOrigin,
+			pushOriginResponse;
 
 		// Prompt the user for commit information until they confirm their message
 		while (true) {
@@ -158,7 +159,6 @@ async function executeCommitPrompts() {
 					commitType = await askCommitPrompt("Enter a commit TYPE:", rl, "TYPE");
 					commitDomain = await askCommitPrompt("Enter a commit DOMAIN:", rl, "DOMAIN");
 					commitMsg = await askCommitPrompt("Enter a commit MESSAGE:", rl, "MESSAGE");
-					console.log({ completeCommitMsg });
 					break;
 			}
 
@@ -178,7 +178,7 @@ async function executeCommitPrompts() {
 				console.log({ commitDomain });
 				console.log({ commitMsg });
 				commitAmendChoice = await askCommitPrompt(
-					`Select which prompt to change ( "TYPE", "DOMAIN", "MESSAGE", "NONE"):`,
+					`Select which prompt to amend ( "TYPE", "DOMAIN", "MESSAGE", "NONE"):`,
 					rl,
 					"CHANGE"
 				);
@@ -198,12 +198,12 @@ async function executeCommitPrompts() {
 
 		// User chooses to commit to remote origin
 		if (["yes", "y"].includes(okCommitOrigin.toLowerCase())) {
-			okCommitOrigin = await execAsync(`git push origin master`, rl);
-			console.log({ okCommitOrigin });
+			pushOriginResponse = await execAsync(`git push origin master`, rl);
+			console.log({ pushOriginResponse });
 		}
 	} catch (error) {
 		console.error(chalk.fail(error.message));
-		// console.error(error);
+		console.error(error);
 	} finally {
 		// Close the readline interface and exit the process
 		rl.close();
