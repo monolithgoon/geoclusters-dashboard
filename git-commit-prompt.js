@@ -35,9 +35,10 @@ const COMMIT_TYPES = Object.freeze({
 	5: "FIX",
 	6: "CHORE",
 	7: "DOCS",
-	8: "PERF",
-	9: "CI",
-	10: "REVERT",
+	8: "BUILD",
+	9: "PERF",
+	10: "CI",
+	11: "REVERT",
 });
 
 /**
@@ -132,7 +133,7 @@ async function askCommitPrompt(prompt, rl, promptFlag) {
 				break;
 
 			case "ORIGIN":
-				
+
 				if (!["yes", "y", "no", "n"].includes(promptResponse.toLowerCase())) {
 					console.log(chalk.consoleYlow("Invalid input. Please enter 'Y' or 'N'"));
 					promptResponse = await askCommitPrompt(prompt, rl, promptFlag);
@@ -160,20 +161,23 @@ async function executeCommitPrompts() {
 	console.log(chalk.consoleYlow(`Valid commit types:`));
 	console.log(COMMIT_TYPES);
 
+	// Declare variables to store commit information
+	let commitType,
+		commitDomain,
+		commitMsg,
+		completeCommitMsg,
+		commitConfirm,
+		commitAmendChoice,
+		commitResponse,
+		okCommitOrigin,
+		okForceCommitOrigin,
+		pushOriginResponse;
+
 	try {
-		// Declare variables to store commit information
-		let commitType,
-			commitDomain,
-			commitMsg,
-			completeCommitMsg,
-			commitConfirm,
-			commitAmendChoice,
-			commitResponse,
-			okCommitOrigin,
-			pushOriginResponse;
 
 		// Prompt the user for commit information until they confirm their message
 		while (true) {
+
 			// Check if the user has requested to change a specific part of the commit message
 			switch (commitAmendChoice?.toUpperCase()) {
 				case "TYPE":
@@ -250,8 +254,11 @@ async function executeCommitPrompts() {
 		console.error(chalk.fail(error.message));
 		// console.error(error);
 		if (error.message.toLowerCase().includes("command failed")) {
-			await askCommitPrompt("Force push commit to remote origin? ( Y / N )", rl, "ORIGIN");
-			// pushOriginResponse = await execAsync(`git push origin master --force`)
+			okForceCommitOrigin = await askCommitPrompt("Force push commit to remote origin? ( Y / N )", rl, "ORIGIN");
+			if (["yes", "y"].includes(okForceCommitOrigin.toLowerCase())) {
+				pushOriginResponse = await execAsync(`git push origin master --force`, rl);
+				console.log({ pushOriginResponse });
+			}
 		}
 	} finally {
 		// Close the readline interface and exit the process
