@@ -1,7 +1,7 @@
 const appConfig = require("./config/config.js");
 const expressServer = require("./express.js");
 const dbConnect = require("./mongoose.js");
-const cacheAPIData = require(`./workers/cache-api-data.js`) 
+const cacheAPIData = require(`./workers/cache-geoclusters-api-data`) 
 const logger = require("./logger.js");
 const chalk = require("./utils/chalk-messages.js");
 
