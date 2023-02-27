@@ -1,5 +1,6 @@
 `use strict`
 const turf = require('@turf/turf');
+const chalk = require("./chalk-messages.js")
 
 
 mandatoryParam = () => {
@@ -132,16 +133,42 @@ exports._formatNumByThousand = (number) => {
 };
 
 
-// CONCAT. STRINGS FROM ARRAY; SEPARATE BY SPACE
+/**
+ * @function _joinWordsArray
+ * @description This function will take an array of strings and returns a single string with the option to separate the values by commas and/or wrap them in quotes.
+ * @description If a nested array is found, it will be flattened and its elements will be concatenated.
+ * @param {string[]} keywords - An array of strings to co ncatenate
+ * @param {Object} [options] - Optional configuration object
+ * @param {boolean} [options.inclQuotes=false] - Whether to wrap each string with quotes
+ * @param {boolean} [options.commaSeparated=false] - Whether to separate strings with commas instead of spaces
+ * @returns {string} - The concatenated string
+ */
 exports._joinWordsArray = (keywords, {inclQuotes=false, commaSeparated=false}={}) => {
-	let concatArray;
-   concatArray = keywords.map((keyword) => {
-		if (keyword) {
-			if (inclQuotes) return `"${keyword}"`
-			else return keyword.trim();
-		};
-   });
-	return commaSeparated ? concatArray.join(",") : concatArray.join(" ");
+  try {
+    let concatArray = [];
+
+    // Iterate over the array of keywords
+    for (let i = 0; i < keywords.length; i++) {
+      let keyword = keywords[i];
+
+      // If the keyword is an array, flatten it and concatenate its elements
+      if (Array.isArray(keyword)) {
+        concatArray.push(_joinWordsArray(keyword, {inclQuotes, commaSeparated}));
+      }
+
+      // If the keyword is a string, wrap it in quotes if the `inclQuotes` option is enabled
+      else if (typeof keyword === "string") {
+        concatArray.push(inclQuotes ? `"${keyword}"` : keyword.trim());
+      }
+    }
+
+    // Join the resulting array into a single string, using either spaces or commas as the separator
+    return commaSeparated ? concatArray.join(",") : concatArray.join(" ");
+
+  } catch (error) {
+    // If an error occurs during the process, log an error message to the console
+    console.error(chalk.fail(`_joinWordsArray: ${error.message}`))
+  }
 };
 
 

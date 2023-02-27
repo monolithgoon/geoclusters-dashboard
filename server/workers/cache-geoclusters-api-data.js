@@ -12,6 +12,7 @@ const {
 const { _sanitizeFeatCollCoords } = require("../utils/helpers.js");
 const API_URLS = require("../constants/api-urls.js");
 const config = require("../config/config.js");
+const { _getFlatClusterProps } = require("../interfaces/cluster-props-adapter-v2.js");
 
 /**
  * Reports the statistics of a saved file.
@@ -123,6 +124,7 @@ function returnNormalized(geoclustersArray) {
 		const normalizedClusters = [];
 
 		if (geoclustersArray) {
+			
 			for (let geoclusterGeoJSON of geoclustersArray) {
 				// Check if the supplied GeoJSON is a valid FeatureCollection
 				if (turf.getType(geoclusterGeoJSON) !== `FeatureCollection`) {
@@ -145,6 +147,9 @@ function returnNormalized(geoclustersArray) {
 
 				// Extract flattened, normalized properties of the cluster
 				const clusterProps = _GetClusterProps(geoclusterGeoJSON);
+
+				const clusterPropsV2 = _getFlatClusterProps(geoclusterGeoJSON);
+				console.log({clusterPropsV2})
 
 				// Replace the original props. with the flatenned props
 				geoclusterGeoJSON.properties = clusterProps;

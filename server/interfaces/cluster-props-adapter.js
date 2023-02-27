@@ -233,7 +233,7 @@ exports._GetClusterProps = (clusterFeatureCollection = mandatoryParam()) => {
 
 		const subdivideMetadata = evaluateObjProps(props, {}, "parcelization_metadata");
 
-		let primaryCommodity = TraverseObject.evaluateValue(
+		let clusterCommodities = TraverseObject.evaluateValue(
 			props,
 			"geo_cluster_details",
 			"primary_crop"
@@ -243,8 +243,8 @@ exports._GetClusterProps = (clusterFeatureCollection = mandatoryParam()) => {
 			? TraverseObject.getFinalValue()
 			: TraverseObject.evaluateValue(props, "legacy_agc_details", "primary_crop")
 			? TraverseObject.getFinalValue()
-			: "Rice";
-		primaryCommodity = _startcase(primaryCommodity);
+			: ["Rice"];
+		clusterCommodities = _startcase(clusterCommodities);
 
 		let clusterGovAdmin1 = Object.freeze({
 			adminName1: evaluateObjProps(
@@ -310,7 +310,7 @@ exports._GetClusterProps = (clusterFeatureCollection = mandatoryParam()) => {
 			clusterLocation,
 			clusterRenderHash,
 			subdivideMetadata,
-			primaryCommodity,
+			clusterCommodities,
 			clusterGovAdmin1,
 			clusterGovAdmin2,
 			// firstVisit,
