@@ -154,14 +154,14 @@ exports._getFlatClusterProps = (clusterFeatureCollection = mandatoryParam()) => 
 		const clusterCreatedDate = returnFirstValidPropValue(props, CLUSTER_PROP_PATHS.CLUSTER_CREATED_DATE) 
 		const clusterFeatsNum = clusterFeatureCollection.features.length;
 		const clusterArea = returnFirstValidPropValue(props, CLUSTER_PROP_PATHS.CLUSTER_CREATED_DATE) || 0
-		const clusterUsedArea = returnFirstValidPropValue(props, CLUSTER_PROP_PATHS.CLUSTER_CREATED_DATE)
-		const clusterUnusedArea = returnFirstValidPropValue(props, CLUSTER_PROP_PATHS.CLUSTER_CREATED_DATE) || 0
+		const clusterUsedArea = returnFirstValidPropValue(props, CLUSTER_PROP_PATHS.CLUSTER_CREATED_DATE) || 0
+		const clusterUnusedArea = returnFirstValidPropValue(props, CLUSTER_PROP_PATHS.CLUSTER_CREATED_DATE);
 		const clusterCenterFeat = returnFirstValidPropValue(props, CLUSTER_PROP_PATHS.CLUSTER_CENTER_POINT_FEAT)
 		const clusterAdminLvl1 = returnFirstValidPropValue(props, CLUSTER_PROP_PATHS.CLUSTER_LOCATION_ADMIN_LVL1)
 		const clusterAdminLvl2 = returnFirstValidPropValue(props, CLUSTER_PROP_PATHS.CLUSTER_LOCATION_ADMIN_LVL2)
 		const clusterAdminLvl3 = returnFirstValidPropValue(props, CLUSTER_PROP_PATHS.CLUSTER_LOCATION_ADMIN_LVL3)
 		const clusterAdminLvl4 = returnFirstValidPropValue(props, CLUSTER_PROP_PATHS.CLUSTER_LOCATION_ADMIN_LVL4)
-		const clusterLocationGeneral = returnFirstValidPropValue(props, CLUSTER_PROP_PATHS.CLUSTER_LOCATION_GENERAL, `${_joinWordsArray(
+		const clusterLocation = returnFirstValidPropValue(props, CLUSTER_PROP_PATHS.CLUSTER_LOCATION_GENERAL, `${_joinWordsArray(
 			[ clusterAdminLvl4, clusterAdminLvl3, clusterAdminLvl2, clusterAdminLvl1 ],
 			{ commaSeparated: true }
 		)}` ) || "Nigeria";
@@ -185,7 +185,7 @@ exports._getFlatClusterProps = (clusterFeatureCollection = mandatoryParam()) => 
 			clusterAdminLvl2,
 			clusterAdminLvl3,
 			clusterAdminLvl4,
-			clusterLocationGeneral,
+			clusterLocation,
 			clusterRenderHash,
 			subdivideMetadata,
 			clusterCommodities,

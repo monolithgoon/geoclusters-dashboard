@@ -257,7 +257,7 @@ async function executeCommitPrompts() {
 		if (error.message.toLowerCase().includes("command failed")) {
 			okForceCommitOrigin = await askCommitPrompt("Force push commit to remote origin? ( Y / N )", rl, "ORIGIN");
 			if (["yes", "y"].includes(okForceCommitOrigin.toLowerCase())) {
-				pushOriginResponse = await execAsync(`git push origin master --force`, rl);
+				pushOriginResponse = await execAsync(`git push --force`, rl);
 				console.log({ pushOriginResponse });
 			}
 		}
