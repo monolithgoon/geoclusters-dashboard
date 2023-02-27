@@ -146,10 +146,8 @@ function returnNormalized(geoclustersArray) {
 				geoclusterGeoJSON = _sanitizeFeatCollCoords(geoclusterGeoJSON);
 
 				// Extract flattened, normalized properties of the cluster
-				const clusterProps = _GetClusterProps(geoclusterGeoJSON);
-
-				// const clusterPropsV2 = _getFlatClusterProps(geoclusterGeoJSON);
-				// console.log({clusterPropsV2})
+				// const clusterProps = _GetClusterProps(geoclusterGeoJSON);
+				const clusterProps = _getFlatClusterProps(geoclusterGeoJSON);
 
 				// Replace the original props. with the flatenned props
 				geoclusterGeoJSON.properties = clusterProps;
@@ -159,7 +157,7 @@ function returnNormalized(geoclustersArray) {
 					const clusterFeature = geoclusterGeoJSON.features[idx];
 					const clusterFeatProps = _GetClusterFeatProps(clusterFeature, { featIdx: idx });
 					clusterFeature.properties = clusterFeatProps;
-				}
+				};
 
 				normalizedClusters.push(geoclusterGeoJSON);
 			}
