@@ -148,8 +148,8 @@ function returnNormalized(geoclustersArray) {
 				// Extract flattened, normalized properties of the cluster
 				const clusterProps = _GetClusterProps(geoclusterGeoJSON);
 
-				const clusterPropsV2 = _getFlatClusterProps(geoclusterGeoJSON);
-				console.log({clusterPropsV2})
+				// const clusterPropsV2 = _getFlatClusterProps(geoclusterGeoJSON);
+				// console.log({clusterPropsV2})
 
 				// Replace the original props. with the flatenned props
 				geoclusterGeoJSON.properties = clusterProps;

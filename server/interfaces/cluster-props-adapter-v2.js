@@ -2,7 +2,7 @@
 const _startcase = require("lodash.startcase");
 const CAPITALIZE_THESE_WORDS = require("../constants/words-to-capitalize.js");
 const { _capitalizeWords, _joinWordsArray } = require("../utils/helpers.js");
-const { CLUSTER_PROP_PATHS } = require("../constants/cluster-prop-path-options.js");
+const { CLUSTER_PROP_PATHS } = require("../constants/cluster-prop-path-selectors.js");
 const chalk = require("../utils/chalk-messages.js");
 
 const mandatoryParam = () => {
@@ -162,12 +162,12 @@ exports._getFlatClusterProps = (clusterFeatureCollection = mandatoryParam()) => 
 		const clusterAdminLvl3 = returnFirstValidPropValue(props, CLUSTER_PROP_PATHS.CLUSTER_LOCATION_ADMIN_LVL3)
 		const clusterAdminLvl4 = returnFirstValidPropValue(props, CLUSTER_PROP_PATHS.CLUSTER_LOCATION_ADMIN_LVL4)
 		const clusterLocationGeneral = returnFirstValidPropValue(props, CLUSTER_PROP_PATHS.CLUSTER_LOCATION_GENERAL, `${_joinWordsArray(
-			[clusterAdminLvl4, clusterAdminLvl3, clusterAdminLvl2, clusterAdminLvl1],
+			[ clusterAdminLvl4, clusterAdminLvl3, clusterAdminLvl2, clusterAdminLvl1 ],
 			{ commaSeparated: true }
 		)}` ) || "Nigeria";
 		const clusterRenderHash = returnFirstValidPropValue(props, CLUSTER_PROP_PATHS.CLUSTER_RENDER_HASH)
 		const subdivideMetadata = returnFirstValidPropValue(props, CLUSTER_PROP_PATHS.AUTO_SUBDIVISION_METADATA)
-		let clusterCommodities = returnFirstValidPropValue(props, CLUSTER_PROP_PATHS.CLUSTER_COMMODITIES) || "..."
+		let clusterCommodities = returnFirstValidPropValue(props, CLUSTER_PROP_PATHS.CLUSTER_COMMODITIES)
 				clusterCommodities = _startcase(clusterCommodities);
 		const clusterGovAdmin1 = returnFirstValidPropValue(props, CLUSTER_PROP_PATHS.CLUSTER_GOV_ADMIN1_NAME1)
 		const clusterGovAdmin2 = returnFirstValidPropValue(props, CLUSTER_PROP_PATHS.CLUSTER_GOV_ADMIN1_NAME2)

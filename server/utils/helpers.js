@@ -153,7 +153,7 @@ exports._joinWordsArray = (keywords, {inclQuotes=false, commaSeparated=false}={}
 
       // If the keyword is an array, flatten it and concatenate its elements
       if (Array.isArray(keyword)) {
-        concatArray.push(_joinWordsArray(keyword, {inclQuotes, commaSeparated}));
+        concatArray.push(exports._joinWordsArray(keyword, {inclQuotes, commaSeparated}));
       }
 
       // If the keyword is a string, wrap it in quotes if the `inclQuotes` option is enabled
