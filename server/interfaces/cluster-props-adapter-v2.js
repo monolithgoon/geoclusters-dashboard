@@ -153,9 +153,9 @@ exports._getFlatClusterProps = (clusterFeatureCollection = mandatoryParam()) => 
 				: clusterName;
 		const clusterCreatedDate = returnFirstValidPropValue(props, CLUSTER_PROP_PATHS.CLUSTER_CREATED_DATE) 
 		const clusterFeatsNum = clusterFeatureCollection.features.length;
-		const clusterArea = returnFirstValidPropValue(props, CLUSTER_PROP_PATHS.CLUSTER_CREATED_DATE) || 0
-		const clusterUsedArea = returnFirstValidPropValue(props, CLUSTER_PROP_PATHS.CLUSTER_CREATED_DATE) || 0
-		const clusterUnusedArea = returnFirstValidPropValue(props, CLUSTER_PROP_PATHS.CLUSTER_CREATED_DATE);
+		const clusterArea = returnFirstValidPropValue(props, CLUSTER_PROP_PATHS.CLUSTER_AREA) || 0
+		const clusterUsedArea = returnFirstValidPropValue(props, CLUSTER_PROP_PATHS.CLUSTER_USED_AREA) || 0
+		const clusterUnusedArea = returnFirstValidPropValue(props, CLUSTER_PROP_PATHS.CLUSTER_UNUSED_AREA);
 		const clusterCenterFeat = returnFirstValidPropValue(props, CLUSTER_PROP_PATHS.CLUSTER_CENTER_POINT_FEAT)
 		const clusterAdminLvl1 = returnFirstValidPropValue(props, CLUSTER_PROP_PATHS.CLUSTER_LOCATION_ADMIN_LVL1)
 		const clusterAdminLvl2 = returnFirstValidPropValue(props, CLUSTER_PROP_PATHS.CLUSTER_LOCATION_ADMIN_LVL2)
