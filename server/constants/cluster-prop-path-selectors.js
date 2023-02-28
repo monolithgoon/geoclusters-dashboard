@@ -1,7 +1,7 @@
 /**
- * This file defines an object containing various possible paths for retreiving various properties for a standerdized, renderable geocluster, depending on if the original geocluster is a parcelized-agc, processed-legacy-agc, or clustered-farm-program. 
+ * This file defines an object containing various possible paths for retreiving various properties for a standerdized, renderable geocluster, depending on if the original geocluster is a parcelized-agc, processed-legacy-agc, or clustered-farm-program.
  * The standardized geocluster properties are defined as keys in the object, with each key having an array of possible property names/paths for that option from the original geocluster.
- * 
+ *
  * Options for cluster properties.
  * @typedef {Object} ClusterPropPathOptions
  * @property {string[]} CLUSTER_ID - Possible property names for cluster ID.
@@ -27,8 +27,6 @@
  * @property {string[]} CLUSTER_GOV_ADMIN2_NAME3 - Possible property names for the last name of the second administrative officer of the cluster.
  */
 
-const { _joinWordsArray } = require("../utils/helpers");
-
 exports.CLUSTER_PROP_PATHS = {
 	CLUSTER_ID: ["agc_id", "geo_cluster_id", "legacy_agc_id", "farm_program_id"],
 	CLUSTER_TITLE: [
@@ -39,18 +37,22 @@ exports.CLUSTER_PROP_PATHS = {
 	],
 	CLUSTER_CREATED_DATE: [`cluster_created_timestamp`, `db_insert_timestamp`],
 	CLUSTER_AREA: [
+		"agc_area",
+		`geo_cluster_details.delineated_area`,
+		`legacy_agc_details.delineated_area`,
+	],
+	CLUSTER_USED_AREA: [
+		`total_allocation`,
 		`geo_cluster_details.total_allocations_area`,
 		`legacy_agc_details.total_allocations_area`,
-		"total_allocation",
 	],
-	CLUSTER_USED_AREA: [`unused_land_area`],
-	CLUSTER_UNUSED_AREA: [`cluster_center_coords`],
+	CLUSTER_UNUSED_AREA: [`unused_land_area`],
 	CLUSTER_CENTER_POINT_FEAT: [`agc_center_coords`],
 	CLUSTER_LOCATION_GENERAL: [`agc_location`],
 	CLUSTER_LOCATION_ADMIN_LVL1: [`geo_cluster_details.country`, "legacy_agc_details.country"],
-	CLUSTER_LOCATION_ADMIN_LVL2: [`geo_cluster_details.country`, "legacy_agc_details.state"],
-	CLUSTER_LOCATION_ADMIN_LVL3: [`geo_cluster_details.country`, "legacy_agc_details.lga"],
-	CLUSTER_LOCATION_ADMIN_LVL4: [`geo_cluster_details.country`, "legacy_agc_details.ward"],
+	CLUSTER_LOCATION_ADMIN_LVL2: [`geo_cluster_details.state`, "legacy_agc_details.state"],
+	CLUSTER_LOCATION_ADMIN_LVL3: [`geo_cluster_details.lga`, "legacy_agc_details.lga"],
+	CLUSTER_LOCATION_ADMIN_LVL4: [`geo_cluster_details.ward`, "legacy_agc_details.ward"],
 	CLUSTER_RENDER_HASH: [`preview_map_url_hash`],
 	AUTO_SUBDIVISION_METADATA: [`parcelization_metadata`],
 	CLUSTER_COMMODITIES: [
