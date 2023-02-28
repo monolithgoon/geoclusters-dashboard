@@ -163,7 +163,7 @@ exports._joinWordsArray = (keywords, {inclQuotes=false, commaSeparated=false}={}
     }
 
     // Join the resulting array into a single string, using either spaces or commas as the separator
-    return commaSeparated ? concatArray.join(",") : concatArray.join(" ");
+    return commaSeparated ? concatArray.join(", ") : concatArray.join(" ");
 
   } catch (error) {
     // If an error occurs during the process, log an error message to the console
