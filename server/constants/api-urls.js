@@ -9,7 +9,7 @@ const API_URLS = {
 			`api/v1/parcelized-agcs/`,
 			// `api/v2/legacy-agcs/`,
 			`api/v2/legacy-agcs/processed/`,
-			// `api/v3/clustered-farm-program/`
+			`api/v3/clustered-farm-programs/`
 		],
 	},
 };

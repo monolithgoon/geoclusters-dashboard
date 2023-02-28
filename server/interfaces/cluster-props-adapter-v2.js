@@ -160,7 +160,8 @@ function formatClusterLocation(locationStr) {
 
 
 /**
- * Returns an object containing various properties of a geocluster feature collection.
+ * @function _getFlatClusterProps
+ * @description Returns an object containing various properties of a geocluster feature collection.
  * @param {object} clusterFeatureCollection - The cluster feature collection to extract properties from.
  * @returns {object} An object containing various properties of the cluster feature collection.
  */

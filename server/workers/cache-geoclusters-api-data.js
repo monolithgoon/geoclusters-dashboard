@@ -111,15 +111,15 @@ function validateGeoJSON(geoJSON) {
 }
 
 /**
- * This function is used to flatten / normalize the properties of the a geocluster's GeoJSON.
+ * @function flattenGeoclusterProperties
+ * @description This function is used to flatten / normalize the properties of the a geocluster's GeoJSON.
  * It takes an array of geoclusters' GeoJSON as input, validates the format of the FeatureCollection,
  * checks if it contains iterable features, sanitizes the coordinates,
  * extracts the properties of the cluster and features, and finally returns a normalized array of GeoJSON for each cluster.
- *
  * @param {Array} geoclustersArray - An array of GeoJSON clusters to be normalized.
  * @returns {Array} normalizedClusters - An array of normalized GeoJSON clusters.
  */
-// REMOVE > DEPRC. BY MORE FUNCITONAL CODE BELOW
+// REMOVE > DEPRC. BY MORE FUNCITONAL VERSION OF CODE BELOW
 // function flattenGeoclusterProperties(geoclustersArray) {
 // 	try {
 // 		const normalizedClusters = [];
@@ -224,7 +224,8 @@ function flattenGeoclusterProperties(geoclustersArray) {
 
 
 /**
- * Gets collections from an API.
+ * @function getAPICollections
+ * @description Gets collections from an API.
  * @param {string} apiHost - The host URL of the API.
  * @param {Array} resourcePaths - An array of resource paths for the API.
  * @return {Array} The collected data from the API.

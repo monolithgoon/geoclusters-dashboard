@@ -11,8 +11,8 @@ const LOCAL_FILE_NAMES = {
 			combined into a single object and rendered on the frontend via the view-controller
 			*/
 		GEOCLUSTERS: [
+			"clustered-farm-programs.json",
 			"parcelized-agcs.json",
-			// "legacy-agcs.json",
 			"processed-legacy-agcs.json",
 		],
 		NGA: {
