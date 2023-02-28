@@ -119,55 +119,109 @@ function validateGeoJSON(geoJSON) {
  * @param {Array} geoclustersArray - An array of GeoJSON clusters to be normalized.
  * @returns {Array} normalizedClusters - An array of normalized GeoJSON clusters.
  */
-function returnNormalized(geoclustersArray) {
-	try {
-		const normalizedClusters = [];
+// REMOVE > DEPRC. BY MORE FUNCITONAL CODE BELOW
+// function flattenGeoclusterProperties(geoclustersArray) {
+// 	try {
+// 		const normalizedClusters = [];
 
-		if (geoclustersArray) {
+// 		if (geoclustersArray) {
 			
-			for (let geoclusterGeoJSON of geoclustersArray) {
-				// Check if the supplied GeoJSON is a valid FeatureCollection
-				if (turf.getType(geoclusterGeoJSON) !== `FeatureCollection`) {
-					throw new Error(`The supplied GeoJSON is not a valid FeatureCollection`);
-				}
+// 			for (let geoclusterGeoJSON of geoclustersArray) {
 
-				// Check if the FeatureCollection contains iterable features
-				if (!Array.isArray(geoclusterGeoJSON.features)) {
-					throw new Error(`The supplied FeatureCollection does not have itirable Features`);
-				}
+// 				// Check if the supplied GeoJSON is a valid FeatureCollection
+// 				if (turf.getType(geoclusterGeoJSON) !== `FeatureCollection`) {
+// 					throw new Error(`The supplied GeoJSON is not a valid FeatureCollection`);
+// 				}
 
-				// SANDBOX
-				// WIP
-				// if (!gjv.valid(geoclusterGeoJSON)) {
-				// 	throw new Error(`Invalid GeoJSON`)
-				// }
+// 				// Check if the FeatureCollection contains iterable features
+// 				if (!Array.isArray(geoclusterGeoJSON.features)) {
+// 					throw new Error(`The supplied FeatureCollection does not have itirable Features`);
+// 				}
 
-				// Sanitize the coordinates of the FeatureCollection
-				geoclusterGeoJSON = _sanitizeFeatCollCoords(geoclusterGeoJSON);
+// 				// SANDBOX
+// 				// WIP
+// 				// if (!gjv.valid(geoclusterGeoJSON)) {
+// 				// 	throw new Error(`Invalid GeoJSON`)
+// 				// }
 
-				// Extract flattened, normalized properties of the cluster
-				// const clusterProps = _GetClusterProps(geoclusterGeoJSON);
-				const clusterProps = _getFlatClusterProps(geoclusterGeoJSON);
+// 				// Sanitize the coordinates of the FeatureCollection
+// 				geoclusterGeoJSON = _sanitizeFeatCollCoords(geoclusterGeoJSON);
 
-				// Replace the original props. with the flatenned props
-				geoclusterGeoJSON.properties = clusterProps;
+// 				// Extract flattened, normalized properties of the cluster
+// 				// const flattenedClusterProps = _GetClusterProps(geoclusterGeoJSON);
+// 				const flattenedClusterProps = _getFlatClusterProps(geoclusterGeoJSON);
 
-				// Extract properties of each feature in the cluster
-				for (let idx = 0; idx < geoclusterGeoJSON.features.length; idx++) {
-					const clusterFeature = geoclusterGeoJSON.features[idx];
-					const clusterFeatProps = _GetClusterFeatProps(clusterFeature, { featIdx: idx });
-					clusterFeature.properties = clusterFeatProps;
-				};
+// 				// Replace the original props. with the flattened props
+// 				geoclusterGeoJSON.properties = flattenedClusterProps;
 
-				normalizedClusters.push(geoclusterGeoJSON);
-			}
-		}
-		return normalizedClusters;
-	} catch (normalizePropsErr) {
-		console.error(chalk.fail(`normalizePropsErr: ${normalizePropsErr}`));
-		return null;
-	}
+// 				// Extract properties of each feature in the cluster
+// 				for (let idx = 0; idx < geoclusterGeoJSON.features.length; idx++) {
+// 					const clusterFeature = geoclusterGeoJSON.features[idx];
+// 					const flatClusterFeatProps = _GetClusterFeatProps(clusterFeature, { featIdx: idx });
+// 					clusterFeature.properties = flatClusterFeatProps;
+// 				};
+
+// 				normalizedClusters.push(geoclusterGeoJSON);
+// 			}
+// 		}
+// 		return normalizedClusters;
+
+// 	} catch (normalizePropsErr) {
+// 		console.error(chalk.fail(`normalizePropsErr: ${normalizePropsErr}`));
+// 		return null;
+// 	}
+// }
+
+function flattenGeoclusterProperties(geoclustersArray) {
+  try {
+    // Use Array.map() to create a new array of normalized feature collections
+    return geoclustersArray.map(geoclusterGeoJSON => {
+      // Check if the supplied GeoJSON is a valid FeatureCollection
+      if (turf.getType(geoclusterGeoJSON) !== 'FeatureCollection') {
+        throw new Error('The supplied GeoJSON is not a valid FeatureCollection');
+      }
+
+      // Check if the FeatureCollection contains iterable features
+      if (!Array.isArray(geoclusterGeoJSON.features)) {
+        throw new Error('The supplied FeatureCollection does not have iterable Features');
+      }
+
+      // Sanitize the coordinates of the FeatureCollection
+      geoclusterGeoJSON = _sanitizeFeatCollCoords(geoclusterGeoJSON);
+
+      // Get flattened, normalized properties of the cluster
+      const flattenedClusterProps = _getFlatClusterProps(geoclusterGeoJSON);
+
+			// Replace the original props. with the flattened props
+      geoclusterGeoJSON.properties = flattenedClusterProps;
+
+      // Extract properties of each feature in the cluster
+      const flattenedFeats = geoclusterGeoJSON.features.map((clusterFeature, idx) => {
+
+        const flatClusterFeatProps = _GetClusterFeatProps(clusterFeature, { featIdx: idx });
+
+        // Use the spread operator to create a new object with the original feature's properties
+        // and replace them with the normalized feature properties
+        return {
+          ...clusterFeature,
+          properties: flatClusterFeatProps,
+        };
+      });
+
+      // Use the spread operator to create a new object with the original feature collection's
+      // features and replace them with the normalized features
+      return {
+        ...geoclusterGeoJSON,
+        features: flattenedFeats,
+      };
+    });
+  } catch (normalizePropsErr) {
+    // Log the error message to the console in red text
+    console.error(chalk.fail(`normalizePropsErr: ${normalizePropsErr}`));
+    return null;
+  }
 }
+
 
 /**
  * Gets collections from an API.
@@ -213,7 +267,7 @@ async function getAPICollections(apiHost, resourcePaths) {
 
 // 		for (const geoclusterCollection of apiCollections) {
 // 			if (geoclusterCollection && geoclusterCollection.data) {
-// 				const collectionJSON = returnNormalized(geoclusterCollection.data.collection_docs);
+// 				const collectionJSON = flattenGeoclusterProperties(geoclusterCollection.data.collection_docs);
 // 				if (collectionJSON) {
 // 					saveData(JSON.stringify(collectionJSON), geoclusterCollection.data.collection_name);
 // 				}
@@ -253,7 +307,7 @@ async function cacheAPIData() {
 		for (const geoclusterCollection of apiCollections) {
 			if (geoclusterCollection && geoclusterCollection.data) {
 				// Normalize (flatten) the collection data.
-				const collectionJSON = returnNormalized(geoclusterCollection.data.collection_docs);
+				const collectionJSON = flattenGeoclusterProperties(geoclusterCollection.data.collection_docs);
 
 				if (collectionJSON) {
 					// Save the normalized data to disk.
