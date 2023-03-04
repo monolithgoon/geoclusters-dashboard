@@ -206,8 +206,9 @@ exports._combineObjArrays = (...baseArrays) => {
 }
 
 
+// REMOVE -> DEPRECATED FOR `repairPolygonFeatsCoords`
 // fix the coords in each feat. and return the featColl.
-repairFeatsCoords = (featureCollection) => {
+const repairFeatsCoords = (featureCollection) => {
 
 	if (featureCollection) {
 
@@ -240,6 +241,60 @@ repairFeatsCoords = (featureCollection) => {
 	};
 };
 
+const repairPolygonFeatsCoords = (featureCollection) => {
+
+  // Check if the input feature collection is defined
+  if (featureCollection) {
+    
+    // Get the array of features from the feature collection
+    const featuresArray = featureCollection.features;
+    
+    // Loop through each feature in the array
+    for (let idx = 0; idx < featuresArray.length; idx++) {
+      
+      // Get the current feature and its coordinates
+      const feature = featuresArray[idx];
+      const featCoords = feature.geometry.coordinates[0];
+      
+      // Check if the feature is a polygon
+      if (turf.getType(feature) === `Polygon`) {
+        
+        // Loop through each coordinate in the polygon
+        for (let idxy = 0; idxy < featCoords.length; idxy++) {
+          
+          // get a coord. [lat, lng] array
+          const polyCoord = featCoords[idxy];
+
+          // Get the current coordinate and convert its latitude and longitude to integers
+          feature.geometry.coordinates[0][idxy] = [+polyCoord[0], +polyCoord[1]];
+        }
+
+        // Append the first coordinate to the end of the array in order to "close" the polygon
+        const firstCoord = feature.geometry.coordinates[0][0];
+        feature.geometry.coordinates[0].push([+firstCoord[0], +firstCoord[1]]);
+        
+      } else {
+        // TODO: add functionality for non-polygon features
+      }
+    }
+    
+    // Update the array of features in the original feature collection with the repaired features
+    featureCollection.features = featuresArray;
+    
+    // Return the repaired feature collection
+    return featureCollection;
+    
+  } else {
+    // Return null if the input feature collection is not defined
+    return null;
+  }
+};
+
+// LOOP THRU EACH FEAT. AND CONVERT STRING COORDS. TO INTEGERS
+exports._sanitizeFeatCollCoords = (featureCollection = mandatoryParam()) => {
+	let modFeatureCollection = repairPolygonFeatsCoords(featureCollection);
+	return modFeatureCollection ? modFeatureCollection : featureCollection;
+};
 
 exports._getFeatCenter = (featGeometry) => {
 
@@ -259,12 +314,6 @@ exports._getFeatCenter = (featGeometry) => {
 };
 
 
-// LOOP THRU EACH FEAT. AND CONVERT STRING COORDS. TO INTEGERS
-exports._sanitizeFeatCollCoords = (featureCollection = mandatoryParam()) => {
-	let modFeatureCollection = repairFeatsCoords(featureCollection);
-	return modFeatureCollection ? modFeatureCollection : featureCollection;
-};
-
 /**
  * Wraps an asynchronous function and catches any errors that occur during its execution.
  *
@@ -281,4 +330,14 @@ exports._catchAsync = (fn, fnDescr = null) => {
       throw err;
     }
   };
+}
+
+exports._catchErrorSync = (fn, fnDescr = null) => {
+  return function (...params) {
+    try {
+      return fn(...params);
+    } catch (err) {
+      console.error(chalk.fail(`${fnDescr || fn.name} error:`, err.message));
+    }
+  }
 }

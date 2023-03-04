@@ -9,7 +9,7 @@ const {
 	_GetClusterProps,
 	_GetClusterFeatProps,
 } = require("../interfaces/cluster-props-adapter.js");
-const { _sanitizeFeatCollCoords } = require("../utils/helpers.js");
+const { _sanitizeFeatCollCoords, _catchErrorSync } = require("../utils/helpers.js");
 const API_URLS = require("../constants/api-urls.js");
 const config = require("../config/config.js");
 const { _getFlatClusterProps } = require("../interfaces/cluster-props-adapter-v2.js");
@@ -98,17 +98,29 @@ async function getDBCollection(url, apiAccessToken) {
 	}
 }
 
-// REMOVE > UN-USED
-// TODO > VALIDATE GeoJSON
-function validateGeoJSON(geoJSON) {
-	if (!gjv.valid(geoJSON)) {
-		console.log(chalk.warningStrong("Invalid GeoJSON"));
-		return false;
+const validateFeatureCollection = _catchErrorSync((geoclusterFeatColl) => {
+	
+	// Check if the supplied GeoJSON is a valid FeatureCollection
+	if (turf.getType(geoclusterFeatColl) !== "FeatureCollection") {
+		throw new Error("The supplied GeoJSON is not a valid FeatureCollection");
+	}
+	
+	// Check if the FeatureCollection contains iterable features
+	if (!Array.isArray(geoclusterFeatColl.features)) {
+		throw new Error("The supplied FeatureCollection does not have iterable Features");
 	}
 
-	// const trace = gjv.isFeatureCollection(geoJSON, true);
+	// Use `gjv` library to validate GeoJSON
+	if (!gjv.valid(geoclusterFeatColl)) {
+		console.log(chalk.warningBright("Invalid GeoJSON"));
+		console.log(geoclusterFeatColl.properties.legacy_agc_name)
+		return false;
+	}
+	
+	// const trace = gjv.isFeatureCollection(geoclusterFeatColl, true);
 	// console.log(chalk.consoleY(trace))
-}
+
+}, `validateFeatureCollection`)
 
 /**
  * @function flattenGeoclusterProperties
@@ -125,7 +137,7 @@ function validateGeoJSON(geoJSON) {
 // 		const normalizedClusters = [];
 
 // 		if (geoclustersArray) {
-			
+
 // 			for (let geoclusterGeoJSON of geoclustersArray) {
 
 // 				// Check if the supplied GeoJSON is a valid FeatureCollection
@@ -173,55 +185,48 @@ function validateGeoJSON(geoJSON) {
 // }
 
 function flattenGeoclusterProperties(geoclustersArray) {
-  try {
-    // Use Array.map() to create a new array of normalized feature collections
-    return geoclustersArray.map(geoclusterGeoJSON => {
-      // Check if the supplied GeoJSON is a valid FeatureCollection
-      if (turf.getType(geoclusterGeoJSON) !== 'FeatureCollection') {
-        throw new Error('The supplied GeoJSON is not a valid FeatureCollection');
-      }
 
-      // Check if the FeatureCollection contains iterable features
-      if (!Array.isArray(geoclusterGeoJSON.features)) {
-        throw new Error('The supplied FeatureCollection does not have iterable Features');
-      }
+	try {
+		
+		// Use Array.map() to create a new array of normalized feature collections
+		return geoclustersArray.map((geoclusterGeoJSON) => {
 
-      // Sanitize the coordinates of the FeatureCollection
-      geoclusterGeoJSON = _sanitizeFeatCollCoords(geoclusterGeoJSON);
+			// Sanitize the coordinates of the FeatureCollection
+			geoclusterGeoJSON = _sanitizeFeatCollCoords(geoclusterGeoJSON);
 
-      // Get flattened, normalized properties of the cluster
-      const flattenedClusterProps = _getFlatClusterProps(geoclusterGeoJSON);
+			validateFeatureCollection(geoclusterGeoJSON);
+
+			// Get flattened, normalized properties of the cluster
+			const flattenedClusterProps = _getFlatClusterProps(geoclusterGeoJSON);
 
 			// Replace the original props. with the flattened props
-      geoclusterGeoJSON.properties = flattenedClusterProps;
+			geoclusterGeoJSON.properties = flattenedClusterProps;
 
-      // Extract properties of each feature in the cluster
-      const flattenedFeats = geoclusterGeoJSON.features.map((clusterFeature, idx) => {
+			// Extract properties of each feature in the cluster
+			const flattenedFeats = geoclusterGeoJSON.features.map((clusterFeature, idx) => {
+				const flatClusterFeatProps = _GetClusterFeatProps(clusterFeature, { featIdx: idx });
 
-        const flatClusterFeatProps = _GetClusterFeatProps(clusterFeature, { featIdx: idx });
+				// Use the spread operator to create a new object with the original feature's properties
+				// and replace them with the normalized feature properties
+				return {
+					...clusterFeature,
+					properties: flatClusterFeatProps,
+				};
+			});
 
-        // Use the spread operator to create a new object with the original feature's properties
-        // and replace them with the normalized feature properties
-        return {
-          ...clusterFeature,
-          properties: flatClusterFeatProps,
-        };
-      });
-
-      // Use the spread operator to create a new object with the original feature collection's
-      // features and replace them with the normalized features
-      return {
-        ...geoclusterGeoJSON,
-        features: flattenedFeats,
-      };
-    });
-  } catch (normalizePropsErr) {
-    // Log the error message to the console in red text
-    console.error(chalk.fail(`normalizePropsErr: ${normalizePropsErr}`));
-    return null;
-  }
+			// Use the spread operator to create a new object with the original feature collection's
+			// features and replace them with the normalized features
+			return {
+				...geoclusterGeoJSON,
+				features: flattenedFeats,
+			};
+		});
+	} catch (normalizePropsErr) {
+		// Log the error message to the console in red text
+		console.error(chalk.fail(`normalizePropsErr: ${normalizePropsErr}`));
+		return null;
+	}
 }
-
 
 /**
  * @function getAPICollections
@@ -247,8 +252,8 @@ async function getAPICollections(apiHost, resourcePaths) {
 	return data;
 }
 
+// REMOVE > DEPRECATED
 // /**
-//  *
 //  * Asynchronously download data from the geoclusters API, and save locally to disk in server/localdata
 //  * This action is performed only **once** when the server loads up initially
 //  * This action is neccessary in order to avoid expensive API calls on paage load,
@@ -280,15 +285,14 @@ async function getAPICollections(apiHost, resourcePaths) {
 // }
 
 /**
+ * @function cacheAPIData
  * @description Caches data from the API collections.
- *
  * Asynchronously download data from the geoclusters API, and save locally to disk in server/localdata
  * This action is performed only **once** when the server loads up initially
  * This action is neccessary in order to avoid expensive API calls on paage load,
  * and to instantly hydrate the DOM with server-side data
  * The cached data is read from disk, and passed to the /server/view-controller via the server/data-controller
  * The data is then made available as an object in the dashboard app using PUG variables
- *
  * @async
  * @function cacheAPIData
  * @throws {Error} If the API request fails or if there is an issue with the data being processed.
@@ -308,7 +312,9 @@ async function cacheAPIData() {
 		for (const geoclusterCollection of apiCollections) {
 			if (geoclusterCollection && geoclusterCollection.data) {
 				// Normalize (flatten) the collection data.
-				const collectionJSON = flattenGeoclusterProperties(geoclusterCollection.data.collection_docs);
+				const collectionJSON = flattenGeoclusterProperties(
+					geoclusterCollection.data.collection_docs
+				);
 
 				if (collectionJSON) {
 					// Save the normalized data to disk.
