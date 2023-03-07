@@ -12,7 +12,8 @@ const {
 const { _sanitizeFeatCollCoords, _catchErrorSync } = require("../utils/helpers.js");
 const API_URLS = require("../constants/api-urls.js");
 const config = require("../config/config.js");
-const { _getFlatClusterProps } = require("../interfaces/cluster-props-adapter-v2.js");
+const { _getFlattenedClusterProps } = require("../interfaces/cluster-props-adapter-v2.js");
+const { _getFlattenedClusterFeatProps } = require("../interfaces/cluster-feature-props-adapter.js");
 
 /**
  * Reports the statistics of a saved file.
@@ -63,7 +64,7 @@ function saveData(data, collectionName) {
 	});
 }
 
-async function getDBCollection(url, apiAccessToken) {
+async function fetchDBCollectionData(url, apiAccessToken) {
 	console.log(chalk.consoleY(`AXIOS retreiving data from [ ${url} ]`));
 
 	try {
@@ -161,7 +162,7 @@ const validateFeatureCollection = _catchErrorSync((geoclusterFeatColl) => {
 
 // 				// Extract flattened, normalized properties of the cluster
 // 				// const flattenedClusterProps = _GetClusterProps(geoclusterGeoJSON);
-// 				const flattenedClusterProps = _getFlatClusterProps(geoclusterGeoJSON);
+// 				const flattenedClusterProps = _getFlattenedClusterProps(geoclusterGeoJSON);
 
 // 				// Replace the original props. with the flattened props
 // 				geoclusterGeoJSON.properties = flattenedClusterProps;
@@ -197,14 +198,18 @@ function flattenGeoclusterProperties(geoclustersArray) {
 			validateFeatureCollection(geoclusterGeoJSON);
 
 			// Get flattened, normalized properties of the cluster
-			const flattenedClusterProps = _getFlatClusterProps(geoclusterGeoJSON);
+			const flattenedClusterProps = _getFlattenedClusterProps(geoclusterGeoJSON);
 
 			// Replace the original props. with the flattened props
 			geoclusterGeoJSON.properties = flattenedClusterProps;
 
 			// Extract properties of each feature in the cluster
 			const flattenedFeats = geoclusterGeoJSON.features.map((clusterFeature, idx) => {
+
 				const flatClusterFeatProps = _GetClusterFeatProps(clusterFeature, { featIdx: idx });
+
+				// WIP
+				_getFlattenedClusterFeatProps(clusterFeature, { featIdx: idx })
 
 				// Use the spread operator to create a new object with the original feature's properties
 				// and replace them with the normalized feature properties
@@ -242,7 +247,7 @@ async function getAPICollections(apiHost, resourcePaths) {
 	// Looping through the resource paths
 	for (const resourcePath of resourcePaths) {
 		// Getting the data for each collection
-		const collectionData = await getDBCollection(`${apiHost}/${resourcePath}`);
+		const collectionData = await fetchDBCollectionData(`${apiHost}/${resourcePath}`);
 
 		// If the data exists, push it to the data array
 		if (collectionData) data.push(collectionData);
@@ -310,7 +315,9 @@ async function cacheAPIData() {
 
 		// Loop through each collection and process the data
 		for (const geoclusterCollection of apiCollections) {
+
 			if (geoclusterCollection && geoclusterCollection.data) {
+				
 				// Normalize (flatten) the collection data.
 				const collectionJSON = flattenGeoclusterProperties(
 					geoclusterCollection.data.collection_docs

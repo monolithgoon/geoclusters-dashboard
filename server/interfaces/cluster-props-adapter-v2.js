@@ -4,144 +4,7 @@ const CAPITALIZE_THESE_WORDS = require("../constants/words-to-capitalize.js");
 const { _capitalizeWords, _joinWordsArray } = require("../utils/helpers.js");
 const { CLUSTER_PROP_PATHS } = require("../constants/cluster-prop-path-selectors.js");
 const chalk = require("../utils/chalk-messages.js");
-
-const mandatoryParam = () => {
-	throw new Error(`Parameter is required.`);
-};
-
-// TRAVERSE AN OBJECT USING AN ARRAY OF OBJ. PROPS.
-let finalValue;
-const TraverseObject = (() => {
-	// let finalValue;
-
-	return {
-		evaluateValue: function thisFunction(...args) {
-			// console.log(thisFunction)
-
-			const keys = [...args];
-
-			try {
-				let tempValue = keys[0];
-
-				for (let idx = 0; idx < keys.length - 1; idx++) {
-					tempValue = tempValue[keys[idx + 1]];
-					// console.log({tempValue});
-				}
-
-				finalValue = tempValue;
-				// console.log({finalValue});
-
-				// IMPORTANT > RETURN THIS TO INDICATE THAT THIS EVALUATED TO VALUE OR UNDEF.
-				return finalValue;
-				// return finalValue;
-			} catch (evaluateValueErr) {
-				// console.log(`%c evaluateValueErr: ${evaluateValueErr.message}`,"background-color: orange; color: black;");
-				return null;
-			}
-		},
-
-		getFinalValue: function () {
-			return finalValue;
-		},
-
-		resetFinalValue: function () {
-			finalValue = undefined;
-		},
-	};
-})();
-
-/**
- * @function evaluatePropertyValueWithDefault
- * @description This fn. is used to safely access nested properties within an object. 
- *   If the specified properties exist and have a value, their value is returned. 
- *   If not, the default value of `null` is returned.
- * @param {Object} baseProp - The base property to start evaluation from.
- * @param {any} options.defaultReturn - The value to be returned if the evaluation is not successful.
- * @param {Array} otherProps - An array of properties to be evaluated.
- * @returns {any} - The result of the evaluation.
- * 
- * EXAMPLE: 
- * const dataObj = {
-		user: {
-			name: "John Doe",
-			age: 30,
-			address: {
-				street: "123 Main St",
-				city: "Anytown",
-				state: "CA",
-				zip: "12345"
-			}
-		}
-};
- * const zip = evaluatePropertyValueWithDefault(dataObj, {}, "user", "address", "zip"); // Output: "12345"
-
- * When a key path is found and evaluated to a value that is not undefined, null, or an empty string, 
- * the value will be returned. 
- * 
- * const unknown = evaluatePropertyValueWithDefault(dataObj, {}, "user", "phone"); // Output: null
- * 
- * If the key path is not found or the evaluated value is undefined, null, or an empty string, 
- * null will be returned since no default return value is specified.
- * 
- */
-function evaluatePropertyValueWithDefault(baseProp, { defaultReturn }, ...propPaths) {
-	TraverseObject.resetFinalValue();
-	TraverseObject.evaluateValue(baseProp, ...propPaths);
-	if (
-		TraverseObject.getFinalValue() &&
-		TraverseObject.getFinalValue() !== "undefined" &&
-		TraverseObject.getFinalValue() !== "null"
-	)
-		return TraverseObject.getFinalValue();
-	else if (defaultReturn) return defaultReturn;
-	else return null;
-}
-
-/**
- * @function returnFirstValidPropValue
- * @description This function takes two arguments: `props`, which is the object to search, and `propertyPaths`, 
- *   which is an array of property paths to check, some of which might have dot notation
- *   It uses the reduce() method to loop through each property path in `propertyPaths`, checking for a truthy value in the `props` object using the evaluatePropertyValueWithDefault() fn. 
- *   If a truthy value is found, the final value of the traversal is returned as the result of the fn.
- *   If none of the property paths yield a truthy value, null is returned.
- * @param {Object} propsObj - The base property to start evaluation from.
- * @param {Array} propertyPaths - An array of property paths
- * 
- * You can then call this fn with any array of property paths you like, for example:
- * 
- * const clusterId = findFirstTruthyValue(props, ["geo_cluster_id", "agc_id", "legacy_agc_id"]);
- * const clusterArea = findFirstTruthyValue(props, ["geo_cluster_details.delineated_area", "legacy_agc_details.delineated_area", "agc_area"]);
- * 
- * This fn. is a generic version of this:
- * 
-    const clusterId = ["geo_cluster_id", "agc_id", "legacy_agc_id"].reduce((acc, clusterProp) => {
-      if (acc) {
-        return acc;
-      }
-      const value = evaluateObjProps(props, {}, clusterProp);
-      return value ? value.toUpperCase() : null;
-    }, null);
- */
-
-function returnFirstValidPropValue(propsObj, propertyPaths) {
-
-	return propertyPaths.reduce((acc, path) => {
-		if (acc) return acc;
-		/**
-		 * ...path.split(".") spreads a path with dot notation into an array of strings that can be traversed,
-		 * and pass them as multiple arguments to the `evaluatePropertyValueWithDefault()` function.
-		 *
-		 * For example:
-		 * evaluatePropertyValueWithDefault(propsObj, {}, ...[`geo_cluster_details.delineated_area`].split("."))
-		 * becomes ->
-		 * evaluatePropertyValueWithDefault(propsObj, "geo_cluster_details", "delineated_area")
-		 */
-		const propValue = evaluatePropertyValueWithDefault(propsObj, {}, ...path.split("."));
-
-		return propValue === propValue ? propValue : null;
-
-	}, null);
-}
+const { returnFirstValidPropValue, mandatoryParam } = require("./helpers.js");
 
 /**
  * @function formatClusterLocation
@@ -158,16 +21,16 @@ function formatClusterLocation(locationStr) {
   return arr.map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(", ");
 }
 
-
 /**
- * @function _getFlatClusterProps
+ * @function _getFlattenedClusterProps
  * @description Returns an object containing various properties of a geocluster feature collection.
  * @param {object} clusterFeatureCollection - The cluster feature collection to extract properties from.
  * @returns {object} An object containing various properties of the cluster feature collection.
  */
-exports._getFlatClusterProps = (clusterFeatureCollection = mandatoryParam()) => {
+exports._getFlattenedClusterProps = (clusterFeatureCollection = mandatoryParam()) => {
 
   try {
+		
     // Extract properties from clusterFeatureCollection object
     const props = clusterFeatureCollection.properties;
 
@@ -226,6 +89,6 @@ exports._getFlatClusterProps = (clusterFeatureCollection = mandatoryParam()) => 
     };
   } catch (error) {
     // Handle errors
-    console.error(chalk.fail(`_getFlatClusterProps: ${error.message}`));
+    console.error(chalk.fail(`_getFlattenedClusterProps: ${error.message}`));
   }
 };

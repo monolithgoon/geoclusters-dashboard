@@ -5,7 +5,6 @@ const {
 	_capitalizeWords,
 	_getFeatCenter,
 	_joinWordsArray,
-	_TraverseObject,
 } = require("../utils/helpers.js");
 
 const mandatoryParam = () => {
@@ -106,12 +105,12 @@ exports._GetClusterProps = (clusterFeatureCollection = mandatoryParam()) => {
 		const props = clusterFeatureCollection.properties;
 
 		// REMOVE > DEPRC.
-		// let clusterID = _TraverseObject.evaluateValue(props, "geo_cluster_id")
-		// 	? _TraverseObject.getFinalValue()
-		// 	: _TraverseObject.evaluateValue(props, "agc_id")
-		// 	? _TraverseObject.getFinalValue()
-		// 	: _TraverseObject.evaluateValue(props, "legacy_agc_id")
-		// 	? _TraverseObject.getFinalValue()
+		// let clusterID = TraverseObject.evaluateValue(props, "geo_cluster_id")
+		// 	? TraverseObject.getFinalValue()
+		// 	: TraverseObject.evaluateValue(props, "agc_id")
+		// 	? TraverseObject.getFinalValue()
+		// 	: TraverseObject.evaluateValue(props, "legacy_agc_id")
+		// 	? TraverseObject.getFinalValue()
 		// 	: null;
 
 		let clusterID =
@@ -370,7 +369,7 @@ exports._GetClusterFeatProps = (clusterFeature = mandatoryParam(), { featIdx } =
 					photoURL:
 						evaluateObjProps(props, {}, "owner_photo_url") ||
 						evaluateObjProps(props, {}, "farmer_bio_data", "farmer_photo_url") ||
-						"/assets/icons/icons8-person-48.png",
+						"/src/assets/icons/icons8-person-48.png",
 					biometrics: {
 						names: evaluateObjProps(props, {}, "farmer_bio_data", "farmer_names"),
 						dob: evaluateObjProps(props, {}, "farmer_bio_data", "farmer_dob") || null,

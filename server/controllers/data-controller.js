@@ -5,9 +5,9 @@ const fsPromises = require('fs').promises;
 const path = require('path');
 const LOCAL_FILE_NAMES = require("../constants/local-file-names.js");
 const NGA_GEO_POL_REGIONS = require("../constants/nga-geo-pol-regions.js");
-const catchAsync = require('../middlewares/catch-async-error.js');
+const catchAsyncServer = require('../middlewares/catch-async-server-error.js');
 const chalk = require("../utils/chalk-messages.js");
-const { _formatNumByThousand, _combineObjArrays, _catchAsync } = require("../utils/helpers.js");
+const { _formatNumByThousand, _combineObjArrays, _catchErrorAsync } = require("../utils/helpers.js");
 
 
 const parseString = async str => {
@@ -125,7 +125,7 @@ const ProcessFiles = ((root) => {
 			 * @param {string} filesDirectory - The path of the directory containing the GeoJSON files
 			 * @returns {Promise} A Promise that resolves to an array of the contents of the GeoJSON files in the directory
 			 */
-			loadGeoJSONFilesFromDirectory: _catchAsync(async (filesDirectory) => {
+			loadGeoJSONFilesFromDirectory: _catchErrorAsync(async (filesDirectory) => {
 
 				console.log(chalk.working(`Reading GeoJSON file(s) data in ${filesDirectory}`));
 
@@ -177,7 +177,7 @@ const ProcessFiles = ((root) => {
 			 * @param {string[]} fileNamesArr - An array of file names to read
 			 * @returns {Promise} A Promise that resolves to an array of file contents
 			 */
-			returnLocalFiles: _catchAsync(async (fileNamesArr) => {
+			returnLocalFiles: _catchErrorAsync(async (fileNamesArr) => {
 
 				// Create an empty array to store the file contents
 				const fileContents = [];
@@ -212,7 +212,7 @@ const ProcessFiles = ((root) => {
             d. Adds the Feature to the `geoPolRegionsGJ` Feature Collection.
          4. Writes the `geoPolRegionsGJ` Feature Collection to a file `nga-geo-pol-regions.geojson`. The path to the file is constructed using the `path.resolve` method and the current working directory.
       */
-      getNGAGeoPolRegions: _catchAsync(async () => {
+      getNGAGeoPolRegions: _catchErrorAsync(async () => {
 
          // Get a GeoJSON Feat. Collection for all the states in Nigeria
          const ngaAdmiinBoundsLvl1FeatColl = await parseString(await ProcessFiles.returnLocalFiles([`nga-state-admin-bounds.geojson`]));
@@ -263,7 +263,7 @@ const ProcessFiles = ((root) => {
 })(__approotdir);
 
 
-exports.getAdminBoundsLvl1GeoJSON = catchAsync((async(req, res, next) => {
+exports.getAdminBoundsLvl1GeoJSON = catchAsyncServer((async(req, res, next) => {
    const ngaAdmiinBoundsLvl1Files = await ProcessFiles.loadGeoJSONFilesFromDirectory(`/localdata/nga-state-admin-bounds`);
    res.status(200).json({
       status: `success`,
@@ -273,7 +273,7 @@ exports.getAdminBoundsLvl1GeoJSON = catchAsync((async(req, res, next) => {
 }), `getAdminBoundsLvl1Err`);
 
 
-exports.getAdminBoundsLvl2GeoJSON = catchAsync((async(req, res, next) => {
+exports.getAdminBoundsLvl2GeoJSON = catchAsyncServer((async(req, res, next) => {
    const ngaAdmiinBoundsLvl2Files = await ProcessFiles.loadGeoJSONFilesFromDirectory(`/localdata/nga-lga-admin-bounds`);
    res.status(200).json({
       status: `success`,
@@ -283,7 +283,7 @@ exports.getAdminBoundsLvl2GeoJSON = catchAsync((async(req, res, next) => {
 }), `getAdminBoundsLvl2Err`);
 
 
-exports.getAdminBoundsLvl3GeoJSON = catchAsync((async(req, res, next) => {
+exports.getAdminBoundsLvl3GeoJSON = catchAsyncServer((async(req, res, next) => {
    const ngaAdmiinBoundsLvl3Files = await ProcessFiles.loadGeoJSONFilesFromDirectory(`/localdata/nga-ward-admin-bounds-openAFRICA`);
    res.status(200).json({
       status: `success`,
@@ -293,7 +293,7 @@ exports.getAdminBoundsLvl3GeoJSON = catchAsync((async(req, res, next) => {
 }), `getAdminBoundsLvl3Err`);
 
 
-exports.getGeoPolRegionsGeoJSON = catchAsync((async(req, res, next) => {
+exports.getGeoPolRegionsGeoJSON = catchAsyncServer((async(req, res, next) => {
    const ngaGeoPolRegionsGJ = await parseString(await ProcessFiles.returnLocalFiles([`nga-geo-pol-regions.geojson`]));
    res.status(200).json({
       status: `success`,
@@ -303,7 +303,7 @@ exports.getGeoPolRegionsGeoJSON = catchAsync((async(req, res, next) => {
 }), `getGeoPolRegionsErr`);
 
 
-exports.getNgaMarketsGeoJSON = catchAsync((async(req, res, next) => {
+exports.getNgaMarketsGeoJSON = catchAsyncServer((async(req, res, next) => {
    const ngaMarketsGeoJSON = await ProcessFiles.loadGeoJSONFilesFromDirectory(LOCAL_FILE_NAMES.DIRECTORIES.NGA.MARKETS);
    res.status(200).json({
       status: `success`,
@@ -313,7 +313,7 @@ exports.getNgaMarketsGeoJSON = catchAsync((async(req, res, next) => {
 }), `getNgaMarketsErr`)
 
 
-exports.getNgaWaterwaysGeoJSON = catchAsync((async(req, res, next) => {
+exports.getNgaWaterwaysGeoJSON = catchAsyncServer((async(req, res, next) => {
    const ngaWaterwaysGeoJSON = await ProcessFiles.loadGeoJSONFilesFromDirectory(LOCAL_FILE_NAMES.DIRECTORIES.NGA.WATERWAYS);
    res.status(200).json({
       status: `success`,
@@ -323,7 +323,7 @@ exports.getNgaWaterwaysGeoJSON = catchAsync((async(req, res, next) => {
 }), `getNgaWaterwaysErr`);
 
 
-exports.getWorldCountriesGeoJSON = catchAsync((async(req, res, next) => {
+exports.getWorldCountriesGeoJSON = catchAsyncServer((async(req, res, next) => {
 
    const worldCountriesGeoJSON = await parseString(await ProcessFiles.returnLocalFiles([LOCAL_FILE_NAMES.FILES.WORLD.COUNTRIES]));
 
@@ -412,7 +412,7 @@ function retrieveCachedClustersJSON(JSONFiles) {
  * @param {Function} next - Express next middleware function
  * @throws {Error} If an error occurs while retrieving the cluster summary data.
  */
-exports.getCachedClustersSummary = catchAsync(async (req, res, next) => {
+exports.getCachedClustersSummary = catchAsyncServer(async (req, res, next) => {
 
    // Retrieve the geocluster data and clusters summary from this server's localdata cache
    const { clustersSummary } = retrieveCachedClustersJSON(LOCAL_FILE_NAMES.FILES.GEOCLUSTERS);
@@ -433,7 +433,7 @@ exports.getCachedClustersSummary = catchAsync(async (req, res, next) => {
  * @param {Function} next - Express next middleware function
  * @throws {Error} If an error occurs while retrieving the geocluster data and summary information.
  */
-exports.getCachedClustersData = catchAsync(async (req, res, next) => {
+exports.getCachedClustersData = catchAsyncServer(async (req, res, next) => {
 
    // Retrieve the geocluster data and clusters summary from this server's localdata cache
    const { returnedClusters, clustersSummary } = retrieveCachedClustersJSON(LOCAL_FILE_NAMES.FILES.GEOCLUSTERS);

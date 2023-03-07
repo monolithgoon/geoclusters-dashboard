@@ -1,7 +1,7 @@
 `use strict`
-const catchAsync = require("../middlewares/catch-async-error.js");
-const ServerError = require("./../utils/app-error");
-const APIFeatures = require("./../utils/api-features");
+const catchAsync = require("../middlewares/catch-async-server-error.js");
+const ServerError = require("./../utils/app-error.js");
+const APIFeatures = require("./../utils/api-features.js");
 
 
 exports.getAll = (Model) =>

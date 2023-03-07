@@ -171,7 +171,7 @@ These processed legacy AGCs are appended with farmer biometric data.
 
    These tile URLs are imported into `maps-config.js`, and converted into Leaflet JS Layers, and exported to the rest of the application.
 
-   On the dashboard, the tiles is for the centerfold base map is set in the `LeafletMapsSetup` IIFE funciton in `../src/js/controllers/maps-controller.js`
+   On the dashboard, the tiles is for the centerfold base map is set in the `LeafletMapsSetup` IIFE funciton in `../src/js/avg-controllers/maps-controller.js`
 
 6. `/maps-api-tokens.js`
 

@@ -4,7 +4,7 @@ const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const APP_CONFIG = require("../config/config.js");
 const USER_MODEL = require("../models/user-model.js");
-const catchAsync = require("../middlewares/catch-async-error.js");
+const catchAsync = require("../middlewares/catch-async-server-error.js");
 const ServerError = require("../utils/app-error.js");
 const sendEmail = require("../services/email.js");
 

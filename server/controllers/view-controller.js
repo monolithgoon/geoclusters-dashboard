@@ -1,7 +1,7 @@
 `use strict`
 const chalk = require('../utils/chalk-messages.js');
 const APP_CONFIG = require("../config/config.js");
-const catchAsync = require("../middlewares/catch-async-error.js");
+const catchAsync = require("../middlewares/catch-async-server-error.js");
 
 
 exports.renderLandingPage = catchAsync(async(req, res, next) => {
