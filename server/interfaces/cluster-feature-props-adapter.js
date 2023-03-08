@@ -1,3 +1,4 @@
+const APP_CONFIG = require("../config/config");
 const API_URLS = require("../constants/api-urls");
 const { CLUSTER_FEATS_PROP_PATHS } = require("../constants/cluster-features-prop-path-selectors");
 const _fetchData = require("../utils/fetch-data");
@@ -23,8 +24,9 @@ const getAdditionalFeatureProps = _catchErrorAsync(async(featureResourcePath, ap
 	// Return null if featureResourcePath is falsy
 	if (!featureResourcePath) return null;
 
+  // IMPORTANT
 	// Build the full URL from the resource path
-	const featAPIUrl = `${API_URLS.GEOCLUSTERS.HOST.LOCAL}/${featureResourcePath}?fields=-farmer_bvn,-farmer_image_base64`;
+	const featAPIUrl = `${APP_CONFIG.geoclustersHostUrl}/${featureResourcePath}?fields=-farmer_bvn,-farmer_image_base64`;
   
 	// Log the URL for debugging purposes
 	console.log({ featAPIUrl });
@@ -126,7 +128,7 @@ exports._getFlattenedClusterFeatProps = _catchErrorAsync(
 			CLUSTER_FEATS_PROP_PATHS.FEATURE_ADDITIONAL_PROPS_API_URL
 		);
 
-		// Get additional feature properties by fetching the feature resource path
+		// Get additional feature properties by fetching with the feature resource path
 		const additionalFeatProps = await getAdditionalFeatureProps(featureResourcePath, "apiAuthToken");
 
     const mergedProps = {
@@ -134,29 +136,29 @@ exports._getFlattenedClusterFeatProps = _catchErrorAsync(
       ...additionalFeatProps,
     }
 
-    if (additionalFeatProps) console.log({ mergedProps })
+    if (additionalFeatProps) console.log({ mergedProps });
 
 		// Calculate the feature index as the featIdx parameter plus one
 		const featureIndex = featIdx + 1;
 
 		// Get the feature ID from the properties object
-		const featureID = returnFirstValidPropValue(props, CLUSTER_FEATS_PROP_PATHS.FEATURE_ID);
+		const featureID = returnFirstValidPropValue(mergedProps, CLUSTER_FEATS_PROP_PATHS.FEATURE_ID);
 
 		// Get the feature admin object from the properties object
 		const featureAdmin = Object.freeze({
 			admin1: Object.freeze({
-				id: returnFirstValidPropValue(props, CLUSTER_FEATS_PROP_PATHS.FEATURE_ADMIN_ID) || `..`,
+				id: returnFirstValidPropValue(mergedProps, CLUSTER_FEATS_PROP_PATHS.FEATURE_ADMIN_ID) || `..`,
 				names: Object.freeze({
 					name1: returnFirstValidPropValue(
-						props,
+						mergedProps,
 						CLUSTER_FEATS_PROP_PATHS.FEATURE_ADMIN_TITLE1
 					),
 					name2: returnFirstValidPropValue(
-						props,
+						mergedProps,
 						CLUSTER_FEATS_PROP_PATHS.FEATURE_ADMIN_TITLE2
 					),
 					name3: returnFirstValidPropValue(
-						props,
+						mergedProps,
 						CLUSTER_FEATS_PROP_PATHS.FEATURE_ADMIN_TITLE3
 					),
 				}),

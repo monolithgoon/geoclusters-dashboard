@@ -250,7 +250,6 @@ exports._catchErrorAsync = (fn, fnDescr = null) => {
     } catch (err) {
       console.error(chalk.fail(`${fnDescr || fn.name} error:`, err.message));
       console.error({ err });
-      // throw err;
     }
   };
 }
