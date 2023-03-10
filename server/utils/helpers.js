@@ -60,7 +60,7 @@ exports._formatNumByThousand = (number) => {
  * @function _joinWordsArray
  * @description This function will take an array of strings and returns a single string with the option to separate the values by commas and/or wrap them in quotes.
  * @description If a nested array is found, it will be flattened and its elements will be concatenated.
- * @param {string[]} keywords - An array of strings to co ncatenate
+ * @param {string[]} keywords - An array of strings to concatenate
  * @param {Object} [options] - Optional configuration object
  * @param {boolean} [options.inclQuotes=false] - Whether to wrap each string with quotes
  * @param {boolean} [options.commaSeparated=false] - Whether to separate strings with commas instead of spaces

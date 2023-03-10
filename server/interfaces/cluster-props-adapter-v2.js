@@ -59,7 +59,7 @@ exports._getFlattenedClusterProps = (clusterFeatureCollection = mandatoryParam()
 			);
 		const clusterLocationGeneral = returnFirstValidPropValue(props, CLUSTER_PROP_PATHS.CLUSTER_LOCATION_GENERAL) || `Nigeria`
 		const clusterLocation = formatClusterLocation(`${clusterLocationSpecific}, ${clusterLocationGeneral}`);
-    const clusterRenderHash = returnFirstValidPropValue(props, CLUSTER_PROP_PATHS.CLUSTER_RENDER_HASH);
+    const clusterPreviewUrlHash = returnFirstValidPropValue(props, CLUSTER_PROP_PATHS.CLUSTER_PREVIEW_URL_HASH);
     const subdivideMetadata = returnFirstValidPropValue(props, CLUSTER_PROP_PATHS.AUTO_SUBDIVISION_METADATA);
     let clusterCommodities = returnFirstValidPropValue(props, CLUSTER_PROP_PATHS.CLUSTER_COMMODITIES);
 				clusterCommodities = _startcase(clusterCommodities);
@@ -81,7 +81,7 @@ exports._getFlattenedClusterProps = (clusterFeatureCollection = mandatoryParam()
       clusterAdminLvl3,
       clusterAdminLvl4,
       clusterLocation,
-      clusterRenderHash,
+      clusterPreviewUrlHash,
       subdivideMetadata,
       clusterCommodities,
       clusterGovAdmin1,

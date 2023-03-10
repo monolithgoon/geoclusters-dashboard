@@ -631,7 +631,10 @@ export const _PopulateDOM = ((dom) => {
 
 					// 2.
 					for (let idx = 0; idx < clusterFeatures.length; idx++) {
+
 						let clusterFeature = clusterFeatures[idx];
+
+						console.log({clusterFeature})
 
 						const { clusterFeatCard, clusterFeatCardWrapper } =
 							await _GenerateClusterFeatMarkup.getClusterFeatDiv(clusterFeature.properties);

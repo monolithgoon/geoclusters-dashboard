@@ -2,8 +2,8 @@ const APP_CONFIG = require("../config/config");
 const API_URLS = require("../constants/api-urls");
 const { CLUSTER_FEATS_PROP_PATHS } = require("../constants/cluster-features-prop-path-selectors");
 const _fetchData = require("../utils/fetch-data");
-const { _catchErrorAsync } = require("../utils/helpers");
-const { returnFirstValidPropValue } = require("./helpers");
+const { _catchErrorAsync, _joinWordsArray, _getFeatCenter } = require("../utils/helpers");
+const { returnFirstValidPropValue, calculateAge } = require("./helpers");
 
 const mandatoryParam = () => {
 	throw new Error(`Parameter is required.`);
@@ -17,90 +17,28 @@ const mandatoryParam = () => {
  * @param {string} [apiAuthToken] - An optional API auth token.
  * @returns {Promise<Object|null>} A Promise that resolves with the additional feature properties, or null if featureResourcePath is falsy.
  */
-const getAdditionalFeatureProps = _catchErrorAsync(async(featureResourcePath, apiAuthToken) => {
-
-  let additionalFeatProps = {};
+const getAdditionalFeatureProps = _catchErrorAsync(async (featureResourcePath, apiAuthToken) => {
+	let additionalFeatProps = {};
 
 	// Return null if featureResourcePath is falsy
 	if (!featureResourcePath) return null;
 
-  // IMPORTANT
+	// IMPORTANT
 	// Build the full URL from the resource path
 	const featAPIUrl = `${APP_CONFIG.geoclustersHostUrl}/${featureResourcePath}?fields=-farmer_bvn,-farmer_image_base64`;
-  
+
 	// Log the URL for debugging purposes
 	console.log({ featAPIUrl });
 
 	// Fetch the additional feature properties from the API
 	const apiResponse = await _fetchData(featAPIUrl, { timeout: 60000 });
 
-  // Store in var.
-  additionalFeatProps = apiResponse?.data;
+	// Store in var.
+	additionalFeatProps = apiResponse?.data;
 
 	// Return the additional feature properties
-  	return additionalFeatProps;
-}, `getAdditionalFeatureProps`)
-
-// REMOVE > DEPRECATED
-// exports._getFlattenedClusterFeatProps = _catchErrorAsync(
-
-// 	async (clusterFeature = mandatoryParam(), { featIdx } = {}) => {
-
-// 		// Extract properties from clusterFeature GeoJSOn object
-// 		const props = clusterFeature.properties;
-
-// 		if (!props) throw new Error(`propsInterfaceError: cannot get properties of the cluster feature`);
-
-// 		//
-// 		const featureResourcePath = returnFirstValidPropValue(
-// 			props,
-// 			CLUSTER_FEATS_PROP_PATHS.FEATURE_API_URL
-// 		);
-
-//     // 
-// 		const additionalFeatProps = await getAdditionalFeatureProps(featureResourcePath, "apiAuthToken");
-
-// 		const featureIndex = featIdx + 1;
-// 		const featureID = returnFirstValidPropValue(props, CLUSTER_FEATS_PROP_PATHS.FEATURE_ID);
-// 		const featureAdmin = Object.freeze({
-// 			admin1: Object.freeze({
-// 				id: returnFirstValidPropValue(props, CLUSTER_FEATS_PROP_PATHS.FEATURE_ADMIN_ID) || `..`,
-// 				names: Object.freeze({
-// 					name1: returnFirstValidPropValue(
-// 						props,
-// 						CLUSTER_FEATS_PROP_PATHS.FEATURE_ADMIN_TITLE1
-// 					),
-// 					name2: returnFirstValidPropValue(
-// 						props,
-// 						CLUSTER_FEATS_PROP_PATHS.FEATURE_ADMIN_TITLE2
-// 					),
-// 					name3: returnFirstValidPropValue(
-// 						props,
-// 						CLUSTER_FEATS_PROP_PATHS.FEATURE_ADMIN_TITLE3
-// 					),
-// 				}),
-// 			}),
-// 		});
-
-// 		return {
-// 			featureID,
-// 			featureIndex,
-// 			// featureArea,
-// 			// // featCenterFeat,
-// 			// featCenterLat,
-// 			// featCenterLng,
-// 			// // featOwnerID,
-// 			// // featOwnerName: {
-// 			// //    firstName,
-// 			// //    middleName,
-// 			// //    lastName,
-// 			// // },
-// 			featureAdmin,
-// 			// featRenderHash,
-// 		};
-// 	},
-// 	`_getFlattenedClusterFeatProps`
-// );
+	return additionalFeatProps;
+}, `getAdditionalFeatureProps`);
 
 /**
  * @async
@@ -113,9 +51,7 @@ const getAdditionalFeatureProps = _catchErrorAsync(async(featureResourcePath, ap
  * @throws {Error} Throws an error if the clusterFeature object does not contain a properties object.
  */
 exports._getFlattenedClusterFeatProps = _catchErrorAsync(
-
 	async (clusterFeature = mandatoryParam(), { featIdx } = {}) => {
-
 		// Extract properties from clusterFeature GeoJSON object
 		const props = clusterFeature.properties;
 
@@ -131,12 +67,12 @@ exports._getFlattenedClusterFeatProps = _catchErrorAsync(
 		// Get additional feature properties by fetching with the feature resource path
 		const additionalFeatProps = await getAdditionalFeatureProps(featureResourcePath, "apiAuthToken");
 
-    const mergedProps = {
-      ...props,
-      ...additionalFeatProps,
-    }
+		const mergedProps = {
+			...props,
+			...additionalFeatProps,
+		};
 
-    if (additionalFeatProps) console.log({ mergedProps });
+		if (additionalFeatProps) console.log({ mergedProps });
 
 		// Calculate the feature index as the featIdx parameter plus one
 		const featureIndex = featIdx + 1;
@@ -144,32 +80,65 @@ exports._getFlattenedClusterFeatProps = _catchErrorAsync(
 		// Get the feature ID from the properties object
 		const featureID = returnFirstValidPropValue(mergedProps, CLUSTER_FEATS_PROP_PATHS.FEATURE_ID);
 
+		//
+		featureArea = returnFirstValidPropValue(mergedProps, CLUSTER_FEATS_PROP_PATHS.FEATURE_AREA);
+
+		//
+		featureAreaUnits = returnFirstValidPropValue(mergedProps, CLUSTER_FEATS_PROP_PATHS.FEATURE_AREA_UNITS);
+
 		// Get the feature admin object from the properties object
 		const featureAdmin = Object.freeze({
-			admin1: Object.freeze({
-				id: returnFirstValidPropValue(mergedProps, CLUSTER_FEATS_PROP_PATHS.FEATURE_ADMIN_ID) || `..`,
-				names: Object.freeze({
-					name1: returnFirstValidPropValue(
-						mergedProps,
-						CLUSTER_FEATS_PROP_PATHS.FEATURE_ADMIN_TITLE1
-					),
-					name2: returnFirstValidPropValue(
-						mergedProps,
-						CLUSTER_FEATS_PROP_PATHS.FEATURE_ADMIN_TITLE2
-					),
-					name3: returnFirstValidPropValue(
-						mergedProps,
-						CLUSTER_FEATS_PROP_PATHS.FEATURE_ADMIN_TITLE3
-					),
-				}),
-			}),
+			admin1: {
+				id: returnFirstValidPropValue(mergedProps, CLUSTER_FEATS_PROP_PATHS.FEATURE_ADMIN_ID),
+				name1: returnFirstValidPropValue(mergedProps, CLUSTER_FEATS_PROP_PATHS.FEATURE_ADMIN_PERSON_NAME1),
+				name2: returnFirstValidPropValue(mergedProps, CLUSTER_FEATS_PROP_PATHS.FEATURE_ADMIN_PERSON_NAME2),
+				name3: returnFirstValidPropValue(mergedProps, CLUSTER_FEATS_PROP_PATHS.FEATURE_ADMIN_PERSON_NAME3),
+				statedNames: returnFirstValidPropValue(mergedProps, CLUSTER_FEATS_PROP_PATHS.FEATURE_ADMIN_PERSON_NAMES),
+				dob: returnFirstValidPropValue(mergedProps, CLUSTER_FEATS_PROP_PATHS.FEATURE_ADMIN_PERSON_DOB),
+				gender: returnFirstValidPropValue(mergedProps, CLUSTER_FEATS_PROP_PATHS.FEATURE_ADMIN_PERSON_GENDER),
+				govIdType: returnFirstValidPropValue(
+					mergedProps,
+					CLUSTER_FEATS_PROP_PATHS.FEATURE_ADMIN_PERSON_GOV_ID_TYPE
+				),
+				govIdNo: returnFirstValidPropValue(mergedProps, CLUSTER_FEATS_PROP_PATHS.FEATURE_ADMIN_PERSON_GOV_ID_NO),
+				phoneNo: returnFirstValidPropValue(mergedProps, CLUSTER_FEATS_PROP_PATHS.FEATURE_ADMIN_PERSON_PHONE_NO),
+				emailAddress: returnFirstValidPropValue(
+					mergedProps,
+					CLUSTER_FEATS_PROP_PATHS.FEATURE_ADMIN_PERSON_EMAIL_ADDRESS
+				),
+				imageUrl:
+					returnFirstValidPropValue(mergedProps, CLUSTER_FEATS_PROP_PATHS.FEATURE_ADMIN_PERSON_IMAGE_URL) ||
+					"/src/assets/icons/icons8-person-48.png",
+			},
 		});
+
+		// Construct the feature admin1's full name
+		const featureAdmin1FullName =
+			featureAdmin.admin1.statedNames ||
+			_joinWordsArray([featureAdmin.admin1.name1, featureAdmin.admin1.name2, featureAdmin.admin1.name3], {
+				commaSeparated: false,
+			});
+
+		// Assign the value of "featureAdmin1FullName" to the "fullName" property in the "admin1" object of "featureAdmin"
+		featureAdmin.admin1["fullName"] = featureAdmin1FullName;
+
+		// Assign the calculated age of admin1's dob to the "age" property in featureAdmin object.
+		featureAdmin.admin1["age"] = calculateAge(featureAdmin.admin1.dob);
+
+		//
+		// if (clusterFeature.geometry) {
+		const [featureCenterLat, featureCenterLng] = [..._getFeatCenter(clusterFeature.geometry).latLng];
+		// }
 
 		// Return an object containing the flattened properties of the cluster feature
 		return {
 			featureID,
 			featureIndex,
 			featureAdmin,
+			featureArea,
+			featureAreaUnits,
+			featureCenterLat,
+			featureCenterLng,
 		};
 	},
 	`_getFlattenedClusterFeatProps`

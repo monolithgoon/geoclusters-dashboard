@@ -228,7 +228,7 @@ exports._GetClusterProps = (clusterFeatureCollection = mandatoryParam()) => {
 			}`
 		);
 
-		const clusterRenderHash = evaluateObjProps(props, {}, "preview_map_url_hash");
+		const clusterPreviewUrlHash = evaluateObjProps(props, {}, "preview_map_url_hash");
 
 		const subdivideMetadata = evaluateObjProps(props, {}, "parcelization_metadata");
 
@@ -307,7 +307,7 @@ exports._GetClusterProps = (clusterFeatureCollection = mandatoryParam()) => {
 			clusterAdminLvl3,
 			clusterAdminLvl4,
 			clusterLocation,
-			clusterRenderHash,
+			clusterPreviewUrlHash,
 			subdivideMetadata,
 			clusterCommodities,
 			clusterGovAdmin1,
@@ -354,7 +354,7 @@ exports._GetClusterFeatProps = (clusterFeature = mandatoryParam(), { featIdx } =
 			const featureIndex = featIdx + 1;
 
 			const featureAdmin = Object.freeze({
-				admin1: Object.freeze({
+				admin1: {
 					id:
 						evaluateObjProps(props, {}, "farmer_bio_data", "farmer_id") ||
 						evaluateObjProps(props, {}, "owner_id") ||
@@ -365,41 +365,48 @@ exports._GetClusterFeatProps = (clusterFeature = mandatoryParam(), { featIdx } =
 							evaluateObjProps(props, {}, "farmer_bio_data", "farmer_first_name"),
 						name2: evaluateObjProps(props, {}, "farmer_bio_data", "farmer_middle_name"),
 						name3: evaluateObjProps(props, {}, "farmer_bio_data", "farmer_last_name"),
+						statedNames: evaluateObjProps(props, {}, "farmer_bio_data", "farmer_names"),
 					}),
-					photoURL:
+					imageUrl:
 						evaluateObjProps(props, {}, "owner_photo_url") ||
 						evaluateObjProps(props, {}, "farmer_bio_data", "farmer_photo_url") ||
 						"/src/assets/icons/icons8-person-48.png",
-					biometrics: {
-						names: evaluateObjProps(props, {}, "farmer_bio_data", "farmer_names"),
-						dob: evaluateObjProps(props, {}, "farmer_bio_data", "farmer_dob") || null,
-						gender: evaluateObjProps(props, {}, "farmer_bio_data", "farmer_gender") || "-",
-						idType:
-							evaluateObjProps(props, {}, "farmer_bio_data", "farmer_id_document_type") ||
-							"-",
-						idNo:
-							evaluateObjProps(props, {}, "farmer_bio_data", "farmer_id_document_no") || "-",
-						originAdminLvl1: "Nigeria",
-						originAdminLvl2: "Delta",
-						originAdminLvl3: "Ukwuani",
-					},
-					contact: {
-						phone:
-							evaluateObjProps(props, {}, "farmer_bio_data", "farmer_phone_number_1") || "-",
-						baseAddress: "No. 1 Inter Bau Rd.",
-					},
-				}),
+					// names: evaluateObjProps(props, {}, "farmer_bio_data", "farmer_names"),
+					dob: evaluateObjProps(props, {}, "farmer_bio_data", "farmer_dob") || null,
+					gender: evaluateObjProps(props, {}, "farmer_bio_data", "farmer_gender") || "-",
+					govIdType:
+						evaluateObjProps(props, {}, "farmer_bio_data", "farmer_id_document_type") ||
+						"-",
+					govIdNo:
+						evaluateObjProps(props, {}, "farmer_bio_data", "farmer_id_document_no") || "-",
+					originAdminLvl1: "Nigeria",
+					originAdminLvl2: "Delta",
+					originAdminLvl3: "Ukwuani",
+					phoneNo:
+						evaluateObjProps(props, {}, "farmer_bio_data", "farmer_phone_number_1") || "-",
+					baseAddress: "No. 1 Inter Bau Rd.",
+				},
 			});
+
+			// Construct the feature admin1's full name
+			const featureAdmin1FullName =
+				featureAdmin.admin1.names.statedNames ||
+				_joinWordsArray([featureAdmin.admin1.names.name1, featureAdmin.admin1.names.name2, featureAdmin.admin1.names.name3], {
+					commaSeparated: false,
+				});
+
+			// Assign the value of "featureAdmin1FullName" to the "fullName" property in the "admin1" object of "featureAdmin"
+			featureAdmin.admin1["fullName"] = _startcase(featureAdmin1FullName);
 
 			// COMPUTE ADMIN-1 AGE
 			let admin1Age;
-			let admin1Dob = featureAdmin.admin1.biometrics.dob;
+			let admin1Dob = featureAdmin.admin1.dob;
 			if (admin1Dob && admin1Dob !== "")
 				admin1Age = (Date.now() - Date.parse(admin1Dob)) / 31556926000;
 			admin1Age = !isNaN(admin1Age) ? admin1Age.toFixed(0) : "-";
 
 			// ASSIGN ADMIN-1 AGE
-			featureAdmin.admin1.biometrics["age"] = admin1Age;
+			featureAdmin.admin1["age"] = admin1Age;
 
 			const featureArea =
 				evaluateObjProps(props, {}, "chunk_size") ||

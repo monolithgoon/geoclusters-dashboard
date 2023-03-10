@@ -143,7 +143,6 @@ export const _GenClusterModalMarkup = (() => {
 })();
 
 export const _getClusterMetadaMarkerMarkup = (clusterProps) => {
-	console.log({ clusterProps });
 
 	try {
 		const HTMLMarkup = `
@@ -186,18 +185,21 @@ export const _GenerateClusterFeatMarkup = (() => {
 		}
 
 		const populateCardMarkup = function (props) {
-			const plotAdminPhotoUrl = props.featureAdmin.admin1.photoURL;
+         
+			const plotAdminPhotoUrl = props.featureAdmin.admin1.imageUrl;
 
-			// let admin1Names = _.startCase(_joinWordsArray(Object.values(props.featureAdmin.admin1.names)).toLowerCase());
-			let admin1Names = _joinWordsArray(Object.values(props.featureAdmin.admin1.names));
-			if (admin1Names) admin1Names = _.startCase(admin1Names.toLowerCase());
+         // REMOVE
+			// // let admin1CombinedNames = _.startCase(_joinWordsArray(Object.values(props.featureAdmin.admin1.names)).toLowerCase());
+			// let admin1CombinedNames = _joinWordsArray(Object.values(props.featureAdmin.admin1.names));
+			// if (admin1CombinedNames) admin1CombinedNames = _.startCase(admin1CombinedNames.toLowerCase());
 
-			// let admin1BiometricNames = _.startCase((props.featureAdmin.admin1.biometrics.names).toLowerCase());
-			let admin1BiometricNames = props.featureAdmin.admin1.biometrics.names;
-			if (admin1BiometricNames)
-				admin1BiometricNames = _.startCase(admin1BiometricNames.toLowerCase());
+			// let admin1FullName = props.featureAdmin.admin1.names.statedNames;
+			// if (admin1FullName) admin1FullName = _.startCase(admin1FullName.toLowerCase());
 
-			const plotAdminNames = admin1BiometricNames || admin1Names;
+			// const plotAdminNames = admin1FullName || admin1CombinedNames;
+
+         // WIP
+         const plotAdminNames = props.featureAdmin.admin1.fullName;
 
 			const HTMLMarkup = `
             <div class="card-content-wrapper">
@@ -243,13 +245,13 @@ export const _GenerateClusterFeatMarkup = (() => {
             <section class="feat-card-bio-section">
 
                <section class="section-1">
-                  <div><span>PHONE</span><span>${admin1.contact.phone}</span></div>
-                  <div><span>AGE</span><span>${admin1.biometrics.age}</span></div>
+                  <div><span>PHONE</span><span>${admin1.phoneNo}</span></div>
+                  <div><span>AGE</span><span>${admin1.age}</span></div>
                </section>
 
                <section class="section-2">
                   <div><span>ID TYPE</span><span>National Identity Number</span></div>
-                  <div><span>ID No.</span><span>${admin1.biometrics.idNo}</span></div>
+                  <div><span>ID No.</span><span>${admin1.govIdNo}</span></div>
                </section>
 
                <section class="section-3">
@@ -277,10 +279,14 @@ export const _GenerateClusterFeatMarkup = (() => {
 
 				// INIT. FEAT. CARD
 				const clusterFeatCard = createCard(["cluster-feature-card"]);
+            console.log("HERE 1")
+            console.log({featureProps})
 				clusterFeatCard.innerHTML = populateCardMarkup(featureProps);
 
 				// INIT. FEAT. CARD DRAWER
 				const featCardDrawer = createDiv(["cluster-feature-card-drawer"]);
+            console.log("HERE 2")
+            console.log({featureProps})
 				featCardDrawer.innerHTML = populateCardDrawerMarkup(featureProps);
 
 				clusterFeatCardWrapper.appendChild(clusterFeatCard);
@@ -301,7 +307,7 @@ export const _getClusterFeatPopupMarkup = (props) => {
          
             <div class="mapboxgl-popup-media-wrapper">
                <img src="${
-						props.featureAdmin.admin1.photoURL
+						props.featureAdmin.admin1.imageUrl
 					}" alt=Feature Admin Photo" style="max-width:100%; opacity: 1;">
             </div>
       

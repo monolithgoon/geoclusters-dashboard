@@ -209,7 +209,7 @@ function flattenGeoclusterProperties(geoclustersArray) {
 				const flatClusterFeatProps = _GetClusterFeatProps(clusterFeature, { featIdx: idx });
 
 				// WIP
-				_getFlattenedClusterFeatProps(clusterFeature, { featIdx: idx })
+				// const flatClusterFeatProps = await _getFlattenedClusterFeatProps(clusterFeature, { featIdx: idx })
 
 				// Use the spread operator to create a new object with the original feature's properties
 				// and replace them with the normalized feature properties
@@ -317,7 +317,7 @@ async function cacheAPIData() {
 		for (const geoclusterCollection of apiCollections) {
 
 			if (geoclusterCollection && geoclusterCollection.data) {
-				
+
 				// Normalize (flatten) the collection data.
 				const collectionJSON = flattenGeoclusterProperties(
 					geoclusterCollection.data.collection_docs

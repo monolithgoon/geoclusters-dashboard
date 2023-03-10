@@ -16,7 +16,7 @@
  * @property {string[]} CLUSTER_LOCATION_ADMIN_LVL2 - Possible property names for cluster location at admin level 2.
  * @property {string[]} CLUSTER_LOCATION_ADMIN_LVL3 - Possible property names for cluster location at admin level 3.
  * @property {string[]} CLUSTER_LOCATION_ADMIN_LVL4 - Possible property names for cluster location at admin level 4.
- * @property {string[]} CLUSTER_RENDER_HASH - Possible property names for cluster render hash.
+ * @property {string[]} CLUSTER_PREVIEW_URL_HASH - Possible property names for cluster preview hash.
  * @property {string[]} AUTO_SUBDIVISION_METADATA - Possible property names for auto-subdivision metadata.
  * @property {string[]} CLUSTER_COMMODITIES - Possible property names for cluster commodities.
  * @property {string[]} CLUSTER_GOV_ADMIN1_NAME1 - Possible property names for the first name of the first administrative officer of the cluster.
@@ -53,7 +53,7 @@ exports.CLUSTER_PROP_PATHS = {
 	CLUSTER_LOCATION_ADMIN_LVL2: [`geo_cluster_details.state`, "legacy_agc_details.state"],
 	CLUSTER_LOCATION_ADMIN_LVL3: [`geo_cluster_details.lga`, "legacy_agc_details.lga"],
 	CLUSTER_LOCATION_ADMIN_LVL4: [`geo_cluster_details.ward`, "legacy_agc_details.ward"],
-	CLUSTER_RENDER_HASH: [`preview_map_url_hash`],
+	CLUSTER_PREVIEW_URL_HASH: [`preview_map_url_hash`],
 	AUTO_SUBDIVISION_METADATA: [`parcelization_metadata`],
 	CLUSTER_COMMODITIES: [
 		`geo_cluster_details.primary_crop`,

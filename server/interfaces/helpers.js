@@ -157,7 +157,7 @@ function evaluatePropertyValueWithDefault(baseProp, { defaultReturn }, ...propPa
 function returnFirstValidPropValue(propsObj, propertyPaths) {
 
 	return propertyPaths.reduce((acc, path) => {
-    
+
 		if (acc) return acc;
 		/**
 		 * ...path.split(".") spreads a path with dot notation into an array of strings that can be traversed,
@@ -174,7 +174,34 @@ function returnFirstValidPropValue(propsObj, propertyPaths) {
 	}, null);
 }
 
+function calculateAge(dateOfBirth) {
+  // Return null if dateOfBirth is falsy
+  if (!dateOfBirth) {
+    return null;
+  }
+  
+  // Parse dateOfBirth as a Date object
+  const dobDate = new Date(dateOfBirth);
+  
+  // Return null if dobDate is invalid
+  if (isNaN(dobDate.getTime())) {
+    return null;
+  }
+  
+  // Calculate the age in milliseconds
+  const ageInMilliseconds = Date.now() - dobDate.getTime();
+  
+  // Calculate the age in years, and round down to the nearest integer
+  const ageInYears = ageInMilliseconds / 31556926000;
+  const age = Math.floor(ageInYears);
+  
+  // Return the age as a number
+  return age;
+}
+
+
 module.exports = {
   mandatoryParam,
   returnFirstValidPropValue,
+  calculateAge,
 };
