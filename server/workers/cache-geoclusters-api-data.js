@@ -5,10 +5,7 @@ const chalk = require("../utils/chalk-messages.js");
 const axios = require("axios");
 const turf = require("@turf/turf");
 const gjv = require("geojson-validation");
-const {
-	_GetClusterProps,
-	_GetClusterFeatProps,
-} = require("../interfaces/cluster-props-adapter.js");
+const { _GetClusterProps, _GetClusterFeatProps } = require("../interfaces/cluster-props-adapter.js");
 const { _sanitizeFeatCollCoords, _catchErrorSync } = require("../utils/helpers.js");
 const API_URLS = require("../constants/api-urls.js");
 const config = require("../config/config.js");
@@ -30,11 +27,7 @@ function reportFileStats(filePath) {
 	const fileMBSize = fileByteSize / (1024 * 1024);
 
 	// Logging the file statistics
-	console.log(
-		chalk.success(
-			`File was saved -> [ ${path.basename(filePath)} ] -> ${fileMBSize.toFixed(2)} MB`
-		)
-	);
+	console.log(chalk.success(`File was saved -> [ ${path.basename(filePath)} ] -> ${fileMBSize.toFixed(2)} MB`));
 }
 
 /**
@@ -43,9 +36,7 @@ function reportFileStats(filePath) {
  * @param {string} collectionName - The name of the database collection.
  */
 function saveData(data, collectionName) {
-	console.log(
-		chalk.working(`Saving database collection [ ${collectionName} ] to local storage ..`)
-	);
+	console.log(chalk.working(`Saving database collection [ ${collectionName} ] to local storage ..`));
 
 	// Defining the file path where the data will be saved
 	const filePath = path.resolve(`${__approotdir}/localdata/${collectionName}.json`);
@@ -55,9 +46,7 @@ function saveData(data, collectionName) {
 		// If there is an error in saving the data
 		if (saveDataErr) {
 			// Throwing an error with a descriptive message
-			throw new Error(
-				chalk.highlight(`Failed to save DB. data to disk.. ${saveDataErr.message}`)
-			);
+			throw new Error(chalk.highlight(`Failed to save DB. data to disk.. ${saveDataErr.message}`));
 		}
 		// If the data was saved successfully
 		reportFileStats(filePath);
@@ -100,12 +89,11 @@ async function fetchDBCollectionData(url, apiAccessToken) {
 }
 
 const validateFeatureCollection = _catchErrorSync((geoclusterFeatColl) => {
-	
 	// Check if the supplied GeoJSON is a valid FeatureCollection
 	if (turf.getType(geoclusterFeatColl) !== "FeatureCollection") {
 		throw new Error("The supplied GeoJSON is not a valid FeatureCollection");
 	}
-	
+
 	// Check if the FeatureCollection contains iterable features
 	if (!Array.isArray(geoclusterFeatColl.features)) {
 		throw new Error("The supplied FeatureCollection does not have iterable Features");
@@ -114,14 +102,13 @@ const validateFeatureCollection = _catchErrorSync((geoclusterFeatColl) => {
 	// Use `gjv` library to validate GeoJSON
 	if (!gjv.valid(geoclusterFeatColl)) {
 		console.log(chalk.warningBright("Invalid GeoJSON"));
-		console.log(geoclusterFeatColl.properties.legacy_agc_name)
+		console.log(geoclusterFeatColl.properties.legacy_agc_name);
 		return false;
 	}
-	
+
 	// const trace = gjv.isFeatureCollection(geoclusterFeatColl, true);
 	// console.log(chalk.consoleY(trace))
-
-}, `validateFeatureCollection`)
+}, `validateFeatureCollection`);
 
 /**
  * @function flattenGeoclusterProperties
@@ -167,7 +154,7 @@ const validateFeatureCollection = _catchErrorSync((geoclusterFeatColl) => {
 // 				// Replace the original props. with the flattened props
 // 				geoclusterGeoJSON.properties = flattenedClusterProps;
 
-// 				// Extract properties of each feature in the cluster
+// 				// Extract and flatten the properties of each feature in the cluster
 // 				for (let idx = 0; idx < geoclusterGeoJSON.features.length; idx++) {
 // 					const clusterFeature = geoclusterGeoJSON.features[idx];
 // 					const flatClusterFeatProps = _GetClusterFeatProps(clusterFeature, { featIdx: idx });
@@ -179,19 +166,16 @@ const validateFeatureCollection = _catchErrorSync((geoclusterFeatColl) => {
 // 		}
 // 		return normalizedClusters;
 
-// 	} catch (normalizePropsErr) {
-// 		console.error(chalk.fail(`normalizePropsErr: ${normalizePropsErr}`));
+// 	} catch (normalizeClusterError) {
+// 		console.error(chalk.fail(`normalizeClusterError: ${normalizeClusterError}`));
 // 		return null;
 // 	}
 // }
 
-function flattenGeoclusterProperties(geoclustersArray) {
-
+function flattenGeoclusterProperties_1(geoclustersArray) {
 	try {
-		
 		// Use Array.map() to create a new array of normalized feature collections
 		return geoclustersArray.map((geoclusterGeoJSON) => {
-
 			// Sanitize the coordinates of the FeatureCollection
 			geoclusterGeoJSON = _sanitizeFeatCollCoords(geoclusterGeoJSON);
 
@@ -203,13 +187,12 @@ function flattenGeoclusterProperties(geoclustersArray) {
 			// Replace the original props. with the flattened props
 			geoclusterGeoJSON.properties = flattenedClusterProps;
 
-			// Extract properties of each feature in the cluster
-			const flattenedFeats = geoclusterGeoJSON.features.map((clusterFeature, idx) => {
-
-				const flatClusterFeatProps = _GetClusterFeatProps(clusterFeature, { featIdx: idx });
+			// Extract and flatten the properties of each feature in the cluster
+			const normalizedClusterFeats = geoclusterGeoJSON.features.map(async (clusterFeature, idx) => {
+				// const flatClusterFeatProps = _GetClusterFeatProps(clusterFeature, { featIdx: idx });
 
 				// WIP
-				// const flatClusterFeatProps = await _getFlattenedClusterFeatProps(clusterFeature, { featIdx: idx })
+				const flatClusterFeatProps = await _getFlattenedClusterFeatProps(clusterFeature, { featIdx: idx });
 
 				// Use the spread operator to create a new object with the original feature's properties
 				// and replace them with the normalized feature properties
@@ -223,12 +206,66 @@ function flattenGeoclusterProperties(geoclustersArray) {
 			// features and replace them with the normalized features
 			return {
 				...geoclusterGeoJSON,
-				features: flattenedFeats,
+				features: normalizedClusterFeats,
 			};
 		});
-	} catch (normalizePropsErr) {
+	} catch (normalizeClusterError) {
 		// Log the error message to the console in red text
-		console.error(chalk.fail(`normalizePropsErr: ${normalizePropsErr}`));
+		console.error(chalk.fail(`normalizeClusterError: ${normalizeClusterError}`));
+		return null;
+	}
+}
+
+async function flattenGeoclusterProperties(geoclustersArray) {
+
+	try {
+
+		const normalizedGeoclusters = await Promise.all(
+			geoclustersArray.map(async (geoclusterGeoJSON) => {
+				
+				// Sanitize the coordinates of the FeatureCollection
+				geoclusterGeoJSON = _sanitizeFeatCollCoords(geoclusterGeoJSON);
+
+				// 
+				validateFeatureCollection(geoclusterGeoJSON);
+
+				// Get flattened / normalized cluster properties
+				const flattenedClusterProps = _getFlattenedClusterProps(geoclusterGeoJSON);
+
+				// Replace the original props. with the flattened props
+				geoclusterGeoJSON.properties = flattenedClusterProps;
+
+				// Extract and flatten the properties of each feature in the cluster
+				const normalizedClusterFeats = await Promise.all(
+					geoclusterGeoJSON.features.map(async (clusterFeature, idx) => {
+						// const flatClusterFeatProps = _GetClusterFeatProps(clusterFeature, { featIdx: idx });
+
+						// WIP
+						const flatClusterFeatProps = await _getFlattenedClusterFeatProps(clusterFeature, { featIdx: idx });
+
+						// Use the spread operator to create a new object with the original feature's properties
+						// and replace them with the normalized feature properties
+						return {
+							...clusterFeature,
+							properties: flatClusterFeatProps,
+						};
+					})
+				);
+
+				// Use the spread operator to create a new object with the original feature collection's
+				// features and replace them with the normalized features
+				return {
+					...geoclusterGeoJSON,
+					features: normalizedClusterFeats,
+				};
+			})
+		);
+
+		return normalizedGeoclusters;
+		
+	} catch (normalizeClusterError) {
+		// Log the error message to the console in red text
+		console.error(chalk.fail(`normalizeClusterError: ${normalizeClusterError}`));
 		return null;
 	}
 }
@@ -305,23 +342,16 @@ async function getAPICollections(apiHost, resourcePaths) {
 async function cacheAPIData() {
 	try {
 		// Make the API request to get the collections.
-		const apiCollections = await getAPICollections(
-			config.geoclustersHostUrl,
-			API_URLS.GEOCLUSTERS.RESOURCE_PATHS
-		);
+		const apiCollections = await getAPICollections(config.geoclustersHostUrl, API_URLS.GEOCLUSTERS.RESOURCE_PATHS);
 
 		// Log the received collections for debugging purposes.
 		console.log({ apiCollections });
 
 		// Loop through each collection and process the data
 		for (const geoclusterCollection of apiCollections) {
-
 			if (geoclusterCollection && geoclusterCollection.data) {
-
 				// Normalize (flatten) the collection data.
-				const collectionJSON = flattenGeoclusterProperties(
-					geoclusterCollection.data.collection_docs
-				);
+				const collectionJSON = await flattenGeoclusterProperties(geoclusterCollection.data.collection_docs);
 
 				if (collectionJSON) {
 					// Save the normalized data to disk.
