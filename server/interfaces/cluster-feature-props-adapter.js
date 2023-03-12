@@ -1,6 +1,6 @@
 const APP_CONFIG = require("../config/config");
 const API_URLS = require("../constants/api-urls");
-const { CLUSTER_FEATS_PROP_PATHS } = require("../constants/cluster-features-prop-path-selectors");
+const { CLUSTER_FEATS_PROP_PATHS } = require("../constants/cluster-feature-prop-path-selectors");
 const _fetchData = require("../utils/fetch-data");
 const { _catchErrorAsync, _joinWordsArray, _getFeatCenter } = require("../utils/helpers");
 const { returnFirstValidPropValue, calculateAge } = require("./helpers");
@@ -18,6 +18,7 @@ const mandatoryParam = () => {
  * @returns {Promise<Object|null>} A Promise that resolves with the additional feature properties, or null if featureResourcePath is falsy.
  */
 const getAdditionalFeatureProps = _catchErrorAsync(async (featureResourcePath, apiAuthToken) => {
+
 	let additionalFeatProps = {};
 
 	// Return null if featureResourcePath is falsy
@@ -34,7 +35,7 @@ const getAdditionalFeatureProps = _catchErrorAsync(async (featureResourcePath, a
 	const apiResponse = await _fetchData(featAPIUrl, { timeout: 60000 });
 
 	// Store in var.
-	additionalFeatProps = apiResponse?.data;
+	additionalFeatProps = apiResponse?.data[0];
 
 	// Return the additional feature properties
 	return additionalFeatProps;
@@ -72,7 +73,9 @@ exports._getFlattenedClusterFeatProps = _catchErrorAsync(
 			...additionalFeatProps,
 		};
 
-		if (additionalFeatProps) console.log({ mergedProps });
+		console.log({mergedProps})
+
+		// if (additionalFeatProps) console.log({ mergedProps });
 
 		// Calculate the feature index as the featIdx parameter plus one
 		const featureIndex = featIdx + 1;
@@ -108,7 +111,7 @@ exports._getFlattenedClusterFeatProps = _catchErrorAsync(
 				),
 				imageUrl:
 					returnFirstValidPropValue(mergedProps, CLUSTER_FEATS_PROP_PATHS.FEATURE_ADMIN_PERSON_IMAGE_URL) ||
-					"/src/assets/icons/icons8-person-48.png",
+					"/dist/assets/icons/icons8-person-48.png",
 			},
 		});
 

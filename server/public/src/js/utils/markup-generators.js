@@ -92,7 +92,11 @@ export const _GenClusterModalMarkup = (() => {
                ></button>
             </div>
             <div class="result-item-modal-header flex-row-center-btw">
-               <span>${_formatNumByThousand(+props.clusterFeatsNum)} ${_capitalizeFirstLetter(_pluralizeString(+props.clusterFeatsNum, DESCRIPTORS.GEOCLUSTER_FEATURE_DESCRIPTION))}</span><span>${_formatNumByThousand(+props.clusterArea.toFixed(0))} ${_capitalizeFirstLetter(_pluralizeString(+props.clusterArea, DESCRIPTORS.GEOCLUSTERS_API_DEFAULT_LAND_AREA_UNIT))}</span>
+               <span>${_formatNumByThousand(+props.clusterFeatsNum)} ${_capitalizeFirstLetter(
+				_pluralizeString(+props.clusterFeatsNum, DESCRIPTORS.GEOCLUSTER_FEATURE_DESCRIPTION)
+			)}</span><span>${_formatNumByThousand(+props.clusterArea.toFixed(0))} ${_capitalizeFirstLetter(
+				_pluralizeString(+props.clusterArea, DESCRIPTORS.GEOCLUSTERS_API_DEFAULT_LAND_AREA_UNIT)
+			)}</span>
             </div>
             <div class="result-item-modal-title flex-row-center">
                <span id="modal_title">${props.clusterName}</span>
@@ -143,14 +147,11 @@ export const _GenClusterModalMarkup = (() => {
 })();
 
 export const _getClusterMetadaMarkerMarkup = (clusterProps) => {
-
 	try {
 		const HTMLMarkup = `
          <div class= "plot-metadata-label--chunk-size"> 
             <span> ${_formatNumByThousand(+clusterProps.clusterArea.toFixed(0))} hectares </span>
-            <span> ${_formatNumByThousand(
-					(+clusterProps.clusterArea * 2.47105).toFixed(0)
-				)} acres </span> 
+            <span> ${_formatNumByThousand((+clusterProps.clusterArea * 2.47105).toFixed(0))} acres </span> 
          </div>
          <div class="metadata-label--owner-info__avg"> 
             <span> ${clusterProps.clusterName} </span>
@@ -185,21 +186,7 @@ export const _GenerateClusterFeatMarkup = (() => {
 		}
 
 		const populateCardMarkup = function (props) {
-         
 			const plotAdminPhotoUrl = props.featureAdmin.admin1.imageUrl;
-
-         // REMOVE
-			// // let admin1CombinedNames = _.startCase(_joinWordsArray(Object.values(props.featureAdmin.admin1.names)).toLowerCase());
-			// let admin1CombinedNames = _joinWordsArray(Object.values(props.featureAdmin.admin1.names));
-			// if (admin1CombinedNames) admin1CombinedNames = _.startCase(admin1CombinedNames.toLowerCase());
-
-			// let admin1FullName = props.featureAdmin.admin1.names.statedNames;
-			// if (admin1FullName) admin1FullName = _.startCase(admin1FullName.toLowerCase());
-
-			// const plotAdminNames = admin1FullName || admin1CombinedNames;
-
-         // WIP
-         const plotAdminNames = props.featureAdmin.admin1.fullName;
 
 			const HTMLMarkup = `
             <div class="card-content-wrapper">
@@ -213,10 +200,8 @@ export const _GenerateClusterFeatMarkup = (() => {
                <div class="card-text-wrapper">
                   <div class="card-text-top">
                      <div class="main-card-text">
-                        <span class="feat-admin1-title flex-center justify-start">${plotAdminNames}</span>
-                        <span>${props.featCenterLng.toFixed(6)}°E • ${props.featCenterLat.toFixed(
-				6
-			)}°N</span>
+                        <span class="feat-admin1-title flex-center justify-start">${props.featureAdmin.admin1.fullName}</span>
+                        <span>${props.featureCenterLng.toFixed(6)}°E • ${props.featureCenterLat.toFixed(6)}°N</span>
                      </div>
                      <div class="card-pills">
                         <span class="flex-row-center">Plot ${props.featureIndex}</span>
@@ -279,14 +264,10 @@ export const _GenerateClusterFeatMarkup = (() => {
 
 				// INIT. FEAT. CARD
 				const clusterFeatCard = createCard(["cluster-feature-card"]);
-            console.log("HERE 1")
-            console.log({featureProps})
 				clusterFeatCard.innerHTML = populateCardMarkup(featureProps);
 
 				// INIT. FEAT. CARD DRAWER
 				const featCardDrawer = createDiv(["cluster-feature-card-drawer"]);
-            console.log("HERE 2")
-            console.log({featureProps})
 				featCardDrawer.innerHTML = populateCardDrawerMarkup(featureProps);
 
 				clusterFeatCardWrapper.appendChild(clusterFeatCard);
@@ -312,13 +293,9 @@ export const _getClusterFeatPopupMarkup = (props) => {
             </div>
       
             <div class="mapboxgl-popup-text-wrapper">
-               <span class="mapboxgl-popup-title">${_.startCase(
-						_joinWordsArray(Object.values(props.featureAdmin.admin1.names))
-					)}</span>
+               <span class="mapboxgl-popup-title">${props.featureAdmin.admin1.fullName}</span>
                <span>VASTID • ${props.featureID}</span>
-               <span>Lat ${props.featCenterLat.toFixed(6)}°N Lng ${props.featCenterLng.toFixed(
-			6
-		)}°E </span>
+               <span>Lat ${props.featureCenterLat.toFixed(6)}°N Lng ${props.featureCenterLng.toFixed(6)}°E </span>
             </div>      
 
          </div>`;

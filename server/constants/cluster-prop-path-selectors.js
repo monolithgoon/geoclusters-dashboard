@@ -35,7 +35,8 @@ exports.CLUSTER_PROP_PATHS = {
 		`legacy_agc_name`,
 		"farm_program_title",
 	],
-	CLUSTER_CREATED_DATE: [`cluster_created_timestamp`, `db_insert_timestamp`],
+	CLUSTER_INSERTED_DATE: [`cluster_created_timestamp`, `db_insert_timestamp`],
+	CLUSTER_INCEPTION_DATE: [`farm_program_start_date`],
 	CLUSTER_AREA: [
 		"agc_area",
 		`geo_cluster_details.delineated_area`,

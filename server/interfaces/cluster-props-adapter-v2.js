@@ -42,7 +42,8 @@ exports._getFlattenedClusterProps = (clusterFeatureCollection = mandatoryParam()
 					: clusterName;
 
     // Extract other properties from properties object
-    const clusterCreatedDate = returnFirstValidPropValue(props, CLUSTER_PROP_PATHS.CLUSTER_CREATED_DATE);
+    const clusterInsertedTimestamp = returnFirstValidPropValue(props, CLUSTER_PROP_PATHS.CLUSTER_INSERTED_DATE);
+    const clusterInceptionDate = returnFirstValidPropValue(props, CLUSTER_PROP_PATHS.CLUSTER_INCEPTION_DATE);
     const clusterFeatsNum = clusterFeatureCollection.features.length;
     const clusterArea = returnFirstValidPropValue(props, CLUSTER_PROP_PATHS.CLUSTER_AREA) || 0;
     const clusterUsedArea = returnFirstValidPropValue(props, CLUSTER_PROP_PATHS.CLUSTER_USED_AREA) || 0;
@@ -70,7 +71,8 @@ exports._getFlattenedClusterProps = (clusterFeatureCollection = mandatoryParam()
     return {
       clusterID,
       clusterName,
-      clusterCreatedDate,
+      clusterInsertedTimestamp,
+      clusterInceptionDate,
       clusterFeatsNum,
       clusterArea,
       clusterUsedArea,

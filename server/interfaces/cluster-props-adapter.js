@@ -413,9 +413,9 @@ exports._GetClusterFeatProps = (clusterFeature = mandatoryParam(), { featIdx } =
 				evaluateObjProps(props, {}, "plot_owner_allocation_size") ||
 				evaluateObjProps(props, {}, "plot_size");
 
-			let featCenterLat, featCenterLng;
+			let featureCenterLat, featureCenterLng;
 			if (clusterFeature.geometry) {
-				[featCenterLat, featCenterLng] = [..._getFeatCenter(clusterFeature.geometry).latLng];
+				[featureCenterLat, featureCenterLng] = [..._getFeatCenter(clusterFeature.geometry).latLng];
 			}
 
 			return {
@@ -423,8 +423,8 @@ exports._GetClusterFeatProps = (clusterFeature = mandatoryParam(), { featIdx } =
 				featureIndex,
 				featureArea,
 				// featCenterFeat,
-				featCenterLat,
-				featCenterLng,
+				featureCenterLat,
+				featureCenterLng,
 				// featOwnerID,
 				// featOwnerName: {
 				//    firstName,

@@ -432,7 +432,7 @@ const LeafletMaps = ((baseMap) => {
 			if (!useBuffer) {
 				const { featProps } = LeafletMaps.getFeatureData(gjFeature);
 
-				const featCenterLatLng = [featProps.featCenterLat, featProps.featCenterLng];
+				const featCenterLatLng = [featProps.featureCenterLat, featProps.featureCenterLng];
 
 				if (!featCenterLatLng) throw new Error(`Cannot create GeoJSON feat. maker`);
 
@@ -871,7 +871,7 @@ const LeafletMaps = ((baseMap) => {
 
 			const { featProps } = LeafletMaps.getFeatureData(gjFeature);
 
-			var featMarkerCoords = [featProps.featCenterLat, featProps.featCenterLng];
+			var featMarkerCoords = [featProps.featureCenterLat, featProps.featureCenterLng];
 
 			//    featMarkerCoords.push(featMarkerCoord);
 			// };
@@ -971,7 +971,7 @@ const LeafletMaps = ((baseMap) => {
 		// REMOVE
 		renderPixiMarker: (gjFeature, { map = baseMap }) => {
 			const { featProps } = LeafletMaps.getFeatureData(gjFeature);
-			const featCenterLatLng = [featProps.featCenterLat, featProps.featCenterLng];
+			const featCenterLatLng = [featProps.featureCenterLat, featProps.featureCenterLng];
 
 			var loader = new PIXI.loaders.Loader();
 			// loader.add('marker', '/assets/icons/location.svg');

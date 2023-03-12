@@ -172,6 +172,7 @@ const validateFeatureCollection = _catchErrorSync((geoclusterFeatColl) => {
 // 	}
 // }
 
+// REMOVE > DOESN'T WORK WITH `_getFlattenedClusterFeatProps` FN.
 function flattenGeoclusterProperties_1(geoclustersArray) {
 	try {
 		// Use Array.map() to create a new array of normalized feature collections
@@ -215,7 +216,6 @@ function flattenGeoclusterProperties_1(geoclustersArray) {
 		return null;
 	}
 }
-
 async function flattenGeoclusterProperties(geoclustersArray) {
 
 	try {
@@ -238,6 +238,8 @@ async function flattenGeoclusterProperties(geoclustersArray) {
 				// Extract and flatten the properties of each feature in the cluster
 				const normalizedClusterFeats = await Promise.all(
 					geoclusterGeoJSON.features.map(async (clusterFeature, idx) => {
+
+						// REMOVE > DEPRC. `_GetClusterFeatProps`
 						// const flatClusterFeatProps = _GetClusterFeatProps(clusterFeature, { featIdx: idx });
 
 						// WIP
