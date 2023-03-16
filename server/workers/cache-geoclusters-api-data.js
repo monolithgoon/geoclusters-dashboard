@@ -46,7 +46,7 @@ function saveData(data, collectionName) {
 		// If there is an error in saving the data
 		if (saveDataErr) {
 			// Throwing an error with a descriptive message
-			throw new Error(chalk.highlight(`Failed to save DB. data to disk.. ${saveDataErr.message}`));
+			throw new Error(chalk.warningBright(`Failed to save DB. data to disk.. ${saveDataErr.message}`));
 		}
 		// If the data was saved successfully
 		reportFileStats(filePath);

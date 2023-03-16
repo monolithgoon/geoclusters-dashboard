@@ -38,7 +38,7 @@
   height: 100%;
   opacity: 0.1;
   background-image: inherit;
-	background-image: url("/src/assets/images/noun-contour-topography.svg");
+	background-image: url("../assets/images/noun-contour-topography.svg");
 	background-size: cover;
 	background-repeat: no-repeat;
 }
@@ -110,7 +110,7 @@
 
 section.bottom-section {
 	flex: 1;
-	background-image: url("/src/assets/images/noun-dark-contour.svg");
+	background-image: url("../assets/images/noun-dark-contour.svg");
 	background-size: cover;
 	background-repeat: no-repeat;
 	background-color: var(--error-page-background-color);

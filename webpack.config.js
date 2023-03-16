@@ -1,6 +1,7 @@
 // Import the necessary modules
 const path = require('path');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 // Export the Webpack configuration object
 module.exports = {
@@ -28,6 +29,13 @@ module.exports = {
     new CleanWebpackPlugin({
       cleanOnceBeforeBuildPatterns: ['**/*', '!assets/**/*'],
     }),
+
+    //  Copy files and directories as part of the Webpack build process
+    new CopyWebpackPlugin({
+      patterns: [
+        { from: 'assets/icons', to: 'assets/icons' },
+      ],
+    }),
   ],
 
   // Define the loaders used to process specific types of files
@@ -40,6 +48,16 @@ module.exports = {
         use: [
           'style-loader',
           'css-loader',
+          // REMOVE -> CAUSING ERRORS -> DOES NOT SEEM TO BE NEEDED
+          // Use the `url-loader` to load images in .css files
+          // {
+          //   loader: 'url-loader',
+          //   options: {
+          //     limit: 8192, // Convert images < 8kb to base64 strings
+          //     name: 'assets/images/[name].[ext]',
+          //     publicPath: '../', // Fix relative paths in CSS
+          //   },
+          // },
         ],
       },
 

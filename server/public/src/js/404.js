@@ -2,7 +2,6 @@
 
 /**
  * @file A JavaScript function to handle the return to landing button click event.
- * @author [Your Name]
  */
 
 /**

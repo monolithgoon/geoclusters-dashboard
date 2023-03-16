@@ -73,8 +73,6 @@ exports._getFlattenedClusterFeatProps = _catchErrorAsync(
 			...additionalFeatProps,
 		};
 
-		console.log({mergedProps})
-
 		// if (additionalFeatProps) console.log({ mergedProps });
 
 		// Calculate the feature index as the featIdx parameter plus one
