@@ -141,7 +141,7 @@ const LeafletMapsSetup = ((baseMap, featDetailMap) => {
 	baseMap.on("zoomend", function () {
 		switchTileLayers(baseMap);
 
-		const zoomLevel = LeafletMaps.getMapZoom();
+		const zoomLevel = LeafletMapsController.getMapZoom();
 		console.log({ zoomLevel });
 
 		// FIXME > MOVE SOME PLACE ELSE
@@ -182,13 +182,13 @@ const LeafletMapsSetup = ((baseMap, featDetailMap) => {
 				const layerGroup = lgObj.layer_group;
 
 				// RENDER ONLY LAYER GROUPS IN MAP VIEW BOUNDS
-				// console.log(LeafletMaps.getLayersInView());
+				// console.log(LeafletMapsController.getLayersInView());
 
 				// FIXME > NOT COMPLETELY WORKING AS INTENDED
 				if (!map.hasLayer(layerGroup)) {
 					// compare the bounds of the layer group to the map bounds;
 					// only add layer groups that are within bounds of the current map view
-					if (map.getBounds().contains(LeafletMaps.getLayerGroupCenterLatLng(layerGroup))) {
+					if (map.getBounds().contains(LeafletMapsController.getLayerGroupCenterLatLng(layerGroup))) {
 						layerGroup.addTo(map);
 
 						console.log("evaluating");
@@ -405,7 +405,7 @@ const MapboxPopupsController = (function () {
 	};
 })();
 
-const LeafletMaps = ((baseMap) => {
+const LeafletMapsController = ((baseMap) => {
 	const MARKER_GROUPS = [];
 	const baseMapLayerGroup = LLayerGroupController.getLayerGroups().baseMapLayerGroup;
 
@@ -419,7 +419,7 @@ const LeafletMaps = ((baseMap) => {
 
 		try {
 			if (!useBuffer) {
-				const { featProps } = LeafletMaps.getFeatureData(gjFeature);
+				const { featProps } = LeafletMapsController.getFeatureData(gjFeature);
 
 				const featCenterLatLng = [featProps.featureCenterLat, featProps.featureCenterLng];
 
@@ -553,7 +553,7 @@ const LeafletMaps = ((baseMap) => {
 				draggable: draggable,
 				icon: L.divIcon({
 					className: `${styleClass}`,
-					html: LeafletMaps.getFeatPropsMarkup(props),
+					html: LeafletMapsController.getFeatPropsMarkup(props),
 				}),
 				zIndexOffset: 100,
 			});
@@ -596,9 +596,9 @@ const LeafletMaps = ((baseMap) => {
 		},
 		panFeatCenter: async (geoJSON, { map = baseMap, zoomLevel }) => {
 			const turfCOMFeat = turf.centerOfMass(geoJSON); // FIXME
-			// await LeafletMaps.panToPointFeat(turfCOMFeat, {map, zoomLevel}); // REMOVE > DEPRC.
-			const featPointCoords = await LeafletMaps.getFeatCoords(turfCOMFeat);
-			await LeafletMaps.panToCoords(featPointCoords, { map, zoomLevel });
+			// await LeafletMapsController.panToPointFeat(turfCOMFeat, {map, zoomLevel}); // REMOVE > DEPRC.
+			const featPointCoords = await LeafletMapsController.getFeatCoords(turfCOMFeat);
+			await LeafletMapsController.panToCoords(featPointCoords, { map, zoomLevel });
 		},
 		fitFeatBounds: (geoJSON, { map = baseMap }) => {
 			const leafletGJLayer = L.geoJson(geoJSON);
@@ -682,11 +682,11 @@ const LeafletMaps = ((baseMap) => {
 					default:
 						gjFeature = getPresentationPoly(gjFeature, { useBuffer, bufferAmt, bufferUnits });
 
-						const { featGeometry, featCoords } = LeafletMaps.getFeatureData(gjFeature);
+						const { featGeometry, featCoords } = LeafletMapsController.getFeatureData(gjFeature);
 
 						// RENDER OUTLINE
 						if (featGeometry) {
-							LeafletMaps.getFeatPolyOutline(featGeometry, {
+							LeafletMapsController.getFeatPolyOutline(featGeometry, {
 								lineColor,
 								lineWeight,
 								lineOpacity,
@@ -697,7 +697,7 @@ const LeafletMaps = ((baseMap) => {
 						}
 
 						// RENDER FILL
-						// if (featCoords) LeafletMaps.getFeatPolyFill(featCoords).addTo(featLayerGroup);
+						// if (featCoords) LeafletMapsController.getFeatPolyFill(featCoords).addTo(featLayerGroup);
 
 						// REMOVE
 						// FIXME > DOES THIS BELONG HERE??
@@ -775,7 +775,7 @@ const LeafletMaps = ((baseMap) => {
 		},
 		// REMOVE
 		renderFeatureMarker__2: async (feature, { map = baseMap }) => {
-			const { featCenter } = LeafletMaps.getFeatureData(feature);
+			const { featCenter } = LeafletMapsController.getFeatureData(feature);
 
 			// L.marker(featCenter).addTo(baseMapLayerGroup);
 
@@ -827,7 +827,7 @@ const LeafletMaps = ((baseMap) => {
 			for (let idx = 0; idx < gjFeatures.length; idx++) {
 				const gjFeature = gjFeatures[idx];
 
-				const { featCenter } = LeafletMaps.getFeatureData(gjFeature);
+				const { featCenter } = LeafletMapsController.getFeatureData(gjFeature);
 
 				// var canvasMarker = L.marker(featCenter, { icon: canvasIcon })
 				// // .bindPopup("AGC")
@@ -848,7 +848,7 @@ const LeafletMaps = ((baseMap) => {
 
 			//    const gjFeature = gjFeatures[idx];
 
-			const { featProps } = LeafletMaps.getFeatureData(gjFeature);
+			const { featProps } = LeafletMapsController.getFeatureData(gjFeature);
 
 			var featMarkerCoords = [featProps.featureCenterLat, featProps.featureCenterLng];
 
@@ -947,7 +947,7 @@ const LeafletMaps = ((baseMap) => {
 		},
 		// REMOVE
 		renderPixiMarker: (gjFeature, { map = baseMap }) => {
-			const { featProps } = LeafletMaps.getFeatureData(gjFeature);
+			const { featProps } = LeafletMapsController.getFeatureData(gjFeature);
 			const featCenterLatLng = [featProps.featureCenterLat, featProps.featureCenterLng];
 
 			var loader = new PIXI.loaders.Loader();
@@ -1119,7 +1119,7 @@ const LeafletMaps = ((baseMap) => {
 	};
 })(AVG_BASE_MAP);
 
-const MapboxMaps = ((subplotsMap) => {
+const MapboxMapsController = ((subplotsMap) => {
 	return {
 		clearPopups: () => {
 			var popUps = document.getElementsByClassName("mapboxgl-popup");
@@ -1233,12 +1233,12 @@ const MapboxMaps = ((subplotsMap) => {
 
 				if (polygonOutlineLayer && polygonFillLayer) {
 					// // CLEAR PREVIOUSLY RENDERED LAYERS
-					// MapboxMaps.sanitizeLayers({map: mapboxMap, renderedLayers: MapboxLayersController.returnSavedLayers()});
-					// MapboxMaps.removeMarkers(MapboxMarkersController.returnSavedMarkers());
+					// MapboxMapsController.sanitizeLayers({map: mapboxMap, renderedLayers: MapboxLayersController.returnSavedLayers()});
+					// MapboxMapsController.removeMarkers(MapboxMarkersController.returnSavedMarkers());
 
 					// ADD THE LAYERS TO THE MAPBOX MAP
-					MapboxMaps.addLayer(mapboxMap, polygonOutlineLayer);
-					MapboxMaps.addLayer(mapboxMap, polygonFillLayer);
+					MapboxMapsController.addLayer(mapboxMap, polygonOutlineLayer);
+					MapboxMapsController.addLayer(mapboxMap, polygonFillLayer);
 
 					// ADD INTERACTION TO THE FILL LAYER
 					MapboxFillLayerHandler.addInteraction(mapboxMap, polygonFillLayer);
@@ -1268,7 +1268,7 @@ const MapboxMaps = ((subplotsMap) => {
 					labelPosition,
 				});
 
-				MapboxMaps.addLayer(mapboxMap, labelLayer);
+				MapboxMapsController.addLayer(mapboxMap, labelLayer);
 
 				MapboxLayersController.saveLayers(labelLayer);
 			} catch (mapboxDrawLabelsErr) {
@@ -1279,7 +1279,7 @@ const MapboxMaps = ((subplotsMap) => {
 		openFeatPopup: (map, props, centerLngLat) => {
 			console.log({ props });
 
-			MapboxMaps.clearPopups();
+			MapboxMapsController.clearPopups();
 
 			// const popup = new mapboxgl.Popup({ className: "mapbox-metadata-popup" })
 			const popup = new mapboxgl.Popup({ closeOnClick: true })
@@ -1322,18 +1322,18 @@ const MapboxMaps = ((subplotsMap) => {
 					const mapboxMarker = new mapboxgl.Marker().setLngLat(gjCenterCoords);
 
 					// CLEAR PREVIOUSLY RENDERED LAYERS
-					MapboxMaps.sanitizeLayers({
+					MapboxMapsController.sanitizeLayers({
 						map: map,
 						renderedLayers: MapboxLayersController.returnSavedLayers(),
 					});
-					MapboxMaps.removeMarkers(MapboxMarkersController.returnSavedMarkers());
+					MapboxMapsController.removeMarkers(MapboxMarkersController.returnSavedMarkers());
 
 					// console.log(gjOutlineLayer)
 					// console.log(gjFillLayer)
 
 					// ADD LAYERS TO MAPBOX MAP
-					MapboxMaps.addLayer(map, gjOutlineLayer);
-					MapboxMaps.addLayer(map, gjFillLayer);
+					MapboxMapsController.addLayer(map, gjOutlineLayer);
+					MapboxMapsController.addLayer(map, gjFillLayer);
 					mapboxMarker.addTo(map);
 
 					// SAVE THE LAYERS & MARKERS
@@ -1369,7 +1369,7 @@ const MapboxFillLayerHandler = ((leafletModalMap) => {
 	try {
 		const layerClick = (map, fillLayer) => {
 			map.on(`click`, `${fillLayer.id}`, (e) => {
-				const layerData = MapboxMaps.getLayerData(e);
+				const layerData = MapboxMapsController.getLayerData(e);
 
 				// // SANDBOX
 				// $('#exampleModal').modal('show');
@@ -1379,7 +1379,7 @@ const MapboxFillLayerHandler = ((leafletModalMap) => {
 
 				_ManipulateDOM.affectDOMElement(fillLayer.id, `selected`);
 
-				MapboxMaps.openFeatPopup(map, layerData.layerProps, layerData.lngLatCenter);
+				MapboxMapsController.openFeatPopup(map, layerData.layerProps, layerData.lngLatCenter);
 
 				// get a new mapbox layer
 				const clickedLayerId = `clickedLayer_${fillLayer.id}`;
@@ -1393,13 +1393,13 @@ const MapboxFillLayerHandler = ((leafletModalMap) => {
 				// TODO > clear prev. popups
 
 				// clear prev. clicked layers
-				MapboxMaps.sanitizeLayers({
+				MapboxMapsController.sanitizeLayers({
 					map,
 					renderedLayers: MapboxLayersController.returnClickedLayers(),
 				});
 
 				// add clicked layer to map
-				MapboxMaps.addLayer(map, clickedLayer);
+				MapboxMapsController.addLayer(map, clickedLayer);
 
 				// KEEP TRACK OF THE CLICKED LAYER
 				MapboxLayersController.saveLayers(clickedLayer);
@@ -1420,7 +1420,7 @@ const MapboxFillLayerHandler = ((leafletModalMap) => {
 						console.log(MapboxLayersController.returnClickedLayers());
 
 						if (clickedLayerId === prevClickedLayer.id) {
-							MapboxMaps.sanitizeLayers({
+							MapboxMapsController.sanitizeLayers({
 								map,
 								renderedLayers: MapboxLayersController.returnClickedLayers(),
 							});
@@ -1457,13 +1457,13 @@ const MapboxFillLayerHandler = ((leafletModalMap) => {
 					L.marker(featureData.latLngCenter).addTo(leafletLayerGroup);
 
 					// RENDER A LEAFLET POLYGON
-					LeafletMaps.getFeatPolyOutline(featGeometry, { lineWeight: 4 }).addTo(leafletLayerGroup);
+					LeafletMapsController.getFeatPolyOutline(featGeometry, { lineWeight: 4 }).addTo(leafletLayerGroup);
 
 					// FILL THE POLYGON
-					LeafletMaps.getFeatPolyFill(featCoords).addTo(leafletLayerGroup);
+					LeafletMapsController.getFeatPolyFill(featCoords).addTo(leafletLayerGroup);
 
 					// DISPLAY PLOT METADATA AT CENTER OF THE CLUSTER PLOT FEATURE
-					LeafletMaps.getClusterPlotHTMLMarker(featProps, featCenter, "plot-metadata-label", {
+					LeafletMapsController.getClusterPlotHTMLMarker(featProps, featCenter, "plot-metadata-label", {
 						draggable: true,
 					}).addTo(leafletLayerGroup);
 
@@ -1590,13 +1590,13 @@ export const _RenderEngine = (function (avgBaseMap, clusterFeatsMap) {
 		// PAN BASE MAP TO FEAT. COLL.
 		const basemapPanToCluster = async (featColl, { zoomLevel }) => {
 			console.time("panBasemap");
-			await LeafletMaps.panFeatCenter(featColl, { map: avgBaseMap, zoomLevel });
+			await LeafletMapsController.panFeatCenter(featColl, { map: avgBaseMap, zoomLevel });
 			console.timeEnd("panBasemap");
 		};
 
 		const basemapFitCluster = async (featColl, { zoomlevel }) => {
 			console.time("fitClusterBounds");
-			LeafletMaps.fitFeatBounds(featColl, { map: avgBaseMap });
+			LeafletMapsController.fitFeatBounds(featColl, { map: avgBaseMap });
 			console.timeEnd("fitClusterBounds");
 		};
 
@@ -1605,7 +1605,7 @@ export const _RenderEngine = (function (avgBaseMap, clusterFeatsMap) {
 			console.time("panSidemap");
 			const gjCenterCoords = turf.coordAll(turf.centerOfMass(featColl))[0];
 			const gjBounds = turf.bbox(featColl);
-			MapboxMaps.panToCoords(clusterFeatsMap, gjCenterCoords, gjBounds, {
+			MapboxMapsController.panToCoords(clusterFeatsMap, gjCenterCoords, gjBounds, {
 				zoom: 16,
 				pitch: 0,
 				bearing: 0,
@@ -1622,7 +1622,7 @@ export const _RenderEngine = (function (avgBaseMap, clusterFeatsMap) {
 				const gjCenterCoords = turf.coordAll(turf.centerOfMass(geoJSONFeat))[0];
 				const gjBounds = turf.bbox(geoJSONFeat);
 				// FIXME > ZOOM VALUE OVER-RIDDEN BY BOUNDS
-				MapboxMaps.panToCoords(clusterFeatsMap, gjCenterCoords, gjBounds, {
+				MapboxMapsController.panToCoords(clusterFeatsMap, gjCenterCoords, gjBounds, {
 					zoom: zoomLevel,
 					pitch: 0,
 					bearing: 0,
@@ -1639,14 +1639,14 @@ export const _RenderEngine = (function (avgBaseMap, clusterFeatsMap) {
 			refreshClusterPlotsMap: (eventObj) => {
 				var layerId = eventObj.target.id;
 				if (layerId) {
-					MapboxMaps.switchLayer({ layerId, map: clusterFeatsMap });
+					MapboxMapsController.switchLayer({ layerId, map: clusterFeatsMap });
 				} else {
 					// TODO
 				}
 			},
 
 			renderFeatPopup: (props, centerLngLat) => {
-				MapboxMaps.openFeatPopup(clusterFeatsMap, props, centerLngLat);
+				MapboxMapsController.openFeatPopup(clusterFeatsMap, props, centerLngLat);
 			},
 
 			panToClusterPlot: (geoJSONFeat, { zoomLevel }) => {
@@ -1660,7 +1660,7 @@ export const _RenderEngine = (function (avgBaseMap, clusterFeatsMap) {
 				// render feats. on base map
 				for (let idx = 0; idx < gjFeatColl.features.length; idx++) {
 					const gjFeature = gjFeatColl.features[idx];
-					LeafletMaps.drawFeature(gjFeature, {
+					LeafletMapsController.drawFeature(gjFeature, {
 						useBuffer,
 						bufferAmt,
 						bufferUnits,
@@ -1708,7 +1708,7 @@ export const _RenderEngine = (function (avgBaseMap, clusterFeatsMap) {
 						});
 
 						// DISPLAY CLUSTER DETAILS IN HTML MARKER
-						LeafletMaps.getClusterMetadataMarker(polyProps, polyCenter, "plot-metadata-label", {
+						LeafletMapsController.getClusterMetadataMarker(polyProps, polyCenter, "plot-metadata-label", {
 							draggable: true,
 						}).addTo(clusterMetaLabelsLG);
 
@@ -1718,14 +1718,14 @@ export const _RenderEngine = (function (avgBaseMap, clusterFeatsMap) {
 						});
 
 						// RENDER CLUSTER SURVEY DETAILS
-						LeafletMaps.drawPolySurveyDetails(featCollPoly, clusterPolyOutlineLG, {
+						LeafletMapsController.drawPolySurveyDetails(featCollPoly, clusterPolyOutlineLG, {
 							bearingThresh: 45,
 							distThresh: 30,
 						});
 
 						// RENDER THE POLY
-						LeafletMaps.drawFeature(featCollPoly, { lineColor: "#6ab04c", lineWeight: 5 });
-						LeafletMaps.drawFeature(featCollPoly, { lineColor: "#badc58", lineWeight: 1 });
+						LeafletMapsController.drawFeature(featCollPoly, { lineColor: "#6ab04c", lineWeight: 5 });
+						LeafletMapsController.drawFeature(featCollPoly, { lineColor: "#badc58", lineWeight: 1 });
 
 						// GET BBOX
 						let featCollBboxPoly = _ProcessGeoJSON.getBboxPoly(featCollPoly);
@@ -1749,14 +1749,14 @@ export const _RenderEngine = (function (avgBaseMap, clusterFeatsMap) {
 
 							finalBboxPoly.properties = polyProps;
 
-							// LeafletMaps.drawFeature(finalBboxPoly, {featLayerGroup: bboxLayerGroup, lineColor: "cyan", lineWeight: 1, lineDashArray: "80, 20"});
-							LeafletMaps.drawFeature(finalBboxPoly, {
+							// LeafletMapsController.drawFeature(finalBboxPoly, {featLayerGroup: bboxLayerGroup, lineColor: "cyan", lineWeight: 1, lineDashArray: "80, 20"});
+							LeafletMapsController.drawFeature(finalBboxPoly, {
 								featLayerGroup: bboxLayerGroup,
 								lineColor: "cyan",
 								lineWeight: 0.55,
 							});
 
-							LeafletMaps.drawPolySurveyDetails(finalBboxPoly, bboxLayerGroup, {
+							LeafletMapsController.drawPolySurveyDetails(finalBboxPoly, bboxLayerGroup, {
 								bearingThresh: 0,
 								distThresh: 5,
 							});
@@ -1768,7 +1768,7 @@ export const _RenderEngine = (function (avgBaseMap, clusterFeatsMap) {
 			},
 
 			populateClustersOnBasemap: async (featureCollections, { useBuffer, bufferAmt, bufferUnits } = {}) => {
-				const zoomLevel = LeafletMaps.getMapZoom();
+				const zoomLevel = LeafletMapsController.getMapZoom();
 
 				// TODO
 				switch (true) {
@@ -1794,11 +1794,11 @@ export const _RenderEngine = (function (avgBaseMap, clusterFeatsMap) {
 							// 1. Generate a polygon for the cluster featColl.
 							// TODO > ADJUST BUFFER BY CLUSTER SIZE
 							let clusterPolygon;
-							clusterPolygon = await _RenderEngine.getClusterPoly(featColl, {
-								useBuffer: true,
-								bufferAmt: 0.01,
-								bufferUnits,
-							});
+							// clusterPolygon = await _RenderEngine.getClusterPoly(featColl, {
+							// 	useBuffer: true,
+							// 	bufferAmt: 0.01,
+							// 	bufferUnits,
+							// });
 
 							// 2. Render the featColl. polygon for the cluster
 							if (clusterPolygon) _RenderEngine.renderClusterPoly(clusterPolygon, { bufferUnits });
@@ -1807,8 +1807,8 @@ export const _RenderEngine = (function (avgBaseMap, clusterFeatsMap) {
 							for (let idy = 0; idy < featColl.features.length; idy++) {
 								const feature = featColl.features[idy];
 								// allFeatures.push(feature);
-								// LeafletMaps.renderFeaturesMarkers(allFeatures, {map: avgBaseMap});
-								const featMarker = LeafletMaps.initMarker(feature, {
+								// LeafletMapsController.renderFeaturesMarkers(allFeatures, {map: avgBaseMap});
+								const featMarker = LeafletMapsController.initMarker(feature, {
 									useBuffer,
 									bufferAmt,
 									bufferUnits,
@@ -1819,8 +1819,8 @@ export const _RenderEngine = (function (avgBaseMap, clusterFeatsMap) {
 
 						// 4. Render the marker clusters
 						if (featCollMarkers.length > 0) {
-							LeafletMaps.saveMarkerGroup(featCollMarkers);
-							await LeafletMaps.renderMarkerCluster(featCollMarkers, { map: avgBaseMap });
+							LeafletMapsController.saveMarkerGroup(featCollMarkers);
+							await LeafletMapsController.renderMarkerCluster(featCollMarkers, { map: avgBaseMap });
 						} else {
 							console.warn(`...no cluster plots' markers to render`);
 						}
@@ -1836,12 +1836,12 @@ export const _RenderEngine = (function (avgBaseMap, clusterFeatsMap) {
 
 				// REMOVE
 				// render cluster plots outlines on the cluster plots mini-map
-				// MapboxMaps.drawFeatFeatColl(gjFeatColl, {map: clusterFeatsMap});
+				// MapboxMapsController.drawFeatFeatColl(gjFeatColl, {map: clusterFeatsMap});
 
 				// render feats. on base map
 				for (let idx = 0; idx < gjFeatColl.features.length; idx++) {
 					const gjFeature = gjFeatColl.features[idx];
-					LeafletMaps.drawFeature(gjFeature, {
+					LeafletMapsController.drawFeature(gjFeature, {
 						useBuffer,
 						bufferAmt,
 						bufferUnits,
@@ -1859,13 +1859,13 @@ export const _RenderEngine = (function (avgBaseMap, clusterFeatsMap) {
 				if (featColl.features) {
 					for (let idx = 0; idx < featColl.features.length; idx++) {
 						const clusterPlotFeat = featColl.features[idx];
-						// await MapboxMaps.drawGJPolygon(clusterFeatsMap, clusterPlotFeat, idx);
+						// await MapboxMapsController.drawGJPolygon(clusterFeatsMap, clusterPlotFeat, idx);
 						const clusterPlotFeatPoly = getPresentationPoly(clusterPlotFeat, {
 							useBuffer,
 							bufferAmt,
 							bufferUnits,
 						});
-						await MapboxMaps.drawGJPolygon(clusterFeatsMap, clusterPlotFeatPoly, idx);
+						await MapboxMapsController.drawGJPolygon(clusterFeatsMap, clusterPlotFeatPoly, idx);
 					}
 				} else {
 					console.log(`There are no features to render.`);
@@ -1880,8 +1880,8 @@ export const _RenderEngine = (function (avgBaseMap, clusterFeatsMap) {
 					for (let idx = 0; idx < featColl.features.length; idx++) {
 						let clusterPlotFeat = featColl.features[idx];
 						// clusterPlotFeat = getPresentationPoly(clusterPlotFeat, {useBuffer, bufferAmt, bufferUnits});
-						// await MapboxMaps.drawGJPolygonLabel(clusterFeatsMap, clusterPlotFeat, polyIdx, {areaUnits});
-						await MapboxMaps.drawGJPolygonLabel(clusterFeatsMap, clusterPlotFeat, idx, {
+						// await MapboxMapsController.drawGJPolygonLabel(clusterFeatsMap, clusterPlotFeat, polyIdx, {areaUnits});
+						await MapboxMapsController.drawGJPolygonLabel(clusterFeatsMap, clusterPlotFeat, idx, {
 							areaUnits,
 						});
 					}
