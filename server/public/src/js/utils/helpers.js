@@ -332,7 +332,7 @@ export const _TurfHelpers = (() => {
 
 		// }, handleError),
 
-		buffer: (geoJSON, bufferRadius, { units = "kilometers" }) => {
+		buffer: (geoJSON, bufferRadius, { units = DEFAULT_APP_SETTINGS.TURF_POLYGON_BUFFER_UNITS }) => {
 			// return catchError2(turf.buffer(geoJSON, bufferRadius, {units}), "turfBufferErr");
 
 			try {
@@ -553,54 +553,112 @@ export function _getUsableGeometry(geoJSON) {
 	};
 }
 
+// REMOVE > DEPRC.
 // HACK > REMOVES THE "TAILS"  FROM THE CHUNKS
 // SOMETIMES, BUFFERING A POLYGON DEFORMS IT
 // turf.buffer SOMETIMES MUTILATES A MULTIPOLYGON CHUNK; DEAL WITH THAT
 // THIS REVERTS THE BUFFER TO THE ORG. POLY IF ANY DEFORMATION WOULD HAPPEN
-export function _getBufferedPolygon(gjPolygon, bufferAmt, { bufferUnits = "kilometers" } = {}) {
-	// if (_TurfHelpers.getType(gjPolygon) === "Polygon") { // REMOVE
+// export function _getBufferedPolygon(gjPolygon, bufferAmt, { bufferUnits = DEFAULT_APP_SETTINGS.TURF_POLYGON_BUFFER_UNITS } = {}) {
+// 	// if (_TurfHelpers.getType(gjPolygon) === "Polygon") { // REMOVE
+// 	if (gjPolygon) {
+// 		let bufferedPolygon = _TurfHelpers.buffer(gjPolygon, bufferAmt, { units: bufferUnits });
+
+// 		// console.log(_TurfHelpers.calcPolyArea(gjPolygon))
+// 		// console.log({bufferAmt}, {bufferUnits})
+// 		// console.log({bufferedPolygon})
+// 		// if (bufferedPolygon) console.log(_TurfHelpers.calcPolyArea(bufferedPolygon))
+
+// 		// SOMETIMES turf.buffer RETURNES "undefined"
+// 		// if (bufferedPolygon && _TurfHelpers.getType(bufferedPolygon) === "Polygon") { // REMOVE
+// 		if (bufferedPolygon) {
+
+// 			// turf.buffer removes feature.geometry._id ...
+// 			// This puts it back
+// 			bufferedPolygon.geometry["_id"] = gjPolygon.geometry._id;
+
+// 			if (_TurfHelpers.calcPolyArea(gjPolygon) < 0.5) {
+// 				return gjPolygon;
+// 			} else if (_TurfHelpers.getType(gjPolygon) !== _TurfHelpers.getType(bufferedPolygon)) {
+// 				return gjPolygon;
+// 			} else if (
+// 				bufferAmt > 0 &&
+// 				_TurfHelpers.calcPolyArea(bufferedPolygon) < _TurfHelpers.calcPolyArea(gjPolygon)
+// 			) {
+// 				return gjPolygon;
+// 			} else if (
+// 				bufferAmt < 0 &&
+// 				_TurfHelpers.calcPolyArea(bufferedPolygon) > _TurfHelpers.calcPolyArea(gjPolygon)
+// 			) {
+// 				return gjPolygon;
+// 			} else {
+// 				// console.error(_TurfHelpers.calcPolyArea(bufferedPolygon))
+// 				return bufferedPolygon;
+// 			}
+// 		} else {
+// 			return gjPolygon;
+// 		}
+// 	} else {
+// 		return gjPolygon;
+// 	}
+// }
+
+/**
+ * Buffers a GeoJSON polygon feature by a specified amount
+ * @param {Object} gjPolygon - GeoJSON polygon feature
+ * @param {number} bufferAmt - Buffer amount
+ * @param {Object} [options] - Optional parameters
+ * @param {string} [options.bufferUnits=DEFAULT_APP_SETTINGS.TURF_POLYGON_BUFFER_UNITS] - Buffer units
+ * @returns {Object} - Buffered GeoJSON polygon feature
+ */
+export function _getBufferedPolygon(gjPolygon, bufferAmt, { bufferUnits = DEFAULT_APP_SETTINGS.TURF_POLYGON_BUFFER_UNITS } = {}) {
+
+	// Check if gjPolygon exists
 	if (gjPolygon) {
+
+		// Buffer the polygon using Turf.js
 		let bufferedPolygon = _TurfHelpers.buffer(gjPolygon, bufferAmt, { units: bufferUnits });
 
-		// console.log(_TurfHelpers.calcPolyArea(gjPolygon))
-		// console.log({bufferAmt}, {bufferUnits})
-		// console.log({bufferedPolygon})
-		// if (bufferedPolygon) console.log(_TurfHelpers.calcPolyArea(bufferedPolygon))
-
-		// SOMETIMES turf.buffer RETURNES "undefined"
-		// if (bufferedPolygon && _TurfHelpers.getType(bufferedPolygon) === "Polygon") { // REMOVE
+		// Handle potential issues with Turf.js buffer function
 		if (bufferedPolygon) {
-			// turf.buffer removes feature.geometry._id ...
+			
+			// Put feature.geometry._id back into buffered polygon
 			bufferedPolygon.geometry["_id"] = gjPolygon.geometry._id;
 
-			if (_TurfHelpers.calcPolyArea(gjPolygon) < 0.5) {
+			// Calculate area of original and buffered polygons
+			const originalArea = _TurfHelpers.calcPolyArea(gjPolygon);
+			const bufferedArea = _TurfHelpers.calcPolyArea(bufferedPolygon);
+
+			// Decide whether to return original or buffered polygon
+			if (originalArea < 0.5) {
+				// Return original polygon if area is too small
 				return gjPolygon;
 			} else if (_TurfHelpers.getType(gjPolygon) !== _TurfHelpers.getType(bufferedPolygon)) {
+				// Return original polygon if types are different
 				return gjPolygon;
-			} else if (
-				bufferAmt > 0 &&
-				_TurfHelpers.calcPolyArea(bufferedPolygon) < _TurfHelpers.calcPolyArea(gjPolygon)
-			) {
+			} else if (bufferAmt > 0 && bufferedArea < originalArea) {
+				// Return original polygon if buffer caused deformation
 				return gjPolygon;
-			} else if (
-				bufferAmt < 0 &&
-				_TurfHelpers.calcPolyArea(bufferedPolygon) > _TurfHelpers.calcPolyArea(gjPolygon)
-			) {
+			} else if (bufferAmt < 0 && bufferedArea > originalArea) {
+				// Return original polygon if negative buffer caused deformation
 				return gjPolygon;
 			} else {
-				// console.error(_TurfHelpers.calcPolyArea(bufferedPolygon))
+				// Return buffered polygon
 				return bufferedPolygon;
 			}
 		} else {
+			// Return original polygon if Turf.js buffer function returns undefined
 			return gjPolygon;
 		}
 	} else {
-		return gjPolygon;
+		// Return null if gjPolygon is null or undefined
+		return null;
 	}
 }
 
 export const _ProcessGeoJSON = (() => {
+
 	return {
+
 		getId: (geoJSON) => {
 			try {
 				if (turf.getType(geoJSON) === `FeatureCollection`)
@@ -611,23 +669,72 @@ export const _ProcessGeoJSON = (() => {
 			}
 		},
 
+		// REMOVE
+		// bufferUniteFeats: (featsArray, { maxBufferAmt, bufferStep } = {}) => {
+		// 	const bufferedFeats = [];
+		// 	try {
+		// 		if (maxBufferAmt && bufferStep) {
+		// 			let bufferAmount = bufferStep;
+		// 			while (bufferAmount <= maxBufferAmt) {
+		// 				bufferAmount += bufferStep;
+		// 				console.log({ bufferAmount });
+		// 				for (let idx = 0; idx < featsArray.length; idx++) {
+		// 					let feat = featsArray[idx];
+		// 					feat = _getBufferedPolygon(feat, bufferAmount);
+		// 					bufferedFeats.push(feat);
+		// 				}
+		// 				const unitedFeats = turf.union(...bufferedFeats);
+		// 				if (_TurfHelpers.getType(unitedFeats) === "Polygon") return unitedFeats;
+		// 			}
+		// 		} else {
+		// 			return turf.union(...featsArray);
+		// 		}
+		// 	} catch (bufferFeatsErr) {
+		// 		console.error(`bufferFeatsErr: ${bufferFeatsErr.message}`);
+		// 	}
+		// },
+		/**
+		 * Buffers and unites an array of features.
+		 * This function buffers the input features with a certain amount and then unites them.
+		 * The amount of buffering and the maximum amount of buffering can be specified using the options object.
+		 * Note that if `maxBufferAmt` and `bufferStep` are not provided in the options object, the function will simply return the united features without buffering them.
+		 * @param {Object[]} featsArray - The array of features to buffer and unite.
+		 * @param {Object} [options] - The options object.
+		 * @param {number} [options.maxBufferAmt] - The maximum buffer amount.
+		 * @param {number} [options.bufferStep] - The buffer step amount.
+		 * @returns {Object} The united polygon feature.
+		 */
 		bufferUniteFeats: (featsArray, { maxBufferAmt, bufferStep } = {}) => {
+
+			// Initialize an array to store the buffered features
 			const bufferedFeats = [];
+
 			try {
+				// If the maximum buffer amount and the buffer step are specified, buffer the features multiple times
 				if (maxBufferAmt && bufferStep) {
+					// Start with the buffer step
 					let bufferAmount = bufferStep;
+
+					// Keep buffering until the buffer amount exceeds the maximum buffer amount
 					while (bufferAmount <= maxBufferAmt) {
 						bufferAmount += bufferStep;
-						console.log({ bufferAmount });
+
+						// Buffer each feature and store it in the bufferedFeats array
 						for (let idx = 0; idx < featsArray.length; idx++) {
 							let feat = featsArray[idx];
 							feat = _getBufferedPolygon(feat, bufferAmount);
 							bufferedFeats.push(feat);
 						}
+
+						// Unite the buffered features
 						const unitedFeats = turf.union(...bufferedFeats);
+
+						// If the result is a polygon, return it
 						if (_TurfHelpers.getType(unitedFeats) === "Polygon") return unitedFeats;
 					}
-				} else {
+				}
+				// If the maximum buffer amount and the buffer step are not specified, unite the features as they are
+				else {
 					return turf.union(...featsArray);
 				}
 			} catch (bufferFeatsErr) {
@@ -635,42 +742,56 @@ export const _ProcessGeoJSON = (() => {
 			}
 		},
 
-		getPresentationPoly: (geoJSONPoly, { useBuffer, bufferAmt, bufferUnits = "kilometers" }) => {
+
+		getPresentationPoly: (geoJSONPoly, { useBuffer, bufferAmt, bufferUnits = DEFAULT_APP_SETTINGS.TURF_POLYGON_BUFFER_UNITS }) => {
 			const presentationPolygon = useBuffer
 				? _getBufferedPolygon(geoJSONPoly, bufferAmt, { bufferUnits })
 				: geoJSONPoly;
 			return presentationPolygon;
 		},
 
+		// IMPORTANT
+		/**
+		 * @description Returns a polygon GeoJSON object that represents the union of all the polygons in the given FeatureCollection.
+		 * @param {Object} featColl - A FeatureCollection object with polygon features.
+		 * @param {Object} [options={}] - An object that specifies the optional parameters to use.
+		 * @param {Boolean} [options.useBuffer] - Specifies whether to buffer the polygon or not.
+		 * @param {Number} [options.bufferAmt] - The amount to buffer the polygon by, in the units specified by `bufferUnits`.
+		 * @param {String} [options.bufferUnits] - The units to use for buffering the polygon.
+		 * @returns {Object} A GeoJSON polygon object representing the union of all the polygons in the given FeatureCollection.
+		 */
 		getFeatCollPoly: (featColl, { useBuffer, bufferAmt, bufferUnits } = {}) => {
 			try {
+				// Ensure that the input object is a FeatureCollection with polygons
 				turf.geojsonType(featColl, "FeatureCollection", "getFeatCollPolyErr");
 
+				// Debugging console.log statement
 				console.log(featColl.properties.clusterName);
 
+				// Get the union of all polygons and refine it if necessary
 				let featCollPoly = _getUsableGeometry(turf.union(...featColl.features)).refinedGeoJSON;
 
-				// console.log(turf.getType(featCollPoly), _TurfHelpers.calcPolyArea(featCollPoly));
+				// Buffer the polygon if specified
+				if (featCollPoly && useBuffer) {
+					featCollPoly = _ProcessGeoJSON.getPresentationPoly(featCollPoly, {useBuffer, bufferAmt, bufferUnits});
+				}
 
-				if (featCollPoly)
-					featCollPoly = _ProcessGeoJSON.getPresentationPoly(featCollPoly, {
-						useBuffer,
-						bufferAmt,
-						bufferUnits,
-					});
-
+				// Debugging console.log statements
 				// console.log({bufferAmt})
 				// console.log(turf.area(featCollPoly))
 
 				return featCollPoly;
+
 			} catch (getFeatCollPolyErr) {
+				// If there is an error, log it and return null
 				console.error(`getFeatCollPolyErr: ${getFeatCollPolyErr.message}`);
+				return null;
 			}
 		},
 
 		getBbox: (geoJSON) => {
 			try {
-				return turf.bbox(geoJSON);
+				return turf.bbox(geoJSON);z
 			} catch (getBboxErr) {
 				console.error(`getBboxErr: ${getBboxErr.message}`);
 			}

@@ -35,6 +35,7 @@ export function _retreiveClusterGJDatasets() {
  * @returns {(object|null)} - The data returned from the API, or `null` if an error occurs
  */
 async function queryAPI(fetch, apiHost, apiResourcePath, { queryString } = {}) {
+
 	// Set the query string to an empty string if no query string is provided
 	queryString = queryString ? queryString : (queryString = "");
 
@@ -120,6 +121,7 @@ export async function _getAPIResource(eventObj, resourceHost, resourcePath, { qu
 }
 
 export const _ParcelizedClustersController = (() => {
+
 	/**
 	 * @funciton getCollectionNameFromPath
 	 * @description Extracts the collection name from the given resource path.
@@ -199,7 +201,7 @@ export const _ParcelizedClustersController = (() => {
 	const apiHost = DEFAULT_APP_SETTINGS.GEOCLUSTERS_API_HOST;
 	const metadataResourcePath = API_URLS.GEOCLUSTERS.RESOURCE_PATHS.PARCELIZED_CLUSTERS_METADATA;
 	const clusterResourcePath = API_URLS.GEOCLUSTERS.RESOURCE_PATHS.PARCELIZED_CLUSTER;
-	const clustersResourcePath = API_URLS.GEOCLUSTERS.RESOURCE_PATHS.PARCELIZED_CLUSTERS_ONLY;
+	const clustersResourcePath = API_URLS.GEOCLUSTERS.RESOURCE_PATHS.PARCELIZED_CLUSTERS;
 
 	// If, for some reason, the "/parcelized-agcs" & "/parcelized-agcs/metadata"
 	// collections haven't been cached previously, cache them now, and exit this controller when done
@@ -215,13 +217,13 @@ export const _ParcelizedClustersController = (() => {
 
 	return {
 		/**
-		 * @funciton cacheLiveData
+		 * @funciton cacheDBCollection
 		 * @description Caches live data for each resource name if not already cached in APP_STATE.
 		 * @async
 		 * @param {Window} window - The browser window object.
 		 * @param {Object} APP_STATE - The application state object.
 		 */
-		cacheLiveData: async (window, APP_STATE) => {
+		cacheDBCollection: async (window, APP_STATE) => {
 
 			// Loop through each resource name and retrieve the live data if it is not already cached.
 			for (const collectionName of resourceNames) {
@@ -259,9 +261,9 @@ export const _ParcelizedClustersController = (() => {
 		},
 
 	/**
-	 * Downloads new parcelized clusters that are not already cached in the app state.
-	 * 
 	 * @async
+	 * @function getNewClusters
+	 * @description Downloads new parcelized clusters that are not already cached in the app state.
 	 * @param {Object} window - The window object of the browser or the global object in a Node.js environment.
 	 * @param {Object} APP_STATE - The app state object.
 	 * @returns {Promise<Array>} The promise that resolves to the new parcelized clusters or null if the API call fails.

@@ -220,7 +220,7 @@ const InitDashboardApp = (() => {
 				
 				// Step-1
 				// Cache entire parcelized-agcs db collection in APP_STATE; skip if it's been done before 
-				await _ParcelizedClustersController.cacheLiveData(window, APP_STATE);
+				await _ParcelizedClustersController.cacheDBCollection(window, APP_STATE);
 
 				// Step-2
 				// Download new clusters

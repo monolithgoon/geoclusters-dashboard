@@ -6,8 +6,8 @@ const API_URLS = Object.freeze({
 			AWS: `http://18.213.158.252:8443`,
 		},
 		RESOURCE_PATHS: {
-			PARCELIZED_CLUSTERS: [`api/v1/parcelized-agcs/`, `api/v1/parcelized-agcs/metadata`],
-			PARCELIZED_CLUSTERS_ONLY: `api/v1/parcelized-agcs`,
+			// PARCELIZED_CLUSTERS: [`api/v1/parcelized-agcs/`, `api/v1/parcelized-agcs/metadata`],
+			PARCELIZED_CLUSTERS: `api/v1/parcelized-agcs`,
 			PARCELIZED_CLUSTERS_METADATA: `api/v1/parcelized-agcs/metadata`,
 			PARCELIZED_CLUSTER: `api/v1/parcelized-agcs/parcelized-agc`,
 		},

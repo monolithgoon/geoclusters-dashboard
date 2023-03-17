@@ -172,7 +172,7 @@ const validateFeatureCollection = _catchErrorSync((geoclusterFeatColl) => {
 // 	}
 // }
 
-// REMOVE > DOESN'T WORK WITH `_getFlattenedClusterFeatProps` FN.
+// REMOVE > DEPRC.
 function flattenGeoclusterProperties_1(geoclustersArray) {
 	try {
 		// Use Array.map() to create a new array of normalized feature collections
@@ -190,10 +190,8 @@ function flattenGeoclusterProperties_1(geoclustersArray) {
 
 			// Extract and flatten the properties of each feature in the cluster
 			const normalizedClusterFeats = geoclusterGeoJSON.features.map(async (clusterFeature, idx) => {
-				// const flatClusterFeatProps = _GetClusterFeatProps(clusterFeature, { featIdx: idx });
 
-				// WIP
-				const flatClusterFeatProps = await _getFlattenedClusterFeatProps(clusterFeature, { featIdx: idx });
+				const flatClusterFeatProps = _GetClusterFeatProps(clusterFeature, { featIdx: idx });
 
 				// Use the spread operator to create a new object with the original feature's properties
 				// and replace them with the normalized feature properties
@@ -216,61 +214,128 @@ function flattenGeoclusterProperties_1(geoclustersArray) {
 		return null;
 	}
 }
-async function flattenGeoclusterProperties(geoclustersArray) {
 
-	try {
+// async function flattenGeoclusterProperties(geoclustersArray) {
 
-		const normalizedGeoclusters = await Promise.all(
-			geoclustersArray.map(async (geoclusterGeoJSON) => {
+// 	try {
+
+// 		const normalizedGeoclusters = await Promise.all(
+// 			geoclustersArray.map(async (geoclusterGeoJSON) => {
 				
-				// Sanitize the coordinates of the FeatureCollection
-				geoclusterGeoJSON = _sanitizeFeatCollCoords(geoclusterGeoJSON);
+// 				// Sanitize the coordinates of the FeatureCollection
+// 				geoclusterGeoJSON = _sanitizeFeatCollCoords(geoclusterGeoJSON);
 
-				// 
-				validateFeatureCollection(geoclusterGeoJSON);
+// 				// 
+// 				validateFeatureCollection(geoclusterGeoJSON);
 
-				// Get flattened / normalized cluster properties
-				const flattenedClusterProps = _getFlattenedClusterProps(geoclusterGeoJSON);
+// 				// Get flattened / normalized cluster properties
+// 				const flattenedClusterProps = _getFlattenedClusterProps(geoclusterGeoJSON);
 
-				// Replace the original props. with the flattened props
-				geoclusterGeoJSON.properties = flattenedClusterProps;
+// 				// Replace the original props. with the flattened props
+// 				geoclusterGeoJSON.properties = flattenedClusterProps;
 
-				// Extract and flatten the properties of each feature in the cluster
-				const normalizedClusterFeats = await Promise.all(
-					geoclusterGeoJSON.features.map(async (clusterFeature, idx) => {
+// 				// Extract and flatten the properties of each feature in the cluster
+// 				const normalizedClusterFeats = await Promise.all(
+// 					geoclusterGeoJSON.features.map(async (clusterFeature, idx) => {
 
-						// REMOVE > DEPRC. `_GetClusterFeatProps`
-						// const flatClusterFeatProps = _GetClusterFeatProps(clusterFeature, { featIdx: idx });
+// 						// REMOVE > DEPRC.
+// 						// const flatClusterFeatProps = _GetClusterFeatProps(clusterFeature, { featIdx: idx });
 
-						// WIP
-						const flatClusterFeatProps = await _getFlattenedClusterFeatProps(clusterFeature, { featIdx: idx });
+// 						// WIP > Get flattened cluster feat. properties
+// 						const flatClusterFeatProps = await _getFlattenedClusterFeatProps(clusterFeature, { featIdx: idx });
 
-						// Use the spread operator to create a new object with the original feature's properties
-						// and replace them with the normalized feature properties
-						return {
-							...clusterFeature,
-							properties: flatClusterFeatProps,
-						};
-					})
-				);
+// 						// Use the spread operator to create a new object with the original feature's properties
+// 						// and replace them with the normalized feature properties
+// 						return {
+// 							...clusterFeature,
+// 							properties: flatClusterFeatProps,
+// 						};
+// 					})
+// 				);
 
-				// Use the spread operator to create a new object with the original feature collection's
-				// features and replace them with the normalized features
-				return {
-					...geoclusterGeoJSON,
-					features: normalizedClusterFeats,
-				};
-			})
-		);
+// 				// Use the spread operator to create a new object with the original feature collection's
+// 				// features and replace them with the normalized features
+// 				return {
+// 					...geoclusterGeoJSON,
+// 					features: normalizedClusterFeats,
+// 				};
+// 			})
+// 		);
 
-		return normalizedGeoclusters;
+// 		return normalizedGeoclusters;
 		
-	} catch (normalizeClusterError) {
-		// Log the error message to the console in red text
-		console.error(chalk.fail(`normalizeClusterError: ${normalizeClusterError}`));
-		return null;
-	}
+// 	} catch (normalizeClusterError) {
+// 		// Log the error message to the console in red text
+// 		console.error(chalk.fail(`normalizeClusterError: ${normalizeClusterError}`));
+// 		return null;
+// 	}
+// }
+/**
+ * Takes an array of GeoJSON FeatureCollections representing geoclusters,
+ * sanitizes their coordinates, flattens their properties, and returns the
+ * normalized FeatureCollections.
+ *
+ * @async
+ * @function flattenGeoclusterProperties
+ * @param {Array<Object>} geoclustersArray - An array of GeoJSON FeatureCollections.
+ * @returns {Promise<Array<Object>>} A Promise that resolves to an array of normalized FeatureCollections.
+ * @throws {Error} Throws an error if the input is invalid or if there is an error normalizing the FeatureCollections.
+ */
+async function flattenGeoclusterProperties(geoclustersArray) {
+	
+  try {
+    const normalizedGeoclusters = await Promise.all(
+      geoclustersArray.map(async (geoclusterGeoJSON) => {
+
+        // Sanitize the coordinates of the FeatureCollection
+        geoclusterGeoJSON = _sanitizeFeatCollCoords(geoclusterGeoJSON);
+
+        // Validate the FeatureCollection
+        validateFeatureCollection(geoclusterGeoJSON);
+
+        // Get flattened / normalized cluster properties
+        const flattenedClusterProps = _getFlattenedClusterProps(
+          geoclusterGeoJSON
+        );
+
+        // Replace the original props. with the flattened props
+        geoclusterGeoJSON.properties = flattenedClusterProps;
+
+        // Extract and flatten the properties of each feature in the cluster
+        const normalizedClusterFeats = await Promise.all(
+          geoclusterGeoJSON.features.map(async (clusterFeature, idx) => {
+            // Get flattened cluster feat. properties
+            const flatClusterFeatProps = await _getFlattenedClusterFeatProps(
+              clusterFeature,
+              { featIdx: idx }
+            );
+
+            // Use the spread operator to create a new object with the original feature's properties
+            // and replace them with the normalized feature properties
+            return {
+              ...clusterFeature,
+              properties: flatClusterFeatProps,
+            };
+          })
+        );
+
+        // Use the spread operator to create a new object with the original feature collection's
+        // features and replace them with the normalized features
+        return {
+          ...geoclusterGeoJSON,
+          features: normalizedClusterFeats,
+        };
+      })
+    );
+
+    return normalizedGeoclusters;
+  } catch (normalizeClusterError) {
+    // Log the error message to the console in red text
+    console.error(chalk.fail(`normalizeClusterError: ${normalizeClusterError}`));
+    return null;
+  }
 }
+
 
 /**
  * @function getAPICollections
