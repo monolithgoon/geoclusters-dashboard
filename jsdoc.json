@@ -1,0 +1,9 @@
+{
+  "source": {
+    "include": ["./server"],
+    "exclude": ["./node_modules"]
+  },
+  "opts": {
+    "destination": "./documentation/jsdocs"
+  }
+}

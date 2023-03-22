@@ -1,0 +1,50 @@
+MAPPING
+
+Basemap - Leaflet.js
+https://unpkg.com/leaflet@1.7.1/dist/leaflet.js
+https://unpkg.com/leaflet@1.7.1/dist/leaflet.css
+
+Marker Clustering - Leaflet Marker Clusters
+https://github.com/Leaflet/Leaflet.markercluster
+
+Map Tiles - Bing Maps
+Bing Maps
+https://github.com/shramov/leaflet-plugins/blob/master/layer/tile/Bing.js
+
+Map Tiles - Google Maps
+      streets: 'http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
+      hybrid: 'http://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}',
+      satellite: 'http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', 
+      terrain: 'http://{s}.google.com/vt/lyrs=p&x={x}&y={y}&z={z}'
+
+
+Sidebar Mapping Provider
+Mapbox GL JS v2.3.0
+https://api.mapbox.com/mapbox-gl-js/v1.10.1/mapbox-gl.js
+https://api.mapbox.com/mapbox-gl-js/v1.10.1/mapbox-gl.css
+
+
+SCRIPTING
+
+jQuery
+https://code.jquery.com/jquery-3.3.1.slim.min.js
+
+Mapbox Omnivoire
+https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.2.0/leaflet-omnivore.min.js
+
+
+
+UI LIBRARIES
+
+Font Awesome v5.15.1
+https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css
+
+Bootstrap v4
+https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js
+
+Bootstrap v5
+https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js
+
+UI Kit
+https://cdn.jsdelivr.net/npm/uikit@3.6.21/dist/js/uikit.min.js
+https://cdn.jsdelivr.net/npm/uikit@3.6.21/dist/js/uikit-icons.min.js

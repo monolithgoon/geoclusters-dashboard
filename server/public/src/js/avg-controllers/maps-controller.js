@@ -267,10 +267,15 @@ const getPresentationPoly = (geoJSONPoly, { useBuffer, bufferAmt, bufferUnits = 
 // CREATE LINE & FILL LAYERS FROM GEOJSON POLY.
 // function getMapboxClickLayer(geoJSON, {color, thickness, fillOpacity})
 function getMapboxLayers(geoJSON, { featureIndex, layerId, color, thickness, fillOpacity } = {}) {
+
+	console.log({ geoJSON })
+	
 	let layerColor = getLayerColor(featureIndex);
 
 	// this layerId has a correspondig featCard with an identical id
 	layerId = layerId ? layerId : _ProcessGeoJSON.getId(geoJSON);
+
+	console.log({ layerId })
 
 	if (layerId) {
 		const fillLayer = {
@@ -1224,6 +1229,7 @@ const MapboxMapsController = ((subplotsMap) => {
 					thickness: 2,
 					fillOpacity: 0.1,
 				}).outlineLayer;
+
 				let polygonFillLayer = getMapboxLayers(polygon, {
 					featureIndex: featureIdx,
 					color: null,
@@ -1232,6 +1238,8 @@ const MapboxMapsController = ((subplotsMap) => {
 				}).fillLayer;
 
 				if (polygonOutlineLayer && polygonFillLayer) {
+
+					// WIP
 					// // CLEAR PREVIOUSLY RENDERED LAYERS
 					// MapboxMapsController.sanitizeLayers({map: mapboxMap, renderedLayers: MapboxLayersController.returnSavedLayers()});
 					// MapboxMapsController.removeMarkers(MapboxMarkersController.returnSavedMarkers());
@@ -1790,6 +1798,7 @@ export const _RenderEngine = (function (avgBaseMap, clusterFeatsMap) {
 						const featCollMarkers = [];
 
 						if (featColl.features.length > 0) {
+							
 							// IMPORTANT
 							// 1. Generate a polygon for the cluster featColl.
 							// TODO > ADJUST BUFFER BY CLUSTER SIZE
@@ -1799,6 +1808,15 @@ export const _RenderEngine = (function (avgBaseMap, clusterFeatsMap) {
 							// 	bufferAmt: 0.01,
 							// 	bufferUnits,
 							// });
+
+							// WIP
+							clusterPolygon = featColl.properties.clusterPolygonFeature;
+
+							// WIP
+							if (clusterPolygon) {
+								clusterPolygon["properties"] = featColl.properties;
+								// console.log({ clusterPolygon })
+							}
 
 							// 2. Render the featColl. polygon for the cluster
 							if (clusterPolygon) _RenderEngine.renderClusterPoly(clusterPolygon, { bufferUnits });

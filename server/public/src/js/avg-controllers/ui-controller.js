@@ -17,7 +17,7 @@ import {
 import { _clientSideRouter, _navigateTo } from "../routers/router.js";
 import { GET_DOM_ELEMENTS } from "../utils/get-dom-elements.js";
 import DEFAULT_APP_SETTINGS from "../constants/default-app-settings.js";
-import _isValidGeoJSON from "../utils/validate-geojson.js";
+import _validateGeoJSON from "../utils/geojson-validator.js";
 
 export const _ManipulateDOM = (() => {
 	return {
@@ -464,7 +464,7 @@ const DOMSequence = ((domElements) => {
 			/** 
 			 * Verify that the GeoJSON comming from the DOM is legit
 			*/
-			if (_isValidGeoJSON(clusterGeoJSON)) {
+			if (_validateGeoJSON(clusterGeoJSON)) {
 
 				// 1. populate the cluster detail modal @ top of left sidebar
 				_PopulateDOM.clusterDetailsModal(domElements.resultModalDiv, clusterGeoJSON);

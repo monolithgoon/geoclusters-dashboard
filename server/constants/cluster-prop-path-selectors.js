@@ -68,4 +68,5 @@ exports.CLUSTER_PROP_PATHS = {
 	CLUSTER_GOV_ADMIN2_NAME1: [`geo_cluster_governance_structure.vice_president.first_name`],
 	CLUSTER_GOV_ADMIN2_NAME2: [`geo_cluster_governance_structure.vice_president.middle_name`],
 	CLUSTER_GOV_ADMIN2_NAME3: [`geo_cluster_governance_structure.vice_president.last_name`],
+	CLUSTER_POLYGON_FEATURE: [`feat_coll_polygon_feature`]
 };

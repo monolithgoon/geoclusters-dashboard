@@ -649,9 +649,11 @@ export const _ProcessGeoJSON = (() => {
 	return {
 
 		getId: (geoJSON) => {
+			console.log({geoJSON})
 			try {
 				if (turf.getType(geoJSON) === `FeatureCollection`)
 					return `feature_collection_${geoJSON._id}`;
+				else if (geoJSON._id) return `feature_${geoJSON._id}`;
 				else if (geoJSON.geometry._id) return `feature_${geoJSON.geometry._id}`;
 			} catch (getGeoJSONIdErr) {
 				console.error(`getGeoJSONIdErr: ${getGeoJSONIdErr.message}`);
@@ -790,23 +792,26 @@ export function _getBufferedPolygon(gjPolygon, bufferAmt, { bufferUnits = DEFAUL
 	if (gjPolygon) {
 
 		// Buffer the polygon using Turf.js
-		let bufferedPolygon = _TurfHelpers.buffer(gjPolygon, bufferAmt, { units: bufferUnits });
+		let bufferedPolygonFeat = _TurfHelpers.buffer(gjPolygon, bufferAmt, { units: bufferUnits });
 
 		// Handle potential issues with Turf.js buffer function
-		if (bufferedPolygon) {
+		if (bufferedPolygonFeat) {
+
+			// Re-instate properties deformed by buffering op.
+			bufferedPolygonFeat["_id"] = gjPolygon._id;
 			
-			// Put feature.geometry._id back into buffered polygon
-			bufferedPolygon.geometry["_id"] = gjPolygon.geometry._id;
+			// Re-instate properties deformed by buffering op.
+			bufferedPolygonFeat.geometry["_id"] = gjPolygon.geometry._id;
 
 			// Calculate area of original and buffered polygons
 			const originalArea = _TurfHelpers.calcPolyArea(gjPolygon);
-			const bufferedArea = _TurfHelpers.calcPolyArea(bufferedPolygon);
+			const bufferedArea = _TurfHelpers.calcPolyArea(bufferedPolygonFeat);
 
 			// Decide whether to return original or buffered polygon
 			if (originalArea < 0.5) {
 				// Return original polygon if area is too small
 				return gjPolygon;
-			} else if (_TurfHelpers.getType(gjPolygon) !== _TurfHelpers.getType(bufferedPolygon)) {
+			} else if (_TurfHelpers.getType(gjPolygon) !== _TurfHelpers.getType(bufferedPolygonFeat)) {
 				// Return original polygon if types are different
 				return gjPolygon;
 			} else if (bufferAmt > 0 && bufferedArea < originalArea) {
@@ -817,7 +822,7 @@ export function _getBufferedPolygon(gjPolygon, bufferAmt, { bufferUnits = DEFAUL
 				return gjPolygon;
 			} else {
 				// Return buffered polygon
-				return bufferedPolygon;
+				return bufferedPolygonFeat;
 			}
 		} else {
 			// Return original polygon if Turf.js buffer function returns undefined

@@ -66,6 +66,7 @@ exports._getFlattenedClusterProps = (clusterFeatureCollection = mandatoryParam()
 				clusterCommodities = _startcase(clusterCommodities);
     const clusterGovAdmin1 = returnFirstValidPropValue(props, CLUSTER_PROP_PATHS.CLUSTER_GOV_ADMIN1_NAME1);
     const clusterGovAdmin2 = returnFirstValidPropValue(props, CLUSTER_PROP_PATHS.CLUSTER_GOV_ADMIN1_NAME2);
+    const clusterPolygonFeature = returnFirstValidPropValue(props, CLUSTER_PROP_PATHS.CLUSTER_POLYGON_FEATURE)
 
     // Return object with extracted properties
     return {
@@ -88,6 +89,7 @@ exports._getFlattenedClusterProps = (clusterFeatureCollection = mandatoryParam()
       clusterCommodities,
       clusterGovAdmin1,
       clusterGovAdmin2,
+      clusterPolygonFeature,
     };
   } catch (error) {
     // Handle errors
