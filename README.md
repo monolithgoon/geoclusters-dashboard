@@ -50,7 +50,7 @@ Build an obfuscated version of the main app entry code `dashboard.js` by running
 npm run build:secure
 ```
 
-### 2. Deploying the APP on Ubuntu
+### 2. Deploying the app on Ubuntu
 
 1. Request for the `avg.pem` key from the admin.
 
@@ -68,6 +68,8 @@ npm run build:secure
 cd /apps
 cd /avg-dashboard
 ```
+
+## Details
 
 ### Parcelized AGCs API Response Envelope
 
@@ -140,9 +142,7 @@ const response = {
 This endpoint returns mappable legacy AGCs that were recovered from NIRSAL'S funded AGC `.csv` files
 These processed legacy AGCs are appended with farmer biometric data.
 
-### Constants
-
-Constants for both the server-side & front end code
+## Constants
 
 ### Backend
 
