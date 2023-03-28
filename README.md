@@ -8,19 +8,21 @@ A SPA dashboard that helps managers discover insights about their work with farm
 
 ## Build & Deployment
 
-This is a step-by-step guide for deploying code for the AVG Dashboard app on an AWS EC2 instance.
+> *This is a step-by-step guide for deploying code for the AVG Dashboard app on an AWS EC2 instance*
 
-> This app consists of just 2 page routes: `/landing` and `/dashboard`
-> 
-> The main JavaScript module scripts for both pages are in `public/src/js/landing.js` and `public/src/js/dashboard.js` respectively
-> 
-> All the HTML for the both pages is served up via server-side rendered `pug` templates
-> 
-> The landing page HTML is served from `landing.pug` and `landing-index.pug`
-> 
-> The dashboard SPA HTML is served from `dashboard.pug` and `dashboard-index.pug`
-> 
-> In order to make the most proprietary code for the dashboard app difficult to copy, an obfuscated version of `dashboard.js` first needs to be built locally, and then commited to the Github repo. Do this by running `npm run build`. You'll find the built script in `/public/dist/jquery-2.3.1.slim.min`. Finally, make sure the module script the HTML is pointing to at the bottom of `dashboard.pug` is the bundled & obfuscated `jquery-2.3.1.slim.min.js` file, and not the original `dashboard.js` file
+### Overview
+
+- This app consists of just 2 page routes: `/landing` and `/dashboard`
+
+- The main JavaScript module scripts for both pages are in `public/src/js/landing.js` and `public/src/js/dashboard.js` respectively
+
+- All the HTML for the both pages is served up via server-side rendered `pug` templates
+
+- The landing page HTML is served from `landing.pug` and `landing-index.pug`
+
+- The dashboard SPA HTML is served from `dashboard.pug` and `dashboard-index.pug`
+
+- In order to make the most proprietary code for the dashboard app difficult to copy, an obfuscated version of `dashboard.js` first needs to be built locally, and then commited to the Github repo. Do this by running `npm run build`. You'll find the built script in `/public/dist/jquery-2.3.1.slim.min`. Finally, make sure the module script the HTML is pointing to at the bottom of `dashboard.pug` is the bundled & obfuscated `jquery-2.3.1.slim.min.js` file, and not the original `dashboard.js` file
 
 ## 1. Run the app locally
 
@@ -195,17 +197,17 @@ These processed legacy AGCs are appended with farmer biometric data.
 
    To get a Mapbox GL JS API token, you can follow these steps:
 
-   -  Go to the Mapbox [website](https://www.mapbox.com/)
-   -  Create a free account or sign in if you already have one
-   -  Go to the Access Tokens [page](https://account.mapbox.com/access-tokens/)
-   -  Generate a new access token and give it a descriptive name
+   - Go to the Mapbox [website](https://www.mapbox.com/)
+   - Create a free account or sign in if you already have one
+   - Go to the Access Tokens [page](https://account.mapbox.com/access-tokens/)
+   - Generate a new access token and give it a descriptive name
 
    To get a Bing Maps token, you can follow these steps:
 
-   -  Go to the Bing Maps Dev Center [website](https://www.bingmapsportal.com/)
-   -  Create a free account or sign in if you already have one
-   -  Go to the My Account [page](https://www.bingmapsportal.com/Application)
-   -  Create- a new Bing Maps key and give it a descriptive name
+   - Go to the Bing Maps Dev Center [website](https://www.bingmapsportal.com/)
+   - Create a free account or sign in if you already have one
+   - Go to the My Account [page](https://www.bingmapsportal.com/Application)
+   - Create- a new Bing Maps key and give it a descriptive name
 
 ## Environment Variables
 
