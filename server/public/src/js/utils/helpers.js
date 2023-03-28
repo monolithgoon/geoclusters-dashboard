@@ -643,7 +643,6 @@ export function _getUsableGeometry(geoJSON) {
 	};
 }
 
-
 export const _ProcessGeoJSON = (() => {
 
 	return {

@@ -8,3 +8,7 @@ webpack.confing.js
 server/public/dist/bundle.js
 server/localdata/processed-legacy-agcs.json
 server/localdata/parcelized-agcs.json
+/git-commit-prompt
+/documentation
+git-commit-prompt.js
+git-commit-prompt.bat

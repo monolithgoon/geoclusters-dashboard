@@ -1,4 +1,4 @@
-const dotenv = require("dotenv"); // read the data from the config file. and use them as env. variables in NODE
+const dotenv = require("dotenv");
 const path = require("path");
 const chalk = require("../utils/chalk-messages.js");
 
@@ -25,7 +25,7 @@ module.exports = Object.freeze({
 
 	geoclustersHostUrl: process.env.GEOCLUSTERS_HOST_URL,
 
-	port: parseInt(process.env.PORT, 10) || 8080,
+	port: parseInt(process.env.PORT, 10) || 9090,
 
 	databaseURL: process.env.ATLAS_DB_STRING,
 

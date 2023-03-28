@@ -6,7 +6,7 @@ import {
 	_TurfHelpers,
 	_formatNumByThousand,
 } from "../utils/helpers.js";
-import { _ProcessGeoJSON, _getBufferedPolygon } from "../utils/helpers.js";
+import { _ProcessGeoJSON } from "../utils/helpers.js";
 import { _RenderEngine } from "./maps-controller.js";
 import { APP_STATE } from "./state-controller.js";
 import {
@@ -788,7 +788,6 @@ const DelegatePreloadedDOMElementsEvents = ((dom) => {
 				_RenderEngine.refreshClusterPlotsMap(evtObj);
 				console.log(APP_STATE.retreiveLastRenderedGJ());
 				if (APP_STATE.retreiveLastRenderedGJ()) {
-					console.log(`FUCK MIKE LINDEL`);
 					// _RenderEngine.renderClusterPlotsOnSidemap(APP_STATE.retreiveLastRenderedGJ(),
 					_RenderEngine.renderClusterOnMaps(APP_STATE.retreiveLastRenderedGJ(), {
 						useBuffer: _pollAVGSettingsValues().bufferFeatsChk,
