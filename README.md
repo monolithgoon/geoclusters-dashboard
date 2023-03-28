@@ -1,6 +1,6 @@
 # Active Land Asset Visualization (AVG) & Monitoring Dashboard
 
-A SPA dashboard that helps managers discover insights about their work with farmers, and communicate KPIs transparently and effectively institutional partners and the general public
+A server-side generated, SPA dashboard that helps managers discover insights about their work with farmers, and communicate KPIs transparently and effectively institutional partners and the general public
 
 ![dashboard-0](https://user-images.githubusercontent.com/60096838/160973371-f393d866-4a73-4a14-8ffe-18e2027faa9d.png)
 
@@ -12,11 +12,15 @@ A SPA dashboard that helps managers discover insights about their work with farm
 
 ### Overview
 
+- The whole app is rendered server-side. Backend code resides in `server/`, and the frontend is served via `server/public/src/`
+
+- The main entry point for the Express server is `server/server.js`
+
 - This app consists of just 2 page routes: `/landing` and `/dashboard`
 
 - The main JavaScript module scripts for both pages are in `public/src/js/landing.js` and `public/src/js/dashboard.js` respectively
 
-- All the HTML for the both pages is served up via server-side rendered `pug` templates
+- All the HTML for the both pages is served up via server-side rendered `PUG` templates via `server/routes/view-routes`
 
 - The landing page HTML is served from `landing.pug` and `landing-index.pug`
 
@@ -24,7 +28,7 @@ A SPA dashboard that helps managers discover insights about their work with farm
 
 - In order to make the most proprietary code for the dashboard app difficult to copy, an obfuscated version of `dashboard.js` first needs to be built locally, and then commited to the Github repo. Do this by running `npm run build`. You'll find the built script in `/public/dist/jquery-2.3.1.slim.min`. Finally, make sure the module script the HTML is pointing to at the bottom of `dashboard.pug` is the bundled & obfuscated `jquery-2.3.1.slim.min.js` file, and not the original `dashboard.js` file
 
-## 1. Run the app locally
+### 1. Run the app locally
 
 Request for a Github personal access token for `https:github.com/monolithgoon/` from the developer
 
@@ -46,7 +50,7 @@ Build an obfuscated version of the main app entry code `dashboard.js` by running
 npm run build:secure
 ```
 
-## 2. Deploying the APP on Ubuntu
+### 2. Deploying the APP on Ubuntu
 
 1. Request for the `avg.pem` key from the admin.
 
@@ -65,7 +69,7 @@ cd /apps
 cd /avg-dashboard
 ```
 
-## Parcelized AGCs API Response Envelope
+### Parcelized AGCs API Response Envelope
 
 `/api/v1/parcelized-agcs/`
 
@@ -99,7 +103,7 @@ const response = {
 
 ```
 
-## Parcelized AGCs Metadata API Response Envelope
+### Parcelized AGCs Metadata API Response Envelope
 
 `/api/v1/parcelized-agcs/metadata`
 
@@ -129,14 +133,16 @@ const response = {
 };
 ```
 
-## Processed Legacy AGCs API Response Envelope
+### Processed Legacy AGCs API Response Envelope
 
 `api/v2/legacy-agcs/processed/`
 
 This endpoint returns mappable legacy AGCs that were recovered from NIRSAL'S funded AGC `.csv` files
 These processed legacy AGCs are appended with farmer biometric data.
 
-## Constants
+### Constants
+
+Constants for both the server-side & front end code
 
 ### Backend
 
@@ -216,21 +222,20 @@ These processed legacy AGCs are appended with farmer biometric data.
 ```bash
 NODE_ENV=development
 PORT=9090
-GEOCLUSTERS_HOST_URL=http://127.0.0.1:9443
-ATLAS_DB_STRING="mongodb+srv://monkey-paw:<PASSWORD>@monkey-paw-cluster-cwcff.gcp.mongodb.net/nirsal_agcs?retryWrites=true&w=majority"
+GEOCLUSTERS_HOST_URL=http://18.213.158.252:8443
+ATLAS_DB_STRING=*****
 ATLAS_DB_PASSOWRD=dooksie
-JWT_SECRET="ru$$1anhackersaredopeasfuckbutareverydangeroussowhatcanyoureally-do-buttopaytheransom?"
-JWT_EXPIRES_IN_DAYS=3600000
+JWT_SECRET=*****
+JWT_EXPIRES_IN_DAYS=5
 JWT_COOKIE_EXPIRES_IN_DAYS=1
-EMAIL_HOST=smtp.mailtrap.io
+MAIL_HOST=smtp.mailtrap.io
 MAILTRAP_PORT=2525
-MAILTRAP_USERNAME=066b33edf48baa
-MAILTRAP_PASSWORD=76240e39850a22
-CLOUDINARY_URL="cloudinary://476581483278117:yIptwJZ4ahB36DNXebOI_UsXUTM@dmvx8fnuz"
+MAILTRAP_USERNAME=*****
+MAILTRAP_PASSWORD=*****
+CLOUDINARY_URL=*****
 APP_DEVELOPER="FieldDev Group"
 APP_OWNER="Koala Technology"
-APP_TITLE="AVG Dashboard - SSR Beta V1.0"
-```
+APP_TITLE="AVG Dashboard - SSR Beta V1.0"```
 
 ### Production
 
