@@ -11,11 +11,16 @@ A SPA dashboard that helps managers discover insights about their work with farm
 This is a step-by-step guide for deploying code for the AVG Dashboard app on an AWS EC2 instance.
 
 > This app consists of just 2 page routes: `/landing` and `/dashboard`
-> The scripts for both pages are in `public/src/js/landing.js` and `public/src/js/dashboard.js` respectively
-> All the HTML for the both pages is served up via server-side rendered `pug` templates.
+> 
+> The main JavaScript module scripts for both pages are in `public/src/js/landing.js` and `public/src/js/dashboard.js` respectively
+> 
+> All the HTML for the both pages is served up via server-side rendered `pug` templates
+> 
 > The landing page HTML is served from `landing.pug` and `landing-index.pug`
+> 
 > The dashboard SPA HTML is served from `dashboard.pug` and `dashboard-index.pug`
-> In order to make the most critical code for the dashboard app difficult to copy, an obfuscated version of `dashboard.js` first needs to be built locally, and then commited to the Github repo.
+> 
+> In order to make the most proprietary code for the dashboard app difficult to copy, an obfuscated version of `dashboard.js` first needs to be built locally, and then commited to the Github repo. Do this by running `npm run build`. You'll find the built script in `/public/dist/jquery-2.3.1.slim.min`. Finally, make sure the module script the HTML is pointing to at the bottom of `dashboard.pug` is the bundled & obfuscated `jquery-2.3.1.slim.min.js` file, and not the original `dashboard.js` file
 
 ## 1. Run the app locally
 
