@@ -2,11 +2,13 @@
 
 A server-side generated, SPA dashboard that helps managers discover insights about their work with farmers, and communicate KPIs transparently and effectively institutional partners and the general public
 
-[Geoclusters Dashboard](https://avg-dashboard.herokuapp.com)
+### [Geoclusters Dashboard](https://avg-dashboard.herokuapp.com)
 
 ![dashboard-0](https://user-images.githubusercontent.com/60096838/160973371-f393d866-4a73-4a14-8ffe-18e2027faa9d.png)
 
-![dashboard-3](https://user-images.githubusercontent.com/60096838/161726037-f05c52d6-6c14-46ed-850c-7d42d8c2e57e.png)
+![dashboard-1](https://user-images.githubusercontent.com/60096838/228782902-bb58061a-a11f-420f-b919-e11b097d66e8.png)
+
+![dashboard-2](https://user-images.githubusercontent.com/60096838/228781340-f126067e-55b6-4d1f-b229-cfd31e30485a.png)
 
 ## Build & Deployment
 
