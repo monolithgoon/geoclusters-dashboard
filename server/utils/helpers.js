@@ -102,31 +102,68 @@ exports._joinWordsArray = (keywords, {inclQuotes=false, commaSeparated=false}={}
  * @param {...Array<Object>} baseArrays - A variable number of arrays containing objects to be combined.
  * @returns {Array<Object>} An array of objects containing all of the objects from the input arrays.
  */
+// REMOVE > DEPRC. BELOW
+// exports._combineObjArrays = (...baseArrays) => {
+
+//   // Create a new array to store the combined objects
+//   const combinedObjsArray = [];
+
+//   // Create a copy of the input arrays so we can modify them without affecting the original arrays
+//   const arrays = [...baseArrays];
+
+//   // Loop through each array in the arrays array
+//   arrays.forEach((array) => {
+//     console.log({ array })
+//     // Check if the array is not null or undefined
+//     if (array && array?.length > 0) {
+//       // Loop through each element in the array and push it to the combinedObjsArray
+//       // MTD. 1
+//       array.forEach((el) => {
+//         combinedObjsArray.push(el);
+//       });
+//       // MTD. 2
+//       // combinedObjsArray.push(...array);
+//     }
+//   });
+
+//   // Return the combined array of objects
+//   return combinedObjsArray;
+// }
 exports._combineObjArrays = (...baseArrays) => {
 
-  // Create a new array to store the combined objects
-  const combinedObjsArray = [];
+	// Check if no arguments are passed to the function or if the arguments passed are not valid arrays
+	if (
+		!baseArrays ||
+		baseArrays.length === 0 ||
+		!baseArrays.every((array) => Array.isArray(array) && array.every((el) => typeof el === "object"))
+	) {
+		// Return an empty array if no valid arguments are passed
+		return [];
+	}
 
-  // Create a copy of the input arrays so we can modify them without affecting the original arrays
-  const arrays = [...baseArrays];
+	// Create a new array to store the combined objects
+	const combinedObjsArray = [];
 
-  // Loop through each array in the arrays array
-  arrays.forEach((array) => {
-    // Check if the array is not null or undefined
-    if (array && array?.length > 0) {
-      // Loop through each element in the array and push it to the combinedObjsArray
-      // MTD. 1
-      array.forEach((el) => {
-        combinedObjsArray.push(el);
-      });
-      // MTD. 2
-      // combinedObjsArray.push(...array);
-    }
-  });
+	// // Combine the input arrays using the spread syntax
+	// const arrays = [...baseArrays]; // REMOVE > UN-NEEDED
 
-  // Return the combined array of objects
-  return combinedObjsArray;
-}
+	// Concatenate all the objects from the input arrays into a new array
+	// const concatenatedArray = [].concat(...arrays); // REMOVE > UN-NEEDED
+	const concatenatedArray = [].concat(...baseArrays);
+
+	// Loop through each element in the concatenated array
+	concatenatedArray.forEach((el) => {
+		// Check if the element is not null or undefined
+		if (el) {
+			// Push the element to the combinedObjsArray
+			combinedObjsArray.push(el);
+		}
+	});
+
+	// Return the combined array of objects
+	return combinedObjsArray;
+};
+
 
 
 // REMOVE -> DEPRECATED FOR `repairPolygonFeatsCoords`
