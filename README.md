@@ -2,6 +2,8 @@
 
 A server-side generated, SPA dashboard that helps managers discover insights about their work with farmers, and communicate KPIs transparently and effectively institutional partners and the general public
 
+[Geoclusters Dashboard](https://avg-dashboard.herokuapp.com)
+
 ![dashboard-0](https://user-images.githubusercontent.com/60096838/160973371-f393d866-4a73-4a14-8ffe-18e2027faa9d.png)
 
 ![dashboard-3](https://user-images.githubusercontent.com/60096838/161726037-f05c52d6-6c14-46ed-850c-7d42d8c2e57e.png)
@@ -69,13 +71,15 @@ cd /apps
 cd /avg-dashboard
 ```
 
-## Details
+## Geoclusters API Response Envelopes
 
-### Parcelized AGCs API Response Envelope
+This is the expected data envelopes for data returned from the geoclusters API
+
+### Parcelized AGCs
 
 `/api/v1/parcelized-agcs/`
 
-This endpoint returns data for AGCs that were processed through the Land Parcelization API
+This endpoint returns data for AGCs that were processed through the Automated Land Parcelization API
 
 ```bash
 const response = {
@@ -105,7 +109,7 @@ const response = {
 
 ```
 
-### Parcelized AGCs Metadata API Response Envelope
+### Parcelized AGCs Metadata
 
 `/api/v1/parcelized-agcs/metadata`
 
@@ -135,9 +139,16 @@ const response = {
 };
 ```
 
-### Processed Legacy AGCs API Response Envelope
+### Processed Legacy AGCs
 
 `api/v2/legacy-agcs/processed/`
+
+This endpoint returns mappable legacy AGCs that were recovered from NIRSAL'S funded AGC `.csv` files
+These processed legacy AGCs are appended with farmer biometric data.
+
+### Clustered Farm Programs
+
+33/legacy-agcs/processed/`
 
 This endpoint returns mappable legacy AGCs that were recovered from NIRSAL'S funded AGC `.csv` files
 These processed legacy AGCs are appended with farmer biometric data.

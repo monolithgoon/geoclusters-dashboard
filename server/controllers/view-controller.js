@@ -8,6 +8,7 @@ exports.renderLandingPage = catchAsync(async(req, res, next) => {
 
    console.log(chalk.success(`SUCCESSFULLY CALLED 'renderLandingPage' VIEW CONTROLLER FN. `));
 
+   // render the 'landing.pug' template with the specified variables
    res.status(200).render('landing', {
       title: APP_CONFIG.appTitle,
       developer: APP_CONFIG.appDeveloper,
@@ -23,6 +24,7 @@ exports.renderAVGDashboard = catchAsync(async(req, res, next) => {
 
    console.log(chalk.success(`SUCCESSFULLY CALLED 'renderAVGDashboard' VIEW CONTROLLER FN. `));
       
+      // render the 'dashboard.pug' template with the specified variables
       res.status(200).render('dashboard', {
          title: APP_CONFIG.appTitle,
          developer: APP_CONFIG.appDeveloper,
