@@ -34,7 +34,6 @@ const mandatoryParam = () => {
 // 	return additionalFeatProps;
 // }, `getAdditionalFeatureProps`);
 
-
 /**
  * @async
  * @function getAdditionalFeatureProps
@@ -44,34 +43,37 @@ const mandatoryParam = () => {
  * @returns {Promise<Object|null>} A Promise that resolves with the additional feature properties, or null if featureResourcePath is falsy.
  */
 const getAdditionalFeatureProps = async (featureResourcePath, apiAuthToken) => {
+	let additionalFeatProps = {};
 
-  let additionalFeatProps = {};
+	// Return {} if featureResourcePath is falsy
+	if (!featureResourcePath) return {};
 
-  // Return {} if featureResourcePath is falsy
-  if (!featureResourcePath) return {};
+	// IMPORTANT
+	// Build the full URL from the resource path
+	const featAPIUrl = `${APP_CONFIG.geoclustersHostUrl}/${featureResourcePath}?fields=-farmer_bvn,-farmer_image_base64`;
 
-  // IMPORTANT
-  // Build the full URL from the resource path
-  const featAPIUrl = `${APP_CONFIG.geoclustersHostUrl}/${featureResourcePath}?fields=-farmer_bvn,-farmer_image_base64`;
+	// Log the URL for debugging purposes
+	console.log({ featAPIUrl });
 
-  // Log the URL for debugging purposes
-  console.log({ featAPIUrl });
+	try {
+		// Fetch the additional feature properties from the API
+		const apiResponse = await _fetchData(featAPIUrl, { timeout: 60000 });
 
-  try {
-    // Fetch the additional feature properties from the API
-    const apiResponse = await _fetchData(featAPIUrl, { timeout: 60000 });
+		console.log({ apiResponse });
 
-    // Store in var.
-    additionalFeatProps = apiResponse?.data[0];
-		
-  } catch (error) {
-    // Handle the error gracefully
-    console.error(`Error in getAdditionalFeatureProps: ${error.message}`);
-    additionalFeatProps = {};
-  }
+		if (apiResponse) {
+			// Store in var.
+			additionalFeatProps = apiResponse.data[0];
+		}
 
-  // Return the additional feature properties
-  return additionalFeatProps;
+	} catch (error) {
+		// Handle the error gracefully
+		console.error(`Error in getAdditionalFeatureProps: ${error.message}`);
+		additionalFeatProps = {};
+	}
+
+	// Return the additional feature properties
+	return additionalFeatProps;
 };
 
 /**
