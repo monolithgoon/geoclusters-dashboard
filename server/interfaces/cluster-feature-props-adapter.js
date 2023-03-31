@@ -9,6 +9,32 @@ const mandatoryParam = () => {
 	throw new Error(`Parameter is required.`);
 };
 
+// REMOVE > DEPRC. BELOW
+// const getAdditionalFeatureProps = _catchErrorAsync(async (featureResourcePath, apiAuthToken) => {
+
+// 	let additionalFeatProps = {};
+
+// 	// Return null if featureResourcePath is falsy
+// 	if (!featureResourcePath) return null;
+
+// 	// IMPORTANT
+// 	// Build the full URL from the resource path
+// 	const featAPIUrl = `${APP_CONFIG.geoclustersHostUrl}/${featureResourcePath}?fields=-farmer_bvn,-farmer_image_base64`;
+
+// 	// Log the URL for debugging purposes
+// 	console.log({ featAPIUrl });
+
+// 	// Fetch the additional feature properties from the API
+// 	const apiResponse = await _fetchData(featAPIUrl, { timeout: 60000 });
+
+// 	// Store in var.
+// 	additionalFeatProps = apiResponse?.data[0];
+
+// 	// Return the additional feature properties
+// 	return additionalFeatProps;
+// }, `getAdditionalFeatureProps`);
+
+
 /**
  * @async
  * @function getAdditionalFeatureProps
@@ -17,29 +43,36 @@ const mandatoryParam = () => {
  * @param {string} [apiAuthToken] - An optional API auth token.
  * @returns {Promise<Object|null>} A Promise that resolves with the additional feature properties, or null if featureResourcePath is falsy.
  */
-const getAdditionalFeatureProps = _catchErrorAsync(async (featureResourcePath, apiAuthToken) => {
+const getAdditionalFeatureProps = async (featureResourcePath, apiAuthToken) => {
 
-	let additionalFeatProps = {};
+  let additionalFeatProps = {};
 
-	// Return null if featureResourcePath is falsy
-	if (!featureResourcePath) return null;
+  // Return {} if featureResourcePath is falsy
+  if (!featureResourcePath) return {};
 
-	// IMPORTANT
-	// Build the full URL from the resource path
-	const featAPIUrl = `${APP_CONFIG.geoclustersHostUrl}/${featureResourcePath}?fields=-farmer_bvn,-farmer_image_base64`;
+  // IMPORTANT
+  // Build the full URL from the resource path
+  const featAPIUrl = `${APP_CONFIG.geoclustersHostUrl}/${featureResourcePath}?fields=-farmer_bvn,-farmer_image_base64`;
 
-	// Log the URL for debugging purposes
-	console.log({ featAPIUrl });
+  // Log the URL for debugging purposes
+  console.log({ featAPIUrl });
 
-	// Fetch the additional feature properties from the API
-	const apiResponse = await _fetchData(featAPIUrl, { timeout: 60000 });
+  try {
+    // Fetch the additional feature properties from the API
+    const apiResponse = await _fetchData(featAPIUrl, { timeout: 60000 });
 
-	// Store in var.
-	additionalFeatProps = apiResponse?.data[0];
+    // Store in var.
+    additionalFeatProps = apiResponse?.data[0];
+		
+  } catch (error) {
+    // Handle the error gracefully
+    console.error(`Error in getAdditionalFeatureProps: ${error.message}`);
+    additionalFeatProps = {};
+  }
 
-	// Return the additional feature properties
-	return additionalFeatProps;
-}, `getAdditionalFeatureProps`);
+  // Return the additional feature properties
+  return additionalFeatProps;
+};
 
 /**
  * @async
