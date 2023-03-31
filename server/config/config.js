@@ -23,11 +23,12 @@ module.exports = Object.freeze({
 	
 	nodeEnv: process.env.NODE_ENV,
 
-	geoclustersHostUrl: process.env.GEOCLUSTERS_HOST_URL,
+	geoclustersHostUrl: process.env.AUTO_LAND_SUBDIVISION_HOST_URL,
 
 	port: parseInt(process.env.PORT, 10) || 9090,
 
 	databaseURL: process.env.ATLAS_DB_STRING,
+	databasePassword: process.env.ATLAS_DB_PASSOWRD,
 
 	jwtSecret: process.env.JWT_SECRET,
 	jwtAlgorithm: process.env.JWT_ALGO,

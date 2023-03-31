@@ -4,10 +4,14 @@ const appConfig = require("./config/config.js");
 
 // EXPORT DB. CONNECTION
 async function DB_CONNECT() {
-	try {
-		console.log(chalk.working("Connecting to the remote MongoDB Atlas DB..."));
 
-		const database = appConfig.databaseURL.replace(`<PASSWORD>`, process.env.ATLAS_DB_PASSOWRD); // REPLACE THE PLACEHOLDER TEXT IN THE CONNECTION STRING
+	try {
+
+		console.log(chalk.working("Connecting to the remote MongoDB Atlas DB..."));
+		console.log(appConfig.databasePassword)
+		console.log(appConfig.databaseURL)
+
+		const database = appConfig.databaseURL.replace(`<PASSWORD>`, appConfig.databasePassword); // REPLACE THE PLACEHOLDER TEXT IN THE CONNECTION STRING
 
 		mongoose
 			.connect(database, {

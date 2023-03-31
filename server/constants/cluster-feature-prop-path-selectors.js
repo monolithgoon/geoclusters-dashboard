@@ -2,7 +2,7 @@ exports.CLUSTER_FEATS_PROP_PATHS = {
 	FEATURE_ID: ["chunk_id", "plot_id"],
 	FEATURE_CLUSTER_ID: ["farm_program_farmer_id"],
 	FEATURE_ADMIN_ID: ["farmer_bio_data.farmer_id", "owner_id", "farm_program_farmer_id"],
-	FEATURE_ADDITIONAL_PROPS_API_URL: ["farmer_global_url"],
+	ADDITIONAL_FEATURE_PROPS_URL: ["farmer_global_url"],
 	FEATURE_ADMIN_PERSON_NAME1: [
 		"farmer_bio_data.farmer_first_name",
 		"farmer_first_name",

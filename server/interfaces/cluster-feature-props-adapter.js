@@ -56,10 +56,9 @@ const getAdditionalFeatureProps = async (featureResourcePath, apiAuthToken) => {
 	console.log({ featAPIUrl });
 
 	try {
+
 		// Fetch the additional feature properties from the API
 		const apiResponse = await _fetchData(featAPIUrl, { timeout: 60000 });
-
-		console.log({ apiResponse });
 
 		if (apiResponse) {
 			// Store in var.
@@ -88,20 +87,21 @@ const getAdditionalFeatureProps = async (featureResourcePath, apiAuthToken) => {
  */
 exports._getFlattenedClusterFeatProps = _catchErrorAsync(
 	async (clusterFeature = mandatoryParam(), { featIdx } = {}) => {
+		
 		// Extract properties from clusterFeature GeoJSON object
 		const props = clusterFeature.properties;
 
 		// Throw an error if the clusterFeature object does not contain a properties object
 		if (!props) throw new Error(`propsInterfaceError: cannot get properties of the cluster feature`);
 
-		// Get the feature resource path from the properties object
-		const featureResourcePath = returnFirstValidPropValue(
+		// Get the resource path for additional, nested properties not incl. by default in `props` obj.
+		const addFeatPropsResourcePath = returnFirstValidPropValue(
 			props,
-			CLUSTER_FEATS_PROP_PATHS.FEATURE_ADDITIONAL_PROPS_API_URL
+			CLUSTER_FEATS_PROP_PATHS.ADDITIONAL_FEATURE_PROPS_URL
 		);
 
 		// Get additional feature properties by fetching with the feature resource path
-		const additionalFeatProps = await getAdditionalFeatureProps(featureResourcePath, "apiAuthToken");
+		const additionalFeatProps = await getAdditionalFeatureProps(addFeatPropsResourcePath, "apiAuthToken");
 
 		const mergedProps = {
 			...props,

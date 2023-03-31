@@ -233,7 +233,7 @@ These processed legacy AGCs are appended with farmer biometric data.
 ```bash
 NODE_ENV=development
 PORT=9090
-GEOCLUSTERS_HOST_URL=http://18.213.158.252:8443
+AUTO_LAND_SUBDIVISION_HOST_URL=http://18.213.158.252:8443
 ATLAS_DB_STRING=*****
 ATLAS_DB_PASSOWRD=dooksie
 JWT_SECRET=*****
@@ -253,7 +253,7 @@ APP_TITLE="AVG Dashboard - SSR Beta V1.0"```
 ```bash
 NODE_ENV=production
 PORT=9090
-GEOCLUSTERS_HOST_URL=http://18.213.158.252:8443
+AUTO_LAND_SUBDIVISION_HOST_URL=http://18.213.158.252:8443
 ATLAS_DB_STRING=*****
 ATLAS_DB_PASSOWRD=dooksie
 JWT_SECRET=*****
