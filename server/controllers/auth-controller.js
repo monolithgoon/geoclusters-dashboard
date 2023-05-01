@@ -253,7 +253,7 @@ exports.restrictTo = (...roles) => {
 		if (!roles.includes(req.user.user_role)) {
 			return next(
 				new ServerError(
-					`Your assigned role restricts you from performing this action. Contact the Admin.`,
+					`Your assigned role restricts you from performing this action. Contact the site admin.`,
 					403,
 					`restrictToFn`
 				)
