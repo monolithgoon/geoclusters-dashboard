@@ -4,6 +4,7 @@ const API_URLS = {
 			LOCAL: `http://127.0.0.1:9443`,
 			HEROKU: `https://geoclusters.herokuapp.com`,
 			AWS: `http://18.213.158.252:8443`,
+			VERCEL: `https://automated-land-subdivision-api.vercel.app/`,
 		},
 		RESOURCE_PATHS: [
 			`api/v1/parcelized-agcs/`,
