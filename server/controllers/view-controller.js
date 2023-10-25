@@ -7,6 +7,10 @@ const catchAsync = require("../middlewares/catch-async-server-error.js");
 exports.renderLandingPage = catchAsync(async(req, res, next) => {
 
    console.log(chalk.success(`SUCCESSFULLY CALLED 'renderLandingPage' VIEW CONTROLLER FN. `));
+   const a = req.app.locals.clustersSummary.totalNumClusters
+   const b = req.app.locals.clustersSummary.totalNumFeatures
+   console.log({a})
+   console.log({b})
 
    // render the 'landing.pug' template with the specified variables
    res.status(200).render('landing', {
