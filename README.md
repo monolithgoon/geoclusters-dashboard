@@ -4,7 +4,7 @@ A server-side generated, SPA dashboard that helps managers discover insights abo
 
 ### [Geoclusters Dashboard Preview](http://51.20.26.23:9090/landing/)
 
-#### Dashboard Guest Login Details
+#### *Dashboard Guest Login Details*
 
 ```bash
 Username - guest@avg-dashboard.com
