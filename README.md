@@ -1,8 +1,8 @@
-![Screenshot_20210408-110025_Gallery](https://github.com/monolithgoon/geoclusters-dashboard/assets/60096838/9cf15fe3-1293-4adf-8f81-7d16d608285c)# Active Land Asset Visualization (AVG) & Monitoring Dashboard
+# Active Land Asset Visualization (AVG) & Monitoring Dashboard
 
 A server-side generated, SPA dashboard that helps managers discover insights about their work with farmers, and communicate KPIs transparently and effectively institutional partners and the general public
 
-### [Geoclusters Dashboard Preview](http://13.53.36.35:9090/landing/)
+### [Geoclusters Dashboard Preview](http://51.20.26.23:9090/landing/)
 
 ![dashboard-0](https://user-images.githubusercontent.com/60096838/160973371-f393d866-4a73-4a14-8ffe-18e2027faa9d.png)
 
