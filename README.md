@@ -4,6 +4,10 @@ A server-side generated, SPA dashboard that helps managers discover insights abo
 
 ### [Geoclusters Dashboard Preview](http://51.20.26.23:9090/landing/)
 
+#### Dashboard Guest Login Details
+***Username - guest@avg-dashboard.com***
+***Password - jungleFever***
+
 ![dashboard-0](https://user-images.githubusercontent.com/60096838/160973371-f393d866-4a73-4a14-8ffe-18e2027faa9d.png)
 
 ![dashboard-2](https://user-images.githubusercontent.com/60096838/228781340-f126067e-55b6-4d1f-b229-cfd31e30485a.png)
