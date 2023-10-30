@@ -18,7 +18,11 @@ export const FEAT_DETAIL_MAP = L.map("feature_detail_map_container", { zoomSnap:
 export const CLUSTER_PLOTS_MAP = new mapboxgl.Map({
    attribution: ATTRIBUTION.APP_DEVELOPER_NAME,
    container: 'parcelization_map_container',
-   style: 'mapbox://styles/mapbox/outdoors-v11',
+   style: 'mapbox://styles/mapbox/outdoors-v12',
+   // style: 'mapbox://styles/mapbox/satellite-streets-v11',
+   // style: 'mapbox://styles/mapbox/traffic-day-v2',
+   // style: 'mapbox://styles/mapbox/navigation-guidance-day-v4',
+   // style: 'mapbox://styles/mapbox/navigation-preview-day-v4',
    accessToken: MAPS_API_TOKENS.DASHBOARD.MAPBOX,
    // REMOVE > DEPRECATED
    // style: {
