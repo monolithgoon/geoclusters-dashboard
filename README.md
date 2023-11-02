@@ -1,6 +1,6 @@
 # Active Land Asset Visualization (AVG) & Monitoring Dashboard
 
-A server-side generated, SPA dashboard that helps managers discover insights about their work with farmers, and communicate KPIs transparently and effectively institutional partners and the general public
+A server-side generated, real-time dashboard that helps managers discover insights about their work with farmers, and communicate KPIs transparently and effectively institutional partners and the general public
 
 ### [Geoclusters Dashboard Preview](http://51.20.26.23:9090/landing/)
 
