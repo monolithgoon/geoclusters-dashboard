@@ -429,7 +429,7 @@ function retrieveCachedClustersJSON(JSONFiles) {
 	console.log({ parsedGeoclusters });
 	// Combine the data from all of the files into a single object
 	const returnedClusters = combineGeoClusterData(parsedGeoclusters);
-	console.log({ returnedClusters });
+	// console.log({ returnedClusters });
 	// Calculate a summary of the data and return it as an object
 	const clustersSummary = calculateClustersSummary(returnedClusters);
 	return { returnedClusters, clustersSummary };
