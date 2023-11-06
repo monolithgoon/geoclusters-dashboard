@@ -1,12 +1,10 @@
 # Active Land Asset Visualization & Monitoring Dashboard
+*Welcome to the Real-Time Farm Program Management Dashboard repository, where you can explore the capabilities of a dynamic geospatial platform designed to enhance farm operations management.
+This server-side rendered dashboard is updated with real-time data, that gives farm program managers a birds-eye view of farmer engagement metrics (farmer demographics, crop types, geo-mapped farm parcels, and other rich contextual information), allowing them to effectively communicate KPIs to institutional partners, and other vested stakeholders*
 
-A server-side generated, real-time dashboard that helps managers discover insights about their work with farmers, and communicate KPIs transparently and effectively institutional partners and the general public
-
-### [Dashboard Preview](http://51.20.26.23:9090/landing/)
-
-#### *Guest Login Credentials*
-
-```bash
+#### [Dashboard Preview](http://51.20.26.23:9090/landing/)
+*Guest Login Credentials*
+```javascript
 Username - guest@avg-dashboard.com
 Password - jungleFever
 ```
@@ -18,10 +16,31 @@ Password - jungleFever
 ![sh-clusters-proto](https://github.com/monolithgoon/geoclusters-dashboard/assets/60096838/0dcfe165-432b-41e3-8e49-07c9e4194d4a)
 ![sh-clusters-proto-2](https://github.com/monolithgoon/geoclusters-dashboard/assets/60096838/111853ab-e59b-4b5d-96b3-869d3b297e0d)
 
-## General
+## Key Features
+
+- **Live Heat-Map Visualization**
+The landing page showcases a real-time Mapbox GL JS 'heat-map' that dynamically updates as new farm programs are added via the backend.
+
+- **Geospatial Data Rendering Engine**
+We've created a proprietary geospatial data rendering engine that intelligently displays relevant map features and data based on the user's viewing context, map bounds, and zoom level. This ensures smooth rendering of tens of thousands of data points without browser crashes.
+
+- **Virtual Asset Title (VAT) Framework**
+Our innovative VAT framework accurately documents the location and metadata of informal, unstructured assets like farmlands. It conforms to the Nigeria Society of Surveyors plot survey standards.
+
+- **React Component Widgets**
+We've developed React component widgets to display insights on various farm operations, including yield, harvest, profitability, and real-time resource deployments. Our approach follows company-wide standards, emphasizing federated React components, Redux state management, and GIS data warehousing best practices.
+
+- **Event-Driven Infrastructure**
+Our architecture leverages websockets to provide near real-time visualization of farmer on-boarding data, including biometric and geospatial information. This enhances coordination between managers and field staff and eliminates oversight duplication.
+
+- **Performance Optimization**
+We've achieved a 60% reduction in dashboard load time through critical asset pre-loading, geojson resource caching, and non-critical resource sourcing from Content Delivery Networks (CDNs).
+
+- **AWS Cloud Deployment**
+Our platform is deployed on the AWS cloud using CI/CD strategies. We leverage AWS services like EC2, S3, and RDS to ensure high availability, scalability, and reliability. Integration with services like DynamoDB, Lambda, and Elastic Load Balancing optimizes performance and cost-efficiency.
 
 ## Build & Deployment
-*Step-by-step for deploying to the app on an AWS EC2 instance*
+*Step-by-step for deploying a Docker image of the app on an AWS EC2 instance*
 
 ### Overview
 
@@ -32,31 +51,28 @@ Password - jungleFever
 - All the HTML for the both pages is served up via server-side rendered `PUG` templates via `server/routes/view-routes`
 - The landing page HTML is served from `landing.pug` and `landing-index.pug`
 - The dashboard SPA HTML is served from `dashboard.pug` and `dashboard-index.pug`
+
+### Docker Compose
+- Clone the Github repo from `git clone https://github.com/monolithgoon/avg-dashboard.git`
+- Ensure you have [Docker Compose](https://docs.docker.com/compose/install) installed locally.
+- Copy the `.env.compose` file and rename it to `.env` in the root of the mono-repo. This file contains default environment variable definitions.
+- To run the platform using our pre-built Docker images, execute the following command:
+`docker-compose -f docker-compose.demo.yml up`
+(Note: it uses the latest images pre-built automatically from the head of the master branch using GitHub CI/CD.)
+- If you want to build everything, including code and Docker images, locally, run:
+`docker-compose up`
+(Note: this process may take a considerable amount of time. The option above is much faster.)
+Be patient; it might take some time for our API to seed fake data in the database during the first Docker Compose run, even if you used pre-built Docker images.
+- Open `http://localhost:4200` in your browser
+
+### Run the app locally
+- Request for a Github personal access token for `https:github.com/monolithgoon/` from the developer
+- Clone the app code to your local machine `git clone https://github.com/monolithgoon/avg-dashboard.git`
+- Install the `package.json` dependencies by running `npm install`
+- Build an obfuscated version of the main app entry code `dashboard.js` by running 'npm run build:secure`
 - In order to make the most proprietary code for the dashboard app difficult to copy, an obfuscated version of `dashboard.js` first needs to be built locally, and then commited to the Github repo. Do this by running `npm run build`. You'll find the built script in `/public/dist/jquery-2.3.1.slim.min`. Finally, make sure the module script the HTML is pointing to at the bottom of `dashboard.pug` is the bundled & obfuscated `jquery-2.3.1.slim.min.js` file, and not the original `dashboard.js` file
 
-### 1. Run the app locally
-
-Request for a Github personal access token for `https:github.com/monolithgoon/` from the developer
-
-Clone the app code to your local machine
-
-```
-git clone https://github.com/monolithgoon/avg-dashboard/
-```
-
-Install the `package.json` dependencies by running
-
-```
-npm install
-```
-
-Build an obfuscated version of the main app entry code `dashboard.js` by running
-
-```
-npm run build:secure
-```
-
-### 2. Deploying the app on Ubuntu
+### Deploying the app to Amazon AWS EC2
 
 1. Request for the `avg.pem` key from the admin.
 
