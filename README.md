@@ -65,6 +65,14 @@ Our platform is deployed on the AWS cloud using CI/CD strategies. We leverage AW
 Be patient; it might take some time for our API to seed fake data in the database during the first Docker Compose run, even if you used pre-built Docker images.
 - Open `http://localhost:4200` in your browser
 
+#### With Docker Compose, the following services will be run:
+- **[PostgreSQL](https://www.postgresql.org/)** - Primary Database
+- **[Pgweb](https://sosedoff.github.io/pgweb/)** - Cross-platform client for PostgreSQL databases, available on [http://localhost:8081](http://localhost:8081)
+- **[Dejavu](https://github.com/appbaseio/dejavu)** - Web UI for ElasticSearch, available on [http://localhost:1358](http://localhost:1358)
+- **[MinIO](https://min.io/)** - Multi-Cloud Object Storage (AWS S3 compatible)
+- **[Jitsu](https://jitsu.com/)** - An open-source Segment alternative. Fully-scriptable data ingestion engine for modern data teams
+- **Redis** - In-memory data store/caching (also used by Jitsu).
+
 ### Run the app locally
 - Request for a Github personal access token for `https:github.com/monolithgoon/` from the developer
 - Clone the app code to your local machine `git clone https://github.com/monolithgoon/avg-dashboard.git`
