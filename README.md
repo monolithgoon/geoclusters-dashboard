@@ -89,7 +89,7 @@ cd /apps
 cd /avg-dashboard
 ```
 
-## Environment Variables Setup- Development
+## Environment Variables Setup - Development
 
 Instructions for setting up essential environment variables required for your project. Make sure to replace the placeholders (e.g., `*****`) with the actual values relevant to your setup.
 
@@ -97,7 +97,7 @@ Instructions for setting up essential environment variables required for your pr
 
 ***Please keep these values secure and do not expose them in public repositories.***
 
-```javascript
+```bash
 NODE_ENV=production
 ATLAS_DB_STRING=*****
 ATLAS_DB_PASSOWRD=*****
@@ -174,23 +174,24 @@ CLOUDINARY_URL=*****
 Visit the Cloudinary [website](https://cloudinary.com). Log in or create an account, and obtain your Cloudinary API URL and replace `*****` with the actual URL.
 
 ## Map Provider API Tokens
-   Add the map provider API tokens to this file `/server/public/js/src/constants/maps-api-tokens.js`
 
-   **In production, do not use the map provider API tokens included in this code repository. They are for development only**
+Because the main maps for the dashboard are rendered on the frontend, they can't be added to or read from the environment variables in the `/server/production.env` file. 
 
-   The `/landing` page uses Mapbox GL JS only.
-   The `/dashboard` page uses 2 mapping providers: Bing Maps for the main centerfold map that renders all the clusters, and Mapbox GL JS for the right sidebar, cluster features map.
+Add the map provider API tokens to this file `/server/public/js/src/constants/maps-api-tokens.js`
 
-   To get a Mapbox GL JS API token, you can follow these steps:
+***In production, do not use the map provider API tokens included in this code repository. They are for development only***
 
-   - Go to the Mapbox [website](https://www.mapbox.com/)
-   - Create a free account or sign in if you already have one
-   - Go to the Access Tokens [page](https://account.mapbox.com/access-tokens/)
-   - Generate a new access token and give it a descriptive name
+The `/landing` page uses Mapbox GL JS only.
+The `/dashboard` page uses 2 mapping providers: Bing Maps for the main centerfold map that renders all the clusters, and Mapbox GL JS for the right sidebar, cluster plot features sidebar map.
 
-   To get a Bing Maps token, you can follow these steps:
+To get a Mapbox GL JS API token, you can follow these steps:
+- Go to the Mapbox [website](https://www.mapbox.com/)
+- Create a free account or sign in if you already have one
+- Go to the Access Tokens [page](https://account.mapbox.com/access-tokens/)
+- Generate a new access token and give it a descriptive name
 
-   - Go to the Bing Maps Dev Center [website](https://www.bingmapsportal.com/)
-   - Create a free account or sign in if you already have one
-   - Go to the My Account [page](https://www.bingmapsportal.com/Application)
-   - Create- a new Bing Maps key and give it a descriptive name
+To get a Bing Maps token, you can follow these steps:
+- Go to the Bing Maps Dev Center [website](https://www.bingmapsportal.com/)
+- Create a free account or sign in if you already have one
+- Go to the My Account [page](https://www.bingmapsportal.com/Application)
+- Create- a new Bing Maps key and give it a descriptive name
