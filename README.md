@@ -115,42 +115,42 @@ CLOUDINARY_URL=*****
 
 ### Node Environment
 
-```javascript
+```bash
 NODE_ENV=production
 ```
 
 Set the Node.js environment to "production" in your server or application configuration for production deployments.
 
 ### MongoDB Atlas Configuration
-```javascript
+```bash
 ATLAS_DB_STRING=*****
 ```
 Visit the MongoDB Atlas [website](https://www.mongodb.com/cloud/atlas). Log in or create an account, and create a new cluster or select an existing one. Locate the connection string for your MongoDB cluster and replace `*****` with the actual connection string.
 
-```javascript
+```bash
 ATLAS_DB_PASSWORD=*****
 ```
 Use the password associated with your MongoDB Atlas cluster.
 
 ### Geoclusters Dashboard
-```javascript
+```bash
 GEOCLUSTERS_DASHBOARD_PORT=9090
 ```
 Set this environment variable to specify the port number for your Geoclusters Dashboard. Modify your server configuration to listen on this port.
 
 ### Auto Land Subdivision Service
-```javascript
+```bash
 AUTO_LAND_SUBDIVISION_HOST_URL=http://51.20.26.23:9443
 ```
 The URL where the Auto Land Subdivision service is hosted. Keep this as is. It's currently being hosted on an AWS EC2 instance. If this isn't working, ask the admin for a working link.
 
 ### JSON Web Token (JWT)
-```javascript
+```bash
 JWT_SECRET=*****
 ```
 Generate a strong and secure secret key for JWT (JSON Web Tokens). It's used for authentication and authorization. Replace `*****` with your secret key.
 
-```javascript
+```bash
 JWT_EXPIRES_IN_DAYS=3600000
 JWT_COOKIE_EXPIRES_IN_DAYS=1
 ```
@@ -158,7 +158,7 @@ These values determine the expiration time for JWT tokens. Adjust them as needed
 
 ### Email Provider Configuration
 
-```javascript
+```bash
 EMAIL_HOST=smtp.mailtrap.io
 MAILTRAP_PORT=2525
 MAILTRAP_USERNAME=*****
@@ -168,7 +168,7 @@ Visit the Mailtrap [website](https://mailtrap.io). Sign in or create an account,
 
 ### Cloudinary Integration
 
-```javascript
+```bash
 CLOUDINARY_URL=*****
 ```
 Visit the Cloudinary [website](https://cloudinary.com). Log in or create an account, and obtain your Cloudinary API URL and replace `*****` with the actual URL.
