@@ -1,10 +1,10 @@
-# Active Land Asset Visualization (AVG) & Monitoring Dashboard
+# Active Land Asset Visualization & Monitoring Dashboard
 
 A server-side generated, real-time dashboard that helps managers discover insights about their work with farmers, and communicate KPIs transparently and effectively institutional partners and the general public
 
-### [Geoclusters Dashboard Preview](http://51.20.26.23:9090/landing/)
+### [Dashboard Preview](http://51.20.26.23:9090/landing/)
 
-#### *Dashboard Guest Login Details*
+#### *Guest Login Credentials*
 
 ```bash
 Username - guest@avg-dashboard.com
@@ -12,37 +12,26 @@ Password - jungleFever
 ```
 
 ![dashboard-0](https://user-images.githubusercontent.com/60096838/160973371-f393d866-4a73-4a14-8ffe-18e2027faa9d.png)
-
 ![dashboard-3](https://github.com/monolithgoon/geoclusters-dashboard/assets/60096838/41ea1552-af18-4b37-a736-048d2ae9455a)
-
 ![dashboard-2](https://user-images.githubusercontent.com/60096838/228781340-f126067e-55b6-4d1f-b229-cfd31e30485a.png)
-
 ![Screenshot_20210408-110025_Gallery](https://github.com/monolithgoon/geoclusters-dashboard/assets/60096838/b7410a3b-3df9-4b8c-b72a-0982a59e6e05)
-
 ![sh-clusters-proto](https://github.com/monolithgoon/geoclusters-dashboard/assets/60096838/0dcfe165-432b-41e3-8e49-07c9e4194d4a)
-
 ![sh-clusters-proto-2](https://github.com/monolithgoon/geoclusters-dashboard/assets/60096838/111853ab-e59b-4b5d-96b3-869d3b297e0d)
 
-## Build & Deployment
+## General
 
-> *This is a step-by-step guide for deploying code for the AVG Dashboard app on an AWS EC2 instance*
+## Build & Deployment
+*Step-by-step for deploying to the app on an AWS EC2 instance*
 
 ### Overview
 
 - The whole app is rendered server-side. Backend code resides in `server/`, and the frontend is served via `server/public/src/`
-
 - The main entry point for the Express server is `server/server.js`
-
 - This app consists of just 2 page routes: `/landing` and `/dashboard`
-
 - The main JavaScript module scripts for both pages are in `public/src/js/landing.js` and `public/src/js/dashboard.js` respectively
-
 - All the HTML for the both pages is served up via server-side rendered `PUG` templates via `server/routes/view-routes`
-
 - The landing page HTML is served from `landing.pug` and `landing-index.pug`
-
 - The dashboard SPA HTML is served from `dashboard.pug` and `dashboard-index.pug`
-
 - In order to make the most proprietary code for the dashboard app difficult to copy, an obfuscated version of `dashboard.js` first needs to be built locally, and then commited to the Github repo. Do this by running `npm run build`. You'll find the built script in `/public/dist/jquery-2.3.1.slim.min`. Finally, make sure the module script the HTML is pointing to at the bottom of `dashboard.pug` is the bundled & obfuscated `jquery-2.3.1.slim.min.js` file, and not the original `dashboard.js` file
 
 ### 1. Run the app locally
@@ -51,19 +40,19 @@ Request for a Github personal access token for `https:github.com/monolithgoon/` 
 
 Clone the app code to your local machine
 
-```bash
-git clone https://github.com/monolithgoon/avg-dashboard
+```
+git clone https://github.com/monolithgoon/avg-dashboard/
 ```
 
 Install the `package.json` dependencies by running
 
-```bash
+```
 npm install
 ```
 
 Build an obfuscated version of the main app entry code `dashboard.js` by running
 
-```bash
+```
 npm run build:secure
 ```
 
@@ -86,7 +75,7 @@ cd /apps
 cd /avg-dashboard
 ```
 
-## Geoclusters API Response Envelopes
+## Dashboard API Response Envelopes
 
 This is the expected data envelopes for data returned from the geoclusters API
 
@@ -96,7 +85,7 @@ This is the expected data envelopes for data returned from the geoclusters API
 
 This endpoint returns data for AGCs that were processed through the Automated Land Parcelization API
 
-```bash
+```javascript
 const response = {
 
    status: "success",
@@ -130,7 +119,7 @@ const response = {
 
 This endpoint returns only METADATA for AGCs that were processed through the Land Parcelization API
 
-```bash
+```javascript
 const response = {
 
    status: "success",
