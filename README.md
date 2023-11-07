@@ -1,6 +1,5 @@
 # Active Land Asset Visualization & Monitoring Dashboard
-*Welcome to the Real-Time Farm Program Management Dashboard repository, where you can explore the capabilities of a dynamic geospatial platform designed to enhance farm operations management.
-This server-side rendered dashboard is updated with real-time data, that gives farm program managers a birds-eye view of farmer engagement metrics (farmer demographics, crop types, geo-mapped farm parcels, and other rich contextual information), allowing them to effectively communicate KPIs to institutional partners, and other vested stakeholders*
+*A dynamic geospatial platform designed to enhance farm operations management. This server-side rendered dashboard is updated with real-time data, that gives farm program managers a birds-eye view of farmer engagement metrics (farmer demographics, crop types, geo-mapped farm parcels, and other rich contextual information), allowing them to effectively communicate KPIs to institutional partners, and other vested stakeholders*
 
 #### [Dashboard Preview](http://51.20.26.23:9090/landing/)
 *Guest Login Credentials*
@@ -8,10 +7,9 @@ This server-side rendered dashboard is updated with real-time data, that gives f
 Username - guest@avg-dashboard.com
 Password - jungleFever
 ```
-
-![dashboard-0](https://user-images.githubusercontent.com/60096838/160973371-f393d866-4a73-4a14-8ffe-18e2027faa9d.png)
+![dashboard-0](https://github.com/monolithgoon/geoclusters-dashboard/assets/60096838/b0702e3b-fb8a-4e8b-9081-89e213f47932)
 ![dashboard-3](https://github.com/monolithgoon/geoclusters-dashboard/assets/60096838/41ea1552-af18-4b37-a736-048d2ae9455a)
-![dashboard-2](https://user-images.githubusercontent.com/60096838/228781340-f126067e-55b6-4d1f-b229-cfd31e30485a.png)
+![dashboard-2](https://github.com/monolithgoon/geoclusters-dashboard/assets/60096838/5d847afb-befe-494e-bab7-a36321b93651)
 ![Screenshot_20210408-110025_Gallery](https://github.com/monolithgoon/geoclusters-dashboard/assets/60096838/b7410a3b-3df9-4b8c-b72a-0982a59e6e05)
 ![sh-clusters-proto](https://github.com/monolithgoon/geoclusters-dashboard/assets/60096838/0dcfe165-432b-41e3-8e49-07c9e4194d4a)
 ![sh-clusters-proto-2](https://github.com/monolithgoon/geoclusters-dashboard/assets/60096838/111853ab-e59b-4b5d-96b3-869d3b297e0d)
