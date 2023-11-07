@@ -160,19 +160,6 @@ const ProcessFiles = ((root) => {
 			// }
 		}, "loadGeoJSONFilesFromDirectory"),
 
-		// REMOVE > DEPRECATED BELOW
-		// returnLocalFiles: async (fileNamesArr) => {
-		//    for (let fileName of fileNamesArr) {
-		//       let fileData = await fsPromises.readFile(path.resolve(`${__approotdir}/${LOCAL_FILE_NAMES.BASE_DIRECTORY}/${fileName}`), `utf8`, (readFileErr, fileBuffer) => {
-		//          if (readFileErr) throw readFileErr;
-		//          console.log(chalk.result(`FILE READ OK - ${fileName}`));
-		//          resolve(fileBuffer);
-		//       });
-		//       if (!fileData) null;
-		//       return fileData;
-		//    };
-		// },
-
 		/**
 		 * @function returnLocalFiles
 		 * @description Reads the contents of an array of files from the local filesystem
