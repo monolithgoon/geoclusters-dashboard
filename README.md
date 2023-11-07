@@ -1,6 +1,8 @@
 # Active Land Asset Visualization & Monitoring Dashboard
-#### [Dashboard Preview](http://51.20.26.23:9090/landing/)
+
 *A dynamic geospatial platform designed to enhance farm operations management. This server-side rendered dashboard is updated with real-time data, that gives farm program managers a birds-eye view of farmer engagement metrics (farmer demographics, crop types, geo-mapped farm parcels, and other rich contextual information), allowing them to effectively communicate KPIs to institutional partners, and other vested stakeholders*
+
+#### [Dashboard Preview](http://51.20.26.23:9090/landing/)
 
 *Guest Login Credentials*
 ```javascript
