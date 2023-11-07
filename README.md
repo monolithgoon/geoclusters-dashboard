@@ -9,13 +9,18 @@ Password - jungleFever
 ```
 ![dashboard-0](https://github.com/monolithgoon/geoclusters-dashboard/assets/60096838/b0702e3b-fb8a-4e8b-9081-89e213f47932)
 ![dashboard-3](https://github.com/monolithgoon/geoclusters-dashboard/assets/60096838/41ea1552-af18-4b37-a736-048d2ae9455a)
+
 <details>
-<summary>More Screens</summary>
+  <summary>Show More Screens</summary>
+  
   ![dashboard-2](https://github.com/monolithgoon/geoclusters-dashboard/assets/60096838/5d847afb-befe-494e-bab7-a36321b93651)
+  
   ![Screenshot_20210408-110025_Gallery](https://github.com/monolithgoon/geoclusters-dashboard/assets/60096838/b7410a3b-3df9-4b8c-b72a-0982a59e6e05)
+  
   ![sh-clusters-proto](https://github.com/monolithgoon/geoclusters-dashboard/assets/60096838/0dcfe165-432b-41e3-8e49-07c9e4194d4a)
+  
   ![sh-clusters-proto-2](https://github.com/monolithgoon/geoclusters-dashboard/assets/60096838/111853ab-e59b-4b5d-96b3-869d3b297e0d)
-<details>
+</details>
 
 ## Key Features
 
