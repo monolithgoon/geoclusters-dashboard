@@ -1,7 +1,7 @@
 # Active Land Asset Visualization & Monitoring Dashboard
+#### [Dashboard Preview](http://51.20.26.23:9090/landing/)
 *A dynamic geospatial platform designed to enhance farm operations management. This server-side rendered dashboard is updated with real-time data, that gives farm program managers a birds-eye view of farmer engagement metrics (farmer demographics, crop types, geo-mapped farm parcels, and other rich contextual information), allowing them to effectively communicate KPIs to institutional partners, and other vested stakeholders*
 
-#### [Dashboard Preview](http://51.20.26.23:9090/landing/)
 *Guest Login Credentials*
 ```javascript
 Username - guest@avg-dashboard.com
@@ -11,7 +11,7 @@ Password - jungleFever
 ![dashboard-3](https://github.com/monolithgoon/geoclusters-dashboard/assets/60096838/41ea1552-af18-4b37-a736-048d2ae9455a)
 
 <details>
-  <summary>Show More Screens</summary>
+  <summary>More Screens</summary>
   
   ![dashboard-2](https://github.com/monolithgoon/geoclusters-dashboard/assets/60096838/5d847afb-befe-494e-bab7-a36321b93651)
   
