@@ -118,8 +118,13 @@ CLOUDINARY_URL=*****
 ```bash
 NODE_ENV=production
 ```
-
 Set the Node.js environment to "production" in your server or application configuration for production deployments.
+
+### Geoclusters Dashboard 
+```bash
+GEOCLUSTERS_DASHBOARD_PORT=9090
+```
+To specify the port number where this app will run, set the `GEOCLUSTERS_DASHBOARD_PORT` environment variable. This value is used by the configuration file located at `/server/config/config.js`
 
 ### MongoDB Atlas Configuration
 ```bash
@@ -132,13 +137,7 @@ ATLAS_DB_PASSWORD=*****
 ```
 Use the password associated with your MongoDB Atlas cluster.
 
-### Geoclusters Dashboard
-```bash
-GEOCLUSTERS_DASHBOARD_PORT=9090
-```
-Set this environment variable to specify the port number for your Geoclusters Dashboard. Modify your server configuration to listen on this port.
-
-### Auto Land Subdivision Service
+### Auto Land Subdivision API Service
 ```bash
 AUTO_LAND_SUBDIVISION_HOST_URL=http://51.20.26.23:9443
 ```
