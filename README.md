@@ -9,10 +9,13 @@ Password - jungleFever
 ```
 ![dashboard-0](https://github.com/monolithgoon/geoclusters-dashboard/assets/60096838/b0702e3b-fb8a-4e8b-9081-89e213f47932)
 ![dashboard-3](https://github.com/monolithgoon/geoclusters-dashboard/assets/60096838/41ea1552-af18-4b37-a736-048d2ae9455a)
-![dashboard-2](https://github.com/monolithgoon/geoclusters-dashboard/assets/60096838/5d847afb-befe-494e-bab7-a36321b93651)
-![Screenshot_20210408-110025_Gallery](https://github.com/monolithgoon/geoclusters-dashboard/assets/60096838/b7410a3b-3df9-4b8c-b72a-0982a59e6e05)
-![sh-clusters-proto](https://github.com/monolithgoon/geoclusters-dashboard/assets/60096838/0dcfe165-432b-41e3-8e49-07c9e4194d4a)
-![sh-clusters-proto-2](https://github.com/monolithgoon/geoclusters-dashboard/assets/60096838/111853ab-e59b-4b5d-96b3-869d3b297e0d)
+<details>
+<summary>More Screens</summary>
+  ![dashboard-2](https://github.com/monolithgoon/geoclusters-dashboard/assets/60096838/5d847afb-befe-494e-bab7-a36321b93651)
+  ![Screenshot_20210408-110025_Gallery](https://github.com/monolithgoon/geoclusters-dashboard/assets/60096838/b7410a3b-3df9-4b8c-b72a-0982a59e6e05)
+  ![sh-clusters-proto](https://github.com/monolithgoon/geoclusters-dashboard/assets/60096838/0dcfe165-432b-41e3-8e49-07c9e4194d4a)
+  ![sh-clusters-proto-2](https://github.com/monolithgoon/geoclusters-dashboard/assets/60096838/111853ab-e59b-4b5d-96b3-869d3b297e0d)
+<details>
 
 ## Key Features
 
@@ -87,13 +90,9 @@ cd /apps
 cd /avg-dashboard
 ```
 
-## Environment Variables Setup - Development
+## Environment Variables
 
-Instructions for setting up essential environment variables required for your project. Make sure to replace the placeholders (e.g., `*****`) with the actual values relevant to your setup.
-
-*Ensure that these environment variables are set in your server or application environment, either by exporting them in your server's configuration or using a tool like Docker or an environment file (`.env` or similar) depending on your deployment method.*
-
-***Please keep these values secure and do not expose them in public repositories.***
+Instructions for setting up essential environment variables required for the project. Replace the placeholders (e.g., `*****`) with the actual values relevant to your setup.
 
 ```bash
 NODE_ENV=production
@@ -111,12 +110,16 @@ MAILTRAP_PASSWORD=*****
 CLOUDINARY_URL=*****
 ```
 
+*To run the app in `development` mode, create a file called `development.env` in the `/server` directory, set the Node.js environment variable to `NODE_ENV=development`, and load the variables with the `dotenv` package*
+
+***Keep these values secure and do not expose them in public repositories.***
+
 ### Node Environment
 
 ```bash
 NODE_ENV=production
 ```
-Set the Node.js environment to "production" in your server or application configuration for production deployments.
+Set the Node.js environment to "production" in your server or application configuration for production deployments. 
 
 ### Geoclusters Dashboard 
 ```bash
@@ -172,9 +175,9 @@ Visit the Cloudinary [website](https://cloudinary.com). Log in or create an acco
 
 ## Map Provider API Tokens
 
-Because the main maps for the dashboard are rendered on the frontend, they can't be added to or read from the environment variables in the `/server/production.env` file. 
+Because the main maps for the dashboard are rendered on the frontend, the API tokens required can't be added to, or read from the server environment variables in the `/server/production.env` file. 
 
-Add the map provider API tokens to this file `/server/public/js/src/constants/maps-api-tokens.js`
+Instead, add the map provider API tokens to this file `/server/public/js/src/constants/maps-api-tokens.js`
 
 ***In production, do not use the map provider API tokens included in this code repository. They are for development only***
 
