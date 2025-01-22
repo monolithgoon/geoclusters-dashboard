@@ -16,9 +16,9 @@ async function DB_CONNECT() {
 		mongoose
 			.connect(database, {
 				// handle mongoDB deprecation warnings
-				useNewUrlParser: true,
-				useCreateIndex: true,
-				useFindAndModify: false,
+				// useNewUrlParser: true,
+				// useCreateIndex: true,
+				// useFindAndModify: false,
 				useUnifiedTopology: true,
 			})
 			.then((connectionObject) => {
