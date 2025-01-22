@@ -28,7 +28,7 @@ module.exports = Object.freeze({
 	port: parseInt(process.env.GEOCLUSTERS_DASHBOARD_PORT, 10) || 9090,
 
 	databaseURL: process.env.ATLAS_DB_STRING,
-	databasePassword: process.env.ATLAS_DB_PASSOWRD,
+	databasePassword: process.env.ATLAS_DB_PASSWORD,
 
 	jwtSecret: process.env.JWT_SECRET,
 	jwtAlgorithm: process.env.JWT_ALGO,
