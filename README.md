@@ -1,12 +1,10 @@
-# Active Land Asset Visualization & Monitoring Dashboard
+# _[Active Land Asset Visualization & Monitoring Dashboard](http://51.20.7.129/landing/)_
 
 *A dynamic geospatial platform that enhances farm operations management.*
 
 This full-stack, server-side rendered (SSR) dashboard is updated with real-time data, that gives farm program managers a birds-eye view of farmer engagement metrics (farmer demographics, crop types, geo-mapped farm parcels, and other rich contextual information), allowing them to effectively communicate KPIs to institutional partners, and other vested stakeholders.
 
-#### [Dashboard Preview](http://51.20.26.23:9090/landing/)
-
-*Guest Login Credentials*
+### *_Guest Login Credentials_*
 ```javascript
 Username - guest@avg-dashboard.com
 Password - jungleFever
@@ -201,3 +199,75 @@ To get a Bing Maps token, you can follow these steps:
 - Create a free account or sign in if you already have one
 - Go to the My Account [page](https://www.bingmapsportal.com/Application)
 - Create- a new Bing Maps key and give it a descriptive name
+- 
+## 📝 *_NGINX Configuration_*
+
+  ### *_Config File_*
+  
+   Add the following block to your NGINX configuration file (`/etc/nginx/sites-available/geoclusters_dashboard`):
+
+   ```bash
+    server {
+       listen 80;
+       server_name 51.20.7.129;
+    
+       root /var/www/geoclusters_dashboard;
+       index index.html;
+    
+       proxy_set_header Upgrade $http_upgrade;
+       proxy_set_header Connection 'upgrade';
+       proxy_set_header Host $host;
+       proxy_cache_bypass $http_upgrade;
+    
+       location / {
+           proxy_pass http://localhost:9090;
+           proxy_http_version 1.1;
+       }
+    
+       location /landing/ {
+           proxy_pass http://localhost:9090;
+           proxy_http_version 1.1;
+       }
+    
+    
+       location /api/ {
+            proxy_pass http://localhost:9090/api/;
+            proxy_http_version 1.1;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        }
+    
+       error_page 404 /404.html;
+       location = /404.html {
+           root /var/www/geoclusters_dashboard;
+       }
+    
+       access_log /var/log/nginx/geoclusters_dashboard_access.log;
+       error_log /var/log/nginx/geoclusters_dashboard_error.log;
+    }
+   ```
+  
+  ### 🌠 *_Enable the Site_*  
+     Create a symbolic link in the `sites-enabled` directory:  
+     ```bash
+     sudo ln -s /etc/nginx/sites-available/geoclusters_dashboard /etc/nginx/sites-enabled/
+     ```
+  
+  ### 🌠 *_Test the Configuration_*  
+     Before applying changes, verify the syntax and configuration:  
+     ```bash
+     sudo nginx -t
+     ```
+  
+     Ensure the output confirms a successful test.  
+  
+  ### 🌠 *_Restart NGINX_*  
+     If the configuration test passes, restart NGINX to apply the changes:  
+     ```bash
+     sudo systemctl restart nginx
+     ```
+  
+  ### 🌠 *_Verify System Functionality_*  
+     - Access the application in your browser via `http://51.20.7.129/landing` to confirm it loads correctly.  
+
+
